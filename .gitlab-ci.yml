@@ -16,8 +16,7 @@ variables:
   POSTGRES_HOST_AUTH_METHOD: trust
 
 cache:
-  key:
-    - $CI_JOB_NAME
+  key: ${CI_JOB_NAME}
   paths:
     - .m2/repository
 
