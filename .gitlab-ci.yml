@@ -23,7 +23,7 @@ cache:
 Test project:
   stage: test
   script:
-    - mvn $MAVEN_OPTS test
+    - mvn $MAVEN_OPTS -Dtest=TestTagResourceController test
   artifacts:
     paths:
       - target/surefire-reports/TEST-*.xml
