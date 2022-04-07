@@ -1,28 +1,32 @@
-variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
 image: maven:latest
-
-cache:
-  key: ${CI_JOB_NAME}
-  paths:
-    - .m2/repository
 
 stages:
   - test
 
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
 services:
   - postgres
+
 variables:
   POSTGRES_DB: postgres
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: root
   POSTGRES_HOST_AUTH_METHOD: trust
 
+cache:
+  key:
+    files:
+        - pom.xml
+  paths:
+    - .m2/repository
+
 Test project:
   stage: test
   script:
-    - mvn $MAVEN_OPTS -Dtest=TestTagResourceController test
+    - mvn $MAVEN_OPTS test
   artifacts:
     paths:
       - target/surefire-reports/TEST-*.xml
