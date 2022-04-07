@@ -1,22 +1,33 @@
 image: maven:latest
 
 stages:
-  - build&test
-  - package
-  - dockerise
+  - test
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
+services:
+  - postgres
+
+variables:
+  POSTGRES_DB: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: root
+  POSTGRES_HOST_AUTH_METHOD: trust
+
 cache:
-  key: ${CI_COMMIT_REF_SLUG}
+  key:
+    files:
+      - pom.xml
   paths:
     - .m2/repository
 
-Build project:
-  stage: build&test
+Test project:
+  stage: test
   script:
-    - mvn $MAVEN_OPTS compile
-
-
-
+    - mvn $MAVEN_OPTS test
+  artifacts:
+    paths:
+      - target/surefire-reports/TEST-*.xml
+    reports:
+      junit: target/surefire-reports/TEST-*.xml
