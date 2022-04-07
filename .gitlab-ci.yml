@@ -1,24 +1,23 @@
-image: maven:latest
-
-stages:
-  - test
-
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
-services:
-  - postgres
-
-variables:
-  POSTGRES_DB: postgres
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: root
-  POSTGRES_HOST_AUTH_METHOD: trust
+image: maven:latest
 
 cache:
   key: ${CI_JOB_NAME}
   paths:
     - .m2/repository
+
+stages:
+  - test
+
+services:
+  - postgres
+variables:
+  POSTGRES_DB: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: root
+  POSTGRES_HOST_AUTH_METHOD: trust
 
 Test project:
   stage: test
