@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface AnswerDtoDao {
 
-    Optional<AnswerDTO> getAnswerDtoById(Long id);
+    Optional<AnswerDTO> getUndeletedAnswerDtoById(Long id);
 
-    List<AnswerDTO> getAllAnswerDtoByQuestionId(Long questionId);
+    List<AnswerDTO> getAllUndeletedAnswerDtoByQuestionId(Long questionId);
 }
