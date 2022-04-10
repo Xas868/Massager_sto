@@ -26,7 +26,7 @@ cache:
     - .m2/repository
 
 Test project:
-  stage: test
+  stage: build&test
   script:
     - mvn $MAVEN_OPTS test
   artifacts:
