@@ -1,5 +1,5 @@
 
-image: maven:latest
+image: maven:3.8.5-jdk-11
 
 stages:
 #  - build&test
@@ -36,7 +36,6 @@ cache:
 #      junit: target/surefire-reports/TEST-*.xml
 
 Package project:
-  image: openjdk:11
   stage: package
   script:
     - mvn $MAVEN_OPTS package
