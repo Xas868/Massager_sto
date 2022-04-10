@@ -2,7 +2,9 @@
 image: maven:latest
 
 stages:
-  - test
+  - build&test
+  - package
+  - dockerise
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
@@ -32,3 +34,12 @@ Test project:
       - target/surefire-reports/TEST-*.xml
     reports:
       junit: target/surefire-reports/TEST-*.xml
+
+Package project:
+  image: openjdk:11-alpine
+  stage: package
+  script:
+    - ./mvnw $MAVEN_OPTS package
+  artifacts:
+    paths:
+      - target/*.jar
