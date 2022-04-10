@@ -19,9 +19,7 @@ variables:
   POSTGRES_HOST_AUTH_METHOD: trust
 
 cache:
-  key:
-    files:
-        - pom.xml
+  key: ${CI_COMMIT_REF_SLUG}
   paths:
     - .m2/repository
 
