@@ -38,7 +38,7 @@ cache:
 Package project:
   stage: package
   script:
-    - mvn $MAVEN_OPTS package
+    - mvn -Dtest="TestAuthenticationResourceController" $MAVEN_OPTS package
   artifacts:
     paths:
       - target/*.jar
