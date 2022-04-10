@@ -49,9 +49,8 @@ Dockerise project:
   services:
     - docker:dind
   script:
-    - "cp $(ls target/*.jar) docker/gitlabci.jar"
-
-    - cd docker
-    - docker build -t $CI_REGISTRY_IMAGE .
+    #- "cp $(ls target/*.jar) docker/gitlabci.jar"
+    #- cd docker
+    - docker build -t $CI_REGISTRY_IMAGE:my_image .
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN git.kata.academy:5050
-    - docker push $CI_REGISTRY_IMAGE
+    - docker push $CI_REGISTRY_IMAGE:my_image
