@@ -1,21 +1,21 @@
 image: maven:3.8.5-jdk-11
 
 stages:
-#  - build&test
+  - build&test
   - package
   - dockerise
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
-#services:
-#  - postgres
+services:
+  - postgres
 
-#variables:
-#  POSTGRES_DB: postgres
-#  POSTGRES_USER: postgres
-#  POSTGRES_PASSWORD: root
-#  POSTGRES_HOST_AUTH_METHOD: trust
+variables:
+  POSTGRES_DB: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: root
+  POSTGRES_HOST_AUTH_METHOD: trust
 
 cache:
   key:
@@ -24,15 +24,15 @@ cache:
   paths:
     - .m2/repository
 
-#Test project:
-#  stage: build&test
-#  script:
-#    - mvn -Dtest="TestAuthenticationResourceController" $MAVEN_OPTS test
-#  artifacts:
-#    paths:
-#      - target/surefire-reports/TEST-*.xml
-#    reports:
-#      junit: target/surefire-reports/TEST-*.xml
+Test project:
+  stage: build&test
+  script:
+    - mvn -Dtest="TestAuthenticationResourceController" $MAVEN_OPTS test
+  artifacts:
+    paths:
+      - target/surefire-reports/TEST-*.xml
+    reports:
+      junit: target/surefire-reports/TEST-*.xml
 
 Package project:
   stage: package
@@ -45,12 +45,10 @@ Package project:
 Dockerise project:
   stage: dockerise
   image: docker:latest
-  #when: manual
+  when: manual
   services:
     - docker:dind
   script:
-    #- "cp $(ls target/*.jar) docker/gitlabci.jar"
-    #- cd docker
     - docker build -t $CI_REGISTRY_IMAGE:my_image .
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN git.kata.academy:5050
     - docker push $CI_REGISTRY_IMAGE:my_image
