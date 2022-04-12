@@ -17,27 +17,25 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
     private EntityManager entityManager;
 
     @Override
-    public Optional<AnswerDTO> getAnswerDtoById(Long id) {
+    public Optional<AnswerDTO> getUndeletedAnswerDtoById(Long id) {
 
-        return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.AnswerDTO(" +
-                        " a.id, a.user.id, (SELECT sum(r.count) FROM Reputation r where r.answer.user.id = a.user.id), " +
-                        " a.question.id, a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
+        return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.AnswerDTO(" +
+                        "a.id, a.user.id, (select sum(r.count) from Reputation r where r.answer.user.id = a.user.id), " +
+                        "a.question.id, a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
                         "(select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteAnswer v where v.answer.id = a.id)," +
-                        " a.user.imageLink, a.user.nickname) " +
-                        " FROM Answer as a" +
-                        " WHERE a.id = :id", AnswerDTO.class)
+                        "a.user.imageLink, a.user.nickname) from Answer as a where a.id = :id and a.isDeleted = false", AnswerDTO.class)
                 .setParameter("id", id));
     }
 
     @Override
-    public List<AnswerDTO> getAllAnswerDtoByQuestionId(Long questionId) {
-        return entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.AnswerDTO(" +
-                        " a.id, a.user.id, (SELECT sum(r.count) FROM Reputation r where r.answer.user.id = a.user.id), " +
-                        " a.question.id, a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
-                        "(select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteAnswer v where v.answer.id = a.id)," +
-                        " a.user.imageLink, a.user.nickname) " +
-                        " FROM Answer as a" +
-                        " WHERE a.question.id = :id", AnswerDTO.class)
+    public List<AnswerDTO> getAllUndeletedAnswerDtoByQuestionId(Long questionId) {
+
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.AnswerDTO( a.id, a.user.id, " +
+                        "(select sum(r.count) from Reputation r where r.answer.user.id = a.user.id), " +
+                        "a.question.id, a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
+                        "(select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteAnswer v " +
+                        "where v.answer.id = a.id), a.user.imageLink, a.user.nickname) " +
+                        "from Answer as a where a.question.id = :id and a.isDeleted = false", AnswerDTO.class)
                 .setParameter("id", questionId)
                 .getResultList();
     }

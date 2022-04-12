@@ -343,7 +343,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
 
         String token = "Bearer " + getToken("user100@mail.ru", "password");
 
-        //Тестируем корректный случай
+        //Тестируем корректный случай с 4 ответами
         mockMvc.perform(MockMvcRequestBuilders.get("/api/user/question/100/answer")
                         .header("Authorization", token)
                         .contentType("application/json")
@@ -361,6 +361,24 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andExpect(jsonPath("$.[2].id").value(102))
                 .andExpect(jsonPath("$.[3].id").value(103))
                 .andExpect(jsonPath("$.size()").value(4));
+
+        //Тестируем случай с 2 удалёнными ответами из 4
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/user/question/101/answer")
+                        .header("Authorization", token)
+                        .contentType("application/json")
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].id").value(104))
+                .andExpect(jsonPath("$.[1].id").value(107))
+                .andExpect(jsonPath("$.size()").value(2));
+
+        //Тестируем случай с вопросом, у которого удалены все ответы
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/user/question/102/answer")
+                        .header("Authorization", token)
+                        .contentType("application/json")
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(0));
 
         //Тестируем случай с вопросом без ответов
         mockMvc.perform(MockMvcRequestBuilders.get("/api/user/question/104/answer")
@@ -423,6 +441,14 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .setParameter("htmlBody", "modified answer about Question 100")
                 .getSingleResult())
                 .isEqualTo(true);
+
+        // Изменяем удалённый ответ
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/user/question/102/answer/108/update")
+                        .header("Authorization", token)
+                        .content("modified answer about Question 102")
+                        .contentType("application/json")
+                ).andDo(print())
+                .andExpect(status().isBadRequest());
 
         // Изменяем несуществующий ответ
         mockMvc.perform(MockMvcRequestBuilders.put("/api/user/question/100/answer/999/update")

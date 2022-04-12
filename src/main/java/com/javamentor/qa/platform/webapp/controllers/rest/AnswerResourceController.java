@@ -148,7 +148,7 @@ public class AnswerResourceController {
         Answer answer = new Answer(question.get(), user, bodyAnswer);
         answerService.persist(answer);
 
-        return new ResponseEntity<>(answerDtoService.getAnswerDtoById(answer.getId()), HttpStatus.OK);
+        return new ResponseEntity<>(answerDtoService.getUndeletedAnswerDtoById(answer.getId()), HttpStatus.OK);
     }
 
     @Operation(summary = "Получение списка ответов на вопрос оп ID вопроса",
@@ -166,7 +166,7 @@ public class AnswerResourceController {
     })
     @GetMapping
     public ResponseEntity<List<AnswerDTO>> getAnswers(@PathVariable Long questionId) {
-        return new ResponseEntity<>(answerDtoService.getAllAnswerDtoByQuestionId(questionId), HttpStatus.OK);
+        return new ResponseEntity<>(answerDtoService.getAllUndeletedAnswerDtoByQuestionId(questionId), HttpStatus.OK);
     }
 
     @Operation(
@@ -205,7 +205,7 @@ public class AnswerResourceController {
     @PutMapping(path = "/{id}/update")
         public ResponseEntity<?> updateAnswer(@PathVariable(name = "id") long answerId,
                                           @Valid @RequestBody String htmlBody) {
-        Optional<AnswerDTO> answerDtoOpt = answerDtoService.getAnswerDtoById(answerId);
+        Optional<AnswerDTO> answerDtoOpt = answerDtoService.getUndeletedAnswerDtoById(answerId);
         if (answerDtoOpt.isEmpty()) {
             return new ResponseEntity<>("Can't find answer with id:" + answerId, HttpStatus.BAD_REQUEST);
         }
