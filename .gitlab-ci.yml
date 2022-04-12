@@ -1,38 +1,38 @@
 image: maven:3.8.5-jdk-11
 
 stages:
-  - build&test
+  #  - build&test
   - package
   - dockerise
 
-variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+#variables:
+#  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
-services:
-  - postgres
+#services:
+#  - postgres
 
-variables:
-  POSTGRES_DB: postgres
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: root
-  POSTGRES_HOST_AUTH_METHOD: trust
+#variables:
+#  POSTGRES_DB: postgres
+#  POSTGRES_USER: postgres
+#  POSTGRES_PASSWORD: root
+#  POSTGRES_HOST_AUTH_METHOD: trust
 
-cache:
-  key:
-    files:
-      - ./pom.xml
-  paths:
-    - .m2/repository
+#cache:
+#  key:
+#    files:
+#      - pom.xml
+#  paths:
+#    - .m2/repository
 
-Test project:
-  stage: build&test
-  script:
-    - mvn -Dtest="TestAuthenticationResourceController" $MAVEN_OPTS test
-  artifacts:
-    paths:
-      - target/surefire-reports/TEST-*.xml
-    reports:
-      junit: target/surefire-reports/TEST-*.xml
+#Test project:
+#  stage: build&test
+#  script:
+#    - mvn -Dtest="TestAuthenticationResourceController" $MAVEN_OPTS test
+#  artifacts:
+#    paths:
+#      - target/surefire-reports/TEST-*.xml
+#    reports:
+#      junit: target/surefire-reports/TEST-*.xml
 
 Package project:
   stage: package
@@ -48,7 +48,11 @@ Dockerise project:
   when: manual
   services:
     - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - docker build -t $CI_REGISTRY_IMAGE:my_image .
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN git.kata.academy:5050
-    - docker push $CI_REGISTRY_IMAGE:my_image
+    - "cp $(ls target/*.jar) jm-0.0.1-SNAPSHOT.jar"
+    - docker build -t $CI_REGISTRY_IMAGE:p_sto_4 .
+    - docker push $CI_REGISTRY_IMAGE:p_sto_4
+#  only:
+#    - main
