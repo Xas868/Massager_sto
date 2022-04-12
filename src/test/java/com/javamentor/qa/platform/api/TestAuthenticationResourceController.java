@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.api;
 
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import com.javamentor.qa.platform.models.dto.AuthenticationResponse;
@@ -19,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DataSet(value = "dataset/AuthenticationResourceController/auth.yml")
+@DataSet(cleanBefore = true, cleanAfter = true, value = "dataset/AuthenticationResourceController/auth.yml", strategy = SeedStrategy.CLEAN_INSERT)
 public class TestAuthenticationResourceController extends AbstractClassForDRRiderMockMVCTests {
 
     @Autowired
