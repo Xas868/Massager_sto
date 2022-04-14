@@ -20,11 +20,7 @@ import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
-import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
-import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.BookmarksService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.TagConverter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,6 +57,7 @@ public class QuestionResourceController {
     private final TagDtoService tagDtoService;
     private final QuestionViewedService questionViewedService;
     private final BookmarksService bookmarksService;
+    private final CommentQuestionService commentQuestionService;
 
     public QuestionResourceController(QuestionService questionService,
                                       VoteQuestionService voteQuestionService,
@@ -70,7 +67,9 @@ public class QuestionResourceController {
                                       TagConverter tagConverter,
                                       TagDtoService tagDtoService,
                                       QuestionViewedService questionViewedService,
-                                      BookmarksService bookmarksService) {
+                                      BookmarksService bookmarksService,
+                                      CommentQuestionService commentQuestionService
+    ) {
         this.questionService = questionService;
         this.voteQuestionService = voteQuestionService;
         this.reputationService = reputationService;
@@ -80,6 +79,7 @@ public class QuestionResourceController {
         this.tagDtoService = tagDtoService;
         this.questionViewedService = questionViewedService;
         this.bookmarksService = bookmarksService;
+        this.commentQuestionService = commentQuestionService;
     }
 
     @GetMapping("api/user/question/count")
@@ -392,6 +392,27 @@ public class QuestionResourceController {
         }
 
         return new ResponseEntity<>("There is no question with id: " + id.toString(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Operation(
+            summary = "Добавление комментария к вопросу",
+            description = "Добавление комментария к вопросу"
+    )
+    @ApiResponse(responseCode = "200", description = "Комментарий добавлен", content = {
+            @Content(mediaType = "application/json")
+    })
+    @ApiResponse(responseCode = "400", description = "Комментарий не добавлен", content = {
+            @Content(mediaType = "application/json")
+    })
+    @PostMapping("/{id}/comment")
+    public ResponseEntity<?> addCommentQuestion(@PathVariable Long id, @RequestBody String bodyComment,
+                                                Authentication auth) {
+        User user = (User) auth.getPrincipal();
+        Optional<Question> question = questionService.getById(id);
+        CommentQuestion commentQuestion = new CommentQuestion(bodyComment, user);
+        commentQuestion.setQuestion(question.get());
+        commentQuestionService.persist(commentQuestion);
+        return new ResponseEntity<>("Comment successfully added", HttpStatus.OK);
     }
 }
 
