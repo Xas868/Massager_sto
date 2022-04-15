@@ -525,15 +525,15 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
         String token101 = "Bearer " + getToken("test102@mail.ru", "user1");
 
         //Проверяю кэширование существующего
-        assertNull(cacheManager.getCache("User").get("test102@mail.ru"));
+        assertNull(cacheManager.getCache("User1").get("test102@mail.ru"));
         userDao.isUserExistByEmail("test102@mail.ru");
-        assertNotNull(cacheManager.getCache("User").get("test102@mail.ru"));
+        assertNotNull(cacheManager.getCache("User1").get("test102@mail.ru"));
         assertTrue(userDao.isUserExistByEmail("test102@mail.ru"));
 
         //Проверяю кэширование несуществующего
-        assertNull(cacheManager.getCache("User").get("test100@mail.ru"));
+        assertNull(cacheManager.getCache("User1").get("test100@mail.ru"));
         userDao.isUserExistByEmail("test100@mail.ru");
-        assertNotNull(cacheManager.getCache("User").get("test100@mail.ru"));
+        assertNotNull(cacheManager.getCache("User1").get("test100@mail.ru"));
         assertFalse(userDao.isUserExistByEmail("test100@mail.ru"));
 
         //Меняю пароль
@@ -544,14 +544,14 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        assertNull(cacheManager.getCache("User").get("test102@mail.ru"));
+        assertNull(cacheManager.getCache("User1").get("test102@mail.ru"));
 
         userDao.isUserExistByEmail("test102@mail.ru");
-        assertNotNull(cacheManager.getCache("User").get("test102@mail.ru"));
+        assertNotNull(cacheManager.getCache("User1").get("test102@mail.ru"));
 
         //Удаляю по email
         userService.deleteById("test102@mail.ru");
-        assertNull(cacheManager.getCache("User").get("test102@mail.ru"));
+        assertNull(cacheManager.getCache("User1").get("test102@mail.ru"));
 
         //Удаляю по id с помощью Dao - ничего не должен удалять
         userDao.deleteById(103L);
