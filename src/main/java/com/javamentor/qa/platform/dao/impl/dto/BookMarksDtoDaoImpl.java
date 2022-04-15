@@ -15,15 +15,15 @@ public class BookMarksDtoDaoImpl implements BookMarksDtoDao {
     private EntityManager entityManager;
 
     @Override
-    public List<BookMarksDto> getAllBookMarksInUserProfile(Long id) {
-        return (List<BookMarksDto>) entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.BookMarksDto (" +
-                        "q.id, q.title ," +
+    public List<BookMarksDto> getAllBookMarksInUserProfile() {
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.BookMarksDto (" +
+                        "q.id," +
+                        "q.title ," +
                         "(select count(a.id) from Answer a where a.question.id = q.id)," +
                         "(select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id)," +
                         "(select count(qv.id) FROM QuestionViewed qv where qv.question.id = q.id)," +
                         "q.persistDateTime) " +
-                        "from Question q where q.isDeleted = false and q.user.id=:id")
-                .setParameter("id", id)
+                        "from Question q  where q.isDeleted=false", BookMarksDto.class)
                 .getResultList();
     }
 }

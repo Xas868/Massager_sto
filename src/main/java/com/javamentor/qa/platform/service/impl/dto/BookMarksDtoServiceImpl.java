@@ -22,11 +22,11 @@ public class BookMarksDtoServiceImpl implements BookMarksDtoService {
     }
 
     @Override
-    public List<BookMarksDto> getAllBookMarksInUserProfile(Long id) {
-        List<BookMarksDto> resultList = bookMarksDtoDao.getAllBookMarksInUserProfile(id);
+    public List<BookMarksDto> getAllBookMarksInUserProfile() {
+        List<BookMarksDto> resultList = bookMarksDtoDao.getAllBookMarksInUserProfile();
         var map = tagDtoDao.getTagDtoByQuestionIds(
                 resultList.stream().map(BookMarksDto::getQuestionId).collect(Collectors.toList()));
-        resultList.forEach(q -> q.setTagDtoList(map.containsKey(q.getQuestionId()) ? map.get(q.getQuestionId()) : new ArrayList<>()));
+        resultList.forEach(q -> q.setListTagDto(map.containsKey(q.getQuestionId()) ? map.get(q.getQuestionId()) : new ArrayList<>()));
         return resultList;
     }
 }

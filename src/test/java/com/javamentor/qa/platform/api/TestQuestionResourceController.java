@@ -25,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -34,7 +35,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1257,7 +1257,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
     public void getQuestionSortedByWeightForTheWeek() throws Exception {
 
         entityManager.createNativeQuery(
-                "update question set persist_date = LOCALTIMESTAMP where id < 6"
+                        "update question set persist_date = LOCALTIMESTAMP where id < 6"
                 )
                 .executeUpdate();
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
@@ -1340,7 +1340,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
     }
 
     @Test
-    @DataSet(cleanBefore = true,cleanAfter = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/QuestionResourceController/QuestionsSortedByAnswersForLastMonth/questionsDiffPersistDate.yml",
                     "dataset/QuestionResourceController/users.yml",

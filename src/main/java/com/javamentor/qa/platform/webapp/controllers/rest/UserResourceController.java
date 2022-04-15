@@ -25,6 +25,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
 import java.util.Optional;
 
@@ -200,9 +201,9 @@ public class UserResourceController {
                     }),
     })
     @GetMapping("/api/user/profile/bookmarks")
-    public ResponseEntity<List<BookMarksDto>> getAllBookMarksInUserProfile(@AuthenticationPrincipal User user) {
+    public ResponseEntity<List<BookMarksDto>> getAllBookMarksInUserProfile() {
         return new ResponseEntity<>(bookMarksDtoService
-                .getAllBookMarksInUserProfile(user.getId()),
+                .getAllBookMarksInUserProfile(),
                 HttpStatus.OK);
     }
 

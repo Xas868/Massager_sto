@@ -38,3 +38,42 @@ user_entity:
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: 2021-12-09 19:41:18.252588
     role_id: 101
+  - id: 104
+    about: "I'm Test user #104"
+    city: "Moscow"
+    full_name: "test 104"
+    password: "$2a$10$p94zVhwJKsg6CzDQAg1tPOwgUUa66.ITiPyhvJbYKIIZQ1i86UEpm"
+    email: "test104@mail.ru"
+    is_deleted: false
+    nickname: "test104"
+    image_link: "photo"
+    is_enabled: true
+    last_redaction_date: 2021-12-09 19:41:18.252588
+    persist_date: 2021-12-09 19:41:18.252588
+    role_id: 101
+  - id: 105
+    about: "I'm Test user #105"
+    city: "Moscow"
+    full_name: "test 105"
+    password: "$2a$10$p94zVhwJKsg6CzDQAg1tPOwgUUa66.ITiPyhvJbYKIIZQ1i86UEpm"
+    email: "test105@mail.ru"
+    is_deleted: false
+    nickname: "test105"
+    image_link: "photo"
+    is_enabled: true
+    last_redaction_date: 2021-12-09 19:41:18.252588
+    persist_date: 2021-12-09 19:41:18.252588
+    role_id: 101
+  - id: 106
+    about: "I'm Test user #106"
+    city: "Moscow"
+    full_name: "test 106"
+    password: "$2a$10$p94zVhwJKsg6CzDQAg1tPOwgUUa66.ITiPyhvJbYKIIZQ1i86UEpm"
+    email: "test106@mail.ru"
+    is_deleted: false
+    nickname: "test106"
+    image_link: "photo"
+    is_enabled: true
+    last_redaction_date: 2021-12-09 19:41:18.252588
+    persist_date: 2021-12-09 19:41:18.252588
+    role_id: 101
