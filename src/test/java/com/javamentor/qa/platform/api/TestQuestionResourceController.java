@@ -5,7 +5,6 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
-import com.javamentor.qa.platform.dao.abstracts.model.BookmarksDao;
 import com.javamentor.qa.platform.dao.abstracts.model.QuestionViewedDao;
 import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
@@ -35,7 +34,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1258,7 +1256,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
     public void getQuestionSortedByWeightForTheWeek() throws Exception {
 
         entityManager.createNativeQuery(
-                "update question set persist_date = LOCALTIMESTAMP where id < 6"
+                        "update question set persist_date = LOCALTIMESTAMP where id < 6"
                 )
                 .executeUpdate();
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
@@ -1341,7 +1339,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
     }
 
     @Test
-    @DataSet(cleanBefore = true,cleanAfter = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/QuestionResourceController/QuestionsSortedByAnswersForLastMonth/questionsDiffPersistDate.yml",
                     "dataset/QuestionResourceController/users.yml",
@@ -1536,5 +1534,14 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                         .header("Authorization", token101))
                 .andDo(print())
                 .andExpect(status().isOk());
+
+
+        //добавляю новый комментарий user 101 по несуществующему вопросу 103
+        mockMvc.perform(MockMvcRequestBuilders.post("/103/comment")
+                        .contentType("application/json")
+                        .content("Hello Test3")
+                        .header("Authorization", token101))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 }

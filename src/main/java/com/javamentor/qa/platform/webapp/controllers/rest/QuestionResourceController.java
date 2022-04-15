@@ -1,11 +1,12 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.dao.impl.pagination.*;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoAllSortedByPopular;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoAllQuestionsImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoByNoAnswersImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoByTagId;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoSortedByDate;
+import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoSortedByImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoSortedByWeightForTheWeekImpl;
 import com.javamentor.qa.platform.exception.ConstrainException;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
@@ -20,7 +21,12 @@ import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.*;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
+import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
+import com.javamentor.qa.platform.service.abstracts.model.BookmarksService;
+import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.TagConverter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -409,6 +415,9 @@ public class QuestionResourceController {
                                                 Authentication auth) {
         User user = (User) auth.getPrincipal();
         Optional<Question> question = questionService.getById(id);
+        if (question.isEmpty()){
+            return new ResponseEntity<>("There is no question " + id.toString(), HttpStatus.BAD_REQUEST);
+        }
         CommentQuestion commentQuestion = new CommentQuestion(bodyComment, user);
         commentQuestion.setQuestion(question.get());
         commentQuestionService.persist(commentQuestion);
