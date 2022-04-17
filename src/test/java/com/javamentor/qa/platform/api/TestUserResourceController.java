@@ -31,10 +31,10 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     private static final String PASSWORD = "password";
     private static final String URL_VOTE = "/api/user/vote?";
 
-//    @BeforeEach
-//    public void clearCache(){
-//        super.clearCache();
-//    }
+    @Autowired
+    private UserDao userDao;
+    @Autowired
+    private UserService userService;
 
     @Test
     //Вывод Dto по id
@@ -512,12 +512,6 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items").isNotEmpty())
                 .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(110, 107, 104, 106, 103, 109, 101, 108, 105)));
     }
-
-
-    @Autowired
-    private UserDao userDao;
-    @Autowired
-    private UserService userService;
 
     @Test
     @DataSet(cleanBefore = true, cleanAfter = true,
