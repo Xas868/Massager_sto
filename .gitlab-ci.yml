@@ -27,32 +27,28 @@ cache:
 Test project:
   stage: build&test
   script:
-    - mvn -Dtest="TestAuthenticationResourceController" $MAVEN_OPTS test
+    - mvn $MAVEN_OPTS -DDB_HOST=postgres -DDB_PORT=5432 -DDB_NAME=POSTGRES_DB -DDB_USERNAME=POSTGRES_USER -DDB_PASSWORD=POSTGRES_PASSWORD test
   artifacts:
     paths:
       - target/surefire-reports/TEST-*.xml
     reports:
       junit: target/surefire-reports/TEST-*.xml
 
-Package project:
-  stage: package
-  script:
-    - mvn -Dmaven.test.skip=true $MAVEN_OPTS package
-  artifacts:
-    paths:
-      - target/*.jar
-
-Dockerise project:
-  stage: dockerise
-  image: docker:latest
-  when: manual
-  services:
-    - docker:dind
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  script:
-    - "cp $(ls target/*.jar) jm-0.0.1-SNAPSHOT.jar"
-    - docker build -t $CI_REGISTRY_IMAGE:p_sto_4 .
-    - docker push $CI_REGISTRY_IMAGE:p_sto_4
-#  only:
-#    - dev
+#Package project:
+#  stage: package
+#  script:
+#    - mvn -Dmaven.test.skip=true $MAVEN_OPTS package
+#  artifacts:
+#    paths:
+#      - target/*.jar
+#
+#Dockerise project:
+#  stage: dockerise
+#  image: docker:latest
+#  when: manual
+#  services:
+#    - docker:dind
+#  script:
+#    - docker build -t $CI_REGISTRY_IMAGE:my_image .
+#    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN git.kata.academy:5050
+#    - docker push $CI_REGISTRY_IMAGE:my_image
