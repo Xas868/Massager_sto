@@ -27,7 +27,7 @@ cache:
 Test project:
   stage: build&test
   script:
-    - mvn $MAVEN_OPTS -DDB_HOST=postgres -DDB_PORT=5432 -DDB_NAME=POSTGRES_DB -DDB_USERNAME=POSTGRES_USER -DDB_PASSWORD=POSTGRES_PASSWORD test
+    - mvn $MAVEN_OPTS -DDB_HOST=postgres -DDB_PORT=5432 -DDB_NAME=$POSTGRES_DB -DDB_USERNAME=$POSTGRES_USER -DDB_PASSWORD=$POSTGRES_PASSWORD test
   artifacts:
     paths:
       - target/surefire-reports/TEST-*.xml
