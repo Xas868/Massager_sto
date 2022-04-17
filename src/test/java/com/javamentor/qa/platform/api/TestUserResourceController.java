@@ -8,6 +8,8 @@ import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
@@ -28,6 +30,11 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     private static final String USERNAME = "user100@mail.ru";
     private static final String PASSWORD = "password";
     private static final String URL_VOTE = "/api/user/vote?";
+
+//    @BeforeEach
+//    public void clearCache(){
+//        super.clearCache();
+//    }
 
     @Test
     //Вывод Dto по id
@@ -506,8 +513,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(110, 107, 104, 106, 103, 109, 101, 108, 105)));
     }
 
-    @Autowired
-    private CacheManager cacheManager;
+
     @Autowired
     private UserDao userDao;
     @Autowired
