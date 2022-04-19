@@ -3,7 +3,9 @@ question:
     description : "test1"
     is_deleted : false
     last_redaction_date : 2021-12-13 15:09:52.715570
-    persist_date : 2022-04-01 15:09:52.715570
+    persist_date : "groovy: Calendar cal = Calendar.getInstance();
+                            cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) + 1);
+                            return cal.getTime();" #2022-04-01 15:09:52.715570
     title : "test"
     user_id : 15
 
@@ -11,7 +13,9 @@ question:
     description: "test2"
     is_deleted: false
     last_redaction_date: 2021-12-13 15:09:52.715570
-    persist_date: 2022-04-02 15:09:52.715570
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                           cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) + 2);
+                           return cal.getTime();" #2022-04-02 15:09:52.715570
     title: "test2"
     user_id: 15
 
@@ -19,7 +23,9 @@ question:
     description: "test3"
     is_deleted: false
     last_redaction_date: 2021-12-13 15:09:52.715570
-    persist_date: 2022-04-03 15:09:52.715570
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                           cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) + 3);
+                           return cal.getTime();" #2022-04-03 15:09:52.715570
     title: "test3"
     user_id: 15
 
@@ -27,7 +33,9 @@ question:
     description: "test4"
     is_deleted: false
     last_redaction_date: 2021-12-13 15:09:52.715570
-    persist_date: 2022-04-04 15:09:52.715570
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                           cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) + 4);
+                           return cal.getTime();" #2022-04-04 15:09:52.715570
     title: "test4"
     user_id: 15
 
@@ -35,7 +43,9 @@ question:
     description : "test5"
     is_deleted : false
     last_redaction_date : 2021-12-13 15:09:52.715570
-    persist_date : 2022-04-05 15:09:52.715570
+    persist_date : "groovy: Calendar cal = Calendar.getInstance();
+                            cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) + 5);
+                            return cal.getTime();" #2022-04-05 15:09:52.715570
     title : "test5"
     user_id : 15
 
@@ -74,7 +84,9 @@ question:
     description: "test3"
     is_deleted: false
     last_redaction_date: 2021-12-13 15:09:52.715570
-    persist_date: 2022-04-15 15:09:52.715570
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                           cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) + 15);
+                           return cal.getTime();" #2022-04-15 15:09:52.715570
     title: "test3"
     user_id: 15
 
@@ -82,7 +94,9 @@ question:
     description: "test11"
     is_deleted: false
     last_redaction_date: 2022-02-15 15:09:52.715570
-    persist_date: 2022-04-02 15:09:52.715570
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                           cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) + 2);
+                           return cal.getTime();" #2022-04-02 15:09:52.715570
     title: "test11"
     user_id: 15
 
