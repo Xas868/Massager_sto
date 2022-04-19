@@ -20,7 +20,7 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
     private EntityManager entityManager;
 
     @Override
-    @Cacheable(value = "User", key = "#email")
+    @Cacheable(value = "userWithRoleByEmail", key = "#email")
     public Optional<User> getWithRoleByEmail(String email) {
         String hql = "select u from User u join fetch u.role r where u.email = :email";
         TypedQuery<User> query = (TypedQuery<User>) entityManager.createQuery(hql).setParameter("email", email);
@@ -29,8 +29,8 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
 
     @Override
     @Caching(evict = {
-            @CacheEvict(value = "User", key = "#user.email"),
-            @CacheEvict(value = "User1", key = "#user.email")
+            @CacheEvict(value = "userWithRoleByEmail", key = "#user.email"),
+            @CacheEvict(value = "userExistByEmail", key = "#user.email")
     })
     public void update(User user) {
         super.update(user);
@@ -38,8 +38,8 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
 
     @Override
     @Caching(evict = {
-            @CacheEvict(value = "User", key = "#email"),
-            @CacheEvict(value = "User1", key = "#email")
+            @CacheEvict(value = "userWithRoleByEmail", key = "#email"),
+            @CacheEvict(value = "userExistByEmail", key = "#email")
     })
     public void deleteById(String email) {
         entityManager
@@ -53,15 +53,15 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
 
     @Override
     @Caching(evict = {
-            @CacheEvict(value = "User1", key = "#user.email"),
-            @CacheEvict(value = "User", key = "#user.email")
+            @CacheEvict(value = "userExistByEmail", key = "#user.email"),
+            @CacheEvict(value = "userWithRoleByEmail", key = "#user.email")
     })
     public void delete(User user) {super.delete(user);}
 
     @Override
     @Caching(evict = {
-            @CacheEvict(value = "User", key = "#username"),
-            @CacheEvict(value = "User1", key = "#username")
+            @CacheEvict(value = "userWithRoleByEmail", key = "#username"),
+            @CacheEvict(value = "userExistByEmail", key = "#username")
     })
     public void changePassword(String password, String username) {
         entityManager
@@ -72,7 +72,7 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
     }
 
     @Override
-    @Cacheable(value = "User1", key = "#email")
+    @Cacheable(value = "userExistByEmail", key = "#email")
     public boolean isUserExistByEmail(String email) {
         String hql = "select u from User u where u.email = :email";
         TypedQuery<User> query = (TypedQuery<User>) entityManager.createQuery(hql).setParameter("email", email);

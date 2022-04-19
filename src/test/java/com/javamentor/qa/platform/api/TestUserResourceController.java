@@ -525,15 +525,15 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
         String token101 = "Bearer " + getToken("test102@mail.ru", "user1");
 
         //Проверяю кэширование существующего
-        assertNull(cacheManager.getCache("User1").get("test102@mail.ru"));
+        assertNull(cacheManager.getCache("userExistByEmail").get("test102@mail.ru"));
         userDao.isUserExistByEmail("test102@mail.ru");
-        assertNotNull(cacheManager.getCache("User1").get("test102@mail.ru"));
+        assertNotNull(cacheManager.getCache("userExistByEmail").get("test102@mail.ru"));
         assertTrue(userDao.isUserExistByEmail("test102@mail.ru"));
 
         //Проверяю кэширование несуществующего
-        assertNull(cacheManager.getCache("User1").get("test100@mail.ru"));
+        assertNull(cacheManager.getCache("userExistByEmail").get("test100@mail.ru"));
         userDao.isUserExistByEmail("test100@mail.ru");
-        assertNotNull(cacheManager.getCache("User1").get("test100@mail.ru"));
+        assertNotNull(cacheManager.getCache("userExistByEmail").get("test100@mail.ru"));
         assertFalse(userDao.isUserExistByEmail("test100@mail.ru"));
 
         //Меняю пароль
@@ -544,14 +544,14 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        assertNull(cacheManager.getCache("User1").get("test102@mail.ru"));
+        assertNull(cacheManager.getCache("userExistByEmail").get("test102@mail.ru"));
 
         userDao.isUserExistByEmail("test102@mail.ru");
-        assertNotNull(cacheManager.getCache("User1").get("test102@mail.ru"));
+        assertNotNull(cacheManager.getCache("userExistByEmail").get("test102@mail.ru"));
 
         //Удаляю по email
         userService.deleteById("test102@mail.ru");
-        assertNull(cacheManager.getCache("User1").get("test102@mail.ru"));
+        assertNull(cacheManager.getCache("userExistByEmail").get("test102@mail.ru"));
 
         //Удаляю по id с помощью Dao - ничего не должен удалять
         userDao.deleteById(103L);
@@ -568,7 +568,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     public void shouldCacheUserAfterLogin() throws Exception {
 
         //Проверяю кэширование до логина
-        assertNull(cacheManager.getCache("User").get("test102@mail.ru"));
+        assertNull(cacheManager.getCache("userWithRoleByEmail").get("test102@mail.ru"));
 
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
         authenticationRequest.setPassword("user1");
@@ -580,15 +580,15 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(status().isOk());
 
         //Проверяю кэширование после логина
-        assertNotNull(cacheManager.getCache("User").get("test102@mail.ru"));
+        assertNotNull(cacheManager.getCache("userWithRoleByEmail").get("test102@mail.ru"));
 
         //Удаляю и проверяю кэширование
         userService.deleteById("test102@mail.ru");
-        assertNull(cacheManager.getCache("User").get("test102@mail.ru"));
+        assertNull(cacheManager.getCache("userWithRoleByEmail").get("test102@mail.ru"));
 
         //Обновляю и проверяю кэширование
         userService.update(userService.getByEmail("test102@mail.ru").get());
-        assertNull(cacheManager.getCache("User").get("test102@mail.ru"));
+        assertNull(cacheManager.getCache("userWithRoleByEmail").get("test102@mail.ru"));
     }
     @Test
     @DataSet(cleanBefore = true, cleanAfter = true,
