@@ -1,18 +1,19 @@
 class Pagination {
 
-    constructor(pagination_url, items, objectNodeId, navNodeId, display, pageNumAttr) {
+    constructor(pagination_url, items, objectNodeId, navNodeId, display, filter) {
         this.pagination_url = pagination_url;       //url
         this.items = items;                         //количество объектов
         this.objectNodeId = objectNodeId;           //id div куда будут вставляться массив объектов
         this.navNodeId = navNodeId;                 //id div куда будет вставляться нумерация
         this.display = display;                     //функция, которая задаёт - как будут вставляться объекты
+        this.filter = filter;                       //возможность фильтрации по имени
     }
 
     async showPage(event, num) {
         if (event != null) {
             event.preventDefault();
         }
-        await this.getPageDto(this.getCookie('token'), this.pagination_url, num, this.items)
+        await this.getPageDto(this.getCookie('token'), this.pagination_url, num, this.items, this.filter)
             .then(pageDto => {
                 this.showNavigation(this.navNodeId, pageDto.totalPageCount, num);
                 this.showObjects(this.objectNodeId, pageDto.items);
@@ -67,11 +68,14 @@ class Pagination {
         return elem;
     }
 
-    async getPageDto(token, URL, page, items) {
+    async getPageDto(token, URL, page, items, filter) {
         let pagination = {};
         URL += "?page=" + page;
         if (items != null) {
             URL += "&items=" + items;
+        }
+        if (filter != null) {
+            URL += "&filter=" + filter;
         }
         await fetch(URL, {
             method: 'GET',
