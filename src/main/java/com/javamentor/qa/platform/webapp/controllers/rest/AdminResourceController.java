@@ -22,7 +22,7 @@ public class AdminResourceController {
 
     @PutMapping("/disable-user/{id}")
     public ResponseEntity<Object> deleteUserWithId(@PathVariable("id") long id) {
-        userService.deleteById(userService.getById(id).get().getEmail());
+        userService.deleteById(id);
         return new ResponseEntity<>("User with id = " + id + " was successfully disabled", HttpStatus.OK);
     }
 }

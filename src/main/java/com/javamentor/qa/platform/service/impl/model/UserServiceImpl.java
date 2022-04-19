@@ -101,8 +101,17 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
 
     @Override
     @Transactional
-    public void deleteById(String email) {
-        userDao.deleteById(email);
+    public void deleteById(Long id) {
+        Optional<User> user = super.getById(id);
+        if (user.isPresent()){
+            deleteByName(user.get().getEmail());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteByName(String email) {
+        userDao.deleteByName(email);
     }
 
 }

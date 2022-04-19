@@ -34,7 +34,7 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
 
     @Override
     @CacheEvict(value = "User", key = "#email")
-    public void deleteById(String email) {
+    public void deleteByName(String email) {
         entityManager
                 .createQuery("update User u set u.isDeleted=true where u.email=:email")
                 .setParameter("email", email)
