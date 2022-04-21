@@ -3,10 +3,12 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.models.dto.AnswerDTO;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.CommentAnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
@@ -45,17 +47,22 @@ public class AnswerResourceController {
     private final QuestionService questionService;
     private final AnswerDtoService answerDtoService;
     private final AnswerConverter answerConverter;
+    private final CommentAnswerService commentAnswerService;
+
 
     @Autowired
     public AnswerResourceController(VoteAnswerService voteAnswerService,
                                     AnswerService answerService,
                                     QuestionService questionService,
-                                    AnswerDtoService answerDtoService, AnswerConverter answerConverter) {
+                                    AnswerDtoService answerDtoService,
+                                    AnswerConverter answerConverter,
+                                    CommentAnswerService commentAnswerService) {
         this.voteAnswerService = voteAnswerService;
         this.answerService = answerService;
         this.questionService = questionService;
         this.answerDtoService = answerDtoService;
         this.answerConverter = answerConverter;
+        this.commentAnswerService = commentAnswerService;
     }
 
     @Operation(summary = "Голосовать \"за\" (Up Vote)", description =
@@ -148,7 +155,7 @@ public class AnswerResourceController {
         Answer answer = new Answer(question.get(), user, bodyAnswer);
         answerService.persist(answer);
 
-        return new ResponseEntity<>(answerDtoService.getUndeletedAnswerDtoById(answer.getId()), HttpStatus.OK);
+        return new ResponseEntity<>("answerDtoService.getUndeletedAnswerDtoById(answer.getId())", HttpStatus.OK);
     }
 
     @Operation(summary = "Получение списка ответов на вопрос оп ID вопроса",
@@ -213,6 +220,30 @@ public class AnswerResourceController {
         answerDTO.setHtmlBody(htmlBody);
         answerService.update(answerConverter.answerDTOToAnswer(answerDTO));
         return new ResponseEntity<>(answerDTO, HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Добавление комментария к ответу",
+            description = "Добавление комментария к ответу"
+    )
+    @ApiResponse(responseCode = "200", description = "Комментарий добавлен", content = {
+            @Content(mediaType = "application/json")
+    })
+    @ApiResponse(responseCode = "400", description = "Комментарий не добавлен", content = {
+            @Content(mediaType = "application/json")
+    })
+    @PostMapping("/{id}/comment")
+    public ResponseEntity<?> addCommentAnswer(@PathVariable Long id, @RequestBody String bodyComment,
+                                                Authentication auth) {
+        User user = (User) auth.getPrincipal();
+        Optional<Answer> answer = answerService.getById(id);
+        if (answer.isEmpty()){
+            return new ResponseEntity<>("There is no answer " + id.toString(), HttpStatus.BAD_REQUEST);
+        }
+        CommentAnswer commentAnswer = new CommentAnswer(bodyComment, user);
+        commentAnswer.setAnswer(answer.get());
+        commentAnswerService.persist(commentAnswer);
+        return new ResponseEntity<>("Comment successfully added", HttpStatus.OK);
     }
 }
 

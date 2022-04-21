@@ -309,6 +309,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.htmlBody").value("answer # 1 about Question 1"));
 
+
         //добавляю новый ответ user 101 по вопросу 101
         mockMvc.perform(MockMvcRequestBuilders.post("/api/user/question/101/answer/add")
                         .contentType("application/json")
@@ -459,4 +460,68 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    @DataSet(
+            value = {
+                    "dataset/testAnswerResourceController/addCommentAnswer/answersComment.yml"
+            },
+            cleanBefore = true, cleanAfter = true,
+            strategy = SeedStrategy.CLEAN_INSERT)
+    @ExpectedDataSet(value = {
+            "dataset/testAnswerResourceController/addCommentAnswer/expected/answerComment.yml"
+    },
+            ignoreCols = {"persist_date", "last_redaction_date"}
+    )
+
+    public void testAddCommentAnswer() throws Exception {
+
+        String token100 = "Bearer " + getToken("user100@mail.ru", "password");
+        String token101 = "Bearer " + getToken("user101@mail.ru", "user101");
+
+        //добавляю новый комментарий user 100 по вопросу 101
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/101/comment")
+                        .contentType("application/json")
+                        .content("Hello Test")
+                        .header("Authorization", token100))
+                .andDo(print())
+                .andExpect(status().isOk());
+        assertThat((boolean) entityManager.createQuery(
+                        "SELECT CASE WHEN c.text =: text THEN TRUE ELSE FALSE END " +
+                                "FROM Comment c WHERE c.id =: id")
+                .setParameter("id", (long) 1)
+                .setParameter("text", "Hello Test")
+                .getSingleResult())
+                .isEqualTo(true);
+
+
+        //добавляю новый комментарий user 101 по вопросу 102
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/user/question/101/answer/102/comment")
+                        .contentType("application/json")
+                        .content("Hello Test2")
+                        .header("Authorization", token101))
+                .andDo(print())
+                .andExpect(status().isOk());
+        assertThat((boolean) entityManager.createQuery(
+                        "SELECT CASE WHEN c.text =: text THEN TRUE ELSE FALSE END " +
+                                "FROM Comment c WHERE c.id =: id")
+                .setParameter("id", (long) 2)
+                .setParameter("text", "Hello Test2")
+                .getSingleResult())
+                .isEqualTo(true);
+
+        //добавляю пустой комментарий user 101 по вопросу 102
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/user/question/102/answer/102/comment")
+                        .contentType("application/json")
+                        .header("Authorization", token101))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        //добавляю новый комментарий user 101 по несуществующему вопросу 103
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/103/comment")
+                        .contentType("application/json")
+                        .content("Hello Test3")
+                        .header("Authorization", token101))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
 }
