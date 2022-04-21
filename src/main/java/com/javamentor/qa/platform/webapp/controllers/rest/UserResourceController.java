@@ -57,7 +57,6 @@ public class UserResourceController {
                     }),
             @ApiResponse(responseCode = "403", description = "Доступ запрещён")
     })
-
     public ResponseEntity<UserDto> getUserDtoId(@PathVariable("userId") long id) {
 
         Optional<UserDto> userDto = userDtoService.findUserDtoById(id);
@@ -80,11 +79,12 @@ public class UserResourceController {
                                     mediaType = "application/json")
                     }),
     })
-
     @GetMapping("/api/user/new")
-    public ResponseEntity<PageDTO<UserDto>> paginationById(@RequestParam int page, @RequestParam(defaultValue = "10") int items) {
+    public ResponseEntity<PageDTO<UserDto>> paginationById(@RequestParam(defaultValue = "1") Integer page,
+                                                           @RequestParam(defaultValue = "10") Integer items,
+                                                           @RequestParam(required = false) String filter) {
         PaginationData data = new PaginationData(page, items,
-                UserPageDtoDaoAllUsersImpl.class.getSimpleName());
+                UserPageDtoDaoAllUsersImpl.class.getSimpleName(), filter);
         return new ResponseEntity<>(userDtoService.getPageDto(data), HttpStatus.OK);
     }
 
@@ -105,9 +105,11 @@ public class UserResourceController {
             @ApiResponse(responseCode = "400", description = "Неверная нумерация страниц")
     })
     @GetMapping(path = "/api/user/vote")
-    public ResponseEntity<PageDTO<UserDto>> getUsersByVoteAsc(@RequestParam(defaultValue = "1") Integer page, @RequestParam(required = false, defaultValue = "10") Integer items) {
+    public ResponseEntity<PageDTO<UserDto>> getUsersByVoteAsc(@RequestParam(defaultValue = "1") Integer page,
+                                                              @RequestParam(required = false, defaultValue = "10") Integer items,
+                                                              @RequestParam(required = false) String filter) {
         PaginationData data = new PaginationData(page, items,
-                UserPageDtoDaoByVoteImpl.class.getSimpleName());
+                UserPageDtoDaoByVoteImpl.class.getSimpleName(), filter);
         return new ResponseEntity<>(userDtoService.getPageDto(data), HttpStatus.OK);
     }
 
@@ -146,13 +148,16 @@ public class UserResourceController {
                     }),
     })
     @GetMapping("/api/user/reputation")
-    public ResponseEntity<PageDTO<UserDto>> getAllUserPaginationByReputation(@RequestParam Integer page, @RequestParam(required = false, defaultValue = "10") Integer items) {
+    public ResponseEntity<PageDTO<UserDto>> getAllUserPaginationByReputation(@RequestParam(defaultValue = "1") Integer page,
+                                                                             @RequestParam(required = false, defaultValue = "10") Integer items,
+                                                                             @RequestParam(required = false) String filter) {
         PaginationData data = new PaginationData(page, items,
-                UserPageDtoDaoAllUsersByRepImpl.class.getSimpleName());
+                UserPageDtoDaoAllUsersByRepImpl.class.getSimpleName(), filter);
         return new ResponseEntity<>(userDtoService.getPageDto(data), HttpStatus.OK);
     }
+
     @Operation(summary = "Получение всех вопросов авторизированного пользователя неотсортированных" +
-            "В запросе нет параметров,возвращается список обьектов UserProfileQuestionDto ",
+            "В запросе нет параметров,возвращается список объектов UserProfileQuestionDto ",
             description = "Получение всех вопросов авторизированного пользователя")
     @ApiResponses(value = {
             @ApiResponse(

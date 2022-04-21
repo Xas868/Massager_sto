@@ -6,7 +6,6 @@ class Pagination {
         this.objectNodeId = objectNodeId;           //id div куда будут вставляться массив объектов
         this.navNodeId = navNodeId;                 //id div куда будет вставляться нумерация
         this.display = display;                     //функция, которая задаёт - как будут вставляться объекты
-        this.filter = filter;                       //возможность фильтрации по имени
     }
 
     async showPage(event, num) {
@@ -74,7 +73,7 @@ class Pagination {
         if (items != null) {
             URL += "&items=" + items;
         }
-        if (filter != null) {
+        if (filter !== "" && filter !== undefined) {
             URL += "&filter=" + filter;
         }
         await fetch(URL, {
