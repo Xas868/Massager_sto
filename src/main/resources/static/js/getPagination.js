@@ -74,7 +74,7 @@ class Pagination {
         if (items != null) {
             URL += "&items=" + items;
         }
-        if (filter !== "" && filter !== undefined) {
+        if (filter != null) {
             URL += "&filter=" + filter;
         }
         await fetch(URL, {
