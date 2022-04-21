@@ -1519,25 +1519,45 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
         String token101 = "Bearer " + getToken("user101@mail.ru", "user101");
 
         //добавляю новый комментарий user 100 по вопросу 101
-        mockMvc.perform(MockMvcRequestBuilders.post("/101/comment")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/user/question/101/comment")
                         .contentType("application/json")
                         .content("Hello Test")
                         .header("Authorization", token100))
                 .andDo(print())
                 .andExpect(status().isOk());
+        assertThat((boolean) entityManager.createQuery(
+                        "SELECT CASE WHEN c.text =: text THEN TRUE ELSE FALSE END " +
+                                "FROM Comment c WHERE c.id =: id")
+                .setParameter("id", (long) 1)
+                .setParameter("text", "Hello Test")
+                .getSingleResult())
+                .isEqualTo(true);
 
 
         //добавляю новый комментарий user 101 по вопросу 102
-        mockMvc.perform(MockMvcRequestBuilders.post("/102/comment")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/user/question/102/comment")
                         .contentType("application/json")
                         .content("Hello Test2")
                         .header("Authorization", token101))
                 .andDo(print())
                 .andExpect(status().isOk());
+        assertThat((boolean) entityManager.createQuery(
+                        "SELECT CASE WHEN c.text =: text THEN TRUE ELSE FALSE END " +
+                                "FROM Comment c WHERE c.id =: id")
+                .setParameter("id", (long) 2)
+                .setParameter("text", "Hello Test2")
+                .getSingleResult())
+                .isEqualTo(true);
 
+        //добавляю пустой комментарий user 101 по вопросу 102
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/user/question/102/comment")
+                        .contentType("application/json")
+                        .header("Authorization", token101))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
 
         //добавляю новый комментарий user 101 по несуществующему вопросу 103
-        mockMvc.perform(MockMvcRequestBuilders.post("/103/comment")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/user/question/103/comment")
                         .contentType("application/json")
                         .content("Hello Test3")
                         .header("Authorization", token101))

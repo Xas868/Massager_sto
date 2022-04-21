@@ -13,6 +13,7 @@ import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.QuestionViewDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCommentDto;
+import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
@@ -410,7 +411,7 @@ public class QuestionResourceController {
     @ApiResponse(responseCode = "400", description = "Комментарий не добавлен", content = {
             @Content(mediaType = "application/json")
     })
-    @PostMapping("/{id}/comment")
+    @PostMapping("/api/user/question/{id}/comment")
     public ResponseEntity<?> addCommentQuestion(@PathVariable Long id, @RequestBody String bodyComment,
                                                 Authentication auth) {
         User user = (User) auth.getPrincipal();
