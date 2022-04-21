@@ -201,9 +201,9 @@ public class UserResourceController {
                     }),
     })
     @GetMapping("/api/user/profile/bookmarks")
-    public ResponseEntity<List<BookMarksDto>> getAllBookMarksInUserProfile() {
+    public ResponseEntity<List<BookMarksDto>> getAllBookMarksInUserProfile(@AuthenticationPrincipal User user) {
         return new ResponseEntity<>(bookMarksDtoService
-                .getAllBookMarksInUserProfile(),
+                .getAllBookMarksInUserProfile(user.getId()),
                 HttpStatus.OK);
     }
 

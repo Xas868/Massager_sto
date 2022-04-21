@@ -5,5 +5,5 @@ import com.javamentor.qa.platform.models.dto.BookMarksDto;
 import java.util.List;
 
 public interface BookMarksDtoService {
-    List<BookMarksDto> getAllBookMarksInUserProfile();
+    List<BookMarksDto> getAllBookMarksInUserProfile(Long id);
 }
