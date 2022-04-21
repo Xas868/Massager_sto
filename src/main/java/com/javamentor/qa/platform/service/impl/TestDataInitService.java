@@ -1,10 +1,6 @@
 package com.javamentor.qa.platform.service.impl;
 
-import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
-import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.Tag;
-import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
-import com.javamentor.qa.platform.models.entity.question.TrackedTag;
+import com.javamentor.qa.platform.models.entity.question.*;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
@@ -34,6 +30,7 @@ public class TestDataInitService {
     private final ReputationService reputationService;
     private final VoteQuestionService voteQuestionService;
     private final VoteAnswerService voteAnswerService;
+    private final RelatedTagService relatedTagService;
 
     private final long NUM_OF_USERS = 10L;
     private final long NUM_OF_TAGS = 5L;
@@ -50,6 +47,7 @@ public class TestDataInitService {
         createUsers();
         createTags();
         createTrackedAndIgnoredTags();
+        createRelatedTags();
         createQuestions();
         createAnswers();
         createReputations();
@@ -133,6 +131,20 @@ public class TestDataInitService {
 
         trackedTagService.persistAll(trackedTags);
         ignoredTagService.persistAll(ignoredTags);
+    }
+
+    public void createRelatedTags() {
+        List<RelatedTag> relatedTags = new ArrayList<>();
+        List<Tag> tags = tagService.getAll();
+        // Связь тегов в виде полного бинарного дерева
+        for (int i = 0; i < NUM_OF_TAGS - 1; i++) {
+            RelatedTag relatedTag = RelatedTag.builder()
+                    .mainTag(tags.get(i / 2))
+                    .childTag(tags.get(i + 1))
+                    .build();
+            relatedTags.add(relatedTag);
+        }
+        relatedTagService.persistAll(relatedTags);
     }
 
     public void createQuestions() {
