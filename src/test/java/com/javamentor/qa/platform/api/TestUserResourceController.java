@@ -556,7 +556,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
         assertNull(cacheManager.getCache("userExistByEmail").get("test102@mail.ru"));
 
         //Удаляю по id с помощью Dao - ничего не должен удалять
-        userDao.deleteById(103L);
+        userService.deleteById(103L);
         assertTrue(userService.getById(103L).isPresent());
     }
 
