@@ -1,6 +1,5 @@
 package com.javamentor.qa.platform.api;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
@@ -31,8 +30,6 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     private UserDao userDao;
     @Autowired
     private UserService userService;
-    @Autowired
-    private CacheManager cacheManager;
 
     @Test
     //Вывод Dto по id
