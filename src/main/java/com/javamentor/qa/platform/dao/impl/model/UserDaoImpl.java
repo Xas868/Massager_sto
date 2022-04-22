@@ -20,8 +20,6 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
 
     @PersistenceContext
     private EntityManager entityManager;
-    @Autowired
-    private CacheManager cacheManager;
 
     @Override
     @Cacheable(value = "userWithRoleByEmail", key = "#email")
@@ -58,13 +56,6 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
                 .createQuery("update User u set u.isDeleted=true where u.id=:id")
                 .setParameter("id", id)
                 .executeUpdate();
-
-        Optional<User> user = getById(id);
-
-        if(user.isPresent()){
-            cacheManager.getCache("userWithRoleByEmail").evict(user.get().getEmail());
-            cacheManager.getCache("userExistByEmail").evict(user.get().getEmail());
-        }
     }
 
     @Override

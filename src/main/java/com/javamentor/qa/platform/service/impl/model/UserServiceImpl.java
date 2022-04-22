@@ -4,6 +4,8 @@ import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.WrongPasswordFormatException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +22,8 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
 
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private CacheManager cacheManager;
 
     public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder) {
         super(userDao);
@@ -105,4 +109,15 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
         userDao.deleteByName(email);
     }
 
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
+        userDao.deleteById(id);
+        Optional<User> user = getById(id);
+        if(user.isPresent()){
+            cacheManager.getCacheNames().stream().filter(x -> (x.equals("userWithRoleByEmail") || x.equals("userExistByEmail")))
+                                                 .forEach(x -> cacheManager.getCache(x).evict(user.get().getEmail()));
+
+        }
+    }
 }

@@ -11,4 +11,6 @@ public interface UserService extends ReadWriteService<User, Long> {
 
     void deleteByName(String email);
 
+    void deleteById(Long id);
+
 }
