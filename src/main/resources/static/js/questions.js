@@ -59,7 +59,7 @@ async function getRelatedTags(numItems){
             getRelatedTags(0);
         }
     });
-};
+}
 
 getRelatedTags(3);
 
@@ -270,13 +270,13 @@ async function deleteTag(tag, mode){
     return myFetch('/api/user/tag/'+mode+'/delete?tag='+tag.id, 'DELETE');
 }
 
-async function myFetch(URL, metod){
+async function myFetch(URL, httpMethod){
 
     let tags = {};
     let token1 = getCookie('token');
 
     await fetch(URL, {
-            method: metod,
+            method: httpMethod,
             headers: {
                 "Content-type": "application/json",
                 "Authorization": `${token1}`,
@@ -291,6 +291,131 @@ async function myFetch(URL, metod){
 
     return tags;
 }
+//----------------------------------------------------
+//тут начало
+// Функция заполнения вопроса тегами
+
+function showTagsForQuestion(tags, questionTagsList) {
+    let output = '';
+    tags.forEach(tag => {
+        output += '<a href="#"><span class="badge bg-info text-light mr-1 mb-1">' + tag.name + '</span>';
+    });
+    questionTagsList.innerHTML = output;
+}
+
+// Функция получения тегов вопроса
+async function fetchQuestionTags(URL){
+    let questionTags = {};
+    let token1 = getCookie('token');
+    await fetch(URL, {
+            method: 'GET',
+            headers: {
+                "Content-type": "application/json",
+                "Authorization": `${token1}`,
+            }
+        }
+    )
+        .then(data => data.json())
+        .then(ob => {questionTags = ob})
+        .catch(mess => {
+            console.log(mess);
+        })
+    return questionTags;
+}
+
+//создаем новый объект пагинации и передаем аргументы в конструктор
+let pagination;
+function createPagination() {
+    pagination = new Pagination(
+        '/api/user/question',
+        3,
+        'pagination_objects',
+        'navigation',
+        function (arrayObjects) {
+            let divFirst = document.createElement('div');
+            if (arrayObjects != null && arrayObjects.length > 0) {
+                for (let num = 0; num < arrayObjects.length; num++) {
+                    let divCard = document.createElement('div');
+                    divCard.classList.add("card");
+                    divCard.classList.add("mb-3");
+                    let questionId = arrayObjects[num].id;
+                    let questionTitle = arrayObjects[num].title;
+                    let questionDescription = arrayObjects[num].description;
+                    let formId = 'question-tags' + questionId;
+                    let questionTagsList = document.createElement('div');
+                    questionTagsList.setAttribute('id', formId);
+                    fetchQuestionTags('http://localhost:8091/api/user/question?page=1')
+                        .then(result => result.items[questionId - 1].listTagDto)
+                        .then(tags => showTagsForQuestion(tags, questionTagsList));
+                    divCard.innerHTML = '';
+                    divCard.innerHTML +=
+                        '<div class="card-body p-1">' +
+                            '<div class="row">' +
+                                '<div class="col-2 align-items-center">' +
+                                    '<div class="text-center">' +
+                                        '<div>100</div>' +
+                                        '<small>голосов</small>' +
+                                    '</div>' +
+                                    '<div class="text-center text-info border border-info rounded">' +
+                                        '<div>200</div>' +
+                                        '<small>ответов</small>' +
+                                    '</div>' +
+                                    '<div class="text-center">' +
+                                        '<div>300</div>' +
+                                        '<small>показов</small>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="col-10">' +
+                                    '<a class="mb-1" href="#">' + questionTitle + '</a>' +
+                                    '<p class="mb-1">' + questionDescription + '</p>' +
+                                    '<div class="row">' +
+                                        '<div class="col-7">' +
+                                            // children[0].children[0].children[1].children[2].children[0] - вставка questionTagsList
+                                        '</div>' +
+                                        '<div class="col-5">' +
+                                            '<div>' +
+                                                '<div>' +
+                                                    '<small class="text-muted">' +
+                                                        'задан <span>26 дек \'21 в 00:00</span>' +
+                                                    '</small>' +
+                                                '</div>' +
+                                                '<div style="display: inline-block">' +
+                                                    '<img src="/images/noUserAvatar.png"' +
+                                                         ' style="width: 50px; height: 50px" alt="...">' +
+                                                '</div>' +
+                                                '<div class="align-items-top"' +
+                                                     ' style="display: inline-block; vertical-align: bottom">' +
+                                                    '<div class="align-items-top">' +
+                                                        '<a class="align-top" href="#">Username1</a>' +
+                                                    '</div>' +
+                                                    '<div class="text-muted">250</div>' +
+                                                '</div>' +
+                                            '</div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
+                    divCard.children[0].children[0].children[1].children[2].children[0].appendChild(questionTagsList);
+                    divFirst.appendChild(divCard);
+                }
+            }
+            return divFirst;
+        }
+    );
+}
+createPagination();
+init();
+function showPage(event, num) {
+    pagination.showPage(event, num);
+}
+async function init() {
+    await pagination.showPage(null, 1);
+}
+
+
+
+
 
 
 
