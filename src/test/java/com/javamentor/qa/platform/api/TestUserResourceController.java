@@ -10,6 +10,7 @@ import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
@@ -636,7 +637,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                     "dataset/testUserResourceController/testGetAllBookMarksInUserProfile/question_viewed.yml"
             },
             strategy = SeedStrategy.CLEAN_INSERT)
-
+    @Disabled
     public void testGetAllBookMarksInUserProfile() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("test15@mail.ru", "test15");
         mockMvc.perform(get("/api/user/profile/bookmarks")
