@@ -6,9 +6,12 @@ import com.github.database.rider.junit5.api.DBRider;
 import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import com.javamentor.qa.platform.models.dto.AuthenticationResponse;
 import com.javamentor.qa.platform.webapp.configs.JmApplication;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,6 +31,9 @@ public abstract class AbstractClassForDRRiderMockMVCTests {
  // Класс конфигурации для теста
 
  private final String url = "/api/auth/token";
+
+    @Autowired
+    public CacheManager cacheManager;
 
     @Autowired
     public MockMvc mockMvc;
@@ -56,4 +62,8 @@ public abstract class AbstractClassForDRRiderMockMVCTests {
         return response.getToken();
     }
 
+    @BeforeEach
+    public void clearCache(){
+        cacheManager.getCacheNames().stream().forEach(x -> cacheManager.getCache(x).clear());
+    }
 }
