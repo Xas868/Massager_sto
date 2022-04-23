@@ -104,9 +104,26 @@ function makeTrackedCard(){
     divTrackedList = document.querySelector("#trackedList");
     btnAddTrackedTag = document.querySelector("#btn_add_tracked_tag");
     btnAddTrackedTag.addEventListener('click', () => {
-
-        addTagClickEvent(addTag, addTagInCard, divTrackedList, iptAddTrackedTag, "tracked");
+        addTagClickEvent(addTag, addTagInCard, divTrackedList, iptAddTrackedTag, "tracked")
+            .then(() => createPagination())
+            .then(() => generateFilter())
+            .then(res => questionPagination.filter = res)
+            .then(()=>console.log(questionPagination.filter))
+            .then(() => init());
     })
+}
+
+async function generateFilter() {
+    let trackingAndIgnoredFilter = '';
+    let trackedTags = await getTags('tracked');
+    for (let i = 0; i < trackedTags.length; i++) {
+        trackingAndIgnoredFilter += '&trackedTag=' + trackedTags[i].id;
+    }
+    let ignoredTags = await getTags('ignored');
+    for (let i = 0; i < ignoredTags.length; i++) {
+        trackingAndIgnoredFilter += '&ignoredTag=' + trackedTags[i].id;
+    }
+    return trackingAndIgnoredFilter;
 }
 
 function makeIgnoredCard(){
@@ -292,7 +309,7 @@ async function myFetch(URL, httpMethod){
     return tags;
 }
 //----------------------------------------------------
-//тут начало
+//Работа пагинации с учётом отслеживаемых и игнорируемых тегов
 // Функция заполнения вопроса тегами
 
 function showTagsForQuestion(tags, questionTagsList) {
@@ -324,9 +341,9 @@ async function fetchQuestionTags(URL){
 }
 
 //создаем новый объект пагинации и передаем аргументы в конструктор
-let pagination;
+let questionPagination;
 function createPagination() {
-    pagination = new Pagination(
+    questionPagination = new Pagination(
         '/api/user/question',
         3,
         'pagination_objects',
@@ -404,17 +421,15 @@ function createPagination() {
         }
     );
 }
+
 createPagination();
 init();
 function showPage(event, num) {
-    pagination.showPage(event, num);
+    questionPagination.showPage(event, num);
 }
 async function init() {
-    await pagination.showPage(null, 1);
+    await questionPagination.showPage(null, 1);
 }
-
-
-
 
 
 
