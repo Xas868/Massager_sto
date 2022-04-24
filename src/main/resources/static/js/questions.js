@@ -91,7 +91,6 @@ function makeTrackedCard(){
     listTrackedTag = document.querySelector("#listTrackedTag");
     iptAddTrackedTag = document.querySelector("#ipt_add_tag_tracked");
     iptAddTrackedTag.addEventListener('input', () => {
-
         tagInputEvent(iptAddTrackedTag.value, listTrackedTag, iptAddTrackedTag);
     })
 
@@ -108,7 +107,6 @@ function makeTrackedCard(){
             .then(() => createPagination())
             .then(() => generateFilter())
             .then(res => questionPagination.filter = res)
-            .then(()=>console.log(questionPagination.filter))
             .then(() => init());
     })
 }
@@ -121,7 +119,7 @@ async function generateFilter() {
     }
     let ignoredTags = await getTags('ignored');
     for (let i = 0; i < ignoredTags.length; i++) {
-        trackingAndIgnoredFilter += '&ignoredTag=' + trackedTags[i].id;
+        trackingAndIgnoredFilter += '&ignoredTag=' + ignoredTags[i].id;
     }
     return trackingAndIgnoredFilter;
 }
@@ -142,7 +140,6 @@ function makeIgnoredCard(){
     listIgnoredTag = document.querySelector("#listIgnoredTag");
     iptAddIgnoredTag = document.querySelector("#ipt_add_tag_ignored");
     iptAddIgnoredTag.addEventListener('input', () => {
-
         tagInputEvent(iptAddIgnoredTag.value, listIgnoredTag, iptAddIgnoredTag);
     })
 
@@ -155,8 +152,11 @@ function makeIgnoredCard(){
     divIgnoredList = document.querySelector("#ignoredList");
     btnAddIgnoredTag = document.querySelector("#btn_add_ignored_tag");
     btnAddIgnoredTag.addEventListener('click', () => {
-
-        addTagClickEvent(addTag, addTagInCard, divIgnoredList, iptAddIgnoredTag, "ignored");
+        addTagClickEvent(addTag, addTagInCard, divIgnoredList, iptAddIgnoredTag, "ignored")
+            .then(() => createPagination())
+            .then(() => generateFilter())
+            .then(res => questionPagination.filter = res)
+            .then(() => init());
     })
 }
 
@@ -229,10 +229,13 @@ async function tagInputEvent(value, tagsList, iptAddTag){
     }
 }
 
-async function tagClickEvent(tag, mode){
+async function tagClickEvent(tag, mode) {
 
     await deleteTag(tag, mode);
     tag.remove();
+    createPagination();
+    questionPagination.filter = await generateFilter();
+    await init();
 }
 
 function addTagInCard(tag, divList, mode){
@@ -308,9 +311,6 @@ async function myFetch(URL, httpMethod){
 
     return tags;
 }
-//----------------------------------------------------
-//Работа пагинации с учётом отслеживаемых и игнорируемых тегов
-// Функция заполнения вопроса тегами
 
 function showTagsForQuestion(tags, questionTagsList) {
     let output = '';
@@ -320,7 +320,6 @@ function showTagsForQuestion(tags, questionTagsList) {
     questionTagsList.innerHTML = output;
 }
 
-// Функция получения тегов вопроса
 async function fetchQuestionTags(URL){
     let questionTags = {};
     let token1 = getCookie('token');
@@ -340,7 +339,6 @@ async function fetchQuestionTags(URL){
     return questionTags;
 }
 
-//создаем новый объект пагинации и передаем аргументы в конструктор
 let questionPagination;
 function createPagination() {
     questionPagination = new Pagination(
@@ -387,7 +385,8 @@ function createPagination() {
                                     '<p class="mb-1">' + questionDescription + '</p>' +
                                     '<div class="row">' +
                                         '<div class="col-7">' +
-                                            // children[0].children[0].children[1].children[2].children[0] - вставка questionTagsList
+                                            // адрес - children[0].children[0].children[1].children[2].children[0]
+                                            // сюда будет вставлен questionTagsList
                                         '</div>' +
                                         '<div class="col-5">' +
                                             '<div>' +
@@ -422,14 +421,20 @@ function createPagination() {
     );
 }
 
-createPagination();
-init();
 function showPage(event, num) {
     questionPagination.showPage(event, num);
 }
 async function init() {
     await questionPagination.showPage(null, 1);
 }
+
+async function globalInit() {
+    createPagination();
+    questionPagination.filter = await generateFilter();
+    await init();
+}
+
+globalInit();
 
 
 
