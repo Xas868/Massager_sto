@@ -161,31 +161,31 @@ function makeIgnoredCard(){
 }
 
 async function loadCards(){
-
-    let tags = await getTags("tracked");
-
-    if(tags.length === 0
-        || tags.length === undefined){
+    let trackedTagsForLoad = await getTags("tracked");
+    if (trackedTagsForLoad.length === 0 || trackedTagsForLoad.length === undefined) {
+        let ignoredTagsForLoad = await getTags("ignored");
+        if(ignoredTagsForLoad.length === 0
+            || ignoredTagsForLoad.length === undefined){
+            return
+        }
+        await makeIgnoredCard();
+        for (let num = 0; num < ignoredTagsForLoad.length; num++){
+            addTagInCard(ignoredTagsForLoad[num], divIgnoredList, "ignored");
+        }
         return
     }
-
     await makeTrackedCard();
-
-    for (let num = 0; num < tags.length; num++){
-        addTagInCard(tags[num], divTrackedList, "tracked");
+    for (let num = 0; num < trackedTagsForLoad.length; num++){
+        addTagInCard(trackedTagsForLoad[num], divTrackedList, "tracked");
     }
-
-    tags = await getTags("ignored");
-
-    if(tags.length === 0
-        || tags.length === undefined){
+    let ignoredTagsForLoad = await getTags("ignored");
+    if(ignoredTagsForLoad.length === 0
+        || ignoredTagsForLoad.length === undefined){
         return
     }
-
     await makeIgnoredCard();
-
-    for (let num = 0; num < tags.length; num++){
-        addTagInCard(tags[num], divIgnoredList, "ignored");
+    for (let num = 0; num < ignoredTagsForLoad.length; num++){
+        addTagInCard(ignoredTagsForLoad[num], divIgnoredList, "ignored");
     }
 }
 
