@@ -634,11 +634,13 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                     "dataset/testUserResourceController/testGetAllBookMarksInUserProfile/questions_has_tag.yml",
                     "dataset/testUserResourceController/testGetAllBookMarksInUserProfile/answers.yml",
                     "dataset/testUserResourceController/testGetAllBookMarksInUserProfile/votes_on_questions.yml",
-                    "dataset/testUserResourceController/testGetAllBookMarksInUserProfile/question_viewed.yml"
+                    "dataset/testUserResourceController/testGetAllBookMarksInUserProfile/question_viewed.yml",
+                    "dataset/testUserResourceController/testGetAllBookMarksInUserProfile/bookmarks.yml"
             },
             strategy = SeedStrategy.CLEAN_INSERT)
 
     public void testGetAllBookMarksInUserProfile() throws Exception {
+        //закладки user с id 101 вопросы 101, 102, 103
         String USER_TOKEN = "Bearer " + getToken("test15@mail.ru", "test15");
         mockMvc.perform(get("/api/user/profile/bookmarks")
                         .header(AUTHORIZATION, USER_TOKEN)
@@ -651,7 +653,36 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.[*].countAnswer").value(containsInRelativeOrder(3, 2, 1)))
                 .andExpect(jsonPath("$.[*].countVote").value(containsInRelativeOrder(2, 1, -1)))
                 .andExpect(jsonPath("$.[*].countView").value(containsInRelativeOrder(4, 1, 0)));
+
+        //закладки user с id 102 вопросы 101, 102, 103
+        String USER_TOKEN_USERID_102 = "Bearer " + getToken("test102@mail.ru", "test15");
+        mockMvc.perform(get("/api/user/profile/bookmarks")
+                        .header(AUTHORIZATION, USER_TOKEN_USERID_102)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$.[*].questionId").value(containsInRelativeOrder(101, 102, 103)))
+                .andExpect(jsonPath("$.[*].listTagDto.length()").value(containsInRelativeOrder(1, 3, 2)))
+                .andExpect(jsonPath("$.[*].countAnswer").value(containsInRelativeOrder(3, 2, 1)))
+                .andExpect(jsonPath("$.[*].countVote").value(containsInRelativeOrder(2, 1, -1)))
+                .andExpect(jsonPath("$.[*].countView").value(containsInRelativeOrder(4, 1, 0)));
+
+        //закладки user с id 103 вопросы 104, 105, 106
+        String USER_TOKEN_USERID_103 = "Bearer " + getToken("test103@mail.ru", "test15");
+        mockMvc.perform(get("/api/user/profile/bookmarks")
+                        .header(AUTHORIZATION, USER_TOKEN_USERID_103)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$.[*].questionId").value(containsInRelativeOrder(104, 105, 106)))
+                .andExpect(jsonPath("$.[*].listTagDto.length()").value(containsInRelativeOrder(0, 0, 0)))
+                .andExpect(jsonPath("$.[*].countAnswer").value(containsInRelativeOrder(0, 0, 0)))
+                .andExpect(jsonPath("$.[*].countVote").value(containsInRelativeOrder(1, 1, 0)))
+                .andExpect(jsonPath("$.[*].countView").value(containsInRelativeOrder(0, 0, 0)));
     }
+
 
 
     @Test
