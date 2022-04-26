@@ -74,7 +74,7 @@ let btnAddTrackedTag;
 let btnAddIgnoredTag;
 let btnMakeTrackedCard = document.querySelector("#btn_add_tag_tracked");
 let btnMakeIgnoredCard = document.querySelector("#btn_add_tag_ignored");
-let numberOfQuestions = document.querySelector("#questions-number");
+let numberOfQuestionsHtml = document.querySelector("#questions-number");
 
 function makeTrackedCard(){
     btnMakeTrackedCard.parentElement.innerHTML =
@@ -341,30 +341,33 @@ async function fetchQuestionTags(URL){
 }
 
 let questionPagination;
+let numberOfQuestionPerPage = 10;
 function createPagination() {
     questionPagination = new Pagination(
         '/api/user/question',
-        10,
+        numberOfQuestionPerPage,
         'pagination_objects',
         'navigation',
         function (arrayObjects) {
             let divFirst = document.createElement('div');
             fetchQuestionTags('http://localhost:8091/api/user/question?page=1')
                 .then(result => result.totalResultCount)
-                .then(res => numberOfQuestions.innerHTML = res.toString());
+                .then(res => numberOfQuestionsHtml.innerHTML = res.toString());
             if (arrayObjects != null && arrayObjects.length > 0) {
                 for (let num = 0; num < arrayObjects.length; num++) {
                     let divCard = document.createElement('div');
                     divCard.classList.add("card");
                     divCard.classList.add("mb-3");
                     let questionId = arrayObjects[num].id;
+                    console.log(questionId);
                     let questionTitle = arrayObjects[num].title;
                     let questionDescription = arrayObjects[num].description;
                     let formId = 'question-tags' + questionId;
                     let questionTagsList = document.createElement('div');
                     questionTagsList.setAttribute('id', formId);
-                    fetchQuestionTags('http://localhost:8091/api/user/question?page=1')
-                        .then(result => result.items[questionId - 1].listTagDto)
+                    let currentPage = Math.floor((questionId - 1) / numberOfQuestionPerPage) + 1;
+                    fetchQuestionTags('http://localhost:8091/api/user/question?page=' + currentPage)
+                        .then(result => result.items[num].listTagDto)
                         .then(tags => showTagsForQuestion(tags, questionTagsList));
                     divCard.innerHTML = '';
                     divCard.innerHTML +=
