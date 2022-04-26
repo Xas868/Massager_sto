@@ -641,7 +641,6 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                     "dataset/testUserResourceController/testGetAllBookMarksInUserProfile/bookmarks.yml"
             },
             strategy = SeedStrategy.CLEAN_INSERT)
-    @Disabled
     public void testGetAllBookMarksInUserProfile() throws Exception {
         //закладки user с id 101 вопросы 101, 102, 103
         String USER_TOKEN = "Bearer " + getToken("test15@mail.ru", "test15");
