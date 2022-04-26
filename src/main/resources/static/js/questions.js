@@ -74,6 +74,7 @@ let btnAddTrackedTag;
 let btnAddIgnoredTag;
 let btnMakeTrackedCard = document.querySelector("#btn_add_tag_tracked");
 let btnMakeIgnoredCard = document.querySelector("#btn_add_tag_ignored");
+let numberOfQuestions = document.querySelector("#questions-number");
 
 function makeTrackedCard(){
     btnMakeTrackedCard.parentElement.innerHTML =
@@ -343,11 +344,14 @@ let questionPagination;
 function createPagination() {
     questionPagination = new Pagination(
         '/api/user/question',
-        3,
+        10,
         'pagination_objects',
         'navigation',
         function (arrayObjects) {
             let divFirst = document.createElement('div');
+            fetchQuestionTags('http://localhost:8091/api/user/question?page=1')
+                .then(result => result.totalResultCount)
+                .then(res => numberOfQuestions.innerHTML = res.toString());
             if (arrayObjects != null && arrayObjects.length > 0) {
                 for (let num = 0; num < arrayObjects.length; num++) {
                     let divCard = document.createElement('div');
@@ -368,15 +372,15 @@ function createPagination() {
                             '<div class="row">' +
                                 '<div class="col-2 align-items-center">' +
                                     '<div class="text-center">' +
-                                        '<div>100</div>' +
+                                        '<div>' + arrayObjects[num].countValuable + '</div>' +
                                         '<small>голосов</small>' +
                                     '</div>' +
                                     '<div class="text-center text-info border border-info rounded">' +
-                                        '<div>200</div>' +
+                                        '<div>' + arrayObjects[num].countAnswer + '</div>' +
                                         '<small>ответов</small>' +
                                     '</div>' +
                                     '<div class="text-center">' +
-                                        '<div>300</div>' +
+                                        '<div>' + arrayObjects[num].viewCount + '</div>' +
                                         '<small>показов</small>' +
                                     '</div>' +
                                 '</div>' +
@@ -402,9 +406,9 @@ function createPagination() {
                                                 '<div class="align-items-top"' +
                                                      ' style="display: inline-block; vertical-align: bottom">' +
                                                     '<div class="align-items-top">' +
-                                                        '<a class="align-top" href="#">Username1</a>' +
+                                                        '<a class="align-top" href="#">' + arrayObjects[num].authorName + '</a>' +
                                                     '</div>' +
-                                                    '<div class="text-muted">250</div>' +
+                                                    '<div class="text-muted">'+ arrayObjects[num].authorReputation +'</div>' +
                                                 '</div>' +
                                             '</div>' +
                                         '</div>' +
