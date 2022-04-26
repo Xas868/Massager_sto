@@ -16,13 +16,14 @@ public class BookMarksDtoDaoImpl implements BookMarksDtoDao {
 
     @Override
     public List<BookMarksDto> getAllBookMarksInUserProfile(Long id) {
-        return (List<BookMarksDto>) entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.BookMarksDto (" +
-                        "q.id, q.title ," +
-                        "(select count(a.id) from Answer a where a.question.id = q.id)," +
-                        "(select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id)," +
-                        "(select count(qv.id) FROM QuestionViewed qv where qv.question.id = q.id)," +
-                        "q.persistDateTime) " +
-                        "from Question q where q.isDeleted = false and q.user.id=:id")
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.BookMarksDto (" +
+                        "b.question.id," +
+                        "b.question.title ," +
+                        "(select count(a.id) from Answer a where a.question.id = b.question.id)," +
+                        "(select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = b.question.id)," +
+                        "(select count(qv.id) FROM QuestionViewed qv where qv.question.id = b.question.id)," +
+                        "b.question.persistDateTime) " +
+                        "from BookMarks b where b.question.isDeleted=false and b.user.id =: id")
                 .setParameter("id", id)
                 .getResultList();
     }
