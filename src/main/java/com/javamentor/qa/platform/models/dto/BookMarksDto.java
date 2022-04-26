@@ -15,9 +15,19 @@ import java.util.List;
 public class BookMarksDto {
     private Long questionId;
     private String title;
-    private List<TagDto> tagDtoList;
+    private List<TagDto> listTagDto;
     private Long countAnswer;
     private Long countVote;
     private Long countView;
-    private LocalDateTime persistQuestionDate;
+    private LocalDateTime persistDateTime;
+
+    public BookMarksDto(Long questionId, String title, Long countAnswer, Long countVote, Long countView, LocalDateTime persistDateTime) {
+        this.questionId = questionId;
+        this.title = title;
+        this.countAnswer = countAnswer;
+        this.countVote = countVote;
+        this.countView = countView;
+        this.persistDateTime = persistDateTime;
+    }
 }
+

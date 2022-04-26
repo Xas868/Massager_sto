@@ -12,6 +12,6 @@ public interface UserDao extends ReadWriteDao<User, Long> {
 
     boolean isUserExistByEmail(String email);
 
-    void deleteById(String email);
+    void deleteByName(String email);
 
 }
