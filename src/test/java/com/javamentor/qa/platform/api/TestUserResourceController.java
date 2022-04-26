@@ -35,6 +35,8 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     private UserDao userDao;
     @Autowired
     private UserService userService;
+    @Autowired
+    private CacheManager cacheManager;
 
     @Test
     //Вывод Dto по id
@@ -550,11 +552,11 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
         assertNotNull(cacheManager.getCache("userExistByEmail").get("test102@mail.ru"));
 
         //Удаляю по email
-        userService.deleteById("test102@mail.ru");
+        userService.deleteByName("test102@mail.ru");
         assertNull(cacheManager.getCache("userExistByEmail").get("test102@mail.ru"));
 
         //Удаляю по id с помощью Dao - ничего не должен удалять
-        userDao.deleteById(103L);
+        userService.deleteById(103L);
         assertTrue(userService.getById(103L).isPresent());
     }
 
@@ -583,7 +585,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
         assertNotNull(cacheManager.getCache("userWithRoleByEmail").get("test102@mail.ru"));
 
         //Удаляю и проверяю кэширование
-        userService.deleteById("test102@mail.ru");
+        userService.deleteByName("test102@mail.ru");
         assertNull(cacheManager.getCache("userWithRoleByEmail").get("test102@mail.ru"));
 
         //Обновляю и проверяю кэширование
