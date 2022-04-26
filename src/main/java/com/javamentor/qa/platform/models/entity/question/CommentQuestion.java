@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -28,6 +29,7 @@ public class CommentQuestion implements Serializable {
     private Comment comment = new Comment(CommentType.QUESTION);
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @NotNull
     @JoinColumn(name = "question_id")
     private Question question;
 
