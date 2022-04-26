@@ -157,7 +157,7 @@ public class TestDataInitService {
         for (int i = 1; i <= NUM_OF_QUESTIONS; i++) {
             Question question = Question.builder()
                     .title("Question " + i)
-                    .description("What you think about question " + i + "?")
+                    .description("What do you think about question " + i + "?")
                     .persistDateTime(LocalDateTime.now().minusDays(i))
                     .user(getRandomUser())
                     .tags(getRandomTagList())
