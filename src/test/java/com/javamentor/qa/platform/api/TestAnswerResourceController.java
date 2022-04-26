@@ -487,8 +487,8 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andExpect(status().isOk());
         assertThat((boolean) entityManager.createQuery(
                         "SELECT CASE WHEN c.text =: text THEN TRUE ELSE FALSE END " +
-                                "FROM Comment c WHERE c.id =: id")
-                .setParameter("id", (long) 1)
+                                "FROM Comment c WHERE c.user.id =: id")
+                .setParameter("id", (long) 100)
                 .setParameter("text", "Hello Test")
                 .getSingleResult())
                 .isEqualTo(true);
@@ -503,8 +503,8 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andExpect(status().isOk());
         assertThat((boolean) entityManager.createQuery(
                         "SELECT CASE WHEN c.text =: text THEN TRUE ELSE FALSE END " +
-                                "FROM Comment c WHERE c.id =: id")
-                .setParameter("id", (long) 2)
+                                "FROM Comment c WHERE c.user.id =: id")
+                .setParameter("id", (long) 101)
                 .setParameter("text", "Hello Test2")
                 .getSingleResult())
                 .isEqualTo(true);
@@ -512,6 +512,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
         //добавляю пустой комментарий user 101 по вопросу 102
         mockMvc.perform(MockMvcRequestBuilders.post("/api/user/question/102/answer/102/comment")
                         .contentType("application/json")
+                        .content("")
                         .header("Authorization", token101))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
