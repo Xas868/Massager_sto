@@ -59,7 +59,7 @@ async function getRelatedTags(numItems){
             getRelatedTags(0);
         }
     });
-};
+}
 
 getRelatedTags(3);
 
@@ -74,6 +74,7 @@ let btnAddTrackedTag;
 let btnAddIgnoredTag;
 let btnMakeTrackedCard = document.querySelector("#btn_add_tag_tracked");
 let btnMakeIgnoredCard = document.querySelector("#btn_add_tag_ignored");
+let numberOfQuestions = document.querySelector("#questions-number");
 
 function makeTrackedCard(){
     btnMakeTrackedCard.parentElement.innerHTML =
@@ -91,7 +92,6 @@ function makeTrackedCard(){
     listTrackedTag = document.querySelector("#listTrackedTag");
     iptAddTrackedTag = document.querySelector("#ipt_add_tag_tracked");
     iptAddTrackedTag.addEventListener('input', () => {
-
         tagInputEvent(iptAddTrackedTag.value, listTrackedTag, iptAddTrackedTag);
     })
 
@@ -104,9 +104,25 @@ function makeTrackedCard(){
     divTrackedList = document.querySelector("#trackedList");
     btnAddTrackedTag = document.querySelector("#btn_add_tracked_tag");
     btnAddTrackedTag.addEventListener('click', () => {
-
-        addTagClickEvent(addTag, addTagInCard, divTrackedList, iptAddTrackedTag, "tracked");
+        addTagClickEvent(addTag, addTagInCard, divTrackedList, iptAddTrackedTag, "tracked")
+            .then(() => createPagination())
+            .then(() => generateFilter())
+            .then(res => questionPagination.filter = res)
+            .then(() => init());
     })
+}
+
+async function generateFilter() {
+    let trackingAndIgnoredFilter = '';
+    let trackedTags = await getTags('tracked');
+    for (let i = 0; i < trackedTags.length; i++) {
+        trackingAndIgnoredFilter += '&trackedTag=' + trackedTags[i].id;
+    }
+    let ignoredTags = await getTags('ignored');
+    for (let i = 0; i < ignoredTags.length; i++) {
+        trackingAndIgnoredFilter += '&ignoredTag=' + ignoredTags[i].id;
+    }
+    return trackingAndIgnoredFilter;
 }
 
 function makeIgnoredCard(){
@@ -125,7 +141,6 @@ function makeIgnoredCard(){
     listIgnoredTag = document.querySelector("#listIgnoredTag");
     iptAddIgnoredTag = document.querySelector("#ipt_add_tag_ignored");
     iptAddIgnoredTag.addEventListener('input', () => {
-
         tagInputEvent(iptAddIgnoredTag.value, listIgnoredTag, iptAddIgnoredTag);
     })
 
@@ -138,37 +153,40 @@ function makeIgnoredCard(){
     divIgnoredList = document.querySelector("#ignoredList");
     btnAddIgnoredTag = document.querySelector("#btn_add_ignored_tag");
     btnAddIgnoredTag.addEventListener('click', () => {
-
-        addTagClickEvent(addTag, addTagInCard, divIgnoredList, iptAddIgnoredTag, "ignored");
+        addTagClickEvent(addTag, addTagInCard, divIgnoredList, iptAddIgnoredTag, "ignored")
+            .then(() => createPagination())
+            .then(() => generateFilter())
+            .then(res => questionPagination.filter = res)
+            .then(() => init());
     })
 }
 
 async function loadCards(){
-
-    let tags = await getTags("tracked");
-
-    if(tags.length === 0
-        || tags.length === undefined){
+    let trackedTagsForLoad = await getTags("tracked");
+    if (trackedTagsForLoad.length === 0 || trackedTagsForLoad.length === undefined) {
+        let ignoredTagsForLoad = await getTags("ignored");
+        if(ignoredTagsForLoad.length === 0
+            || ignoredTagsForLoad.length === undefined){
+            return
+        }
+        await makeIgnoredCard();
+        for (let num = 0; num < ignoredTagsForLoad.length; num++){
+            addTagInCard(ignoredTagsForLoad[num], divIgnoredList, "ignored");
+        }
         return
     }
-
     await makeTrackedCard();
-
-    for (let num = 0; num < tags.length; num++){
-        addTagInCard(tags[num], divTrackedList, "tracked");
+    for (let num = 0; num < trackedTagsForLoad.length; num++){
+        addTagInCard(trackedTagsForLoad[num], divTrackedList, "tracked");
     }
-
-    tags = await getTags("ignored");
-
-    if(tags.length === 0
-        || tags.length === undefined){
+    let ignoredTagsForLoad = await getTags("ignored");
+    if(ignoredTagsForLoad.length === 0
+        || ignoredTagsForLoad.length === undefined){
         return
     }
-
     await makeIgnoredCard();
-
-    for (let num = 0; num < tags.length; num++){
-        addTagInCard(tags[num], divIgnoredList, "ignored");
+    for (let num = 0; num < ignoredTagsForLoad.length; num++){
+        addTagInCard(ignoredTagsForLoad[num], divIgnoredList, "ignored");
     }
 }
 
@@ -212,10 +230,13 @@ async function tagInputEvent(value, tagsList, iptAddTag){
     }
 }
 
-async function tagClickEvent(tag, mode){
+async function tagClickEvent(tag, mode) {
 
     await deleteTag(tag, mode);
     tag.remove();
+    createPagination();
+    questionPagination.filter = await generateFilter();
+    await init();
 }
 
 function addTagInCard(tag, divList, mode){
@@ -270,13 +291,13 @@ async function deleteTag(tag, mode){
     return myFetch('/api/user/tag/'+mode+'/delete?tag='+tag.id, 'DELETE');
 }
 
-async function myFetch(URL, metod){
+async function myFetch(URL, httpMethod){
 
     let tags = {};
     let token1 = getCookie('token');
 
     await fetch(URL, {
-            method: metod,
+            method: httpMethod,
             headers: {
                 "Content-type": "application/json",
                 "Authorization": `${token1}`,
@@ -291,6 +312,134 @@ async function myFetch(URL, metod){
 
     return tags;
 }
+
+function showTagsForQuestion(tags, questionTagsList) {
+    let output = '';
+    tags.forEach(tag => {
+        output += '<a href="#"><span class="badge bg-info text-light mr-1 mb-1">' + tag.name + '</span>';
+    });
+    questionTagsList.innerHTML = output;
+}
+
+async function fetchQuestionTags(URL){
+    let questionTags = {};
+    let token1 = getCookie('token');
+    await fetch(URL, {
+            method: 'GET',
+            headers: {
+                "Content-type": "application/json",
+                "Authorization": `${token1}`,
+            }
+        }
+    )
+        .then(data => data.json())
+        .then(ob => {questionTags = ob})
+        .catch(mess => {
+            console.log(mess);
+        })
+    return questionTags;
+}
+
+let questionPagination;
+function createPagination() {
+    questionPagination = new Pagination(
+        '/api/user/question',
+        10,
+        'pagination_objects',
+        'navigation',
+        function (arrayObjects) {
+            let divFirst = document.createElement('div');
+            fetchQuestionTags('http://localhost:8091/api/user/question?page=1')
+                .then(result => result.totalResultCount)
+                .then(res => numberOfQuestions.innerHTML = res.toString());
+            if (arrayObjects != null && arrayObjects.length > 0) {
+                for (let num = 0; num < arrayObjects.length; num++) {
+                    let divCard = document.createElement('div');
+                    divCard.classList.add("card");
+                    divCard.classList.add("mb-3");
+                    let questionId = arrayObjects[num].id;
+                    let questionTitle = arrayObjects[num].title;
+                    let questionDescription = arrayObjects[num].description;
+                    let formId = 'question-tags' + questionId;
+                    let questionTagsList = document.createElement('div');
+                    questionTagsList.setAttribute('id', formId);
+                    fetchQuestionTags('http://localhost:8091/api/user/question?page=1')
+                        .then(result => result.items[questionId - 1].listTagDto)
+                        .then(tags => showTagsForQuestion(tags, questionTagsList));
+                    divCard.innerHTML = '';
+                    divCard.innerHTML +=
+                        '<div class="card-body p-1">' +
+                            '<div class="row">' +
+                                '<div class="col-2 align-items-center">' +
+                                    '<div class="text-center">' +
+                                        '<div>' + arrayObjects[num].countValuable + '</div>' +
+                                        '<small>голосов</small>' +
+                                    '</div>' +
+                                    '<div class="text-center text-info border border-info rounded">' +
+                                        '<div>' + arrayObjects[num].countAnswer + '</div>' +
+                                        '<small>ответов</small>' +
+                                    '</div>' +
+                                    '<div class="text-center">' +
+                                        '<div>' + arrayObjects[num].viewCount + '</div>' +
+                                        '<small>показов</small>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="col-10">' +
+                                    '<a class="mb-1" href="#">' + questionTitle + '</a>' +
+                                    '<p class="mb-1">' + questionDescription + '</p>' +
+                                    '<div class="row">' +
+                                        '<div class="col-7">' +
+                                            // адрес - children[0].children[0].children[1].children[2].children[0]
+                                            // сюда будет вставлен questionTagsList
+                                        '</div>' +
+                                        '<div class="col-5">' +
+                                            '<div>' +
+                                                '<div>' +
+                                                    '<small class="text-muted">' +
+                                                        'задан <span>26 дек \'21 в 00:00</span>' +
+                                                    '</small>' +
+                                                '</div>' +
+                                                '<div style="display: inline-block">' +
+                                                    '<img src="/images/noUserAvatar.png"' +
+                                                         ' style="width: 50px; height: 50px" alt="...">' +
+                                                '</div>' +
+                                                '<div class="align-items-top"' +
+                                                     ' style="display: inline-block; vertical-align: bottom">' +
+                                                    '<div class="align-items-top">' +
+                                                        '<a class="align-top" href="#">' + arrayObjects[num].authorName + '</a>' +
+                                                    '</div>' +
+                                                    '<div class="text-muted">'+ arrayObjects[num].authorReputation +'</div>' +
+                                                '</div>' +
+                                            '</div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
+                    divCard.children[0].children[0].children[1].children[2].children[0].appendChild(questionTagsList);
+                    divFirst.appendChild(divCard);
+                }
+            }
+            return divFirst;
+        }
+    );
+}
+
+function showPage(event, num) {
+    questionPagination.showPage(event, num);
+}
+async function init() {
+    await questionPagination.showPage(null, 1);
+}
+
+async function globalInit() {
+    createPagination();
+    questionPagination.filter = await generateFilter();
+    await init();
+}
+
+globalInit();
+
 
 
 

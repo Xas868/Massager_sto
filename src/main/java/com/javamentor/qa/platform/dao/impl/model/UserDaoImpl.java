@@ -3,6 +3,8 @@ package com.javamentor.qa.platform.dao.impl.model;
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.entity.user.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -41,7 +43,7 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
             @CacheEvict(value = "userWithRoleByEmail", key = "#email"),
             @CacheEvict(value = "userExistByEmail", key = "#email")
     })
-    public void deleteById(String email) {
+    public void deleteByName(String email) {
         entityManager
                 .createQuery("update User u set u.isDeleted=true where u.email=:email")
                 .setParameter("email", email)
@@ -49,7 +51,12 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
     }
 
     @Override
-    public void deleteById(Long id) {} // Не должен работать, оставляю пустым. Может бросать исключение?
+    public void deleteById(Long id) {
+        entityManager
+                .createQuery("update User u set u.isDeleted=true where u.id=:id")
+                .setParameter("id", id)
+                .executeUpdate();
+    }
 
     @Override
     @Caching(evict = {
