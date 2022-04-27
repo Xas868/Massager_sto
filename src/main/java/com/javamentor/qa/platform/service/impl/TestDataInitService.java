@@ -38,7 +38,7 @@ public class TestDataInitService {
     private final RelatedTagService relatedTagService;
 
     private final long NUM_OF_USERS = 10L;
-    private final long NUM_OF_TAGS = 5L;
+    private final long NUM_OF_TAGS = 50L;
     private final long NUM_OF_QUESTIONS = 100L;
     private final long NUM_OF_ANSWERS = 50L;
     private final int MAX_TRACKED_TAGS = 3;
