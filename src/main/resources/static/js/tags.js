@@ -11,7 +11,7 @@ let pagination;
 function createPagination() {
     pagination = new Pagination(
         '/api/user/tag/popular',
-        2,
+        10,
         'pagination_objects',
         'navigation',
         function (arrayObjects) {
@@ -25,14 +25,17 @@ function createPagination() {
                 for (let num = 0; num < arrayObjects.length; num++) {
 
                     if(numCardsInDeck === 0) {
-                        numCardsInDeck = 4;
+                        numCardsInDeck = 2;
                         divCardDeck = document.createElement('div');
                         divCardDeck.classList.add("card-deck");
                         divCardDeck.classList.add("tags-card-deck");
                         divFirst.appendChild(divCardDeck);
                     }
 
+                    let divShell = document.createElement('div');
                     let divCard = document.createElement('div');
+                    divShell.classList.add("col-6");
+                    divShell.classList.add("p-0");
                     divCard.classList.add("card");
 
                     countQuestion        = arrayObjects[num].countQuestion;
@@ -53,7 +56,8 @@ function createPagination() {
                         '   </div>'+
                         '</div>';
 
-                    divCardDeck.appendChild(divCard);
+                    divShell.appendChild(divCard);
+                    divCardDeck.appendChild(divShell);
                     numCardsInDeck--;
                 }
             }
