@@ -39,13 +39,13 @@ public class TestDataInitService {
 
     private final long NUM_OF_USERS = 10L;
     private final long NUM_OF_TAGS = 50L;
-    private final long NUM_OF_QUESTIONS = 10L;
+    private final long NUM_OF_QUESTIONS = 100L;
     private final long NUM_OF_ANSWERS = 50L;
     private final int MAX_TRACKED_TAGS = 3;
     private final int MAX_IGNORED_TAGS = 3;
     private final long NUM_OF_REPUTATIONS = 10L;
-    private final long NUM_OF_VOTEQUESTIONS = 10L;
-    private final long NUM_OF_VOTEANSWERS = 10L;
+    private final long NUM_OF_VOTEQUESTIONS = 200L; // не более NUM_OF_USERS * NUM_OF_QUESTIONS
+    private final long NUM_OF_VOTEANSWERS = 200L; // не более NUM_OF_USERS * NUM_OF_ANSWERS
 
     public void init() {
         createRoles();
@@ -203,11 +203,17 @@ public class TestDataInitService {
     public void createVoteQuestion() {
         List<VoteQuestion> voteQuestions = new ArrayList<>();
         for (long i = 1; i <= NUM_OF_VOTEQUESTIONS; i++) {
+            User randomUser = getRandomUser();
+            Question randomQuestion = getRandomQuestion();
+            while (!(voteQuestionService.validateUserVoteByQuestionIdAndUserId(randomQuestion.getId(), randomUser.getId()))) {
+                randomUser = getRandomUser();
+                randomQuestion = getRandomQuestion();
+            }
             VoteQuestion voteQuestion = VoteQuestion.builder()
-                    .question(questionService.getById(i).get()) // При getRandomQuestion могут не быть все вопросы
+                    .question(randomQuestion)
                     .vote(new Random().nextInt(100) % 2 == 0 ? VoteType.UP_VOTE : VoteType.DOWN_VOTE)
                     .localDateTime(LocalDateTime.now())
-                    .user(getRandomUser())
+                    .user(randomUser)
                     .build();
             voteQuestions.add(voteQuestion);
         }
@@ -217,11 +223,17 @@ public class TestDataInitService {
     public void createVoteAnswer() {
         List<VoteAnswer> voteAnswers = new ArrayList<>();
         for (long i = 1; i <= NUM_OF_VOTEANSWERS; i++) {
+            User randomUser = getRandomUser();
+            Answer randomAnswer = getRandomAnswer();
+            while (voteAnswerService.existsVoteByAnswerAndUser(randomAnswer.getId(), randomUser.getId())) {
+                randomUser = getRandomUser();
+                randomAnswer = getRandomAnswer();
+            }
             VoteAnswer voteAnswer = VoteAnswer.builder()
-                    .answer(answerService.getById(i).get())
+                    .answer(randomAnswer)
                     .vote(new Random().nextInt(100) % 2 == 0 ? VoteType.UP_VOTE : VoteType.DOWN_VOTE)
                     .persistDateTime(LocalDateTime.now())
-                    .user(getRandomUser())
+                    .user(randomUser)
                     .build();
             voteAnswers.add(voteAnswer);
         }
@@ -245,6 +257,11 @@ public class TestDataInitService {
     private Question getRandomQuestion() {
         List<Question> questions = questionService.getAll();
         return questions.get(new Random().nextInt(questions.size()));
+    }
+
+    private Answer getRandomAnswer() {
+        List<Answer> answers = answerService.getAll();
+        return answers.get(new Random().nextInt(answers.size()));
     }
 
 
