@@ -1,0 +1,405 @@
+<script src="/js/authorizationCheck.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="/css/question.css" rel="stylesheet" media="screen">
+</head>
+
+<body>
+<div id="main">
+    <div class="row">
+        <div class="col">
+            <div id="questionHeader" class="d-flex justify-content-between mb-3 align-items-center">
+                <h2 id="questionName">Название вопроса</h2>
+                <button class="btn btn-info h-50">Задать вопрос</button>
+            </div>
+            <div class="infoBar d-flex justify-content-left mb-3 align-items-center">
+                <div class="flex--item ws-nowrap mr-16 mb-8">
+                    <span>Задан:</span>
+                    <span id="dateCreated" class="mr-2">дата</span>
+                </div>
+                <div class="flex--item ws-nowrap mr-16 mb-8">
+                    <span>Обновлён:</span>
+                    <span id="dateModified" class="mr-2">дата</span>
+                </div>
+                <div class="flex--item ws-nowrap mr-16 mb-8">
+                    <span>Просмотрено:</span>
+                    <span id="viewedCounter" class="mr-2">количество</span>
+                </div>
+            </div>
+
+            <div class="container px-0">
+                <!--Question-->
+                <div class="row">
+                    <div class="col-1 d-flex justify-content-center align-items-start">
+                        <div class="d-flex flex-column justify-content-center">
+                            <button id="voteUp" class="p-0 btn btn_link_custom" data-toggle="tooltip"
+                                    data-placement="right" title="Полезный вопрос">
+                                <svg aria-hidden="true" class="svg-icon iconArrowUpLg" width="36" height="36"
+                                     viewBox="0 0 36 36">
+                                    <path d="M2 25h32L18 9 2 25Z"></path>
+                                </svg>
+                            </button>
+
+                            <div id="votesCounter" class="d-flex justify-content-center">
+                                <span id="votes">0</span>
+                            </div>
+
+                            <button id="voteDown" class="p-0 btn btn_link_custom" data-toggle="tooltip"
+                                    data-placement="right" title="Бесполезный вопрос">
+                                <svg aria-hidden="true" class="svg-icon iconArrowDownLg" width="36" height="36"
+                                     viewBox="0 0 36 36">
+                                    <path d="M2 11h32L18 27 2 11Z"></path>
+                                </svg>
+                            </button>
+
+                            <button id="bookmark" class="p-0 btn btn_link_custom" data-toggle="tooltip"
+                                    data-placement="right" title="Добавить вопрос в закладки">
+                                <svg aria-hidden="true" class="svg-icon iconBookmark" width="18" height="18"
+                                     viewBox="0 0 18 18">
+                                    <path d="M6 1a2 2 0 0 0-2 2v14l5-4 5 4V3a2 2 0 0 0-2-2H6Zm3.9 3.83h2.9l-2.35 1.7.9 2.77L9 7.59l-2.35 1.7.9-2.76-2.35-1.7h2.9L9 2.06l.9 2.77Z"></path>
+                                </svg>
+                                <div id="bookmarkCount" class="mt4">0</div>
+                            </button>
+
+                            <a id="postUpdates" class="d-flex justify-content-center" href="#" data-toggle="tooltip"
+                               data-placement="right" title="Изменения, связанные с вопросом">
+                                <svg aria-hidden="true" class="mln2 mr0 svg-icon iconHistory" width="19" height="18"
+                                     viewBox="0 0 19 18">
+                                    <path d="M3 9a8 8 0 1 1 3.73 6.77L8.2 14.3A6 6 0 1 0 5 9l3.01-.01-4 4-4-4h3L3 9Zm7-4h1.01L11 9.36l3.22 2.1-.6.93L10 10V5Z"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="row d-flex flex-column">
+                            <div id="questionText">
+                                <p>Этот текст здесь исключительно в целях демонстрации. При дальнейшем развитии данной
+                                    страницы этот элемент необходимо удалить! Этот текст здесь исключительно в целях
+                                    демонстрации. При дальнейшем развитии данной страницы этот элемент необходимо
+                                    удалить! Этот текст здесь исключительно в целях демонстрации. При дальнейшем
+                                    развитии
+                                    данной страницы этот элемент необходимо удалить! Этот текст здесь исключительно в
+                                    целях демонстрации. При дальнейшем развитии данной страницы этот элемент необходимо
+                                    удалить! Этот текст здесь исключительно в целях демонстрации. При дальнейшем
+                                    развитии данной
+                                    страницы этот элемент необходимо удалить! Этот текст здесь исключительно в целях
+                                    демонстрации. При дальнейшем развитии данной страницы этот элемент необходимо
+                                    удалить! Этот текст здесь исключительно в целях демонстрации. При дальнейшем
+                                    развитии
+                                    данной страницы этот элемент необходимо удалить! Этот текст здесь исключительно в
+                                    целях демонстрации. При дальнейшем развитии данной страницы этот элемент необходимо
+                                    удалить!</p>
+                            </div>
+
+                            <div class="questionTags">
+                                <a href="#"><span class="badge bg-info text-light">tag_name_1</span></a>
+                                <a href="#"><span class="badge bg-info text-light">tag_name_2</span></a>
+                                <a href="#"><span class="badge bg-info text-light">tag_name_3</span></a>
+                                <a href="#"><span class="badge bg-info text-light">tag_name_4</span></a>
+                            </div>
+
+                            <div class="row mx-0 bottomBlock d-flex justify-content-between">
+                                <div>
+                                    <a type="button" id="dropdownShareButton" data-toggle="dropdown"
+                                       aria-haspopup="true" aria-expanded="false" style="color: #6a737c;">Поделиться</a>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownShareButton">
+                                        <span class="px-1">Поделись ссылкой на этот вопрос:</span>
+                                        <input class="mx-1" style="width:90%" placeholder="<ссылка на вопрос>">
+                                    </div>
+                                    <a type="button" style="color: #6a737c;">Изменить</a>
+                                    <a type="button" style="color: #6a737c;">Следить</a>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="container">
+                                            <div class="d-flex flex-column">
+                                                <div class="row">
+                                                    <a id="lastChangeLink" href="#">ссылка на инфу об изменениях</a>
+                                                </div>
+                                                <div id="userCard0" class="row">
+                                                    <span>карточка пользователя</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col">
+                                        <div class="container">
+                                            <div class="d-flex flex-column">
+                                                <div class="row">
+                                                    <span id="askedDate">дата создания вопроса</span>
+                                                </div>
+                                                <div id="userCard1" class="row">
+                                                    <span>карточка пользователя</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row d-flex flex-column py-2">
+                            <div>
+                                <ul class="list-group mb-2">
+                                    <!--ЭЛЕМЕНТЫ НИЖЕ ЯВЛЯЮТСЯ ДЕМОНСТРАТИВНЫМИ ШАБЛОНАМИ-->
+                                    <li class="list-group-item border-right-0 border-left-0 px-0">
+                                        <div class="row mx-0">
+                                            <div class="col-1 d-flex justify-content-center">
+                                                <span class="usefulCommentVotesCounter">123</span>
+                                            </div>
+                                            <div class="col">
+                                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
+                                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
+                                                –&nbsp;<a href="#" class="comment-user">Имя Пользователя 1</a>
+                                                <span class="comment-data"
+                                                      style="color:#9199a1">15 сентября 2021, 17:49</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item border-right-0 border-left-0 px-0">
+                                        <div class="row mx-0">
+                                            <div class="col-1 d-flex justify-content-center">
+                                                <span class="usefulCommentVotes">120</span>
+                                            </div>
+                                            <div class="col">
+                                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
+                                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
+                                                –&nbsp;<a href="#" class="comment-user">Имя Пользователя 2</a>
+                                                <span class="comment-data"
+                                                      style="color:#9199a1">16 сентября 2021, 18:49</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item border-right-0 border-left-0 px-0">
+                                        <div class="row mx-0">
+                                            <div class="col-1 d-flex justify-content-center">
+                                                <span class="usefulCommentVotes">23</span>
+                                            </div>
+                                            <div class="col">
+                                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
+                                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
+                                                –&nbsp;<a href="#" class="comment-user">Имя Пользователя 3</a>
+                                                <span class="comment-data"
+                                                      style="color:#9199a1">17 сентября 2021, 17:29</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <textarea class="col px-1" id="inputCommentField" rows="5"
+                                          style="resize:none"></textarea>
+                                <button class="btn btn-info mt-2" id="addCommentButton">Добавить комментарий</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Answer-->
+                <div class="col px-0">
+                    <div class="row my-2 mx-0 d-flex justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <span id="answerCounter" class="mr-1">0</span>
+                            <span> Ответ(а/ов)</span>
+                        </div>
+                        <div class="row mx-0">
+                            <div class="col d-flex justify-content-end p-0 align-items-center">
+                                <label for="inputGroupSelectSort" class="mr-1 my-0">Сортировка по:</label>
+                            </div>
+                            <div class="col p-0" style="width: 200px;">
+                                <select class="custom-select" id="inputGroupSelectSort">
+                                    <option value="0">Голосам</option>
+                                    <option value="1">Дате ответа</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="answers">
+                        <div class="row">
+                            <div class="col-1 d-flex justify-content-center align-items-start">
+                                <div class="d-flex flex-column justify-content-center">
+                                    <button id="voteUpAnswer" class="p-0 btn btn_link_custom" data-toggle="tooltip"
+                                            data-placement="right" title="Полезный вопрос">
+                                        <svg aria-hidden="true" class="svg-icon iconArrowUpLg" width="36" height="36"
+                                             viewBox="0 0 36 36">
+                                            <path d="M2 25h32L18 9 2 25Z"></path>
+                                        </svg>
+                                    </button>
+
+                                    <div id="votesCounterAnswer" class="d-flex justify-content-center">
+                                        <span id="votesAnswer">0</span>
+                                    </div>
+
+                                    <button id="voteDownAnswer" class="p-0 btn btn_link_custom" data-toggle="tooltip"
+                                            data-placement="right" title="Бесполезный вопрос">
+                                        <svg aria-hidden="true" class="svg-icon iconArrowDownLg" width="36" height="36"
+                                             viewBox="0 0 36 36">
+                                            <path d="M2 11h32L18 27 2 11Z"></path>
+                                        </svg>
+                                    </button>
+
+                                    <a id="postUpdatesAnswer" class="d-flex justify-content-center" href="#" data-toggle="tooltip"
+                                       data-placement="right" title="Изменения, связанные с вопросом">
+                                        <svg aria-hidden="true" class="mln2 mr0 svg-icon iconHistory" width="19" height="18"
+                                             viewBox="0 0 19 18">
+                                            <path d="M3 9a8 8 0 1 1 3.73 6.77L8.2 14.3A6 6 0 1 0 5 9l3.01-.01-4 4-4-4h3L3 9Zm7-4h1.01L11 9.36l3.22 2.1-.6.93L10 10V5Z"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="row d-flex flex-column">
+                                    <div id="answerText">
+                                        <p>Этот текст здесь исключительно в целях демонстрации. При дальнейшем развитии данной
+                                            страницы этот элемент необходимо удалить! Этот текст здесь исключительно в целях
+                                            демонстрации. При дальнейшем развитии данной страницы этот элемент необходимо
+                                            удалить! Этот текст здесь исключительно в целях демонстрации. При дальнейшем
+                                            развитии
+                                            данной страницы этот элемент необходимо удалить! Этот текст здесь исключительно в
+                                            целях демонстрации. При дальнейшем развитии данной страницы этот элемент необходимо
+                                            удалить! Этот текст здесь исключительно в целях демонстрации. При дальнейшем
+                                            развитии данной
+                                            страницы этот элемент необходимо удалить! Этот текст здесь исключительно в целях
+                                            демонстрации. При дальнейшем развитии данной страницы этот элемент необходимо
+                                            удалить! Этот текст здесь исключительно в целях демонстрации. При дальнейшем
+                                            развитии
+                                            данной страницы этот элемент необходимо удалить! Этот текст здесь исключительно в
+                                            целях демонстрации. При дальнейшем развитии данной страницы этот элемент необходимо
+                                            удалить!</p>
+                                    </div>
+
+                                    <div class="row mx-0 bottomBlock d-flex justify-content-between">
+                                        <div>
+                                            <a type="button" id="dropdownShareButtonAnswer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #6a737c;">Поделиться</a>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownShareButton">
+                                                <span class="px-1">Поделись ссылкой на этот ответ:</span>
+                                                <input class="mx-1" style="width:90%" placeholder="<ссылка на ответ>">
+                                            </div>
+                                            <a type="button" style="color: #6a737c;">Изменить</a>
+                                            <a type="button" style="color: #6a737c;">Следить</a>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="container">
+                                                    <div class="d-flex flex-column">
+                                                        <div class="row">
+                                                            <a id="lastChangeLinkAnswer" href="#">ссылка на инфу об изменениях</a>
+                                                        </div>
+                                                        <div id="userCard2" class="row">
+                                                            <span>карточка пользователя</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col">
+                                                <div class="container">
+                                                    <div class="d-flex flex-column">
+                                                        <div class="row">
+                                                            <span id="answeredDate">дата создания ответа</span>
+                                                        </div>
+                                                        <div id="userCard3" class="row">
+                                                            <span>карточка пользователя</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row d-flex flex-column py-2">
+                                    <div>
+                                        <ul class="list-group mb-2">
+                                            <!--ЭЛЕМЕНТЫ НИЖЕ ЯВЛЯЮТСЯ ДЕМОНСТРАТИВНЫМИ ШАБЛОНАМИ-->
+                                            <li class="list-group-item border-right-0 border-left-0 px-0">
+                                                <div class="row mx-0">
+                                                    <div class="col-1 d-flex justify-content-center">
+                                                        <span class="usefulCommentVotesCounter">123</span>
+                                                    </div>
+                                                    <div class="col">
+                                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
+                                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
+                                                        –&nbsp;<a href="#" class="comment-user">Имя Пользователя 1</a>
+                                                        <span class="comment-data"
+                                                              style="color:#9199a1">15 сентября 2021, 17:49</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="list-group-item border-right-0 border-left-0 px-0">
+                                                <div class="row mx-0">
+                                                    <div class="col-1 d-flex justify-content-center">
+                                                        <span class="usefulCommentVotes">120</span>
+                                                    </div>
+                                                    <div class="col">
+                                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
+                                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
+                                                        –&nbsp;<a href="#" class="comment-user">Имя Пользователя 2</a>
+                                                        <span class="comment-data"
+                                                              style="color:#9199a1">16 сентября 2021, 18:49</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="list-group-item border-right-0 border-left-0 px-0">
+                                                <div class="row mx-0">
+                                                    <div class="col-1 d-flex justify-content-center">
+                                                        <span class="usefulCommentVotes">23</span>
+                                                    </div>
+                                                    <div class="col">
+                                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
+                                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
+                                                        –&nbsp;<a href="#" class="comment-user">Имя Пользователя 3</a>
+                                                        <span class="comment-data"
+                                                              style="color:#9199a1">17 сентября 2021, 17:29</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                <textarea class="col px-1" id="inputCommentFieldAnswer" rows="5"
+                                          style="resize:none"></textarea>
+                                        <button class="btn btn-info mt-2" id="addCommentAnswerButton">Добавить комментарий</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h6 class="mt-2 mb-0">
+                        Не нашли подходящего ответа? Посмотрите другие вопросы с тегами:
+                    </h6>
+                    <div class="questionTags">
+                        <a href="#"><span class="badge bg-info text-light">tag_name_1</span></a>
+                        <a href="#"><span class="badge bg-info text-light">tag_name_2</span></a>
+                        <a href="#"><span class="badge bg-info text-light">tag_name_3</span></a>
+                        <a href="#"><span class="badge bg-info text-light">tag_name_4</span></a>
+                    </div>
+                    <h6 class="mb-2">
+                        Или задайте новый вопрос <a href="#">тут</a>.
+                    </h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/initScriptAuthorized.js"></script>
+</body>
+</html>
