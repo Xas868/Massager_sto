@@ -359,15 +359,15 @@ function createPagination() {
                     divCard.classList.add("card");
                     divCard.classList.add("mb-3");
                     let questionId = arrayObjects[num].id;
-                    console.log(questionId);
                     let questionTitle = arrayObjects[num].title;
                     let questionDescription = arrayObjects[num].description;
                     let formId = 'question-tags' + questionId;
                     let questionTagsList = document.createElement('div');
                     questionTagsList.setAttribute('id', formId);
-                    let currentPage = Math.floor((questionId - 1) / numberOfQuestionPerPage) + 1;
-                    fetchQuestionTags('http://localhost:8091/api/user/question?page=' + currentPage)
-                        .then(result => result.items[num].listTagDto)
+                    fetchQuestionTags('http://localhost:8091/api/user/question?page=1')
+                        .then(result => result.totalResultCount)
+                        .then(totalNumberOfQuestions => fetchQuestionTags('http://localhost:8091/api/user/question?page=1&items=' + totalNumberOfQuestions))
+                        .then(result => result.items[questionId - 1].listTagDto)
                         .then(tags => showTagsForQuestion(tags, questionTagsList));
                     divCard.innerHTML = '';
                     divCard.innerHTML +=
