@@ -7,6 +7,9 @@ import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
@@ -259,6 +262,32 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.itemsOnPage").value("0"));
     }
 
+    //Проверяем изменение пароля
+    @Test
+    @DataSet(cleanBefore = true,
+            value = {
+                    "dataset/userresourcecontroller/roles.yml",
+                    "dataset/userresourcecontroller/users_with_deleted_user.yml",
+                    "dataset/userresourcecontroller/questions.yml",
+                    "dataset/userresourcecontroller/reputations.yml"
+            },
+            strategy = SeedStrategy.REFRESH)
+    public void shouldReturnUserWithChangedPassword() throws Exception {
+        //Ставим новый пароль
+        this.mockMvc.perform(patch("/api/user/change/password?password=test534")
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        //Заходим под новым паролем
+        this.mockMvc.perform(patch("/api/user/change/password?password=anotherTest534")
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "test534")))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
     //Получаем неудалённых пользователей, отсортированных по репутации
     @Test
     @DataSet(cleanBefore = true,
@@ -304,32 +333,6 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.totalPageCount").value("0"))
                 .andExpect(jsonPath("$.totalResultCount").value("0"))
                 .andExpect(jsonPath("$.itemsOnPage").value("0"));
-    }
-
-    //Проверяем изменение пароля
-    @Test
-    @DataSet(cleanBefore = true,
-            value = {
-                    "dataset/userresourcecontroller/roles.yml",
-                    "dataset/userresourcecontroller/users_with_deleted_user.yml",
-                    "dataset/userresourcecontroller/questions.yml",
-                    "dataset/userresourcecontroller/reputations.yml"
-            },
-            strategy = SeedStrategy.REFRESH)
-    public void shouldReturnUserWithChangedPassword() throws Exception {
-        //Ставим новый пароль
-        this.mockMvc.perform(patch("/api/user/change/password?password=test534")
-                        .contentType("application/json")
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
-                .andDo(print())
-                .andExpect(status().isOk());
-
-        //Заходим под новым паролем
-        this.mockMvc.perform(patch("/api/user/change/password?password=anotherTest534")
-                        .contentType("application/json")
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "test534")))
-                .andDo(print())
-                .andExpect(status().isOk());
     }
 
     @Test
