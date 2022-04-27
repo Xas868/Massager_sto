@@ -44,8 +44,8 @@ public class TestDataInitService {
     private final int MAX_TRACKED_TAGS = 3;
     private final int MAX_IGNORED_TAGS = 3;
     private final long NUM_OF_REPUTATIONS = 10L;
-    private final long NUM_OF_VOTEQUESTIONS = 200L; // не более NUM_OF_USERS * NUM_OF_QUESTIONS
-    private final long NUM_OF_VOTEANSWERS = 200L; // не более NUM_OF_USERS * NUM_OF_ANSWERS
+    private final long NUM_OF_VOTEQUESTIONS = 200L;
+    private final long NUM_OF_VOTEANSWERS = 200L;
 
     public void init() {
         createRoles();
