@@ -21,7 +21,14 @@ public class QuestionPageDtoDaoSortedByImpl implements PageDtoDao<QuestionViewDt
         int itemsOnPage = properties.getItemsOnPage();
         int offset = (properties.getCurrentPage() - 1) * itemsOnPage;
         return entityManager.createQuery("select " +
-                        "q.id, q.title, u.id,u.fullName, u.imageLink, q.description, q.persistDateTime,q.lastUpdateDateTime, " +
+                        "q.id, " +
+                        "q.title, " +
+                        "u.id," +
+                        "u.fullName, " +
+                        "u.imageLink, " +
+                        "q.description, " +
+                        "q.persistDateTime," +
+                        "q.lastUpdateDateTime, " +
                         "coalesce((select sum(r.count) from Reputation r where r.author.id=u.id),0), "+
                         "(coalesce((select count(a.id) from Answer a where a.question.id = q.id),0)) as answerCounter, " +
                         "(coalesce((select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id),0)) as voteCounter " +
