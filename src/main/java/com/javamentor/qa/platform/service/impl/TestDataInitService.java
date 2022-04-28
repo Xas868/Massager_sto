@@ -44,8 +44,8 @@ public class TestDataInitService {
     private final int MAX_TRACKED_TAGS = 3;
     private final int MAX_IGNORED_TAGS = 3;
     private final long NUM_OF_REPUTATIONS = 10L;
-    private final long NUM_OF_VOTEQUESTIONS = 200L;
-    private final long NUM_OF_VOTEANSWERS = 200L;
+    private final long NUM_OF_VOTEQUESTIONS = 120L;
+    private final long NUM_OF_VOTEANSWERS = 120L;
 
     public void init() {
         createRoles();
@@ -205,7 +205,7 @@ public class TestDataInitService {
         for (long i = 1; i <= NUM_OF_VOTEQUESTIONS; i++) {
             User randomUser = getRandomUser();
             Question randomQuestion = getRandomQuestion();
-            while (!(voteQuestionService.validateUserVoteByQuestionIdAndUserId(randomQuestion.getId(), randomUser.getId()))) {
+            while (didThisUserVoteForThisQuestion(randomUser.getId(), randomQuestion.getId(), voteQuestions)) {
                 randomUser = getRandomUser();
                 randomQuestion = getRandomQuestion();
             }
@@ -225,7 +225,7 @@ public class TestDataInitService {
         for (long i = 1; i <= NUM_OF_VOTEANSWERS; i++) {
             User randomUser = getRandomUser();
             Answer randomAnswer = getRandomAnswer();
-            while (voteAnswerService.existsVoteByAnswerAndUser(randomAnswer.getId(), randomUser.getId())) {
+            while (didThisUserVoteForThisAnswer(randomUser.getId(), randomAnswer.getId(), voteAnswers)) {
                 randomUser = getRandomUser();
                 randomAnswer = getRandomAnswer();
             }
@@ -264,5 +264,21 @@ public class TestDataInitService {
         return answers.get(new Random().nextInt(answers.size()));
     }
 
+    private boolean didThisUserVoteForThisQuestion(Long userId, Long questionId, List<VoteQuestion> voteQuestions) {
+        for (VoteQuestion voteQuestion : voteQuestions) {
+            if (Objects.equals(voteQuestion.getQuestion().getId(), questionId) && Objects.equals(voteQuestion.getUser().getId(), userId)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    private boolean didThisUserVoteForThisAnswer(Long userId, Long answerId, List<VoteAnswer> voteAnswers) {
+        for (VoteAnswer voteAnswer : voteAnswers) {
+            if (Objects.equals(voteAnswer.getAnswer().getId(), answerId) && Objects.equals(voteAnswer.getUser().getId(), userId)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
