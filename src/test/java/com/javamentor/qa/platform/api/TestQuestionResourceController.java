@@ -5,7 +5,6 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
-import com.javamentor.qa.platform.dao.abstracts.model.BookmarksDao;
 import com.javamentor.qa.platform.dao.abstracts.model.QuestionViewedDao;
 import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
@@ -1499,5 +1498,50 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                         .header("Authorization", token101))
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DataSet(
+            value = {
+                    "dataset/testQuestionResourceController/addCommentQuestion/comments.yml"
+            },
+            cleanBefore = true, cleanAfter = true,
+            strategy = SeedStrategy.CLEAN_INSERT)
+    @ExpectedDataSet(value = {
+            "dataset/testQuestionResourceController/addCommentQuestion/expected/comments.yml"
+    },
+            ignoreCols = {"persist_date", "last_redaction_date"}
+    )
+
+    public void testAddCommentQuestion() throws Exception {
+
+        String token100 = "Bearer " + getToken("user100@mail.ru", "password");
+        String token101 = "Bearer " + getToken("user101@mail.ru", "user101");
+
+        //добавляю новый комментарий user 100 по вопросу 101
+        mockMvc.perform(MockMvcRequestBuilders.post("/101/comment")
+                        .contentType("application/json")
+                        .content("Hello Test")
+                        .header("Authorization", token100))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+
+        //добавляю новый комментарий user 101 по вопросу 102
+        mockMvc.perform(MockMvcRequestBuilders.post("/102/comment")
+                        .contentType("application/json")
+                        .content("Hello Test2")
+                        .header("Authorization", token101))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+
+        //добавляю новый комментарий user 101 по несуществующему вопросу 103
+        mockMvc.perform(MockMvcRequestBuilders.post("/103/comment")
+                        .contentType("application/json")
+                        .content("Hello Test3")
+                        .header("Authorization", token101))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 }
