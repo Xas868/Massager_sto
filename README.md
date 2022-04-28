@@ -599,6 +599,11 @@ public class UserController {
 - Полное описание работы с профилями смотри здесь: https://www.baeldung.com/spring-profiles
 
 ## Описание структуры тестов
+
+- для запуска тестов необходимо установить значения environment variables по умолчанию JUNIT
+
+- ![](src/main/resources/static/images/junit_conf.jpg)
+
 - Тесты создаются согласно рест контроллерам например если есть ResourseAnswerController то есть тест TestResourseAnswerController и тестируются все api из контроллера
 
 

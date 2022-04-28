@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.dao.impl.pagination.*;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoAllSortedByPopular;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoAllQuestionsImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoByNoAnswersImpl;
@@ -13,7 +14,6 @@ import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.QuestionViewDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCommentDto;
-import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
@@ -366,8 +366,8 @@ public class QuestionResourceController {
     })
     public ResponseEntity<PageDTO<QuestionViewDto>> paginationForTheMonth(@RequestParam int page,
                                                                           @RequestParam(required = false, defaultValue = "10") int items,
-                                                                          @RequestParam(required = false) List<Long>trackedTag,
-                                                                          @RequestParam(required = false) List<Long>ignoredTag){
+                                                                          @RequestParam(required = false) List<Long> trackedTag,
+                                                                          @RequestParam(required = false) List<Long> ignoredTag) {
         PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoSortedByImpl.class.getSimpleName());
         data.getProps().put("trackedTags", trackedTag);
         data.getProps().put("ignoredTags", ignoredTag);

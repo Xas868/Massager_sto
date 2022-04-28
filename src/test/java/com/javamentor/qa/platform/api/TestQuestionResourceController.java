@@ -5,6 +5,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
+import com.javamentor.qa.platform.dao.abstracts.model.BookmarksDao;
 import com.javamentor.qa.platform.dao.abstracts.model.QuestionViewedDao;
 import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
@@ -34,6 +35,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
