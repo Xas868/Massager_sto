@@ -54,31 +54,6 @@ reputation:
     type: 0
     author_id: 110
     sender_id: 110
-  - id: 111
-    count: 10
-    type: 0
-    author_id: 111
-    sender_id: 111
-  - id: 112
-    count: 10
-    type: 0
-    author_id: 112
-    sender_id: 112
-  - id: 113
-    count: 10
-    type: 0
-    author_id: 113
-    sender_id: 113
-  - id: 114
-    count: 10
-    type: 0
-    author_id: 114
-    sender_id: 114
-  - id: 115
-    count: 10
-    type: 0
-    author_id: 115
-    sender_id: 115
   - id: 116
     count: 10
     type: 0
@@ -99,3 +74,18 @@ reputation:
     type: 2
     author_id: 119
     sender_id: 119
+  - id: 120
+    count: 10
+    type: 2
+    author_id: 119
+    sender_id: 100
+  - id: 121
+    count: -5
+    type: 3
+    author_id: 119
+    sender_id: 101
+  - id: 122
+    count: 10
+    type: 2
+    author_id: 119
+    sender_id: 102

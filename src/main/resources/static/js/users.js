@@ -7,12 +7,11 @@ function activateSideBar() {
 
 //создаем новый объект пагинации и передаем аргументы в конструктор
 let pagination = new Pagination(
-    'http://localhost:8091/api/user/reputation',            //url
-    16,                                                //количество объектов
-    'users_grid',                             //id div куда будут вставляться объекты
-    'users_navigation',                        //id div куду будет вставляться нумерация
-
-    function (arrayObjects) {                      //функция, которая задаёт - как будут вставляться объекты
+    'http://localhost:8091/api/user/reputation',    //url
+    16,                                                     //количество объектов
+    'users_grid',                                    //id div куда будут вставляться объекты
+    'users_navigation',                                //id div куду будет вставляться нумерация
+    function (arrayObjects) {                             //функция, которая задаёт - как будут вставляться объекты
 
         let mainDiv = document.createElement('div');
 
@@ -60,3 +59,8 @@ function showPage(event, num) {
 async function init() {
     await pagination.showPage(null, 1);
 }
+
+document.getElementById("filterByUser").oninput = async function() {
+    pagination.filter=document.getElementById("filterByUser").value;
+    await init();
+};
