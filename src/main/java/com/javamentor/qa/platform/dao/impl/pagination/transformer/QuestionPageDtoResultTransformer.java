@@ -20,7 +20,7 @@ public class QuestionPageDtoResultTransformer implements ResultTransformer {
         questionViewDto.setLastUpdateDateTime((LocalDateTime) tuple[7]);
         questionViewDto.setAuthorReputation((Long) tuple[8]);
         questionViewDto.setCountAnswer(((Number) tuple[9]).intValue());
-        questionViewDto.setCountValuable(((Number) tuple[10]).intValue());
+        questionViewDto.setCountValuable(((Number) tuple[9]).intValue());
         return questionViewDto;
     }
 
