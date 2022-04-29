@@ -44,8 +44,8 @@ public class TestDataInitService {
     private final int MAX_TRACKED_TAGS = 3;
     private final int MAX_IGNORED_TAGS = 3;
     private final long NUM_OF_REPUTATIONS = 10L;
-    private final long NUM_OF_VOTEQUESTIONS = 10L;
-    private final long NUM_OF_VOTEANSWERS = 10L;
+    private final long NUM_OF_VOTEQUESTIONS = 120L;
+    private final long NUM_OF_VOTEANSWERS = 120L;
 
     public void init() {
         createRoles();
@@ -203,11 +203,17 @@ public class TestDataInitService {
     public void createVoteQuestion() {
         List<VoteQuestion> voteQuestions = new ArrayList<>();
         for (long i = 1; i <= NUM_OF_VOTEQUESTIONS; i++) {
+            User randomUser = getRandomUser();
+            Question randomQuestion = getRandomQuestion();
+            while (didThisUserVoteForThisQuestion(randomUser.getId(), randomQuestion.getId(), voteQuestions)) {
+                randomUser = getRandomUser();
+                randomQuestion = getRandomQuestion();
+            }
             VoteQuestion voteQuestion = VoteQuestion.builder()
-                    .question(questionService.getById(i).get()) // При getRandomQuestion могут не быть все вопросы
+                    .question(randomQuestion)
                     .vote(new Random().nextInt(100) % 2 == 0 ? VoteType.UP_VOTE : VoteType.DOWN_VOTE)
                     .localDateTime(LocalDateTime.now())
-                    .user(getRandomUser())
+                    .user(randomUser)
                     .build();
             voteQuestions.add(voteQuestion);
         }
@@ -217,11 +223,17 @@ public class TestDataInitService {
     public void createVoteAnswer() {
         List<VoteAnswer> voteAnswers = new ArrayList<>();
         for (long i = 1; i <= NUM_OF_VOTEANSWERS; i++) {
+            User randomUser = getRandomUser();
+            Answer randomAnswer = getRandomAnswer();
+            while (didThisUserVoteForThisAnswer(randomUser.getId(), randomAnswer.getId(), voteAnswers)) {
+                randomUser = getRandomUser();
+                randomAnswer = getRandomAnswer();
+            }
             VoteAnswer voteAnswer = VoteAnswer.builder()
-                    .answer(answerService.getById(i).get())
+                    .answer(randomAnswer)
                     .vote(new Random().nextInt(100) % 2 == 0 ? VoteType.UP_VOTE : VoteType.DOWN_VOTE)
                     .persistDateTime(LocalDateTime.now())
-                    .user(getRandomUser())
+                    .user(randomUser)
                     .build();
             voteAnswers.add(voteAnswer);
         }
@@ -247,5 +259,26 @@ public class TestDataInitService {
         return questions.get(new Random().nextInt(questions.size()));
     }
 
+    private Answer getRandomAnswer() {
+        List<Answer> answers = answerService.getAll();
+        return answers.get(new Random().nextInt(answers.size()));
+    }
 
+    private boolean didThisUserVoteForThisQuestion(Long userId, Long questionId, List<VoteQuestion> voteQuestions) {
+        for (VoteQuestion voteQuestion : voteQuestions) {
+            if (Objects.equals(voteQuestion.getQuestion().getId(), questionId) && Objects.equals(voteQuestion.getUser().getId(), userId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean didThisUserVoteForThisAnswer(Long userId, Long answerId, List<VoteAnswer> voteAnswers) {
+        for (VoteAnswer voteAnswer : voteAnswers) {
+            if (Objects.equals(voteAnswer.getAnswer().getId(), answerId) && Objects.equals(voteAnswer.getUser().getId(), userId)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
