@@ -22,14 +22,21 @@ public class QuestionPageDtoDaoAllQuestionsImpl implements PageDtoDao<QuestionVi
     public List<QuestionViewDto> getPaginationItems(PaginationData properties) {
         int itemsOnPage = properties.getItemsOnPage();
         int offset = (properties.getCurrentPage() - 1) * itemsOnPage;
-        return (List<QuestionViewDto>) entityManager.createQuery("SELECT DISTINCT q.id, q.title, u.id," +
-                        " u.fullName, u.imageLink, q.description, q.persistDateTime," +
-                        " q.lastUpdateDateTime, (SELECT SUM(r.count) from Reputation r WHERE r.author.id = q.user.id), " +
-                        " (select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v JOIN Question q" +
-                        " ON v.question.id = q.id)" +
-                        " from Question q JOIN q.user u JOIN q.tags t " +
-                        " WHERE ((:trackedTags) IS NULL OR t.id IN (:trackedTags)) AND" +
-                        " ((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags)))")
+        return (List<QuestionViewDto>) entityManager.createQuery("SELECT DISTINCT " +
+                        "q.id, " +
+                        "q.title, " +
+                        "u.id," +
+                        "u.fullName, " +
+                        "u.imageLink, " +
+                        "q.description, " +
+                        "q.persistDateTime," +
+                        "q.lastUpdateDateTime, " +
+                        "(SELECT SUM(r.count) from Reputation r WHERE r.author.id = q.user.id), " +
+                        "(coalesce((select count(a.id) from Answer a where a.question.id = q.id),0)) as answerCounter, " +
+                        "(select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id)" +
+                        " from Question q JOIN User u on q.user.id = u.id " +
+                        "where ((:trackedTags) IS NULL OR q.id IN (select q.id from Question q join q.tags t where t.id in (:trackedTags))) and" +
+                        "((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags)))")
                 .setParameter("trackedTags", properties.getProps().get("trackedTags"))
                 .setParameter("ignoredTags", properties.getProps().get("ignoredTags"))
                 .setFirstResult(offset)

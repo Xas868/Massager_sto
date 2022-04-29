@@ -35,7 +35,7 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                         "a.question.id, a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
                         "(select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteAnswer v " +
                         "where v.answer.id = a.id), a.user.imageLink, a.user.nickname) " +
-                        "from Answer as a where a.question.id = :id and a.isDeleted = false", AnswerDTO.class)
+                        "from Answer as a where a.question.id = :id and a.isDeleted = false order by a.id", AnswerDTO.class)
                 .setParameter("id", questionId)
                 .getResultList();
     }
