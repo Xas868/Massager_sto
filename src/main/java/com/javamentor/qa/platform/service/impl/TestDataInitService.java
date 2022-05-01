@@ -37,13 +37,13 @@ public class TestDataInitService {
     private final VoteAnswerService voteAnswerService;
     private final RelatedTagService relatedTagService;
 
-    private final long NUM_OF_USERS = 10L;
+    private final long NUM_OF_USERS = 20L;
     private final long NUM_OF_TAGS = 50L;
     private final long NUM_OF_QUESTIONS = 100L;
     private final long NUM_OF_ANSWERS = 50L;
     private final int MAX_TRACKED_TAGS = 3;
     private final int MAX_IGNORED_TAGS = 3;
-    private final long NUM_OF_REPUTATIONS = 10L;
+    private final long NUM_OF_REPUTATIONS = 20L;
     private final long NUM_OF_VOTEQUESTIONS = 120L;
     private final long NUM_OF_VOTEANSWERS = 120L;
 

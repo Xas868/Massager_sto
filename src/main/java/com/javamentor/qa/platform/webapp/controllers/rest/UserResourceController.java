@@ -215,4 +215,22 @@ public class UserResourceController {
                 HttpStatus.OK);
     }
 
+    // -------------------------------------------------
+
+    @Operation(summary = "123" +
+            "456 ",
+            description = "789")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Возвращает список UserDto(Long id,String email, String fullName, String imageLink, String city, Long reputation)",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json")
+                    }),
+    })
+    @GetMapping("/api/user/top-10-of-week")
+    public ResponseEntity<List<UserDto>> getTop10UsersForWeekRankedByNumberOfQuestions() {
+        return new ResponseEntity<>(userDtoService.getTop10UsersForWeekRankedByNumberOfQuestions(), HttpStatus.OK);
+    }
 }

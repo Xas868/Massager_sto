@@ -49,4 +49,9 @@ public class UserDtoServiceImpl extends DtoServiceImpl<UserDto> implements UserD
                 q.setListTagDto(map.containsKey(q.getQuestionId())?map.get(q.getQuestionId()):new ArrayList<>()));
         return resultList;
     }
+
+    @Override
+    public List<UserDto> getTop10UsersForWeekRankedByNumberOfQuestions() {
+        return userDtoDao.getTop10UsersForWeekRankedByNumberOfQuestions();
+    }
 }
