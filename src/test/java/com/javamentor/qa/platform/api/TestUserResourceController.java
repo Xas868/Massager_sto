@@ -17,6 +17,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
@@ -535,5 +542,82 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    // Получение списка из топ 10 пользователей за неделю с наибольшим количеством вопросов по убыванию.
+    // Все ответы в этом датасете в рамках одной недели, проверка только сортировки
+    // У User 112 - 5 ответов, голосов за ответы - (-5) - но т.к. ответов наибольшее число среди всех - он первый
+    // у User 105, User 102, User 108, User 114 - по 4 ответа, полученные голоса за эти ответы +5, 0, -2, -2.
+    // т.к. User 108, User 114 имеют равное число и ответов, и голосов, они отсортированы по id
+    @Test
+    @DataSet(cleanBefore = true, cleanAfter = true,
+            value = {
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/users.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/roles.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/questions.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/answers.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/votes_on_answers.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/reputations.yml"
+            },
+            strategy = SeedStrategy.CLEAN_INSERT)
+    public void testGetTop10UsersRankedByNumberOfQuestions() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
+        mockMvc.perform(get("/api/user/top-10-of-week")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[*].id").value(containsInRelativeOrder(112, 105, 102, 108, 114, 109, 101, 106, 100, 107)));
+    }
+
+    // Получение списка из топ 10 пользователей за неделю с наибольшим количеством вопросов по убыванию.
+    // У User 112 4 ответа из 5 (108, 110, 115, 116) - даны более чем одну неделю назад, то есть он должен выйти из топ10,
+    // т.к. у 10 и 11 места по 2 ответа.
+    // У User 105, User 102, User 108, User 114 - по 4 ответа, полученные голоса за эти ответы +5, 0, -2, -2.
+    // Т.к. User 108, User 114 имеют равное число и ответов, и голосов, они отсортированы по id
+    @Test
+    @DataSet(cleanBefore = true, cleanAfter = true,
+            value = {
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/users.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/roles.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/questions.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/answers_4_ans_out_of_week.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/votes_on_answers.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/reputations.yml"
+            },
+            strategy = SeedStrategy.CLEAN_INSERT)
+    public void testGetTop10UsersForWeekRankedByNumberOfQuestions() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
+        mockMvc.perform(get("/api/user/top-10-of-week")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[*].id").value(containsInRelativeOrder(105, 102, 108, 114, 109, 101, 106, 100, 107, 113)));
+    }
+
+    // Получение списка из топ 10 пользователей за неделю с наибольшим количеством вопросов по убыванию.
+    // Четыре ответа, которые User 112 давал - удалены (isDeleted = true). Ожидается потеря топ1 по количеству ответов.
+    @Test
+    @DataSet(cleanBefore = true, cleanAfter = true,
+            value = {
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/users.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/roles.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/questions.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/answers_deleted_ans.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/votes_on_answers.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/reputations.yml"
+            },
+            strategy = SeedStrategy.CLEAN_INSERT)
+    public void testGetTop10UsersForWeekDeletedAnswersRankedByNumberOfQuestions() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
+        Clock clock = Clock.fixed(Instant.parse("2014-12-22T10:15:30.00Z"), ZoneId.of("UTC"));
+        LocalDateTime dateTime = LocalDateTime.now(clock);
+        mockMvc.perform(get("/api/user/top-10-of-week")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[*].id").value(containsInRelativeOrder(105, 102, 108, 114, 109, 101, 106, 100, 107, 113)));
     }
 }
