@@ -13,6 +13,7 @@ import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -215,19 +216,19 @@ public class UserResourceController {
                 HttpStatus.OK);
     }
 
-    // -------------------------------------------------
-
-    @Operation(summary = "123" +
-            "456 ",
-            description = "789")
+    @Operation(summary = "Получение списка из топ 10 пользователей, оставивших наибольшее число ответов на вопросы за неделю",
+            description = "Получение списка из топ 10 пользователей (UserDto), оставивших наибольшее число ответов на вопросы за неделю. " +
+    "Если число ответов равны, то сортировка идёт по голосам, полученным за эти ответы по убыванию. Если голоса равны, то " +
+    "сортировка по id по возрастанию.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Возвращает список UserDto(Long id,String email, String fullName, String imageLink, String city, Long reputation)",
+                    description = "Возвращает список UserDto(Long id, String email, String fullName, String imageLink, String city, Long reputation)",
                     content = {
                             @Content(
-                                    mediaType = "application/json")
-                    }),
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = UserDto.class)))
+                    })
     })
     @GetMapping("/api/user/top-10-of-week")
     public ResponseEntity<List<UserDto>> getTop10UsersForWeekRankedByNumberOfQuestions() {

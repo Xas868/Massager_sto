@@ -17,13 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-import java.time.Clock;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
@@ -611,8 +604,6 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
             strategy = SeedStrategy.CLEAN_INSERT)
     public void testGetTop10UsersForWeekDeletedAnswersRankedByNumberOfQuestions() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
-        Clock clock = Clock.fixed(Instant.parse("2014-12-22T10:15:30.00Z"), ZoneId.of("UTC"));
-        LocalDateTime dateTime = LocalDateTime.now(clock);
         mockMvc.perform(get("/api/user/top-10-of-week")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
