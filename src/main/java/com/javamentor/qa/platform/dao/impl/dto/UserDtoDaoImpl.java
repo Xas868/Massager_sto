@@ -56,7 +56,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
     @Override
-    public List<UserDto> getTop10UsersForWeekRankedByNumberOfQuestions(Integer days, Integer top) {
+    public List<UserDto> getTop10UsersForPeriodRankedByNumberOfQuestions(Integer days) {
         return entityManager.createNativeQuery(
                         "SELECT u.id, u.email, u.full_name as \"fullName\", u.image_link as \"imageLink\", u.city, " +
                                 "(select sum(CASE WHEN r.count = NULL THEN 0 ELSE r.count END) from reputation r where r.author_id=u.id) as reputation " +
@@ -87,7 +87,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
                         return list;
                     }
                 })
-                .setMaxResults(top)
+                .setMaxResults(10)
                 .getResultList();
     }
 }

@@ -567,7 +567,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
         LocalDateTime realDateTime = LocalDateTime.now();
         Duration duration = Duration.between(fakeDateTime, realDateTime);
         Long setDaysToUrl = duration.toDays() + 7;
-        String url = "/api/user/top-10-of-week/?days=" + setDaysToUrl;
+        String url = "/api/user/top10/period/?days=" + setDaysToUrl;
         mockMvc.perform(get(url)
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -599,7 +599,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
         LocalDateTime realDateTime = LocalDateTime.now();
         Duration duration = Duration.between(fakeDateTime, realDateTime);
         Long setDaysToUrl = duration.toDays() + 7;
-        String url = "/api/user/top-10-of-week/?days=" + setDaysToUrl;
+        String url = "/api/user/top10/period/?days=" + setDaysToUrl;
         mockMvc.perform(get(url)
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -628,7 +628,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
         LocalDateTime realDateTime = LocalDateTime.now();
         Duration duration = Duration.between(fakeDateTime, realDateTime);
         Long setDaysToUrl = duration.toDays() + 7;
-        String url = "/api/user/top-10-of-week/?days=" + setDaysToUrl;
+        String url = "/api/user/top10/period/?days=" + setDaysToUrl;
         mockMvc.perform(get(url)
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
