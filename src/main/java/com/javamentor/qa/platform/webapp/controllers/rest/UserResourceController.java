@@ -232,8 +232,8 @@ public class UserResourceController {
                     })
     })
     @GetMapping("/api/user/top-10-of-week")
-    public ResponseEntity<List<UserDto>> getTop10UsersForWeekRankedByNumberOfQuestions(@RequestParam(value = "days", defaultValue = "7") Integer days,
-                                                                                       @RequestParam(value = "top", defaultValue = "10") Integer top) {
+    public ResponseEntity<List<UserDto>> getTop10UsersForWeekRankedByNumberOfQuestions(@RequestParam(value = "days", defaultValue = "7", required = false) Integer days,
+                                                                                       @RequestParam(value = "top", defaultValue = "10", required = false) Integer top) {
         return new ResponseEntity<>(userDtoService.getTop10UsersForWeekRankedByNumberOfQuestions(days, top), HttpStatus.OK);
     }
 }
