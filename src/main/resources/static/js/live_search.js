@@ -17,7 +17,9 @@ document.querySelector('#tagsTextInput').oninput = async function () {
     }
     if(val != '') {
         if (String(val).match(/[^;|,|\s|a-zA-z0-9]/)) {
-            tags.insertAdjacentHTML("beforebegin", "<div id='tagsChild'><span style='color: red'><b>Разделяйте теги только пробелом запятой или точкой с заяптой</b></span></div>")
+            if(!document.getElementById("tagsChild")){
+                tags.insertAdjacentHTML('beforebegin', "<div id='tagsChild'><span style='color: red'><b>Разделяйте теги только пробелом, запятой или точкой с запятой</b></span></div>");
+            }
         } else {
             if(document.getElementById("tagsChild") != null) {
                 var parent = document.getElementById("tags");
