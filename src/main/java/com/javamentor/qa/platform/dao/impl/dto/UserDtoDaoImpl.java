@@ -56,7 +56,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
     @Override
-    public List<UserDto> getTop10UsersForWeekRankedByNumberOfQuestions() {
+    public List<UserDto> getTop10UsersForWeekRankedByNumberOfQuestions(Integer days, Integer top) {
         return entityManager.createNativeQuery(
                         "SELECT u.id, u.email, u.full_name as \"fullName\", u.image_link as \"imageLink\", u.city, " +
                                 "(select sum(CASE WHEN r.count = NULL THEN 0 ELSE r.count END) from reputation r where r.author_id=u.id) as reputation " +
@@ -68,7 +68,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
                                 "group by u.id " +
                                 "order by count(a.user_id) desc, sum(sumv) desc, u.id"
                 )
-                .setParameter("date", LocalDateTime.now().minusWeeks(1))
+                .setParameter("date", LocalDateTime.now().minusDays(days))
                 .unwrap(org.hibernate.query.NativeQuery.class)
                 .setResultTransformer(new ResultTransformer() {
                     @Override
@@ -87,7 +87,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
                         return list;
                     }
                 })
-                .setMaxResults(10)
+                .setMaxResults(top)
                 .getResultList();
     }
 }

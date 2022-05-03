@@ -218,8 +218,9 @@ public class UserResourceController {
 
     @Operation(summary = "Получение списка из топ 10 пользователей, оставивших наибольшее число ответов на вопросы за неделю",
             description = "Получение списка из топ 10 пользователей (UserDto), оставивших наибольшее число ответов на вопросы за неделю. " +
-    "Если число ответов равны, то сортировка идёт по голосам, полученным за эти ответы по убыванию. Если голоса равны, то " +
-    "сортировка по id по возрастанию.")
+    "Если числа ответов равны, то сортировка идёт по голосам, полученным за эти ответы по убыванию. Если голоса равны, то " +
+    "сортировка по id по возрастанию. Запрос параметризован необязательными параметрами: days - количество дней подсчёта ответов " +
+    "(по умолчанию 7) и top - размер выводимого списка лидеров (по умолчанию 10)")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -231,7 +232,8 @@ public class UserResourceController {
                     })
     })
     @GetMapping("/api/user/top-10-of-week")
-    public ResponseEntity<List<UserDto>> getTop10UsersForWeekRankedByNumberOfQuestions() {
-        return new ResponseEntity<>(userDtoService.getTop10UsersForWeekRankedByNumberOfQuestions(), HttpStatus.OK);
+    public ResponseEntity<List<UserDto>> getTop10UsersForWeekRankedByNumberOfQuestions(@RequestParam(value = "days", defaultValue = "7") Integer days,
+                                                                                       @RequestParam(value = "top", defaultValue = "10") Integer top) {
+        return new ResponseEntity<>(userDtoService.getTop10UsersForWeekRankedByNumberOfQuestions(days, top), HttpStatus.OK);
     }
 }

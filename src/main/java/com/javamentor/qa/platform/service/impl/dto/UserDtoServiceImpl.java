@@ -51,7 +51,7 @@ public class UserDtoServiceImpl extends DtoServiceImpl<UserDto> implements UserD
     }
 
     @Override
-    public List<UserDto> getTop10UsersForWeekRankedByNumberOfQuestions() {
-        return userDtoDao.getTop10UsersForWeekRankedByNumberOfQuestions();
+    public List<UserDto> getTop10UsersForWeekRankedByNumberOfQuestions(Integer days, Integer top) {
+        return userDtoDao.getTop10UsersForWeekRankedByNumberOfQuestions(days, top);
     }
 }

@@ -17,6 +17,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
@@ -555,7 +560,15 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
             strategy = SeedStrategy.CLEAN_INSERT)
     public void testGetTop10UsersRankedByNumberOfQuestions() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
-        mockMvc.perform(get("/api/user/top-10-of-week")
+        // Так как работа api привязана к дате, то необходима установка периода с учётом настоящего времени теста
+        // и временем загрузки датасетов
+        String instantFakeDayOfTest = "2022-05-03T10:00:00Z";
+        LocalDateTime fakeDateTime = LocalDateTime.ofInstant(Instant.parse(instantFakeDayOfTest), ZoneId.of("UTC"));
+        LocalDateTime realDateTime = LocalDateTime.now();
+        Duration duration = Duration.between(fakeDateTime, realDateTime);
+        Long setDaysToUrl = duration.toDays() + 7;
+        String url = "/api/user/top-10-of-week/?days=" + setDaysToUrl;
+        mockMvc.perform(get(url)
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
@@ -581,7 +594,13 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
             strategy = SeedStrategy.CLEAN_INSERT)
     public void testGetTop10UsersForWeekRankedByNumberOfQuestions() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
-        mockMvc.perform(get("/api/user/top-10-of-week")
+        String instantFakeDayOfTest = "2022-05-03T10:00:00Z";
+        LocalDateTime fakeDateTime = LocalDateTime.ofInstant(Instant.parse(instantFakeDayOfTest), ZoneId.of("UTC"));
+        LocalDateTime realDateTime = LocalDateTime.now();
+        Duration duration = Duration.between(fakeDateTime, realDateTime);
+        Long setDaysToUrl = duration.toDays() + 7;
+        String url = "/api/user/top-10-of-week/?days=" + setDaysToUrl;
+        mockMvc.perform(get(url)
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
@@ -604,7 +623,13 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
             strategy = SeedStrategy.CLEAN_INSERT)
     public void testGetTop10UsersForWeekDeletedAnswersRankedByNumberOfQuestions() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
-        mockMvc.perform(get("/api/user/top-10-of-week")
+        String instantFakeDayOfTest = "2022-05-03T10:00:00Z";
+        LocalDateTime fakeDateTime = LocalDateTime.ofInstant(Instant.parse(instantFakeDayOfTest), ZoneId.of("UTC"));
+        LocalDateTime realDateTime = LocalDateTime.now();
+        Duration duration = Duration.between(fakeDateTime, realDateTime);
+        Long setDaysToUrl = duration.toDays() + 7;
+        String url = "/api/user/top-10-of-week/?days=" + setDaysToUrl;
+        mockMvc.perform(get(url)
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
