@@ -216,11 +216,10 @@ public class UserResourceController {
                 HttpStatus.OK);
     }
 
-    @Operation(summary = "Получение списка из топ 10 пользователей, оставивших наибольшее число ответов на вопросы за установленный период времени (по умолчанию за неделю)",
-            description = "Получение отсортированного списка из топ 10 пользователей (UserDto), оставивших наибольшее число ответов на вопросы за установленный период времени, " +
-                    "по умолчанию за неделю. " +
-                    "Если числа ответов равны, то сортировка идёт по голосам, полученным за эти ответы по убыванию. Если голоса равны, то " +
-                    "сортировка по id по возрастанию. Запрос параметризован необязательным параметром: days - количество дней подсчёта ответов")
+    @Operation(summary = "Получение списка из топ 10 пользователей, оставивших наибольшее число ответов на вопросы за неделю",
+            description = "Получение отсортированного списка из топ 10 пользователей (UserDto), оставивших наибольшее число ответов на вопросы за неделю. " +
+                    "Если числа ответов у некоторых пользователей равны, то сортировка идёт по голосам, полученным за эти ответы по убыванию. Если голоса равны, то " +
+                    "сортировка по id по возрастанию.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -231,8 +230,8 @@ public class UserResourceController {
                                     array = @ArraySchema(schema = @Schema(implementation = UserDto.class)))
                     })
     })
-    @GetMapping("/api/user/top10/period")
-    public ResponseEntity<List<UserDto>> getTop10UsersForPeriodRankedByNumberOfQuestions(@RequestParam(value = "days", defaultValue = "7", required = false) Integer days) {
-        return new ResponseEntity<>(userDtoService.getTop10UsersForPeriodRankedByNumberOfQuestions(days), HttpStatus.OK);
+    @GetMapping("/api/user/top10/week")
+    public ResponseEntity<List<UserDto>> getTop10UsersForWeekRankedByNumberOfQuestions() {
+        return new ResponseEntity<>(userDtoService.getTop10UsersForWeekRankedByNumberOfQuestions(), HttpStatus.OK);
     }
 }

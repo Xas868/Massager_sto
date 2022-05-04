@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -56,30 +55,30 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
     @Override
-    public List<UserDto> getTop10UsersForPeriodRankedByNumberOfQuestions(Integer days) {
-        return entityManager.createNativeQuery(
-                        "SELECT u.id, u.email, u.full_name as \"fullName\", u.image_link as \"imageLink\", u.city, " +
-                                "(select sum(CASE WHEN r.count = NULL THEN 0 ELSE r.count END) from reputation r where r.author_id=u.id) as reputation " +
-                                "from user_entity u " +
-                                "inner join answer a on u.id = a.user_id " +
-                                "left join (select voa.answer_id, sum(case when voa.vote = 'UP_VOTE' then 1 else -1 end) as sumv " +
-                                "from votes_on_answers voa group by voa.answer_id) as vs on a.id = vs.answer_id " +
-                                "where a.persist_date > :date and a.is_deleted = false and u.is_deleted = false " +
-                                "group by u.id " +
-                                "order by count(a.user_id) desc, sum(sumv) desc, u.id"
-                )
-                .setParameter("date", LocalDateTime.now().minusDays(days))
-                .unwrap(org.hibernate.query.NativeQuery.class)
+    public List<UserDto> getTop10UsersForWeekRankedByNumberOfQuestions() {
+        String hql = "select u.id, u.email, u.fullName, u.imageLink, u.city, " +
+                "(select sum(case when r.count is null then 0 else r.count end) from Reputation r where r.author.id=u.id) as reputation, " +
+                "sum(case when voa.vote = 'UP_VOTE' then 1 when voa.vote = 'DOWN_VOTE' then -1 else 0 end) as sumVotes, " +
+                "count(distinct a.id) as answersCount " +
+                "from User u " +
+                "inner join Answer a on u.id = a.user.id " +
+                "left join VoteAnswer voa on a.id = voa.answer.id " +
+                "where a.persistDateTime > :date and a.isDeleted = false and u.isDeleted = false " +
+                "group by u.id " +
+                "order by answersCount desc, sumVotes desc, u.id";
+        return entityManager.createQuery(hql)
+                .setParameter("date", LocalDateTime.now().minusDays(7))
+                .unwrap(org.hibernate.query.Query.class)
                 .setResultTransformer(new ResultTransformer() {
                     @Override
                     public UserDto transformTuple(Object[] objects, String[] strings) {
                         return new UserDto(
-                                ((BigInteger)objects[0]).longValue(),
+                                (Long)objects[0],
                                 (String)objects[1],
                                 (String)objects[2],
                                 (String)objects[3],
                                 (String)objects[4],
-                                ((BigInteger)objects[5]).longValue());
+                                (Long)objects[5]);
                     }
 
                     @Override
