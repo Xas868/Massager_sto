@@ -5,7 +5,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.241299
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.241299
     question_id: 101
     user_id: 107
@@ -15,7 +16,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.241299
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.241299
     question_id: 101
     user_id: 109
@@ -25,7 +27,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.241299
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.241299
     question_id: 101
     user_id: 100
@@ -35,7 +38,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.241299
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.241299
     question_id: 101
     user_id: 114
@@ -45,7 +49,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.242300
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.242300
     question_id: 101
     user_id: 112
@@ -55,7 +60,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.242300
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.242300
     question_id: 101
     user_id: 109
@@ -65,7 +71,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.242300
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.242300
     question_id: 101
     user_id: 114
@@ -75,7 +82,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.242300
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.242300
     question_id: 101
     user_id: 102
@@ -95,7 +103,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.242300
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.242300
     question_id: 101
     user_id: 108
@@ -115,7 +124,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.242300
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.242300
     question_id: 101
     user_id: 113
@@ -125,7 +135,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.242300
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.242300
     question_id: 101
     user_id: 106
@@ -135,7 +146,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.243299
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.243299
     question_id: 101
     user_id: 109
@@ -145,7 +157,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.243299
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.243299
     question_id: 101
     user_id: 105
@@ -175,7 +188,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.243299
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.243299
     question_id: 101
     user_id: 104
@@ -185,7 +199,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.243299
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.243299
     question_id: 101
     user_id: 110
@@ -195,7 +210,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.243299
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.243299
     question_id: 101
     user_id: 102
@@ -205,7 +221,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.248298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.248298
     question_id: 101
     user_id: 108
@@ -215,7 +232,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.248298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.248298
     question_id: 101
     user_id: 102
@@ -225,7 +243,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.248298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.248298
     question_id: 101
     user_id: 101
@@ -235,7 +254,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.248298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.248298
     question_id: 101
     user_id: 106
@@ -245,7 +265,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.248298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.248298
     question_id: 101
     user_id: 105
@@ -255,7 +276,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.248298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.248298
     question_id: 101
     user_id: 105
@@ -265,7 +287,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.248298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.248298
     question_id: 101
     user_id: 103
@@ -275,7 +298,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.249298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.249298
     question_id: 101
     user_id: 114
@@ -285,7 +309,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.249298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.249298
     question_id: 101
     user_id: 114
@@ -295,7 +320,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.249298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.249298
     question_id: 101
     user_id: 111
@@ -305,7 +331,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.249298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.249298
     question_id: 101
     user_id: 102
@@ -315,7 +342,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.249298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.249298
     question_id: 101
     user_id: 100
@@ -325,7 +353,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.249298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.249298
     question_id: 101
     user_id: 101
@@ -335,7 +364,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.249298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.249298
     question_id: 101
     user_id: 110
@@ -345,7 +375,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.249298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.249298
     question_id: 101
     user_id: 108
@@ -355,7 +386,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.249298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.249298
     question_id: 101
     user_id: 105
@@ -365,7 +397,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.249298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.249298
     question_id: 101
     user_id: 101
@@ -375,7 +408,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.249298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.249298
     question_id: 101
     user_id: 107
@@ -385,7 +419,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.250298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.250298
     question_id: 101
     user_id: 113
@@ -395,7 +430,8 @@ answer:
     is_deleted: false
     is_deleted_by_moderator: false
     is_helpful: false
-    persist_date: 2022-05-02 13:15:30.250298
+    persist_date: "groovy: Calendar cal = Calendar.getInstance();
+                            return cal.getTime();"
     update_date: 2022-05-02 13:15:30.250298
     question_id: 101
     user_id: 108
