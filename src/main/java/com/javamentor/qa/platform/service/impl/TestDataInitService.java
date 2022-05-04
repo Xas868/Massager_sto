@@ -242,7 +242,7 @@ public class TestDataInitService {
 
     private List<Tag> getRandomTagList() {
         List<Tag> tags = tagService.getAll();
-        int numOfDeleteTags = new Random().nextInt(tags.size());
+        int numOfDeleteTags = tags.size() - 5 + new Random().nextInt(5);
         for (int i = 0; i < numOfDeleteTags; i++) {
             tags.remove(new Random().nextInt(tags.size()));
         }
