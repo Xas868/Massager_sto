@@ -470,7 +470,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
     @ExpectedDataSet(value = {
             "dataset/testAnswerResourceController/addCommentAnswer/expected/answerComment.yml"
     },
-            ignoreCols = {"persist_date", "last_redaction_date"}
+            ignoreCols = {"persist_date", "last_redaction_date", "id"}
     )
 
     public void testAddCommentAnswer() throws Exception {

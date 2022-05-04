@@ -155,7 +155,7 @@ public class AnswerResourceController {
         Answer answer = new Answer(question.get(), user, bodyAnswer);
         answerService.persist(answer);
 
-        return new ResponseEntity<>("answerDtoService.getUndeletedAnswerDtoById(answer.getId())", HttpStatus.OK);
+        return new ResponseEntity<>(answerDtoService.getUndeletedAnswerDtoById(answer.getId()), HttpStatus.OK);
     }
 
     @Operation(summary = "Получение списка ответов на вопрос оп ID вопроса",
