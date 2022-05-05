@@ -13,6 +13,7 @@ import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -215,4 +216,22 @@ public class UserResourceController {
                 HttpStatus.OK);
     }
 
+    @Operation(summary = "Получение списка из топ 10 пользователей, оставивших наибольшее число ответов на вопросы за неделю",
+            description = "Получение отсортированного списка из топ 10 пользователей (UserDto), оставивших наибольшее число ответов на вопросы за неделю. " +
+                    "Если числа ответов у некоторых пользователей равны, то сортировка идёт по голосам, полученным за эти ответы по убыванию. Если голоса равны, то " +
+                    "сортировка по id по возрастанию.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Возвращает список UserDto(Long id, String email, String fullName, String imageLink, String city, Long reputation)",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = UserDto.class)))
+                    })
+    })
+    @GetMapping("/api/user/top10/week")
+    public ResponseEntity<List<UserDto>> getTop10UsersForWeekRankedByNumberOfQuestions() {
+        return new ResponseEntity<>(userDtoService.getTop10UsersForWeekRankedByNumberOfQuestions(), HttpStatus.OK);
+    }
 }
