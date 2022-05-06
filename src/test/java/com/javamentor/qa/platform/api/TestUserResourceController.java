@@ -35,7 +35,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     private CacheManager cacheManager;
 
     @Test
-    //Вывод Dto по id
+    //Вывод Dto по id без тегов
     @DataSet(cleanBefore = true,
             value = {
                     "dataset/testUserResourceController/roles.yml",
@@ -57,7 +57,39 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.fullName").value("test 15"))
                 .andExpect(jsonPath("$.imageLink").value("photo"))
                 .andExpect(jsonPath("$.city").value("Moscow"))
-                .andExpect(jsonPath("$.reputation").value(100));
+                .andExpect(jsonPath("$.reputation").value(100))
+                .andExpect(jsonPath("$.listTagDto").isEmpty());
+    }
+
+    @Test
+    //Вывод Dto по id с топ 3 тегами
+    // У User100 2 ответа под вопросом с тегом 106 и 5 вопросов с тегом 106 - итого, популярность: 7
+    //           2 ответа под вопросом с тегом 103 и 4 вопроса с тегом 103 - итого, популярность: 6
+    //           2 ответа под вопросом с тегом 104 и 4 вопроса с тегом 104 - итого, популярность: 6
+    // Тег 106 - 1-е место, тег 103, тег 104 - 2-е и 3-е соответственно (популярность одинакова => сортировка по id)
+    @DataSet(cleanBefore = true,
+            value = {
+                    "dataset/testUserResourceController/getApiUserDtoIdWithTop3Tags/roles.yml",
+                    "dataset/testUserResourceController/getApiUserDtoIdWithTop3Tags/users5.yml",
+                    "dataset/testUserResourceController/getApiUserDtoIdWithTop3Tags/reputations5.yml",
+                    "dataset/testUserResourceController/getApiUserDtoIdWithTop3Tags/answers20.yml",
+                    "dataset/testUserResourceController/getApiUserDtoIdWithTop3Tags/tags8.yml"
+            },
+            strategy = SeedStrategy.CLEAN_INSERT)
+    public void getApiUserDtoIdWithTop3Tags() throws Exception {
+        this.mockMvc.perform(get("/api/user/100")
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "test15")))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value("100"))
+                .andExpect(jsonPath("$.email").value("user100@mail.ru"))
+                .andExpect(jsonPath("$.fullName").value("test 1"))
+                .andExpect(jsonPath("$.imageLink").value("photo"))
+                .andExpect(jsonPath("$.city").value("Moscow"))
+                .andExpect(jsonPath("$.reputation").value(1000))
+                .andExpect(jsonPath("$.listTagDto[*].id").value(containsInRelativeOrder(106, 103, 104)));
     }
 
     //Проверяем на не существующий id
