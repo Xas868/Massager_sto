@@ -13,4 +13,5 @@ public interface TagDtoService extends PageDtoService<TagViewDto>{
     List<PopularTagDto> getPopularTags(Integer limit);
     List<TagDto> getTagDtoServiceById(Long id);
     List<TagDto> getTagsLike(String value);
+    List<TagDto> getTop3TagsForUser(Long userId);
 }

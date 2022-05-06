@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.service.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.UserDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
+import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
@@ -27,8 +28,13 @@ public class UserDtoServiceImpl extends DtoServiceImpl<UserDto> implements UserD
 
     @Override
     public Optional<UserDto> findUserDtoById(Long id) {
-        return userDtoDao.findUserDto(id);
+        Optional<UserDto> user = userDtoDao.findUserDto(id);
+        if (user.isPresent()) {
+            user.get().setListTagDto(tagDtoDao.getTop3TagsForUser(id));
+        }
+        return user;
     }
+
     @Override
     public List<UserProfileQuestionDto> getUserProfileQuestionDtoByUserIdIsDeleted(Long id) {
         List<UserProfileQuestionDto> resultList=userDtoDao.getAllUserProfileQuestionDtoByUserIdWhereQuestionIsDeleted(id);
@@ -52,6 +58,11 @@ public class UserDtoServiceImpl extends DtoServiceImpl<UserDto> implements UserD
 
     @Override
     public List<UserDto> getTop10UsersForWeekRankedByNumberOfQuestions() {
-        return userDtoDao.getTop10UsersForWeekRankedByNumberOfQuestions();
+        List<UserDto> resultList = userDtoDao.getTop10UsersForWeekRankedByNumberOfQuestions();
+        for (long i = 0; i < resultList.size(); i++) {
+            List<TagDto> tagsToSetForUser = tagDtoDao.getTop3TagsForUser(i + 1);
+            resultList.get((int) i).setListTagDto(tagsToSetForUser);
+        }
+        return resultList;
     }
 }

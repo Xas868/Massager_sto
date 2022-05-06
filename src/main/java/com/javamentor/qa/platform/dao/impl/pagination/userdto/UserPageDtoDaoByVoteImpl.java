@@ -1,6 +1,8 @@
 package com.javamentor.qa.platform.dao.impl.pagination.userdto;
 
+import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
+import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
@@ -18,6 +20,11 @@ public class UserPageDtoDaoByVoteImpl implements PageDtoDao<UserDto> {
     @PersistenceContext
     private EntityManager entityManager;
     private String filter;
+    private final TagDtoDao tagDtoDao;
+
+    public UserPageDtoDaoByVoteImpl(TagDtoDao tagDtoDao) {
+        this.tagDtoDao = tagDtoDao;
+    }
 
     @Override
     public List<UserDto> getPaginationItems(PaginationData properties) {
@@ -35,7 +42,7 @@ public class UserPageDtoDaoByVoteImpl implements PageDtoDao<UserDto> {
                     "or upper(u.email) like upper(:filter) " +
                     "or upper(u.fullName) like upper(:filter)) " +
                     "GROUP BY u.id ORDER BY voteOrder DESC, u.id ASC";
-            return entityManager.createQuery(hql)
+            List<UserDto> resultList = entityManager.createQuery(hql)
                     .setParameter("filter", "%" + filter + "%")
                     .setParameter("voteAns", ReputationType.VoteAnswer)
                     .setParameter("voteQuest", ReputationType.VoteQuestion)
@@ -60,10 +67,15 @@ public class UserPageDtoDaoByVoteImpl implements PageDtoDao<UserDto> {
                         }
                     })
                     .getResultList();
+            for (long i = 0; i < resultList.size(); i++) {
+                List<TagDto> tagsToSetForUser = tagDtoDao.getTop3TagsForUser(offset + i);
+                resultList.get((int) i).setListTagDto(tagsToSetForUser);
+            }
+            return resultList;
         }
 
         hql += "GROUP BY u.id ORDER BY voteOrder DESC, u.id ASC";
-        return entityManager.createQuery(hql)
+        List<UserDto> resultList = entityManager.createQuery(hql)
                 .setParameter("voteAns", ReputationType.VoteAnswer)
                 .setParameter("voteQuest", ReputationType.VoteQuestion)
                 .setFirstResult(offset)
@@ -87,6 +99,11 @@ public class UserPageDtoDaoByVoteImpl implements PageDtoDao<UserDto> {
                     }
                 })
                 .getResultList();
+        for (long i = 0; i < resultList.size(); i++) {
+            List<TagDto> tagsToSetForUser = tagDtoDao.getTop3TagsForUser(offset + i);
+            resultList.get((int) i).setListTagDto(tagsToSetForUser);
+        }
+        return resultList;
     }
 
     @Override
