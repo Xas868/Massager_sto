@@ -1,8 +1,6 @@
 package com.javamentor.qa.platform.dao.impl.pagination.userdto;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
-import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import org.springframework.stereotype.Repository;
@@ -18,11 +16,6 @@ public class UserPageDtoDaoAllUsersImpl implements PageDtoDao<UserDto> {
     @PersistenceContext
     private EntityManager entityManager;
     private String filter;
-    private final TagDtoDao tagDtoDao;
-
-    public UserPageDtoDaoAllUsersImpl(TagDtoDao tagDtoDao) {
-        this.tagDtoDao = tagDtoDao;
-    }
 
     @Override
     public List<UserDto> getPaginationItems(PaginationData properties) {
@@ -39,28 +32,18 @@ public class UserPageDtoDaoAllUsersImpl implements PageDtoDao<UserDto> {
                     "or upper(u.email) like upper(:filter) " +
                     "or upper(u.fullName) like upper(:filter)) " +
                     "order by u.persistDateTime";
-            List<UserDto> resultList = entityManager.createQuery(hql, UserDto.class)
+            return entityManager.createQuery(hql, UserDto.class)
                     .setParameter("filter", "%" + filter + "%")
                     .setFirstResult(offset)
                     .setMaxResults(itemsOnPage)
                     .getResultList();
-            for (long i = 0; i < resultList.size(); i++) {
-                List<TagDto> tagsToSetForUser = tagDtoDao.getTop3TagsForUser(offset + i);
-                resultList.get((int) i).setListTagDto(tagsToSetForUser);
-            }
-            return resultList;
         }
 
         hql += "order by u.persistDateTime";
-        List<UserDto> resultList = entityManager.createQuery(hql, UserDto.class)
+        return entityManager.createQuery(hql, UserDto.class)
                 .setFirstResult(offset)
                 .setMaxResults(itemsOnPage)
                 .getResultList();
-        for (long i = 0; i < resultList.size(); i++) {
-            List<TagDto> tagsToSetForUser = tagDtoDao.getTop3TagsForUser(offset + i);
-            resultList.get((int) i).setListTagDto(tagsToSetForUser);
-        }
-        return resultList;
     }
 
     @Override

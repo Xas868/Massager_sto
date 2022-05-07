@@ -3,9 +3,10 @@ package com.javamentor.qa.platform.service.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.UserDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
-import com.javamentor.qa.platform.models.dto.TagDto;
+import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,9 +31,7 @@ public class UserDtoServiceImpl extends DtoServiceImpl<UserDto> implements UserD
     @Override
     public Optional<UserDto> findUserDtoById(Long id) {
         Optional<UserDto> user = userDtoDao.findUserDto(id);
-        if (user.isPresent()) {
-            user.get().setListTagDto(tagDtoDao.getTop3TagsForUser(id));
-        }
+        user.ifPresent(userDto -> userDto.setListTagDto(tagDtoDao.getTop3TagsForUser(id)));
         return user;
     }
 
@@ -58,11 +58,19 @@ public class UserDtoServiceImpl extends DtoServiceImpl<UserDto> implements UserD
 
     @Override
     public List<UserDto> getTop10UsersForWeekRankedByNumberOfQuestions() {
-        List<UserDto> resultList = userDtoDao.getTop10UsersForWeekRankedByNumberOfQuestions();
-        for (long i = 0; i < resultList.size(); i++) {
-            List<TagDto> tagsToSetForUser = tagDtoDao.getTop3TagsForUser(i + 1);
-            resultList.get((int) i).setListTagDto(tagsToSetForUser);
-        }
+        var resultList = userDtoDao.getTop10UsersForWeekRankedByNumberOfQuestions();
+        var usersIdList = resultList.stream().map(UserDto::getId).collect(Collectors.toList());
+        var map = usersIdList.stream().collect(Collectors.toMap(Function.identity(), tagDtoDao::getTop3TagsForUser));
+        resultList.forEach(u -> u.setListTagDto(map.get(u.getId())));
         return resultList;
+    }
+
+    @Override
+    public PageDTO<UserDto> getPageDto(PaginationData properties) {
+        var pageDto = super.getPageDto(properties);
+        var usersIdList = pageDto.getItems().stream().map(UserDto::getId).collect(Collectors.toList());
+        var map = usersIdList.stream().collect(Collectors.toMap(Function.identity(), tagDtoDao::getTop3TagsForUser));
+        pageDto.getItems().forEach(u -> u.setListTagDto(map.get(u.getId())));
+        return pageDto;
     }
 }
