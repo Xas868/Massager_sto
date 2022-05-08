@@ -14,7 +14,7 @@
         <div class="col">
             <div id="questionHeader" class="d-flex justify-content-between mb-3 align-items-center">
                 <h2 id="questionName">Название вопроса</h2>
-                <button class="btn btn-info h-50">Задать вопрос</button>
+                <button class="btn btn-info h-50" onclick="window.location.href='/questions/add'">Задать вопрос</button>
             </div>
             <div class="infoBar d-flex justify-content-left mb-3 align-items-center">
                 <div class="flex--item ws-nowrap mr-16 mb-8">
@@ -44,9 +44,7 @@
                                 </svg>
                             </button>
 
-                            <div id="votesCounter" class="d-flex justify-content-center">
-                                <span id="votes">0</span>
-                            </div>
+                            <div id="votesCounter" class="d-flex justify-content-center"></div>
 
                             <button id="voteDown" class="p-0 btn btn_link_custom" data-toggle="tooltip"
                                     data-placement="right" title="Бесполезный вопрос">
@@ -77,31 +75,9 @@
 
                     <div class="col">
                         <div class="row d-flex flex-column">
-                            <div id="questionText">
-                                <p>Этот текст здесь исключительно в целях демонстрации. При дальнейшем развитии данной
-                                    страницы этот элемент необходимо удалить! Этот текст здесь исключительно в целях
-                                    демонстрации. При дальнейшем развитии данной страницы этот элемент необходимо
-                                    удалить! Этот текст здесь исключительно в целях демонстрации. При дальнейшем
-                                    развитии
-                                    данной страницы этот элемент необходимо удалить! Этот текст здесь исключительно в
-                                    целях демонстрации. При дальнейшем развитии данной страницы этот элемент необходимо
-                                    удалить! Этот текст здесь исключительно в целях демонстрации. При дальнейшем
-                                    развитии данной
-                                    страницы этот элемент необходимо удалить! Этот текст здесь исключительно в целях
-                                    демонстрации. При дальнейшем развитии данной страницы этот элемент необходимо
-                                    удалить! Этот текст здесь исключительно в целях демонстрации. При дальнейшем
-                                    развитии
-                                    данной страницы этот элемент необходимо удалить! Этот текст здесь исключительно в
-                                    целях демонстрации. При дальнейшем развитии данной страницы этот элемент необходимо
-                                    удалить!</p>
-                            </div>
+                            <div id="questionText"></div>
 
-                            <div class="questionTags">
-                                <a href="#"><span class="badge bg-info text-light">tag_name_1</span></a>
-                                <a href="#"><span class="badge bg-info text-light">tag_name_2</span></a>
-                                <a href="#"><span class="badge bg-info text-light">tag_name_3</span></a>
-                                <a href="#"><span class="badge bg-info text-light">tag_name_4</span></a>
-                            </div>
+                            <div class="questionTags"></div>
 
                             <div class="row mx-0 bottomBlock d-flex justify-content-between">
                                 <div>
@@ -114,14 +90,10 @@
                                     <a type="button" style="color: #6a737c;">Изменить</a>
                                     <a type="button" style="color: #6a737c;">Следить</a>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col">
+                                <div class="d-flex flex-row">
+                                    <div class="userCard">
                                         <div class="container">
-                                            <div class="d-flex flex-column">
-                                                <div class="row">
-                                                    <a id="lastChangeLink" href="#">ссылка на инфу об изменениях</a>
-                                                </div>
+                                            <div class="d-flex flex-column flex-wrap">
                                                 <div id="userCard0" class="row">
                                                     <span>карточка пользователя</span>
                                                 </div>
@@ -129,12 +101,9 @@
                                         </div>
                                     </div>
 
-                                    <div class="col">
+                                    <div class="mainUserCard">
                                         <div class="container">
                                             <div class="d-flex flex-column">
-                                                <div class="row">
-                                                    <span id="askedDate">дата создания вопроса</span>
-                                                </div>
                                                 <div id="userCard1" class="row">
                                                     <span>карточка пользователя</span>
                                                 </div>
@@ -154,8 +123,8 @@
                                                 <span class="usefulCommentVotesCounter">123</span>
                                             </div>
                                             <div class="col">
-                                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
-                                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
+                                                <span class="comment-text">Данный блок - заглушка. Comment_question не инициализирован.
+                                                Данный блок - заглушка. Comment_question не инициализирован. Данный блок - заглушка. Comment_question не инициализирован.</span>
                                                 –&nbsp;<a href="#" class="comment-user">Имя Пользователя 1</a>
                                                 <span class="comment-data"
                                                       style="color:#9199a1">15 сентября 2021, 17:49</span>
@@ -168,8 +137,8 @@
                                                 <span class="usefulCommentVotes">120</span>
                                             </div>
                                             <div class="col">
-                                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
-                                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
+                                                <span class="comment-text">Данный блок - заглушка. Comment_question не инициализирован.
+                                                    Данный блок - заглушка. Comment_question не инициализирован. Данный блок - заглушка. Comment_question не инициализирован.</span>
                                                 –&nbsp;<a href="#" class="comment-user">Имя Пользователя 2</a>
                                                 <span class="comment-data"
                                                       style="color:#9199a1">16 сентября 2021, 18:49</span>
@@ -182,8 +151,8 @@
                                                 <span class="usefulCommentVotes">23</span>
                                             </div>
                                             <div class="col">
-                                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
-                                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
+                                                <span class="comment-text">Данный блок - заглушка. Comment_question не инициализирован.
+                                                    Данный блок - заглушка. Comment_question не инициализирован. Данный блок - заглушка. Comment_question не инициализирован.</span>
                                                 –&nbsp;<a href="#" class="comment-user">Имя Пользователя 3</a>
                                                 <span class="comment-data"
                                                       style="color:#9199a1">17 сентября 2021, 17:29</span>
@@ -377,14 +346,9 @@
                     <h6 class="mt-2 mb-0">
                         Не нашли подходящего ответа? Посмотрите другие вопросы с тегами:
                     </h6>
-                    <div class="questionTags">
-                        <a href="#"><span class="badge bg-info text-light">tag_name_1</span></a>
-                        <a href="#"><span class="badge bg-info text-light">tag_name_2</span></a>
-                        <a href="#"><span class="badge bg-info text-light">tag_name_3</span></a>
-                        <a href="#"><span class="badge bg-info text-light">tag_name_4</span></a>
-                    </div>
+                    <div class="questionTagsBottom"></div>
                     <h6 class="mb-2">
-                        Или задайте новый вопрос <a href="#">тут</a>.
+                        Или задайте новый вопрос <a href="../questions/add">тут</a>.
                     </h6>
                 </div>
             </div>
@@ -401,5 +365,6 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
 <script type="text/javascript" src="/js/initScriptAuthorized.js"></script>
+<script type="text/javascript" src="/js/question.js"></script>
 </body>
 </html>

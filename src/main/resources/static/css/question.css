@@ -9,3 +9,17 @@
 .infoBar {
     font-size: 10pt;
 }
+
+.mainUserCard {
+    box-sizing: border-box;
+    padding: 5px 6px 7px 7px;
+    background-color: rgba(217, 234, 247, 1);
+    border-radius: 5px;
+    width: 220px;
+}
+
+.userCard {
+    box-sizing: border-box;
+    padding: 5px 6px 7px 7px;
+    width: 220px;
+}
