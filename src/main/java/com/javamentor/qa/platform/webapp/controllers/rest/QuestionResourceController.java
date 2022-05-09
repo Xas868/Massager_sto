@@ -421,7 +421,9 @@ public class QuestionResourceController {
         CommentQuestion commentQuestion = new CommentQuestion(bodyComment, user);
         commentQuestion.setQuestion(question.get());
         commentQuestionService.persist(commentQuestion);
-        return new ResponseEntity<>("Comment successfully added", HttpStatus.OK);
+        List<QuestionCommentDto> questionCommentDtoList = questionDtoService.getQuestionByIdComment(id);
+        QuestionCommentDto questionCommentDto = questionCommentDtoList.get(questionCommentDtoList.size() - 1);
+        return new ResponseEntity<>(questionCommentDto, HttpStatus.OK);
     }
 }
 
