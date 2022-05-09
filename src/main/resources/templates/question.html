@@ -115,7 +115,7 @@
                         </div>
                         <div class="row d-flex flex-column py-2">
                             <div>
-                                <ul class="list-group mb-2">
+                                <ul class="list-group mb-2" id="questionComments">
                                     <!--ЭЛЕМЕНТЫ НИЖЕ ЯВЛЯЮТСЯ ДЕМОНСТРАТИВНЫМИ ШАБЛОНАМИ-->
                                     <li class="list-group-item border-right-0 border-left-0 px-0">
                                         <div class="row mx-0">
@@ -162,9 +162,9 @@
                                 </ul>
                             </div>
                             <div>
-                                <textarea class="col px-1" id="inputCommentField" rows="5"
+                                <textarea class="col px-1" id="inputCommentField" rows="4"
                                           style="resize:none"></textarea>
-                                <button class="btn btn-info mt-2" id="addCommentButton">Добавить комментарий</button>
+                                <button class="btn btn-info mt-2" id="questionCommentButton">Добавить комментарий</button>
                             </div>
                         </div>
                     </div>
@@ -191,7 +191,7 @@
                     </div>
 
                     <div id="answers">
-                        <div class="row">
+                        <div id="answerForm" class="row">
                             <div class="col-1 d-flex justify-content-center align-items-start">
                                 <div class="d-flex flex-column justify-content-center">
                                     <button id="voteUpAnswer" class="p-0 btn btn_link_custom" data-toggle="tooltip"
@@ -295,8 +295,8 @@
                                                         <span class="usefulCommentVotesCounter">123</span>
                                                     </div>
                                                     <div class="col">
-                                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
-                                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
+                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
+                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
                                                         –&nbsp;<a href="#" class="comment-user">Имя Пользователя 1</a>
                                                         <span class="comment-data"
                                                               style="color:#9199a1">15 сентября 2021, 17:49</span>
@@ -309,8 +309,8 @@
                                                         <span class="usefulCommentVotes">120</span>
                                                     </div>
                                                     <div class="col">
-                                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
-                                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
+                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
+                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
                                                         –&nbsp;<a href="#" class="comment-user">Имя Пользователя 2</a>
                                                         <span class="comment-data"
                                                               style="color:#9199a1">16 сентября 2021, 18:49</span>
@@ -323,8 +323,8 @@
                                                         <span class="usefulCommentVotes">23</span>
                                                     </div>
                                                     <div class="col">
-                                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
-                                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
+                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
+                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
                                                         –&nbsp;<a href="#" class="comment-user">Имя Пользователя 3</a>
                                                         <span class="comment-data"
                                                               style="color:#9199a1">17 сентября 2021, 17:29</span>
@@ -334,23 +334,26 @@
                                         </ul>
                                     </div>
                                     <div>
-                                <textarea class="col px-1" id="inputCommentFieldAnswer" rows="5"
-                                          style="resize:none"></textarea>
+                        <textarea class="col px-1" id="inputCommentFieldAnswer" rows="5"
+                                  style="resize:none"></textarea>
                                         <button class="btn btn-info mt-2" id="addCommentAnswerButton">Добавить комментарий</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <h6 class="mt-2 mb-0">
-                        Не нашли подходящего ответа? Посмотрите другие вопросы с тегами:
-                    </h6>
-                    <div class="questionTagsBottom"></div>
-                    <h6 class="mb-2">
-                        Или задайте новый вопрос <a href="../questions/add">тут</a>.
-                    </h6>
                 </div>
+                <div>
+                    <textarea class="col px-1" id="inputAnswerField" rows="5" style="resize:none"></textarea>
+                    <button class="btn btn-info mt-2" id="addAnswerButton">Добавить ответ</button>
+                </div>
+                <h6 class="mt-2 mb-0">
+                    Не нашли подходящего ответа? Посмотрите другие вопросы с тегами:
+                </h6>
+                <div class="questionTagsBottom"></div>
+                <h6 class="mb-2">
+                    Или задайте новый вопрос <a href="../questions/add">тут</a>.
+                </h6>
             </div>
         </div>
     </div>
