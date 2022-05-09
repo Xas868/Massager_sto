@@ -18,10 +18,14 @@ const answersList = document.querySelector('#answers');
 const answerForm = document.querySelector('#answerForm');
 let url = window.location.href;
 let questionId = url.substring(url.lastIndexOf('/') + 1).replace(/\D/g, "");
-const questionComments = document.getElementById('questionComments');
+const questionComments = document.querySelector('#questionComments');
 const questionCommentButton = document.getElementById('questionCommentButton');
 let commentsOutput = '';
+const addAnswerButton = document.getElementById('addAnswerButton');
+let answerId = '';
 
+
+//-----Блок вопроса-----------------------------------------------------------------------------------------------
 
 async function makeUpVoteForQuestion() {
     await fetch(`http://localhost:8091/api/user/question/${questionId}/upVote`,{
@@ -102,22 +106,134 @@ async function setQuestionInfo(info) {
     questionTagsBottom.innerHTML = questionTagsHtml;
 }
 
-async function setAnswersInfo(answers) {
-    for (let answer in answers) {
+
+
+
+voteUp.onclick = async function() {
+    await makeUpVoteForQuestion();
+    fetchQuestionInfo().then(res => {votes.innerHTML = res.countValuable});
+}
+
+async function makeDownVoteForQuestion(){
+    await fetch(`http://localhost:8091/api/user/question/${questionId}/downVote`,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token[1]
+        }
+    })
+}
+
+voteDown.onclick = async function() {
+    await makeDownVoteForQuestion();
+    fetchQuestionInfo().then(res => {votes.innerHTML = res.countValuable});
+}
+
+async function addBookmarkForQuestion(){
+    await fetch(`http://localhost:8091/api/user/question/${questionId}/bookmark`,{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token[1]
+        }
+    })
+}
+
+addBookmark.onclick = async function() {
+    await addBookmarkForQuestion();
+    bookmarkCount.innerHTML = "В базу добавлено, но в api нет возможности получить число всех закладок вопроса"
+    addBookmark.disabled = true;
+}
+
+//-----Комментарии к вопросам-----
+
+questionCommentButton.onclick = async function() {
+    let commentTextToAdd = document.getElementById('inputCommentField').value;
+    document.getElementById('inputCommentField').value = "";
+    fetch(`/${questionId}/comment`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token[1]
+        },
+        body: commentTextToAdd
+    })
+        .then(response => response.json())
+        .then(data => {
+            const newComment = [];
+            newComment.push(data);
+            showQuestionCommentsOnPage(newComment);
+        });
+}
+
+function showQuestionCommentsOnPage(data) {
+    for (let questionComment in data) {
+        commentsOutput += `
+        <li class="list-group-item border-right-0 border-left-0 px-0">
+            <div class="row mx-0">
+                <div class="col-1 d-flex justify-content-center">
+                    <span class="usefulCommentVotes">0</span>
+                </div>
+                <div class="col">
+                    <span class="comment-text">${data[questionComment].text}<span> – </span><a href="#" class="comment-user">User ${data[questionComment].userId}</a>
+                    <span class="comment-data" style="color:#9199a1">${data[questionComment].persistDate.replace("T", " в ").slice(0, -7)}</span>
+                </div>
+            </div>
+        </li>`;
+    }
+    questionComments.innerHTML = commentsOutput;
+}
+
+fetch(`/api/user/question/${questionId}/comment`, {
+        method: 'GET',
+        headers: {
+            "Content-type": "application/json",
+            "Authorization": 'Bearer ' + token[1],
+        }
+    }
+)
+    .then(response => response.json())
+    .then(data => showQuestionCommentsOnPage(data))
+    .catch(error => console.log(error));
+
+//-----Блок ответов-------------------------------------------------------------------------------------------------
+
+addAnswerButton.onclick = async function() {
+    let answerTextToAdd = document.getElementById('inputAnswerField').value;
+    document.getElementById('inputAnswerField').value = "";
+    fetch(`/api/user/question/${questionId}/answer/add`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token[1]
+        },
+        body: answerTextToAdd
+    })
+        .then(response => response.json())
+        .then(data => {
+            const newAnswer = [];
+            newAnswer.push(data);
+            showAnswersOnPage(newAnswer);
+        });
+}
+
+const showAnswersOnPage = (answersData) => {
+    answersData.forEach(answer => {
+        // let countToSet = answer.countValuable === null ? 0 : answer.countValuable;
         answersOutput += `
         <div class="row">
             <div class="col-1 d-flex justify-content-center align-items-start">
                 <div class="d-flex flex-column justify-content-center">
-                    <button id="voteUpAnswer" class="p-0 btn btn_link_custom" data-toggle="tooltip"
+                    <button id="voteUpAnswer" class="p-0 btn btn_link_custom voteUpAnswer" data-toggle="tooltip"
                             data-placement="right" title="Полезный вопрос">
                         <svg aria-hidden="true" class="svg-icon iconArrowUpLg" width="36" height="36"
                              viewBox="0 0 36 36">
-                            <path d="M2 25h32L18 9 2 25Z"></path>
+                            <path d="M2 25h32L18 9 2 25Z" id="voteUpAnswer${answer.id}"></path>
                         </svg>
                     </button>
 
                     <div id="votesCounterAnswer" class="d-flex justify-content-center">
-                        <span id="votesAnswer">0</span>
+                        <span id="votesAnswer${answer.id}">${answer.countValuable}</span>
                     </div>
 
                     <button id="voteDownAnswer" class="p-0 btn btn_link_custom" data-toggle="tooltip"
@@ -141,22 +257,7 @@ async function setAnswersInfo(answers) {
             <div class="col">
                 <div class="row d-flex flex-column">
                     <div id="answerText">
-                        <p>Этот текст здесь исключительно в целях демонстрации. При дальнейшем развитии данной
-                            страницы этот элемент необходимо удалить! Этот текст здесь исключительно в целях
-                            демонстрации. При дальнейшем развитии данной страницы этот элемент необходимо
-                            удалить! Этот текст здесь исключительно в целях демонстрации. При дальнейшем
-                            развитии
-                            данной страницы этот элемент необходимо удалить! Этот текст здесь исключительно в
-                            целях демонстрации. При дальнейшем развитии данной страницы этот элемент необходимо
-                            удалить! Этот текст здесь исключительно в целях демонстрации. При дальнейшем
-                            развитии данной
-                            страницы этот элемент необходимо удалить! Этот текст здесь исключительно в целях
-                            демонстрации. При дальнейшем развитии данной страницы этот элемент необходимо
-                            удалить! Этот текст здесь исключительно в целях демонстрации. При дальнейшем
-                            развитии
-                            данной страницы этот элемент необходимо удалить! Этот текст здесь исключительно в
-                            целях демонстрации. При дальнейшем развитии данной страницы этот элемент необходимо
-                            удалить!</p>
+                        <p>${answer.htmlBody}</p>
                     </div>
 
                     <div class="row mx-0 bottomBlock d-flex justify-content-between">
@@ -174,11 +275,21 @@ async function setAnswersInfo(answers) {
                             <div class="col">
                                 <div class="container">
                                     <div class="d-flex flex-column">
-                                        <div class="row">
-                                            <a id="lastChangeLinkAnswer" href="#">ссылка на инфу об изменениях</a>
-                                        </div>
                                         <div id="userCard2" class="row">
-                                            <span>карточка пользователя</span>
+                                            <div>
+                                                <div>
+                                                    <a id="lastChangeLink" href="#">
+                                                        <small>редактирован <span>${answer.persistDateTime.replace("T", " в ").slice(0, -10)}</span></small>
+                                                    </a>
+                                                </div>
+                                                <div class="pr-2" style="display: inline-block">
+                                                    <img src="/images/noUserAvatar.png" style="width: 50px; height: 50px" alt="...">
+                                                </div>
+                                                <div class="align-items-top" style="display: inline-block; vertical-align: bottom">
+                                                    <div class="align-items-top"><a class="align-top" href="#">Автор</a></div>
+                                                    <div class="text-muted">Репутация</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -248,120 +359,34 @@ async function setAnswersInfo(answers) {
                         </ul>
                     </div>
                     <div>
-                        <textarea class="col px-1" id="inputCommentFieldAnswer" rows="5"
+                        <textarea class="col px-1" id="inputCommentFieldAnswer" rows="4"
                           style="resize:none"></textarea>
                         <button class="btn btn-info mt-2" id="addCommentAnswerButton">Добавить комментарий</button>
                     </div>
                 </div>
             </div>
         </div>
+        <hr>
         `;
-    }
-
+    });
+    answersList.innerHTML = answersOutput;
 }
 
-async function createNewAnswer(answerCreateDto) {
-    await fetch(`/api/user/question/${questionId}/answer/add`,{
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token[1]
-        },
-        body: JSON.stringify(answerCreateDto)
-    })
-}
-
-voteUp.onclick = async function() {
-    await makeUpVoteForQuestion();
-    fetchQuestionInfo().then(res => {votes.innerHTML = res.countValuable});
-}
-
-async function makeDownVoteForQuestion(){
-    await fetch(`http://localhost:8091/api/user/question/${questionId}/downVote`,{
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token[1]
-        }
-    })
-}
-
-voteDown.onclick = async function() {
-    await makeDownVoteForQuestion();
-    fetchQuestionInfo().then(res => {votes.innerHTML = res.countValuable});
-}
-
-async function addBookmarkForQuestion(){
-    await fetch(`http://localhost:8091/api/user/question/${questionId}/bookmark`,{
+fetch(`/api/user/question/${questionId}/answer`, {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token[1]
+            "Content-type": "application/json",
+            "Authorization": 'Bearer ' + token[1],
         }
-    })
-}
+    }
+)
+    .then(response => response.json())
+    .then(data => showAnswersOnPage(data))
+    .catch(error => console.log(error));
 
-addBookmark.onclick = async function() {
-    await addBookmarkForQuestion();
-    bookmarkCount.innerHTML = "В базу добавлено, но у нас нет api для подсчёта всех закладок вопроса, после F5 будет снова 0"
-    addBookmark.disabled = true;
-}
-
-//-----Комментарии к вопросам-----
-
-async function createNewCommentForQuestion(commentText) {
-    await fetch(`http://localhost:8091/${questionId}/comment`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token[1]
-        },
-        body: commentText
-    })
-}
-
-questionCommentButton.onclick = async function() {
-    let commentText = document.getElementById('inputCommentField').value;
-    console.log(commentText);
-    let newListElement = document.createElement('li');
-    newListElement.setAttribute('class', 'list-group-item border-right-0 border-left-0 px-0');
-    let newCommentForm = `
-        <div class="row mx-0">
-            <div class="col-1 d-flex justify-content-center">
-                <span class="usefulCommentVotes">0</span>
-            </div>
-            <div class="col">
-                <span class="comment-text">`+ commentText +`<span> – </span><a href="#" class="comment-user">Имя Пользователя 3</a>
-                <span class="comment-data"
-                      style="color:#9199a1">17 сентября 2021, 17:29</span>
-            </div>
-        </div>`;
-    newListElement.innerHTML = newCommentForm;
-    questionComments.appendChild(newListElement);
-    document.getElementById('inputCommentField').value = "";
-    await createNewCommentForQuestion(commentText);
-}
-
-async function showQuestionCommentsOnPage(questionComments) {
-    questionComments.forEach(questionComment => {
-        commentsOutput += `
-        <li class="list-group-item border-right-0 border-left-0 px-0">
-            <div class="row mx-0">
-                <div class="col-1 d-flex justify-content-center">
-                    <span class="usefulCommentVotes">23</span>
-                </div>
-                <div class="col">
-                <span class="comment-text">`+ questionComment.text + `<span> – </span><a href="#" class="comment-user">User ` + questionComment.userId + `</a>
-                <span class="comment-data" style="color:#9199a1">`+ questionComment.persistDate.replace("T", " в ").slice(0, -7) + `</span>
-            </div>
-        </div>
-        </li>`;
-    });
-    questionComments.innerHTML = commentsOutput;
-}
-
-async function fetchQuestionCommentsData() {
-    await fetch(`/api/user/question/${questionId}/comment`, {
+async function fetchAnswerInfo() {
+    let answerInfo = {};
+    await fetch(`/api/user/question/${questionId}/answer`, {
             method: 'GET',
             headers: {
                 "Content-type": "application/json",
@@ -369,17 +394,43 @@ async function fetchQuestionCommentsData() {
             }
         }
     )
-        .then(response => response.json())
-        .then(data => showQuestionCommentsOnPage(data))
-        .catch(error => console.log(error));
+        .then(data => data.json())
+        .then(ob => {answerInfo = ob})
+        .catch(mess => {
+            console.log(mess);
+        })
+    return answerInfo;
 }
-fetchQuestionCommentsData();
 
+const on = (element, event, selector, handler) => {
+    element.addEventListener(event, e => {
+        if (e.target.closest(selector)) {
+            handler(e)
+        }
+    })
+}
 
-//--------------------------------------------------------------------
+async function makeUpVoteForAnswer(){
+    await fetch(`/api/user/question/${questionId}/answer/${answerId}/upVote`,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token[1]
+        }
+    })
+}
 
-let answerDiv = document.createElement('div');
-answerDiv.setAttribute('id', 'answer');
-answerDiv.setAttribute('class', 'row');
-answerDiv.innerHTML = answerForm.innerHTML;
-answersList.appendChild(answerDiv);
+async function filterById(jsonObject, id) {
+    return jsonObject.filter(function(jsonObject) {return (jsonObject['id'] == id);})[0];
+}
+
+on(document, 'click', '.voteUpAnswer', async e => {
+    answerId = e.target.id;
+    answerId = answerId.substring(answerId.lastIndexOf('/') + 1).replace(/\D/g, "");
+    await makeUpVoteForAnswer();
+    let answers = await fetchAnswerInfo();
+    let countAnswerVotes = await filterById(answers, answerId);
+    let votesAnswer = document.getElementById('votesAnswer' + answerId);
+    votesAnswer.innerHTML = countAnswerVotes.countValuable;
+})
+
