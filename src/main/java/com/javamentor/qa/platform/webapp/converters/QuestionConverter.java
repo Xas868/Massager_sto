@@ -6,8 +6,10 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+@Component
 public abstract class QuestionConverter {
 
     @Mapping(source = "tags", target = "listTagDto")

@@ -33,12 +33,14 @@ public class QuestionPageDtoDaoAllQuestionsImpl implements PageDtoDao<QuestionVi
                         "q.lastUpdateDateTime, " +
                         "(SELECT SUM(r.count) from Reputation r WHERE r.author.id = q.user.id), " +
                         "(coalesce((select count(a.id) from Answer a where a.question.id = q.id),0)) as answerCounter, " +
-                        "(coalesce((select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id), 0)) " +
+                        "(coalesce((select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id), 0))," +
+                        "(select count(bm.id) from BookMarks bm where bm.question.id= q.id and bm.user.id=: userId ) " +
                         "from Question q JOIN User u on q.user.id = u.id " +
                         "where ((:trackedTags) IS NULL OR q.id IN (select q.id from Question q join q.tags t where t.id in (:trackedTags))) and " +
                         "((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags)))")
                 .setParameter("trackedTags", properties.getProps().get("trackedTags"))
                 .setParameter("ignoredTags", properties.getProps().get("ignoredTags"))
+                .setParameter("userId",properties.getProps().get("userId"))
                 .setFirstResult(offset)
                 .setMaxResults(itemsOnPage)
                 .unwrap(org.hibernate.query.Query.class)

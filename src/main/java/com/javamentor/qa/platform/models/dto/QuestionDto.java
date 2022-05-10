@@ -33,4 +33,8 @@ public class QuestionDto {
     private List<TagDto> listTagDto;
     private List<QuestionCommentDto> listQuestionCommentDto;
     private VoteType isUserVote;
+    private  Boolean isUserBookmark; // которое показывает добавил ли
+                                      // авторизированный пользователь данный вопрос к себе в закладки
+
+
 }

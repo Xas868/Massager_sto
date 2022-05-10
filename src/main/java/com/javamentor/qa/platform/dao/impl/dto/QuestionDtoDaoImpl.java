@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.dao.impl.dto.transformer.QuestionDtoResultTran
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCommentDto;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -38,21 +39,29 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
     @Override
     public Optional<QuestionDto> getQuestionDtoDaoById(Long id, Long userId) {
 
-        TypedQuery<QuestionDto> dto = entityManager.createQuery("select q.id, q.title, u.id," +
-                        " u.fullName, u.imageLink, q.description, q.persistDateTime," +
-                        " q.lastUpdateDateTime, (select sum(r.count) from Reputation r where r.author.id =u.id), " +
-                        " (select count (a.id) from Question q JOIN Answer a ON a.question.id = q.id WHERE q.id =:id)," +
-                        " (select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v JOIN Question " +
-                        " q ON v.question.id = q.id where q.id =:id), " +
-                        " v.vote " +
-                        " from Question q " +
-                        " LEFT JOIN q.user u " +
-                        " LEFT JOIN VoteQuestion v " +
-                        " ON v.question.id = q.id and v.user.id = :userId " +
-                        " where q.id = :id and q.isDeleted=false")
+        TypedQuery<QuestionDto> dto = entityManager.createQuery(
+                        "select q.id," +
+                                " q.title," +
+                                " u.id," +
+                                " u.fullName," +
+                                " u.imageLink," +
+                                " q.description," +
+                                " q.persistDateTime," +
+                                " q.lastUpdateDateTime," +
+                                "(select sum(r.count) from Reputation r where r.author.id =u.id), " +
+                                " (select count (a.id) from Question q JOIN Answer a ON  a.question.id = q.id WHERE q.id =:id)," +
+                                " (select sum( case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v JOIN Question " +
+                                " q ON v.question.id = q.id where q.id =:id)," +
+                                " v.vote," +
+                                "(select count(*)from BookMarks bm where bm.question.id=:id and bm.user.id=: userId)" +
+                                " from Question q " +
+                                " LEFT JOIN q.user u " +
+                                " LEFT JOIN VoteQuestion v " +
+                                " ON v.question.id = q.id " +
+                                "and v.user.id = :userId where q.id = :id and q.isDeleted=false")
                 .setParameter("id", id)
                 .setParameter("userId", userId)
-                .unwrap(org.hibernate.query.Query.class)
+                .unwrap(Query.class)
                 .setResultTransformer(new QuestionDtoResultTransformer());
         return SingleResultUtil.getSingleResultOrNull(dto);
     }
