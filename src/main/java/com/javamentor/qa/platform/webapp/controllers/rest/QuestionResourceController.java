@@ -1,12 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoAllSortedByPopular;
-import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoAllQuestionsImpl;
-import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoByNoAnswersImpl;
-import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoByTagId;
-import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoSortedByDate;
-import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoSortedByImpl;
-import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoSortedByWeightForTheWeekImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.*;
 import com.javamentor.qa.platform.exception.ConstrainException;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
@@ -21,12 +15,7 @@ import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
-import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
-import com.javamentor.qa.platform.service.abstracts.model.BookmarksService;
-import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.TagConverter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,12 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -274,10 +258,14 @@ public class QuestionResourceController {
     })
     public ResponseEntity<PageDTO<QuestionViewDto>> allQuestionsWithTrackedTagsAndIgnoredTags(@RequestParam int page, @RequestParam(required = false, defaultValue = "10") int items,
                                                                                               @RequestParam(required = false) List<Long> trackedTag,
-                                                                                              @RequestParam(required = false) List<Long> ignoredTag) {
+                                                                                              @RequestParam(required = false) List<Long> ignoredTag,
+                                                                                              Authentication auth) {
+
         PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoAllQuestionsImpl.class.getSimpleName());
+        User user = (User) auth.getPrincipal();
         data.getProps().put("trackedTags", trackedTag);
         data.getProps().put("ignoredTags", ignoredTag);
+        data.getProps().put("userId", user.getId());
 
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
@@ -318,11 +306,15 @@ public class QuestionResourceController {
     public ResponseEntity<PageDTO<QuestionViewDto>> AllQuestionSortedByPopular(@RequestParam int page,
                                                                                @RequestParam(required = false, defaultValue = "10") int items,
                                                                                @RequestParam(required = false) List<Long> trackedTag,
-                                                                               @RequestParam(required = false) List<Long> ignoredTag) {
+                                                                               @RequestParam(required = false) List<Long> ignoredTag,
+                                                                               Authentication auth) {
 
         PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoAllSortedByPopular.class.getSimpleName());
+        User user = (User) auth.getPrincipal();
         data.getProps().put("trackedTag", trackedTag);
         data.getProps().put("ignoredTag", ignoredTag);
+        data.getProps().put("userId",user.getId());
+
 
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
@@ -421,7 +413,9 @@ public class QuestionResourceController {
         CommentQuestion commentQuestion = new CommentQuestion(bodyComment, user);
         commentQuestion.setQuestion(question.get());
         commentQuestionService.persist(commentQuestion);
-        return new ResponseEntity<>("Comment successfully added", HttpStatus.OK);
+        List<QuestionCommentDto> questionCommentDtoList = questionDtoService.getQuestionByIdComment(id);
+        QuestionCommentDto questionCommentDto = questionCommentDtoList.get(questionCommentDtoList.size() - 1);
+        return new ResponseEntity<>(questionCommentDto, HttpStatus.OK);
     }
 }
 

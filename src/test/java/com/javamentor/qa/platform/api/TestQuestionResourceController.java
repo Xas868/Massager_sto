@@ -9,6 +9,7 @@ import com.javamentor.qa.platform.dao.abstracts.model.QuestionViewedDao;
 import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
+import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
@@ -1498,6 +1499,23 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                         .header("Authorization", token101))
                 .andDo(print())
                 .andExpect(status().isOk());
+
+        //проверка на - отображается ли вопрос в метке, который добавил себе авторизованный юзер
+
+        mockMvc.perform(get("/api/user/question/101")
+                        .contentType("application/json")
+                        .header("Authorization", token100));
+         Long id = 101L;
+       Long userId =100L ;
+      List<BookMarks> bookMarks = (List<BookMarks>) entityManager.createQuery("select count(*) from BookMarks bm " +
+                "where bm.question.id = :id and bm.user.id=:userId ")
+                .setParameter("id",id)
+                .setParameter("userId",userId)
+              .getResultList();
+        assertThat(bookMarks).isNotNull();
+
+
+
     }
 
     @Test
