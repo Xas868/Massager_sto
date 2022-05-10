@@ -4,8 +4,10 @@ import com.javamentor.qa.platform.models.dto.AnswerDTO;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring")
+@Component
 public abstract class AnswerConverter {
 
     @Mapping(source = "dateAccept", target = "dateAcceptTime")
