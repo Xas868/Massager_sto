@@ -98,6 +98,34 @@ public class TagDtoDaoImpl implements TagDtoDao {
     }
 
     @Override
+    public List<TagDto> getTop3TagsForUser(Long userId) {
+        String hql = "select tag.id, tag.name, tag.description, " +
+                "coalesce((select count(t.id) from Question q join User u on u.id = q.user.id join q.tags t " +
+                "where tag.id = t.id and u.id = :userId group by t.id order by count(t.id) desc, t.id), 0) + " +
+                "coalesce((select count(t.id) from Answer a join User u on u.id = a.user.id join a.question.tags t " +
+                "where tag.id = t.id and u.id = :userId group by t.id order by count(t.id) desc, t.id), 0) as tagscount " +
+                "from Tag tag order by tagscount desc, tag.id";
+        return entityManager.createQuery(hql)
+                .setParameter("userId", userId)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(new ResultTransformer() {
+                    @Override
+                    public TagDto transformTuple(Object[] objects, String[] strings) {
+                        return new TagDto(
+                                (Long)objects[0],
+                                (String)objects[1],
+                                (String)objects[2]);
+                    }
+                    @Override
+                    public List transformList(List list) {
+                        return list;
+                    }
+                })
+                .setMaxResults(3)
+                .getResultList();
+    }
+
+    @Override
     public Map<Long, List<TagDto>> getTagDtoByQuestionIds(List<Long> questionIds) {
         Map<Long, List<TagDto>> resultMap = new HashMap<>();
         entityManager.createQuery(

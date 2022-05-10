@@ -39,10 +39,18 @@ let pagination = new Pagination(
                     <div class="card-title"><a href="#">${arrayObjects[num].fullName}</a></div>
                     <div class="card-text small">${arrayObjects[num].city}</div>
                     <div class="card-text font-weight-bolder small">${arrayObjects[num].reputation}</div>
-                    <div class="card-text small"><a href="#">python</a>, <a href="#">java</a>, <a href="#">c#</a></div>
+                    <div class="card-text small"></div>
                 </div>
             </div>
         `;
+                let output = '';
+                arrayObjects[num].listTagDto.forEach(tag => {
+                    output += '<a href="#">' + tag.name + '</a>, ';
+                });
+                if (output !== '') {
+                    output = output.slice(0, -2);
+                }
+                cardDiv.children[0].children[1].children[3].innerHTML = output;
                 cardDeckDiv.appendChild(cardDiv);
                 numCardsInDeck--;
             }

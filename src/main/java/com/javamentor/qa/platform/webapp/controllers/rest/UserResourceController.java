@@ -50,11 +50,11 @@ public class UserResourceController {
 
     @GetMapping("/api/user/{userId}")
     @Operation(summary = "Получение dto пользователя по id",
-            description = "Получение null сли пользователь не найден")
+            description = "Получение null, если пользователь не найден")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Возвращает список UserDto (id, email, fullName, imageLink, city, reputacion)",
+                    description = "Возвращает список UserDto (id, email, fullName, imageLink, city, reputation, listTagDto)",
                     content = {
                             @Content(
                                     mediaType = "application/json",
@@ -78,7 +78,7 @@ public class UserResourceController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Возвращает пагинированный список PageDTO<UserDto> (id, email, fullName, imageLink, city, reputation)",
+                    description = "Возвращает пагинированный список PageDTO<UserDto> (id, email, fullName, imageLink, city, reputation, listTagDto)",
                     content = {
                             @Content(
                                     mediaType = "application/json")
@@ -146,7 +146,7 @@ public class UserResourceController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Возвращает пагинированный список PageDTO<UserDto> (id, nickname, imageLink, city, reputation)",
+                    description = "Возвращает пагинированный список PageDTO<UserDto> (id, email, fullName, imageLink, city, reputation, listTagDto)",
                     content = {
                             @Content(
                                     mediaType = "application/json")
@@ -223,7 +223,7 @@ public class UserResourceController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Возвращает список UserDto(Long id, String email, String fullName, String imageLink, String city, Long reputation)",
+                    description = "Возвращает список UserDto(id, email, fullName, imageLink, city, reputation, listTagDto)",
                     content = {
                             @Content(
                                     mediaType = "application/json",
