@@ -51,4 +51,9 @@ public class TagDtoServiceImpl extends DtoServiceImpl<TagViewDto> implements Tag
     public List<TagDto> getTagsLike(String value){
         return tagDtoDao.getTagsLike(value);
     }
+
+    @Override
+    public List<TagDto> getTop3TagsForUser(Long userId) {
+        return tagDtoDao.getTop3TagsForUser(userId);
+    }
 }
