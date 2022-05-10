@@ -15,15 +15,14 @@ const addBookmark = document.getElementById('bookmark');
 const bookmarkCount = document.getElementById('bookmarkCount');
 let answersOutput = '';
 const answersList = document.querySelector('#answers');
-const answerForm = document.querySelector('#answerForm');
 let url = window.location.href;
 let questionId = url.substring(url.lastIndexOf('/') + 1).replace(/\D/g, "");
 const questionComments = document.querySelector('#questionComments');
 const questionCommentButton = document.getElementById('questionCommentButton');
 let commentsOutput = '';
+let commentAnswerOutput = '';
 const addAnswerButton = document.getElementById('addAnswerButton');
 let answerId = '';
-
 
 //-----Блок вопроса-----------------------------------------------------------------------------------------------
 
@@ -81,7 +80,7 @@ async function setQuestionInfo(info) {
                 '<img src="/images/noUserAvatar.png" style="width: 50px; height: 50px" alt="...">' +
             '</div>' +
             '<div class="align-items-top" style="display: inline-block; vertical-align: bottom">' +
-                '<div class="align-items-top"><a class="align-top" href="#">Автор</a></div>' +
+                '<div class="align-items-top"><a class="align-top" href="#">Редактор</a></div>' +
                 '<div class="text-muted">Репутация</div>' +
             '</div>' +
         '</div>';
@@ -105,9 +104,6 @@ async function setQuestionInfo(info) {
     questionTags.innerHTML = questionTagsHtml;
     questionTagsBottom.innerHTML = questionTagsHtml;
 }
-
-
-
 
 voteUp.onclick = async function() {
     await makeUpVoteForQuestion();
@@ -201,25 +197,32 @@ fetch(`/api/user/question/${questionId}/comment`, {
 addAnswerButton.onclick = async function() {
     let answerTextToAdd = document.getElementById('inputAnswerField').value;
     document.getElementById('inputAnswerField').value = "";
-    fetch(`/api/user/question/${questionId}/answer/add`, {
+    await fetch(`/api/user/question/${questionId}/answer/add`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + token[1]
         },
         body: answerTextToAdd
-    })
+    });
+    await fetch(`/api/user/question/${questionId}/answer`, {
+            method: 'GET',
+            headers: {
+                "Content-type": "application/json",
+                "Authorization": 'Bearer ' + token[1],
+            }
+        }
+    )
         .then(response => response.json())
-        .then(data => {
-            const newAnswer = [];
-            newAnswer.push(data);
-            showAnswersOnPage(newAnswer);
-        });
+        .then(data => showAnswersOnPage(data))
+        .catch(error => console.log(error));
+    let questionInfoForCount = await fetchQuestionInfo();
+    answerCounter.innerHTML = questionInfoForCount.countAnswer;
 }
 
 const showAnswersOnPage = (answersData) => {
+    answersOutput = ``;
     answersData.forEach(answer => {
-        // let countToSet = answer.countValuable === null ? 0 : answer.countValuable;
         answersOutput += `
         <div class="row">
             <div class="col-1 d-flex justify-content-center align-items-start">
@@ -232,15 +235,15 @@ const showAnswersOnPage = (answersData) => {
                         </svg>
                     </button>
 
-                    <div id="votesCounterAnswer" class="d-flex justify-content-center">
+                    <div id="votesCounterAnswer${answer.id}" class="d-flex justify-content-center">
                         <span id="votesAnswer${answer.id}">${answer.countValuable}</span>
                     </div>
 
-                    <button id="voteDownAnswer" class="p-0 btn btn_link_custom" data-toggle="tooltip"
+                    <button id="voteDownAnswer" class="p-0 btn btn_link_custom voteDownAnswer" data-toggle="tooltip"
                             data-placement="right" title="Бесполезный вопрос">
                         <svg aria-hidden="true" class="svg-icon iconArrowDownLg" width="36" height="36"
                              viewBox="0 0 36 36">
-                            <path d="M2 11h32L18 27 2 11Z"></path>
+                            <path d="M2 11h32L18 27 2 11Z" id="voteDownAnswer${answer.id}></path>
                         </svg>
                     </button>
 
@@ -270,12 +273,11 @@ const showAnswersOnPage = (answersData) => {
                             <a type="button" style="color: #6a737c;">Изменить</a>
                             <a type="button" style="color: #6a737c;">Следить</a>
                         </div>
-
-                        <div class="row">
-                            <div class="col">
+                        <div class="d-flex flex-row">
+                            <div class="userCard">
                                 <div class="container">
-                                    <div class="d-flex flex-column">
-                                        <div id="userCard2" class="row">
+                                    <div class="d-flex flex-column flex-wrap">
+                                        <div id="editorCard${answer.id}" class="row">
                                             <div>
                                                 <div>
                                                     <a id="lastChangeLink" href="#">
@@ -286,7 +288,7 @@ const showAnswersOnPage = (answersData) => {
                                                     <img src="/images/noUserAvatar.png" style="width: 50px; height: 50px" alt="...">
                                                 </div>
                                                 <div class="align-items-top" style="display: inline-block; vertical-align: bottom">
-                                                    <div class="align-items-top"><a class="align-top" href="#">Автор</a></div>
+                                                    <div class="align-items-top"><a class="align-top" href="#">Редактор</a></div>
                                                     <div class="text-muted">Репутация</div>
                                                 </div>
                                             </div>
@@ -294,15 +296,22 @@ const showAnswersOnPage = (answersData) => {
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="col">
+                            <div class="userCard">
                                 <div class="container">
                                     <div class="d-flex flex-column">
-                                        <div class="row">
-                                            <span id="answeredDate">дата создания ответа</span>
-                                        </div>
-                                        <div id="userCard3" class="row">
-                                            <span>карточка пользователя</span>
+                                        <div id="userCard${answer.userId}" class="row">
+                                            <div>
+                                                <div>
+                                                    <small class="text-muted">задан <span>${answer.persistDateTime.replace("T", " в ").slice(0, -10)}</span></small>
+                                                </div>
+                                                <div class="pr-2" style="display: inline-block">
+                                                    <img src="/images/noUserAvatar.png" style="width: 50px; height: 50px" alt="...">
+                                                </div>
+                                                <div class="align-items-top" style="display: inline-block; vertical-align: bottom">
+                                                    <div class="align-items-top"><a class="align-top" href="#">User ${answer.userId}</a></div>
+                                                    <div class="text-muted">${answer.userReputation}</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -311,7 +320,7 @@ const showAnswersOnPage = (answersData) => {
                     </div>
                 </div>
                 <div class="row d-flex flex-column py-2">
-                    <div>
+                    <div id="commentAnswerList${answer.id}">
                         <ul class="list-group mb-2">
                             <!--ЭЛЕМЕНТЫ НИЖЕ ЯВЛЯЮТСЯ ДЕМОНСТРАТИВНЫМИ ШАБЛОНАМИ-->
                             <li class="list-group-item border-right-0 border-left-0 px-0">
@@ -320,48 +329,19 @@ const showAnswersOnPage = (answersData) => {
                                         <span class="usefulCommentVotesCounter">123</span>
                                     </div>
                                     <div class="col">
-                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
-                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
+                                <span class="comment-text" style="color: red">В api нет возможности получить список комментариев к ответу, комментарий добавится в базу, но не будет отображен</span>
                                         –&nbsp;<a href="#" class="comment-user">Имя Пользователя 1</a>
                                         <span class="comment-data"
                                               style="color:#9199a1">15 сентября 2021, 17:49</span>
                                     </div>
                                 </div>
                             </li>
-                            <li class="list-group-item border-right-0 border-left-0 px-0">
-                                <div class="row mx-0">
-                                    <div class="col-1 d-flex justify-content-center">
-                                        <span class="usefulCommentVotes">120</span>
-                                    </div>
-                                    <div class="col">
-                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
-                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
-                                        –&nbsp;<a href="#" class="comment-user">Имя Пользователя 2</a>
-                                        <span class="comment-data"
-                                              style="color:#9199a1">16 сентября 2021, 18:49</span>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="list-group-item border-right-0 border-left-0 px-0">
-                                <div class="row mx-0">
-                                    <div class="col-1 d-flex justify-content-center">
-                                        <span class="usefulCommentVotes">23</span>
-                                    </div>
-                                    <div class="col">
-                                <span class="comment-text">Этот текст здесь исключительно в целях демонстрации оформления.
-                                    При дальнейшем развитии данной страницы этот элемент необходимо удалить!</span>
-                                        –&nbsp;<a href="#" class="comment-user">Имя Пользователя 3</a>
-                                        <span class="comment-data"
-                                              style="color:#9199a1">17 сентября 2021, 17:29</span>
-                                    </div>
-                                </div>
-                            </li>
                         </ul>
                     </div>
                     <div>
-                        <textarea class="col px-1" id="inputCommentFieldAnswer" rows="4"
+                        <textarea class="col px-1" id="inputCommentFieldAnswer${answer.id}" rows="3"
                           style="resize:none"></textarea>
-                        <button class="btn btn-info mt-2" id="addCommentAnswerButton">Добавить комментарий</button>
+                        <button class="btn btn-info mt-2 addCommentAnswerButton" id="addCommentAnswerButton${answer.id}">Добавить комментарий</button>
                     </div>
                 </div>
             </div>
@@ -410,27 +390,74 @@ const on = (element, event, selector, handler) => {
     })
 }
 
-async function makeUpVoteForAnswer(){
-    await fetch(`/api/user/question/${questionId}/answer/${answerId}/upVote`,{
+async function filterById(jsonObject, id) {
+    return jsonObject.filter(function(jsonObject) {return (jsonObject['id'] == id);})[0];
+}
+
+on(document, 'click', '.voteUpAnswer', async e => {
+    let voteUpAnswerId = e.target.id;
+    voteUpAnswerId = voteUpAnswerId.replace(/\D/g, "");
+    await fetch(`/api/user/question/${questionId}/answer/${voteUpAnswerId}/upVote`,{
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + token[1]
         }
     })
-}
-
-async function filterById(jsonObject, id) {
-    return jsonObject.filter(function(jsonObject) {return (jsonObject['id'] == id);})[0];
-}
-
-on(document, 'click', '.voteUpAnswer', async e => {
-    answerId = e.target.id;
-    answerId = answerId.substring(answerId.lastIndexOf('/') + 1).replace(/\D/g, "");
-    await makeUpVoteForAnswer();
     let answers = await fetchAnswerInfo();
-    let countAnswerVotes = await filterById(answers, answerId);
-    let votesAnswer = document.getElementById('votesAnswer' + answerId);
+    let countAnswerVotes = await filterById(answers, voteUpAnswerId);
+    let votesAnswer = document.getElementById('votesAnswer' + voteUpAnswerId);
     votesAnswer.innerHTML = countAnswerVotes.countValuable;
 })
 
+on(document, 'click', '.voteDownAnswer', async e => {
+    let voteDownAnswerId = e.target.id;
+    voteDownAnswerId = voteDownAnswerId.replace(/\D/g, "");
+    await fetch(`/api/user/question/${questionId}/answer/${voteDownAnswerId}/downVote`,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token[1]
+        }
+    })
+    let answers = await fetchAnswerInfo();
+    let countAnswerVotes = await filterById(answers, voteDownAnswerId);
+    let votesAnswer = document.getElementById('votesAnswer' + voteDownAnswerId);
+    votesAnswer.innerHTML = countAnswerVotes.countValuable;
+})
+
+//-----Комментарии к ответам-----
+
+on(document, 'click', '.addCommentAnswerButton', async e => {
+    let commentAnswerId = e.target.id;
+    commentAnswerId = commentAnswerId.replace(/\D/g, "");
+    let commentAnswerTextToAdd = document.getElementById(`inputCommentFieldAnswer${commentAnswerId}`).value;
+    document.getElementById(`inputCommentFieldAnswer${commentAnswerId}`).value = '';
+    await fetch(`/api/user/question/${questionId}/answer/${commentAnswerId}/comment`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token[1]
+        },
+        body: commentAnswerTextToAdd
+    });
+});
+
+// Использовать как появится api
+function showAnswerCommentsOnPage(data) {
+    data.forEach(answerComment => {
+        commentAnswerOutput += `
+        <li class="list-group-item border-right-0 border-left-0 px-0">
+            <div class="row mx-0">
+                <div class="col-1 d-flex justify-content-center">
+                    <span class="usefulCommentVotes">23</span>
+                </div>
+                <div class="col">
+                    <span class="comment-text">текст!</span><a href="#" class="comment-user">Имя Пользователя 3</a>
+                    <span class="comment-data" style="color:#9199a1">17 сентября 2021, 17:29</span>
+                </div>
+            </div>
+        </li>
+        `;
+    });
+}
