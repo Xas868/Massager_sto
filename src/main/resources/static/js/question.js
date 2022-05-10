@@ -12,7 +12,9 @@ const questionTagsBottom = document.querySelector('.questionTagsBottom');
 const voteUp = document.getElementById('voteUp');
 const voteDown = document.getElementById('voteDown');
 const addBookmark = document.getElementById('bookmark');
-const bookmarkCount = document.getElementById('bookmarkCount');
+const bookmarkFigure = document.getElementById('bookmarkFigure');
+const voteUpFigure = document.getElementById('voteUpFigure');
+const voteDownFigure = document.getElementById('voteDownFigure');
 let answersOutput = '';
 const answersList = document.querySelector('#answers');
 let url = window.location.href;
@@ -69,21 +71,6 @@ async function setQuestionInfo(info) {
     viewedCounter.innerHTML = info.viewCount;
     votes.innerHTML = info.countValuable;
     answerCounter.innerHTML = info.countAnswer;
-    userCardEdited.innerHTML =
-        '<div>' +
-            '<div>' +
-                '<a id="lastChangeLink" href="#">' +
-                    '<small>редактирован <span>' + info.lastUpdateDateTime.replace("T", " в ").slice(0, -10) + '</span></small>' +
-                '</a>' +
-            '</div>' +
-            '<div class="pr-2" style="display: inline-block">' +
-                '<img src="/images/noUserAvatar.png" style="width: 50px; height: 50px" alt="...">' +
-            '</div>' +
-            '<div class="align-items-top" style="display: inline-block; vertical-align: bottom">' +
-                '<div class="align-items-top"><a class="align-top" href="#">Редактор</a></div>' +
-                '<div class="text-muted">Репутация</div>' +
-            '</div>' +
-        '</div>';
     userCardAsked.innerHTML =
         '<div>' +
             '<div>' +
@@ -103,11 +90,27 @@ async function setQuestionInfo(info) {
     info.listTagDto.forEach(tag => questionTagsHtml += '<a href="#"><span class="badge bg-info text-light mr-1 mb-1 mt-1">' + tag.name + '</span></a>');
     questionTags.innerHTML = questionTagsHtml;
     questionTagsBottom.innerHTML = questionTagsHtml;
+    if (info.isUserVote === 'UP_VOTE') {
+        voteUp.disabled = true;
+        voteDown.disabled = true;
+        voteUpFigure.setAttribute("style", "fill:#17a2b8");
+    } else if (info.isUserVote === 'DOWN_VOTE') {
+        voteUp.disabled = true;
+        voteDown.disabled = true;
+        voteDownFigure.setAttribute("style", "fill:#17a2b8");
+    }
+    if (info.isUserBookmark) {
+        bookmarkFigure.setAttribute("style", "fill:#17a2b8");
+        addBookmark.disabled = true;
+    }
 }
 
 voteUp.onclick = async function() {
     await makeUpVoteForQuestion();
     fetchQuestionInfo().then(res => {votes.innerHTML = res.countValuable});
+    voteUp.disabled = true;
+    voteDown.disabled = true;
+    voteUpFigure.setAttribute("style", "fill:#17a2b8");
 }
 
 async function makeDownVoteForQuestion(){
@@ -123,6 +126,9 @@ async function makeDownVoteForQuestion(){
 voteDown.onclick = async function() {
     await makeDownVoteForQuestion();
     fetchQuestionInfo().then(res => {votes.innerHTML = res.countValuable});
+    voteUp.disabled = true;
+    voteDown.disabled = true;
+    voteDownFigure.setAttribute("style", "fill:#17a2b8");
 }
 
 async function addBookmarkForQuestion(){
@@ -137,7 +143,7 @@ async function addBookmarkForQuestion(){
 
 addBookmark.onclick = async function() {
     await addBookmarkForQuestion();
-    bookmarkCount.innerHTML = "В базу добавлено, но в api нет возможности получить число всех закладок вопроса"
+    bookmarkFigure.setAttribute("style", "fill:#17a2b8");
     addBookmark.disabled = true;
 }
 
@@ -243,12 +249,12 @@ const showAnswersOnPage = (answersData) => {
                             data-placement="right" title="Бесполезный вопрос">
                         <svg aria-hidden="true" class="svg-icon iconArrowDownLg" width="36" height="36"
                              viewBox="0 0 36 36">
-                            <path d="M2 11h32L18 27 2 11Z" id="voteDownAnswer${answer.id}></path>
+                            <path d="M2 11h32L18 27 2 11Z" id="voteDownAnswer${answer.id}"></path>
                         </svg>
                     </button>
 
                     <a id="postUpdatesAnswer" class="d-flex justify-content-center" href="#" data-toggle="tooltip"
-                       data-placement="right" title="Изменения, связанные с вопросом">
+                       data-placement="right" title="Изменения, связанные с вопросом"/>
                         <svg aria-hidden="true" class="mln2 mr0 svg-icon iconHistory" width="19" height="18"
                              viewBox="0 0 19 18">
                             <path d="M3 9a8 8 0 1 1 3.73 6.77L8.2 14.3A6 6 0 1 0 5 9l3.01-.01-4 4-4-4h3L3 9Zm7-4h1.01L11 9.36l3.22 2.1-.6.93L10 10V5Z"></path>
@@ -274,28 +280,6 @@ const showAnswersOnPage = (answersData) => {
                             <a type="button" style="color: #6a737c;">Следить</a>
                         </div>
                         <div class="d-flex flex-row">
-                            <div class="userCard">
-                                <div class="container">
-                                    <div class="d-flex flex-column flex-wrap">
-                                        <div id="editorCard${answer.id}" class="row">
-                                            <div>
-                                                <div>
-                                                    <a id="lastChangeLink" href="#">
-                                                        <small>редактирован <span>${answer.persistDateTime.replace("T", " в ").slice(0, -10)}</span></small>
-                                                    </a>
-                                                </div>
-                                                <div class="pr-2" style="display: inline-block">
-                                                    <img src="/images/noUserAvatar.png" style="width: 50px; height: 50px" alt="...">
-                                                </div>
-                                                <div class="align-items-top" style="display: inline-block; vertical-align: bottom">
-                                                    <div class="align-items-top"><a class="align-top" href="#">Редактор</a></div>
-                                                    <div class="text-muted">Репутация</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="userCard">
                                 <div class="container">
                                     <div class="d-flex flex-column">
