@@ -24,11 +24,18 @@ public class QuestionPageDtoDaoSearchInTitle implements PageDtoDao<QuestionViewD
         int offset = (properties.getCurrentPage() - 1) * itemsOnPage;
         return entityManager.createQuery(
                         "select " +
-                                " q.id, q.title, u.id, (select sum(r.count) from Reputation r where r.author.id =q.user.id)," +
-                                " u.fullName, u.imageLink, q.description,0 as viewCount," +
+                                " q.id," +
+                                " q.title," +
+                                " u.id," +
+                                " (select sum(r.count) from Reputation r where r.author.id =q.user.id),"+
+                                " u.fullName," +
+                                " u.imageLink," +
+                                " q.description," +
+                                "0 as viewCount," +
                                 " (select count (a.id) from Answer a where a.question.id = q.id)," +
                                 " (select count(vq.id) from VoteQuestion vq where vq.question.id=q.id)," +
-                                " q.persistDateTime, q.lastUpdateDateTime" +
+                                " q.persistDateTime," +
+                                " q.lastUpdateDateTime" +
                                 " from Question q JOIN q.user u" +
                                 " WHERE lower(q.title) like lower(concat('%',:q,'%'))" +
                                 " ORDER BY q.persistDateTime desc"
@@ -54,6 +61,7 @@ public class QuestionPageDtoDaoSearchInTitle implements PageDtoDao<QuestionViewD
                         questionViewDto.setPersistDateTime((LocalDateTime) tuple[10]);
                         questionViewDto.setLastUpdateDateTime((LocalDateTime) tuple[11]);
                         return questionViewDto;
+
                     }
 
                     @Override
