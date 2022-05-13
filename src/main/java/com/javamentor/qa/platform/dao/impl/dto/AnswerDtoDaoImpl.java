@@ -20,7 +20,7 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
     public Optional<AnswerDTO> getUndeletedAnswerDtoById(Long id) {
 
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.AnswerDTO(" +
-                        "a.id, a.user.id, (select sum(r.count) from Reputation r where r.answer.user.id = a.user.id), " +
+                        "a.id, a.user.id, (select sum(r.count) from Reputation r where r.author.id = a.user.id), " +
                         "a.question.id, a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
                         "(select coalesce(sum(case when v.vote = 'UP_VOTE' then 1 else -1 end), 0) from VoteAnswer v where v.answer.id = a.id)," +
                         "a.user.imageLink, a.user.nickname) from Answer as a where a.id = :id and a.isDeleted = false", AnswerDTO.class)
@@ -31,7 +31,7 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
     public List<AnswerDTO> getAllUndeletedAnswerDtoByQuestionId(Long questionId) {
 
         return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.AnswerDTO( a.id, a.user.id, " +
-                        "(select sum(r.count) from Reputation r where r.answer.user.id = a.user.id), " +
+                        "(select sum(r.count) from Reputation r where r.author.id = a.user.id), " +
                         "a.question.id, a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
                         "(select coalesce(sum(case when v.vote = 'UP_VOTE' then 1 else -1 end), 0) from VoteAnswer v " +
                         "where v.answer.id = a.id), a.user.imageLink, a.user.nickname) " +
