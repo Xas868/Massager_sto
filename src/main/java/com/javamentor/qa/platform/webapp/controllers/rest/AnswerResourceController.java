@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.AnswerCommentDto;
 import com.javamentor.qa.platform.models.dto.AnswerDTO;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
@@ -7,11 +8,11 @@ import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentAnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
-import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,15 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -83,7 +76,7 @@ public class AnswerResourceController {
     })
     @PostMapping(path = "/{id}/upVote")
     public ResponseEntity<?> upVote(@PathVariable(name = "id") long answerId,
-                                       Authentication authentication) {
+                                    Authentication authentication) {
         User currentUser = (User) authentication.getPrincipal();
         return upDownVoteEvent(VoteType.UP_VOTE, answerId, currentUser);
     }
@@ -148,7 +141,7 @@ public class AnswerResourceController {
         User user = (User) authentication.getPrincipal();
         Optional<Question> question = questionService.getById(questionId);
 
-        if (question.isEmpty()){
+        if (question.isEmpty()) {
             return new ResponseEntity<>("There is no question " + questionId.toString(), HttpStatus.BAD_REQUEST);
         }
 
@@ -207,10 +200,10 @@ public class AnswerResourceController {
     })
     @ApiResponse(responseCode = "400", description = "Answer с таким id не существует",
             content = {
-            @Content(mediaType = "application/json")
-    })
+                    @Content(mediaType = "application/json")
+            })
     @PutMapping(path = "/{id}/update")
-        public ResponseEntity<?> updateAnswer(@PathVariable(name = "id") long answerId,
+    public ResponseEntity<?> updateAnswer(@PathVariable(name = "id") long answerId,
                                           @Valid @RequestBody String htmlBody) {
         Optional<AnswerDTO> answerDtoOpt = answerDtoService.getUndeletedAnswerDtoById(answerId);
         if (answerDtoOpt.isEmpty()) {
@@ -234,10 +227,10 @@ public class AnswerResourceController {
     })
     @PostMapping("/{id}/comment")
     public ResponseEntity<?> addCommentAnswer(@PathVariable Long id, @RequestBody String bodyComment,
-                                                Authentication auth) {
+                                              Authentication auth) {
         User user = (User) auth.getPrincipal();
         Optional<Answer> answer = answerService.getById(id);
-        if (answer.isEmpty()){
+        if (answer.isEmpty()) {
             return new ResponseEntity<>("There is no answer " + id.toString(), HttpStatus.BAD_REQUEST);
         }
         CommentAnswer commentAnswer = new CommentAnswer(bodyComment, user);
@@ -245,5 +238,21 @@ public class AnswerResourceController {
         commentAnswerService.persist(commentAnswer);
         return new ResponseEntity<>("Comment successfully added", HttpStatus.OK);
     }
+
+
+    @Operation(
+            summary = "Получить список комементариев к ответу на вопрос",
+            description = "получение  комментария к ответу на вопрос"
+    )
+    @ApiResponse(responseCode = "200", description = "OK", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = CommentAnswer.class))
+    })
+    @GetMapping("/{answerId}/comment")
+    public ResponseEntity<List<AnswerCommentDto>> getCommentsByAnswer(@PathVariable Long answerId) {
+        List<AnswerCommentDto> answerComments = answerDtoService.getAllCommentsDtoByAnswerId(answerId);
+        return new ResponseEntity<>(answerComments, HttpStatus.OK);
+    }
+
+
 }
 
