@@ -36,7 +36,16 @@ public class AnswerDtoServiceImpl extends DtoServiceImpl<AnswerDTO> implements A
 
     @Override
     public List<AnswerDTO> getAllUndeletedAnswerDtoByQuestionId(Long questionId) {
-        return answerDtoDao.getAllUndeletedAnswerDtoByQuestionId(questionId);
+
+
+        List<AnswerDTO> a = answerDtoDao.getAllUndeletedAnswerDtoByQuestionId(questionId);
+        for (AnswerDTO answersId : a) {
+            answersId.setCommentOnTheAnswerToTheQuestion(getAllCommentsDtoByAnswerId(answersId.getId()));
+        }
+        return a;
+
+
+
     }
 
     @Override
