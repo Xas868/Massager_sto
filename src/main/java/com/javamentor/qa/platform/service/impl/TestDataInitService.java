@@ -174,6 +174,7 @@ public class TestDataInitService {
             Answer answer = Answer.builder()
                     .htmlBody("Answer " + i)
                     .user(getRandomUser())
+                    .editModerator(getRandomUser())
                     .question(getRandomQuestion())
                     .isDeleted(false)
                     .isHelpful(false)
