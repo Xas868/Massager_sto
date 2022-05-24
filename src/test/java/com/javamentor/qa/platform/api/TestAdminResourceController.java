@@ -51,7 +51,7 @@ public class TestAdminResourceController extends AbstractClassForDRRiderMockMVCT
     }
     @Test
     @DataSet(value = "dataset/AdminResourceController/deleteAnswerById.yml"
-    , strategy = SeedStrategy.REFRESH, cleanBefore = true, cleanAfter = true)
+    , strategy = SeedStrategy.REFRESH, cleanAfter = true)
     public void shouldDeleteAnswerById() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
                 .delete("/api/admin/answer/{id}/delete", "2")
@@ -59,5 +59,11 @@ public class TestAdminResourceController extends AbstractClassForDRRiderMockMVCT
                 .header("Authorization", "Bearer " + getToken("user1@mail.ru","user1")))
                 .andDo(print())
                 .andExpect(status().isOk());
+        assertThat((boolean) entityManager.createQuery(
+                        "SELECT CASE WHEN a.isDeleted = TRUE THEN TRUE ELSE FALSE END " +
+                                "FROM Answer a WHERE a.id =: id")
+                .setParameter("id", (long) 2)
+                .getSingleResult())
+                .isEqualTo(true);
     }
 }

@@ -44,8 +44,7 @@ public class AdminResourceController {
         if (answerService.existsById(id)) {
             answerService.deleteById(id);
             return new ResponseEntity<>("Answer with id = " + id + " was successfully deleted", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Answer with id = " + id + " doesn't exist", HttpStatus.BAD_REQUEST);
         }
+            return new ResponseEntity<>("Answer with id = " + id + " doesn't exist", HttpStatus.BAD_REQUEST);
     }
 }
