@@ -7,15 +7,13 @@ import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.nullValue;
@@ -59,6 +57,29 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.city").value("Moscow"))
                 .andExpect(jsonPath("$.reputation").value(100))
                 .andExpect(jsonPath("$.listTagDto").isEmpty());
+    }
+
+    @Test
+    /*
+    Вычисление количества ответов аутентифицированного юзера.
+    У юзера test1 3 ответа, 2 из которых сделаны менее, чем неделю назад.
+     */
+    @DataSet (cleanBefore = true,
+            value = {
+                    "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/answers.yml",
+                    "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/user.yml",
+                    "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/role.yml",
+                    "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/questions.yml"
+            },
+            strategy = SeedStrategy.REFRESH)
+    public void testGetCountAnswersPerWeekByUserId() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("test1@mail.ru", "test1");
+        mockMvc.perform(get("/api/user/profile/question/week")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json("2"));
     }
 
     @Test
