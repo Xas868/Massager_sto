@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.service.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.AnswerDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
+import com.javamentor.qa.platform.models.dto.AnswerCommentDto;
 import com.javamentor.qa.platform.models.dto.AnswerDTO;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +25,32 @@ public class AnswerDtoServiceImpl extends DtoServiceImpl<AnswerDTO> implements A
 
     @Override
     public Optional<AnswerDTO> getUndeletedAnswerDtoById(Long id) {
-        return answerDtoDao.getUndeletedAnswerDtoById(id);
+        Optional<AnswerDTO> answerDTO = answerDtoDao.getUndeletedAnswerDtoById(id);
+        if (answerDTO.isPresent()) {
+            answerDTO.get().setCommentOnTheAnswerToTheQuestion(getAllCommentsDtoByAnswerId(id));
+            return answerDTO;
+        }
+
+        return Optional.empty();
     }
 
     @Override
     public List<AnswerDTO> getAllUndeletedAnswerDtoByQuestionId(Long questionId) {
-        return answerDtoDao.getAllUndeletedAnswerDtoByQuestionId(questionId);
+
+
+        List<AnswerDTO> a = answerDtoDao.getAllUndeletedAnswerDtoByQuestionId(questionId);
+        for (AnswerDTO answersId : a) {
+            answersId.setCommentOnTheAnswerToTheQuestion(getAllCommentsDtoByAnswerId(answersId.getId()));
+        }
+        return a;
+
+
+
+    }
+
+    @Override
+    public List<AnswerCommentDto> getAllCommentsDtoByAnswerId(Long answerId) {
+        return answerDtoDao.getAllCommentsDtoByAnswerId(answerId);
     }
 }
+
