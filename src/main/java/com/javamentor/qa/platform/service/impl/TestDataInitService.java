@@ -174,7 +174,7 @@ public class TestDataInitService {
             Answer answer = Answer.builder()
                     .htmlBody("Answer " + i)
                     .user(getRandomUser())
-                    .editModerator(getRandomUser())
+                    .editModerator(getRandomAdmin())
                     .question(getRandomQuestion())
                     .isDeleted(false)
                     .isHelpful(false)
@@ -253,6 +253,13 @@ public class TestDataInitService {
     private User getRandomUser() {
         List<User> users = userService.getAll();
         return users.get(new Random().nextInt(users.size()));
+    }
+    private User getRandomAdmin() {
+         User admin = getRandomUser();
+             if (admin.getRole().getId() == 1) {
+                return admin;
+             }
+        return null;
     }
 
     private Question getRandomQuestion() {
