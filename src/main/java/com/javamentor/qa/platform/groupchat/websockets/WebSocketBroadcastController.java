@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.groupchat.websockets.chatroom.ChatRoomService;
 import com.javamentor.qa.platform.models.entity.chat.Chat;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.models.entity.chat.Message;
+import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.webapp.converters.MessagesConverterForChat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +26,10 @@ public class WebSocketBroadcastController {
     @Autowired
     MessagesConverterForChat messagesConverterForChat;
 
-@Autowired
+    @Autowired
     ChatRoomService chatRoomService;
-@Autowired
-ChatMessagesService chatMessagesService;
+    @Autowired
+    ChatMessagesService chatMessagesService;
 
 
     @GetMapping("/stomp-broadcast")
@@ -43,7 +44,7 @@ ChatMessagesService chatMessagesService;
     // как это определено в аннотации @sendTo.
 
 
-@Transactional
+
     public Message send(@Payload MessageCreateDtoRequest messageRequest) {
 
 
@@ -52,30 +53,31 @@ ChatMessagesService chatMessagesService;
 //        message.setUserSender((User) authentication.getPrincipal());
 //
         Message message = new Message();
-        Chat chat = new Chat();
-        chat.setId(1L);
-        chat.setChatType(ChatType.GROUP);
-        chat.setTitle("Group");
 
+//        Chat chat = new Chat();
+//        chat.setId(1L);
+//        chat.setChatType(ChatType.GROUP);
+//        chat.setTitle("Group");
+//
+//
+//
+//
+//
+//chatRoomService.persist(chat);
 
-
-
-
-
-      chatRoomService.persist(chat);
-
-      message.setMessage(message.getMessage());
-      message.setChat(chat);
+        message.setMessage(messageRequest.getMessage());
+        message.setChat(Chat.builder().id(1L).build());
+        message.setUserSender(User.builder().id(100L).email("user100@mail.ru").isDeleted(false).isEnabled(true).password("user100")
+              .role(Role.builder().id(1L).build()).build());
+//
+//        message.setUserSender(User.builder().id(101L).email("1").password("1")
+//                .role(Role.builder().id(1L).build()).build());
 //      message.setUserSender(user);
 
-    chatMessagesService.persist(message);
+        chatMessagesService.persist(message);
 
 
-
-         return  new Message();
-
-
-
+        return message;
 
 
     }

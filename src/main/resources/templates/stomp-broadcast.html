@@ -139,13 +139,13 @@
         $("#message").val("");
     }
 
-    function createTextNode(messageObj) {
+    function createTextNode( messageObj) {
         return '<div class="row alert alert-info"><div class="col-md-8">' +
-            messageObj.text +
+            messageObj.message +
             '</div><div class="col-md-4 text-right"><small>[<b>' +
-            messageObj.from +
+            messageObj.message +
             '</b> ' +
-            messageObj.time +
+            messageObj.message +
             ']</small>' +
             '</div></div>';
     }
