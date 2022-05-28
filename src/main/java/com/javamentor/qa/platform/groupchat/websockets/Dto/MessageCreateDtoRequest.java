@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.groupchat.websockets.Dto;
 
 
+import com.javamentor.qa.platform.models.entity.user.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -16,6 +17,11 @@ public class MessageCreateDtoRequest implements Serializable {
 
     @Schema(description = "Тело сообщения")
     private String message;
+    private User userSender;
+
+
+    private Long chat_id;
+
 
 
 

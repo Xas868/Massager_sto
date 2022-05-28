@@ -74,7 +74,7 @@
 
 <script type="text/javascript">
     let stompClient = null;
-   let userName = $("#from").val();
+   let userSender = $("#from").val();
 
     function setConnected(connected) {
         $("#from").prop("disabled", connected);
@@ -88,8 +88,8 @@
     }
 
     function connect() {
-        userName = $("#from").val();
-        if (userName == null || userName === "") {
+        userSender = $("#from").val();
+        if (userSender == null || userSender === "") {
             alert('Please input a nickname!');
             return;
         }
@@ -124,7 +124,7 @@
     }
 
     function sendConnection(message) {
-        const text = userName + message;
+        const text = userSender + message;
         sendBroadcast({'from': 'server', 'text': text});
     }
 
@@ -135,7 +135,7 @@
     function send() {
         const text = $("#message").val();
         //persist (fetch?)
-        sendBroadcast({'from': userName, 'text': text});
+        sendBroadcast({'from': userSender, 'message': text,'chat_id':1});
         $("#message").val("");
     }
 
@@ -150,7 +150,7 @@
             '</div></div>';
     }
 
-    function showBroadcastMessage(message) {
+    function showBroadcastMessage(  message) {
         $("#content").html($("#content").html() + message);
         $("#clear").show();
     }
