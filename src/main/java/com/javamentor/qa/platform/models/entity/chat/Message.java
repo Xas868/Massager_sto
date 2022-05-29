@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -44,6 +45,7 @@ public class Message {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "chat_id")
+    @Cascade({org.hibernate.annotations.CascadeType.REMOVE})
     private Chat chat;
 
 
@@ -56,6 +58,8 @@ public class Message {
     public Message(String message) {
         this.message = message;
     }
+
+
 
     @Override
     public boolean equals(Object o) {

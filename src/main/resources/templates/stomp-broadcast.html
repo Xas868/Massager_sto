@@ -75,6 +75,7 @@
 <script type="text/javascript">
     let stompClient = null;
    let userSender = $("#from").val();
+   let chatId = null;
 
     function setConnected(connected) {
         $("#from").prop("disabled", connected);
@@ -135,7 +136,7 @@
     function send() {
         const text = $("#message").val();
         //persist (fetch?)
-        sendBroadcast({'from': userSender, 'message': text,'chat_id':1});
+        sendBroadcast({'from': userSender, 'message': text});
         $("#message").val("");
     }
 
