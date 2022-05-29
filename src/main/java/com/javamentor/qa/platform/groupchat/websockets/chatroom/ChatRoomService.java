@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface ChatRoomService extends ReadWriteService<Chat, Long> {
 
-    Optional<Long> findIdChatByUser_Sender(Long userSender,boolean createIfNotExist);
+
+
+
 
 }

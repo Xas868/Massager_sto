@@ -18,6 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addViewController("/pagination").setViewName("testPagination");
         registry.addViewController("/accessDenied").setViewName("accessDenied");
         registry.addViewController("/questions/{id}").setViewName("question");
+        registry.addViewController("/stomp-broadcast").setViewName("stomp-broadcast");
     }
 
     @Override

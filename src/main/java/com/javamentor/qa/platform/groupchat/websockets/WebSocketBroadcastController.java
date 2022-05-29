@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.groupchat.websockets.chatmesseges.ChatMessages
 import com.javamentor.qa.platform.groupchat.websockets.chatroom.ChatRoomService;
 import com.javamentor.qa.platform.models.entity.chat.Chat;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.chat.Message;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -34,8 +35,7 @@ public class WebSocketBroadcastController {
     @Autowired
     ChatMessagesService chatMessagesService;
 
-    @PersistenceContext
-    EntityManager entityManager;
+
 
 
     @GetMapping("/stomp-broadcast")
@@ -43,8 +43,9 @@ public class WebSocketBroadcastController {
         return "stomp-broadcast";
     }
 
-    Chat chat = (Chat.builder().chatType(ChatType.GROUP).title("Group")
-            .persistDate(LocalDateTime.now()).id(1L).build());
+
+    User user = (User.builder().id(100L).email("user100@mail.ru").isDeleted(false).isEnabled(true).password("user100")
+            .role(Role.builder().id(1L).build()).build());
 
     @MessageMapping("/broadcast")//@MessageMapping аннотация гарантирует, что если сообщение
     // отправляется на /app/broadcast, то будет вызван send() метод.
@@ -53,41 +54,26 @@ public class WebSocketBroadcastController {
 
 
     @Transactional
-    public void send(@Payload MessageCreateDtoRequest messageRequest) {
-
-
-//        Message message = messagesConverterForChat.changeDtoRequestToMessage(messageRequest);
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        message.setUserSender((User) authentication.getPrincipal());
-
-
-        Long id = chat.getId();
-
-        if (chat.getId() >= id) {
-            ++id;
-            chat.setId(id);
-
-        }
-
-
+    public Message send(@Payload MessageCreateDtoRequest messageRequest) {
         Message message = new Message();
-
-
-        entityManager.persist(chat);
-
+        Chat chat = new Chat();
+        chat.setChatType(ChatType.GROUP);
+        chat.setTitle("gr");
+        chat.setId(1L);
+       chatRoomService.update(chat);
         message.setMessage(messageRequest.getMessage());
         message.setChat(chat);
-        message.setUserSender(User.builder().id(100L).email("user100@mail.ru").isDeleted(false).isEnabled(true).password("user100")
-                .role(Role.builder().id(1L).build()).build());
-//
-//        message.setUserSender(User.builder().id(101L).email("1").password("1")
-//                .role(Role.builder().id(1L).build()).build());
-//      message.setUserSender(user);
-
+        message.setUserSender(user);
+        message.setPersistDate(LocalDateTime.now());
         chatMessagesService.persist(message);
 
-
-//        return message;
+        return new Message(message.getId(),
+                messageRequest.
+                getMessage(),
+                message.getLastRedactionDate(),
+                message.getPersistDate(),
+                messageRequest.getUserSender(),
+                chat);
 
 
     }

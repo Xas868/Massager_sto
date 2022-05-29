@@ -18,6 +18,7 @@ public class MessageCreateDtoRequest implements Serializable {
     @Schema(description = "Тело сообщения")
     private String message;
     private User userSender;
+    private String time;
 
 
     private Long chat_id;

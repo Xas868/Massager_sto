@@ -22,28 +22,8 @@ public class ChatRoomServiceImpl extends ReadWriteServiceImpl<Chat, Long> implem
 
     }
 
-    public Optional<Long> findIdChatByUser_Sender(Long userSender, boolean createIfNotExist) {// здесь нахождение
-        // id чата по id отправителя. Но надо ли ? Если  у нас только 1 групповой чат .
-        return chatRoomDao.findIdChatByUser_Sender(userSender).map(Chat::getId)
-                .or(() -> {
-                    if (!createIfNotExist) {
-                        return Optional.empty();
-                    }
-
-                    Long chatId = userSender;
 
 
-                    Chat singleGroupChat =Chat.builder()
-                            .id(chatId)
-                            .chatType(ChatType.GROUP)
-                            .persistDate(LocalDateTime.now())
-                            .title("GroupChat")
-                            .build();
-                    chatRoomDao.persist(singleGroupChat);
-                    return Optional.of(userSender);
 
-                });
-
-    }
 }
 

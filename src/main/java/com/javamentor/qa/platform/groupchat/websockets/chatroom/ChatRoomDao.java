@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface ChatRoomDao  extends ReadWriteDao<Chat, Long> {
 
-    Optional<Chat> findIdChatByUser_Sender(Long userSender);
+
 }
