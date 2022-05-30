@@ -24,23 +24,6 @@ abstract public class MessagesConverterForChat  {
 
 
 
-//    @Named("idGroupChat")
-//    public Chat idGroupChat(){
-//        return Chat.builder()
-//                .id(1L)
-//                .title("GRChat")
-//                .persistDate(LocalDateTime.now()).build();
-//    }
-
-
-//    @Named("userIdToSet")
-//    public  Set<User> userIdToSet(Long userId) {
-//        User user = userService.getById(userId);
-//        Set<User> userSet = new HashSet<>();
-//        userSet.add(user);
-//        return userSet;
-//    }
-
 
 
 
