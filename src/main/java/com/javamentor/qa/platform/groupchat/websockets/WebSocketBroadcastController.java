@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.groupchat.websockets;
 
 import com.javamentor.qa.platform.groupchat.websockets.Dto.MessageCreateDtoRequest;
+import com.javamentor.qa.platform.groupchat.websockets.Dto.MessageCreateDtoResponse;
 import com.javamentor.qa.platform.groupchat.websockets.chatmesseges.ChatMessagesService;
 import com.javamentor.qa.platform.groupchat.websockets.chatroom.ChatRoomService;
 import com.javamentor.qa.platform.models.entity.chat.Chat;
@@ -44,7 +45,7 @@ public class WebSocketBroadcastController {
     }
 
 
-    User user = (User.builder().id(100L).email("user100@mail.ru").isDeleted(false).isEnabled(true).password("user100")
+    User user = (User.builder().id(100L).email("user100@mail.ru").nickname("user_100").isDeleted(false).imageLink("/images/noUserAvatar.png").isEnabled(true).password("user100")
             .role(Role.builder().id(1L).build()).build());
 
     @MessageMapping("/broadcast")//@MessageMapping аннотация гарантирует, что если сообщение
@@ -54,7 +55,7 @@ public class WebSocketBroadcastController {
 
 
     @Transactional
-    public Message send(@Payload MessageCreateDtoRequest messageRequest) {
+    public MessageCreateDtoResponse send(@Payload MessageCreateDtoRequest messageRequest) {
         Message message = new Message();
         Chat chat = new Chat();
         chat.setChatType(ChatType.GROUP);
@@ -67,13 +68,8 @@ public class WebSocketBroadcastController {
         message.setPersistDate(LocalDateTime.now());
         chatMessagesService.persist(message);
 
-        return new Message(message.getId(),
-                messageRequest.
-                getMessage(),
-                message.getLastRedactionDate(),
-                message.getPersistDate(),
-                messageRequest.getUserSender(),
-                chat);
+        return new MessageCreateDtoResponse(message.getId(),message.getChat().getId(),message.getUserSender().getId()
+        ,message.getMessage(),message.getPersistDate(), user.getNickname(), user.getImageLink());
 
 
     }

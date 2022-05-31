@@ -37,6 +37,17 @@
     <div class="row">
         <div class="col-md-6">
             <div class="mb-3">
+                <div class="d-flex flex-row">
+                    <div class="mainUserCard">
+                        <div class="container">
+                            <div class="d-flex flex-column">
+                                <div id="userCard1" class="row">
+                                    <span>карточка пользователя</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="input-group">
                     <input type="text" id="from" class="form-control" placeholder="Choose a nickname"/>
                     <div class="btn-group">
@@ -73,7 +84,8 @@
 
 
 <script type="text/javascript">
-let data = null
+    const userCardAsked = document.querySelector('#userCard1')
+    let commentsOutput = '';
     let stompClient = null;
    let userSenderFront = $("#from").val();
 
@@ -141,13 +153,21 @@ let data = null
     }
 
     function createTextNode( messageObj) {
+
         return '<div class="row alert alert-info"><div class="col-md-8">' +
             messageObj.message +
             '</div><div class="col-md-4 text-right"><small>[<b>' +
             userSenderFront+
             '</b> ' +
             messageObj.persistDate.replace("T", " в ").slice(0,-7) +
+            '</b> ' +
+
+            messageObj.nickname +
+            '</b> ' +
+
+
             ']</small>' +
+
             '</div></div>';
     }
 
@@ -163,6 +183,43 @@ let data = null
         $("#content").html("");
         $("#clear").hide();
     }
+
+
+
+    function showCommentsOnPage(data) {
+        for (let questionComment in data) {
+            commentsOutput += `
+        <li class="list-group-item border-right-0 border-left-0 px-0">
+            <div class="row mx-0">
+                <div class="col-1 d-flex justify-content-center">
+                    <span class="usefulCommentVotes">0</span>
+                </div>
+                <div class="col">
+                    <span class="comment-text">${data[questionComment].text}<span> – </span><a href="#" class="comment-user">User ${data[questionComment].userId}</a>
+                    <span class="comment-data" style="color:#9199a1">${data[questionComment].persistDate.replace("T", " в ").slice(0, -7)}</span>
+                </div>
+            </div>
+        </li>`;
+        }
+        questionComments.innerHTML = commentsOutput;
+    }
+
+
+    userCardAsked.innerHTML =
+        '<div>' +
+        '<div>' +
+        '<small class="text-muted">' +
+        // 'задан <span>' + info.persistDateTime.replace("T", " в ").slice(0, -10) + '</span>' +
+        '</small>' +
+        '</div>' +
+        '<div class="pr-2" style="display: inline-block">' +
+        '<img src="/images/noUserAvatar.png" style="width: 50px; height: 50px" alt="...">' +
+        '</div>' +
+        '<div class="align-items-top" style="display: inline-block; vertical-align: bottom">' +
+        // '<div class="align-items-top"><a class="align-top" href="#">' + info.authorName + '</a></div>' +
+        // '<div class="text-muted">'+ info.authorReputation + '</div>' +
+        '</div>' +
+        '</div>';
 
 
 </script>
