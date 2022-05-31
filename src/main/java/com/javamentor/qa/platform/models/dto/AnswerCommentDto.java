@@ -22,4 +22,5 @@ public class AnswerCommentDto {
     private String imageLink;
     private Long reputation;
 
+
 }

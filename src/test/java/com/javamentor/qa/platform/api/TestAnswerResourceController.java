@@ -556,6 +556,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andExpect(jsonPath("$[0].text").value("Hello Test from Comment on the answer"))
                 .andExpect(jsonPath("$[0].reputation").value(100))
                 .andExpect(jsonPath("$[0].userId").value(100));
+
     }
 }
 
