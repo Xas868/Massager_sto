@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,7 +56,9 @@ public class WebSocketBroadcastController {
 
 
     @Transactional
-    public MessageCreateDtoResponse send(@Payload MessageCreateDtoRequest messageRequest) {
+    public MessageCreateDtoResponse send(@Payload MessageCreateDtoRequest messageRequest,
+                                         Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
         Message message = new Message();
         Chat chat = new Chat();
         chat.setChatType(ChatType.GROUP);
