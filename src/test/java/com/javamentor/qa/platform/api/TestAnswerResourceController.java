@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -525,4 +526,42 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
+
+
+    @Test
+    @DataSet(value = {
+            "dataset/testAnswerResourceController/commentsOnTheAnswer.yml",
+            "dataset/testAnswerResourceController/users.yml",
+            "dataset/testAnswerResourceController/repForCommentsOnTheAnswer.yml",
+            "dataset/testAnswerResourceController/roles.yml",
+            "dataset/testAnswerResourceController/answers.yml",
+            "dataset/testAnswerResourceController/questions.yml",
+            "dataset/testAnswerResourceController/comment_answer.yml"
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
+    )
+    // Получение списка дто комментариев к ответам на вопросы
+    public void shouldReceiveCommentsOnTheAnswerToTheQuestion() throws Exception {
+        mockMvc.perform(get("/api/user/question/100/answer/100/comment")
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].answerId").value(100))
+                .andExpect(jsonPath("$[0].lastRedactionDate").value("2021-12-13T23:09:52.716"))
+                .andExpect(jsonPath("$[0].persistDate").value("2021-12-13T23:09:52.716"))
+                .andExpect(jsonPath("$[0].text").value("Hello Test from Comment on the answer"))
+                .andExpect(jsonPath("$[0].reputation").value(100))
+                .andExpect(jsonPath("$[0].userId").value(100));
+
+    }
 }
+
+
+
+
+
+

@@ -1,0 +1,9 @@
+comment:
+  - id: 1
+    comment_type: 1
+    text: "Hello Test from Comment on the answer"
+    persist_date: 2021-12-13T23:09:52.716+03:00
+    last_redaction_date: 2021-12-13T23:09:52.716+03:00
+    user_id: 100
+
+
