@@ -10,6 +10,7 @@ import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -233,11 +234,12 @@ public class UserResourceController {
     }
 
     @Operation(summary = "Получение количества ответов авторизованного пользователя." ,
-            description = "Получение количества ответов авторизованного пользователя.")
+            description = "Контроллер возвращает целое число, которое отражает количество ответов авторизованного пользователя за неделю. В качестве параметра принимает авторизованного пользователя.")
+    @Parameter (name = "user", description = "Авторизованный пользователь, количество ответов которого будет отображено.", required = true)
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Возвращает число ответов авторизованного пользователя",
+                    description = "Возвращает число ответов авторизованного пользователя.",
                     content = {
                             @Content(
                                     mediaType = "application/json")
