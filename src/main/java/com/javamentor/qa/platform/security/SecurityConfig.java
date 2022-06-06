@@ -51,7 +51,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .antMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/api/**").authenticated()
-                .antMatchers("/stomp-broadcast").hasAnyRole("USER", "ADMIN")
                 .anyRequest().permitAll()
                 .and().exceptionHandling().accessDeniedPage("/accessDenied");
     }
