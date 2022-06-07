@@ -3,16 +3,14 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoAllUsersByRepImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoAllUsersImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoByVoteImpl;
-import com.javamentor.qa.platform.models.dto.BookMarksDto;
-import com.javamentor.qa.platform.models.dto.PageDTO;
-import com.javamentor.qa.platform.models.dto.UserDto;
-import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -233,5 +231,23 @@ public class UserResourceController {
     @GetMapping("/api/user/top10/week")
     public ResponseEntity<List<UserDto>> getTop10UsersForWeekRankedByNumberOfQuestions() {
         return new ResponseEntity<>(userDtoService.getTop10UsersForWeekRankedByNumberOfQuestions(), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Получение количества ответов авторизованного пользователя." ,
+            description = "Контроллер возвращает целое число, которое отражает количество ответов авторизованного пользователя за неделю. В качестве параметра принимает авторизованного пользователя.")
+    @Parameter (name = "user", description = "Авторизованный пользователь, количество ответов которого будет отображено.", required = true)
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Возвращает число ответов авторизованного пользователя.",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json")
+                    })
+    })
+    @GetMapping ("api/user/profile/question/week")
+    public ResponseEntity<Long> getAnswersPerWeekByUserId (@AuthenticationPrincipal User user) {
+        return new ResponseEntity<Long>(userDtoService.getCountAnswersPerWeekByUserId(user.getId()), HttpStatus.OK);
+
     }
 }
