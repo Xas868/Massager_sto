@@ -58,7 +58,7 @@ public class WebSocketBroadcastController {
     @Transactional
     public MessageCreateDtoResponse send(@Payload MessageCreateDtoRequest messageRequest,
                                          Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
+//        User user = (User) authentication.getPrincipal();
         Message message = new Message();
         Chat chat = new Chat();
         chat.setChatType(ChatType.GROUP);

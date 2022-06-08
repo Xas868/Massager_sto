@@ -84,6 +84,7 @@
 
 
 <script type="text/javascript">
+    var request = new XMLHttpRequest()
     const userCardAsked = document.querySelector('#userCard1')
     let commentsOutput = '';
     let stompClient = null;
@@ -107,11 +108,13 @@
             alert('Please input a nickname!');
             return;
         }
-        /*<![CDATA[*/
-        let url = /*[['ws://'+${#httpServletRequest.serverName}+':'+${#httpServletRequest.serverPort}+@{/broadcast}]]*/ 'ws://localhost:8091/broadcast';
-        /*]]>*/
+
+
+        let url =  'ws://localhost:8091/broadcast';
+
         stompClient = Stomp.client(url);
-        stompClient.connect({}, function () {
+
+        stompClient.connect(   {}, function () {
             stompClient.subscribe('/topic/messages', function (output) {
                 showBroadcastMessage(createTextNode(JSON.parse(output.body)));
 
@@ -123,6 +126,7 @@
             alert('error' + err);
         });
     }
+
 
     function disconnect() {
         if (stompClient != null) {
