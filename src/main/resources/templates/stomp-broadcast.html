@@ -132,24 +132,21 @@ let currentUserName;
 
     function connect(event) {
         let url = 'ws://localhost:8091/broadcast';
-        this.stompClient = Stomp.client(this.url);
-        this.stompClient.connect({
-            // Authorization: "Bearer " + localStorage.getItem("tokenChat")
-        }, frame => {
-            this.connect = true;
-            console.log(frame);
-            this.stompClient.subscribe('/topic/messages',onMessageReceived);
+        stompClient = Stomp.client(url);
+        console.log(event)
+         stompClient.connect({}, onConnected, onError);
 
 
-            },
-            error => {
 
-                console.log(error);
+    }
+    function onConnected() {
 
-                this.connect = false;
-                console.log(error);
-            }
-        );
+        // Subscribe to the Public Topic
+        stompClient.subscribe('/topic/messages', onMessageReceived);
+    }
+    function onError(error) {
+        connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
+        connectingElement.style.color = 'red';
     }
 
 
@@ -166,7 +163,8 @@ let currentUserName;
                 senderNickname: senderNickname,
                 senderImage: senderImage,
                 chatId:  chatId,
-                time: this.time
+                time: this.time,
+
 
             };
 
@@ -187,6 +185,7 @@ let currentUserName;
         const avatarElement = document.createElement("i");
         avatarElement.innerHTML = `<img src="${messageRequestDto.senderImage}"
                              alt="" width="42" height="42" class="bar-sm">`;
+        // ../images/noUserAvatar.png
 
         messageElement.appendChild(avatarElement);
 
@@ -199,10 +198,14 @@ let currentUserName;
 
         const textElement = document.createElement('a');
         const messageText = document.createTextNode(messageRequestDto.message);
+        const messageTime  = document.createTextNode(messageRequestDto.time.replace("T", " в ").slice(0,-7))
         textElement.appendChild(messageText);
+        textElement.appendChild(messageTime);
 
 
         messageElement.appendChild(textElement);
+
+        messageElement.appendChild(messageTime);
 
         messageArea.appendChild(messageElement);
         messageArea.scrollTop = messageArea.scrollHeight

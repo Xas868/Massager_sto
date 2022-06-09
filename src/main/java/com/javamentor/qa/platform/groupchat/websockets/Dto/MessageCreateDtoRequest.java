@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -18,11 +19,10 @@ public class MessageCreateDtoRequest implements Serializable {
     @Schema(description = "Тело сообщения")
     private String message;
     private Long senderId;
-    private String time;
+    private LocalDateTime time;
     private Long chatId;
     private String senderNickname;
     private String senderImage;
-
 
 
 

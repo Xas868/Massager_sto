@@ -35,16 +35,13 @@ public class WebSocketBroadcastController {
     UserService userService;
 
 
-
-
     @GetMapping("/stomp-broadcast")
     public String getWebSocketBroadcast() {
         return "stomp-broadcast";
     }
 
 
-//    User user = (User.builder().id(100L).email("user100@mail.ru").nickname("user_100").isDeleted(false).imageLink("/images/noUserAvatar.png").isEnabled(true).password("user100")
-//            .role(Role.builder().id(1L).build()).build());
+
 
     @MessageMapping("/broadcast")//@MessageMapping аннотация гарантирует, что если сообщение
     // отправляется на /app/broadcast, то будет вызван send() метод.
@@ -60,7 +57,7 @@ public class WebSocketBroadcastController {
         chat.setChatType(ChatType.GROUP);
         chat.setTitle("gr");
         chat.setId(1L);
-       chatRoomService.update(chat);
+        chatRoomService.update(chat);
 
         message.setMessage(messageRequestDto.getMessage());
         message.setChat(chat);
@@ -68,17 +65,20 @@ public class WebSocketBroadcastController {
         message.setPersistDate(LocalDateTime.now());
         chatMessagesService.persist(message);
 
-        return new MessageCreateDtoRequest(messageRequestDto.getMessage(),
-               messageRequestDto.getSenderId(),
-                messageRequestDto.getTime(),
-                messageRequestDto.getChatId(),
-                messageRequestDto.getSenderNickname(),
-                messageRequestDto.getSenderImage());
+        MessageCreateDtoRequest dtoRequestNew = new MessageCreateDtoRequest(messageRequestDto.getMessage()
+                , messageRequestDto.getSenderId()
+                , message.getPersistDate()
+                , messageRequestDto.getChatId()
+                , messageRequestDto.getSenderNickname()
+                , userById(messageRequestDto.getSenderId()).getImageLink());
+
+
+        return dtoRequestNew;
 
 
     }
 
-   User userById(Long id){
+    User userById(Long id) {
         return userService.getById(id).orElse(null);
     }
 
