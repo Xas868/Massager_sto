@@ -17,11 +17,11 @@ public class MessageCreateDtoRequest implements Serializable {
 
     @Schema(description = "Тело сообщения")
     private String message;
-    private User userSender;
+    private Long senderId;
     private String time;
-
-
-    private Long chat_id;
+    private Long chatId;
+    private String senderNickname;
+    private String senderImage;
 
 
 

@@ -4,228 +4,308 @@
 
 <head>
     <title>WebSocket With STOMP Broadcast Example</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
-          integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <!-- Bootstrap CSS (Cloudflare CDN) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css"
-          integrity="sha512-T584yQ/tdRR5QwOpfvDfVQUidzfgc2339Lc8uBDtcp/wYu80d7jwBgAxbyMh0a9YM9F8N3tdErpFI8iaGx6x5g=="
-          crossorigin="anonymous" referrerpolicy="no-referrer">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>-->
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>-->
+
+    <script  th:src="@{/webjars/stomp-websocket/2.3.3-1/stomp.js}" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
             crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
             crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
 
-    <script th:src="@{/webjars/stomp-websocket/2.3.3-1/stomp.js}" type="text/javascript"></script>
+    <script type="text/javascript" src="/static/js/libs/jquery.cookie.js"
+            th:src="@{/js/libs/jquery.cookie.js}"></script>
+    <script src="/static/js/authorizationCheck.js" th:src="@{/js/authorizationCheck.js}"></script>
+
+    <meta charset="UTF-8">
+    <title>main</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<!--    <link rel="stylesheet" type="text/css" href="../groupChat.css">-->
+
+
+
+
+
 
 
 </head>
 
 <body>
 <div class="container">
-    <div class="py-5 text-center">
-        <a href="/"><h2>WebSocket</h2></a>
-        <p class="lead">WebSocket Broadcast - with STOMP</p>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="mb-3">
-                <div class="d-flex flex-row">
-                    <div class="mainUserCard">
-                        <div class="container">
-                            <div class="d-flex flex-column">
-                                <div id="userCard1" class="row">
-                                    <span>карточка пользователя</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <input type="text" id="from" class="form-control" placeholder="Choose a nickname"/>
-                    <div class="btn-group">
-                        <button type="button" id="connect" class="btn btn-sm btn-outline-secondary" onclick="connect()">
-                            Connect
-                        </button>
-                        <button type="button" id="disconnect" class="btn btn-sm btn-outline-secondary"
-                                onclick="disconnect()" disabled>Disconnect
-                        </button>
-                    </div>
-                </div>
+<!--    <div class="py-5 text-center">-->
+<!--        <a href="/"><h2>WebSocket</h2></a>-->
+<!--        <p class="lead">WebSocket Broadcast - with STOMP</p>-->
+<!--    </div>-->
+    <div id="chat-page">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h3 id="chatTitle">Group Chat</h3>
             </div>
+            <ul id="messageArea">
 
-            <div class="mb-3">
-                <div class="input-group" id="sendmessage" style="display: none;">
-                    <input type="text" id="message" class="form-control" placeholder="Message">
-                    <div class="input-group-append">
-                        <button id="send" class="btn btn-primary" onclick="send()">Send</button>
+            </ul>
+            <form id="messageForm" name="messageForm" nameForm="messageForm">
+                <div class="form-group">
+                    <div class="input-group clearfix">
+                        <input type="text" id="message" placeholder="Type a message..." autocomplete="off" class="form-control"/>
+                        <button type="submit" class="primary">Send</button>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div id="content"></div>
-            <div>
-                <span class="float-right">
-                            <button id="clear" class="btn btn-primary" onclick="clearBroadcast()" style="display: none;">Clear</button>
-                        </span>
-            </div>
+            </form>
         </div>
     </div>
 </div>
 
 
 <script type="text/javascript">
-    var request = new XMLHttpRequest()
-    const userCardAsked = document.querySelector('#userCard1')
-    let commentsOutput = '';
-    let stompClient = null;
-   let userSenderFront = $("#from").val();
 
 
-    function setConnected(connected) {
-        $("#from").prop("disabled", connected);
-        $("#connect").prop("disabled", connected);
-        $("#disconnect").prop("disabled", !connected);
-        if (connected) {
-            $("#sendmessage").show();
-        } else {
-            $("#sendmessage").hide();
+
+
+    let tokenChat = $.cookie("token");
+
+    const URL_CURRENT_USER = "/api/auth/currentUser"
+let currentUserName;
+    let senderId
+    let senderNickname
+    let senderImage
+    let chatId = 1
+
+
+    const setCurrentUser = (currentUser) => {
+        senderId = currentUser.id
+        senderNickname = currentUser.nickname
+        senderImage = currentUser.linkImage
+    }
+
+    $.ajax( {
+        url: URL_CURRENT_USER,
+        type: "GET",
+        async: false,
+        beforeSend: function (request) {
+            if (tokenChat != null) {
+                request.setRequestHeader("Authorization", "Bearer " + tokenChat);
+                console.log(tokenChat)
+            }
+        },
+        success: function (result) {
+            setCurrentUser(result)
         }
+    })
+
+    const messageForm = document.querySelector('#messageForm');
+    const messageInput = document.querySelector('#message');
+    const messageArea = document.querySelector('#messageArea');
+    const connectingElement = document.querySelector('.connecting');
+
+
+   //  var request = new XMLHttpRequest()
+   //  const userCardAsked = document.querySelector('#userCard1')
+   //  let commentsOutput = '';
+   //  let stompClient = null;
+   // let userSenderFront = $("#from").val();
+
+
+    // function setConnected(connected) {
+    //     $("#from").prop("disabled", connected);
+    //     $("#connect").prop("disabled", connected);
+    //     $("#disconnect").prop("disabled", !connected);
+    //     if (connected) {
+    //         $("#sendmessage").show();
+    //     } else {
+    //         $("#sendmessage").hide();
+    //     }
+    // }
+
+    function connect(event) {
+        let url = 'ws://localhost:8091/broadcast';
+        this.stompClient = Stomp.client(this.url);
+        this.stompClient.connect({
+            // Authorization: "Bearer " + localStorage.getItem("tokenChat")
+        }, frame => {
+            this.connect = true;
+            console.log(frame);
+            this.stompClient.subscribe('/topic/messages',onMessageReceived);
+
+
+            },
+            error => {
+
+                console.log(error);
+
+                this.connect = false;
+                console.log(error);
+            }
+        );
     }
 
-    function connect() {
-        userSenderFront = $("#from").val();
-        if (userSenderFront == null || userSenderFront === "") {
-            alert('Please input a nickname!');
-            return;
+
+
+
+
+    function sendMessage(event) {
+        const messageContent = messageInput.value.trim();
+        console.log(messageContent)
+        if (messageContent && stompClient) {
+            const chatMessage = {
+                message: messageContent,
+                senderId: senderId,
+                senderNickname: senderNickname,
+                senderImage: senderImage,
+                chatId:  chatId,
+                time: this.time
+
+            };
+
+            stompClient.send("/app/broadcast", {}, JSON.stringify(chatMessage));
+            messageInput.value = '';
         }
+        event.preventDefault();
 
-
-        let url =  'ws://localhost:8091/broadcast';
-
-        stompClient = Stomp.client(url);
-
-        stompClient.connect(   {}, function () {
-            stompClient.subscribe('/topic/messages', function (output) {
-                showBroadcastMessage(createTextNode(JSON.parse(output.body)));
-
-            });
-
-            sendConnection(  userSenderFront+ ' connected to server');
-            setConnected(true);
-        }, function (err) {
-            alert('error' + err);
-        });
     }
+    function onMessageReceived(payload) {
+        const messageRequestDto = JSON.parse(payload.body);
+        console.log(messageRequestDto)
+
+        const messageElement = document.createElement('li');
+
+        messageElement.classList.add('chat-message');
+
+        const avatarElement = document.createElement("i");
+        avatarElement.innerHTML = `<img src="${messageRequestDto.senderImage}"
+                             alt="" width="42" height="42" class="bar-sm">`;
+
+        messageElement.appendChild(avatarElement);
+
+        const usernameElement = document.createElement('span');
+        const usernameText = document.createTextNode(messageRequestDto.senderNickname);
+        usernameElement.appendChild(usernameText);
+        messageElement.appendChild(usernameElement);
+        const br = document.createElement("br");
+        usernameElement.after(br)
+
+        const textElement = document.createElement('a');
+        const messageText = document.createTextNode(messageRequestDto.message);
+        textElement.appendChild(messageText);
 
 
-    function disconnect() {
-        if (stompClient != null) {
-            sendConnection( userSenderFront + ' disconnected from server');
-            showBroadcastMessage(  '<div class="alert alert-warning">  Disconnected from server</div>')
+        messageElement.appendChild(textElement);
 
-
-            stompClient.disconnect(function () {
-                console.log('disconnected...');
-                setConnected(false);
-            });
-        }
+        messageArea.appendChild(messageElement);
+        messageArea.scrollTop = messageArea.scrollHeight
     }
-
-    function sendConnection(message) {
-        const text =   message;
-        sendBroadcast({'from': 'server', 'message': text, userSenderFront});
-    }
-
-    function sendBroadcast(json) {
-        stompClient.send("/app/broadcast", {}, JSON.stringify(json));
-    }
-
-    function send() {
-        const text = $("#message").val();
-        sendBroadcast({'from': userSenderFront, 'message': text});
-        $("#message").val("");
-    }
-
-    function createTextNode( messageObj) {
-
-        return '<div class="row alert alert-info"><div class="col-md-8">' +
-            messageObj.message +
-            '</div><div class="col-md-4 text-right"><small>[<b>' +
-            userSenderFront+
-            '</b> ' +
-            messageObj.persistDate.replace("T", " в ").slice(0,-7) +
-            '</b> ' +
-
-            messageObj.nickname +
-            '</b> ' +
-
-
-            ']</small>' +
-
-            '</div></div>';
-    }
-
-    function showBroadcastMessage(  message) {
-        $("#content").html($("#content").html() + message);
-        $("#clear").show();
-    }
+    document.addEventListener('DOMContentLoaded', connect, true)
+    messageForm.addEventListener('submit', sendMessage, true)
 
 
 
 
-    function clearBroadcast() {
-        $("#content").html("");
-        $("#clear").hide();
-    }
 
 
 
-    function showCommentsOnPage(data) {
-        for (let questionComment in data) {
-            commentsOutput += `
-        <li class="list-group-item border-right-0 border-left-0 px-0">
-            <div class="row mx-0">
-                <div class="col-1 d-flex justify-content-center">
-                    <span class="usefulCommentVotes">0</span>
-                </div>
-                <div class="col">
-                    <span class="comment-text">${data[questionComment].text}<span> – </span><a href="#" class="comment-user">User ${data[questionComment].userId}</a>
-                    <span class="comment-data" style="color:#9199a1">${data[questionComment].persistDate.replace("T", " в ").slice(0, -7)}</span>
-                </div>
-            </div>
-        </li>`;
-        }
-        questionComments.innerHTML = commentsOutput;
-    }
 
 
-    userCardAsked.innerHTML =
-        '<div>' +
-        '<div>' +
-        '<small class="text-muted">' +
-        // 'задан <span>' + info.persistDateTime.replace("T", " в ").slice(0, -10) + '</span>' +
-        '</small>' +
-        '</div>' +
-        '<div class="pr-2" style="display: inline-block">' +
-        '<img src="/images/noUserAvatar.png" style="width: 50px; height: 50px" alt="...">' +
-        '</div>' +
-        '<div class="align-items-top" style="display: inline-block; vertical-align: bottom">' +
-        // '<div class="align-items-top"><a class="align-top" href="#">' + info.authorName + '</a></div>' +
-        // '<div class="text-muted">'+ info.authorReputation + '</div>' +
-        '</div>' +
-        '</div>';
+
+
+    // function sendConnection(message) {
+    //     const text =   message;
+    //     sendBroadcast({'from': 'server', 'message': text, userSenderFront});
+    // }
+    //
+    // function sendBroadcast(json) {
+    //     stompClient.send("/app/broadcast", {}, JSON.stringify(json));
+    // }
+    //
+    // function send() {
+    //     const text = $("#message").val();
+    //     sendBroadcast({'from': userSenderFront, 'message': text});
+    //     $("#message").val("");
+    // }
+    //
+    // function createTextNode( messageObj) {
+    //
+    //     return '<div class="row alert alert-info"><div class="col-md-8">' +
+    //         messageObj.message +
+    //         '</div><div class="col-md-4 text-right"><small>[<b>' +
+    //         userSenderFront+
+    //         '</b> ' +
+    //         messageObj.persistDate.replace("T", " в ").slice(0,-7) +
+    //         '</b> ' +
+    //
+    //         messageObj.nickname +
+    //         '</b> ' +
+    //
+    //
+    //         ']</small>' +
+    //
+    //         '</div></div>';
+    // }
+    //
+    // function showBroadcastMessage(  message) {
+    //     $("#content").html($("#content").html() + message);
+    //     $("#clear").show();
+    // }
+    //
+    //
+    //
+    //
+    // function clearBroadcast() {
+    //     $("#content").html("");
+    //     $("#clear").hide();
+    // }
+    //
+    //
+    //
+    // function showCommentsOnPage(data) {
+    //     for (let questionComment in data) {
+    //         commentsOutput += `
+    //     <li class="list-group-item border-right-0 border-left-0 px-0">
+    //         <div class="row mx-0">
+    //             <div class="col-1 d-flex justify-content-center">
+    //                 <span class="usefulCommentVotes">0</span>
+    //             </div>
+    //             <div class="col">
+    //                 <span class="comment-text">${data[questionComment].text}<span> – </span><a href="#" class="comment-user">User ${data[questionComment].userId}</a>
+    //                 <span class="comment-data" style="color:#9199a1">${data[questionComment].persistDate.replace("T", " в ").slice(0, -7)}</span>
+    //             </div>
+    //         </div>
+    //     </li>`;
+    //     }
+    //     questionComments.innerHTML = commentsOutput;
+    // }
+    //
+    //
+    // userCardAsked.innerHTML =
+    //     '<div>' +
+    //     '<div>' +
+    //     '<small class="text-muted">' +
+    //     // 'задан <span>' + info.persistDateTime.replace("T", " в ").slice(0, -10) + '</span>' +
+    //     '</small>' +
+    //     '</div>' +
+    //     '<div class="pr-2" style="display: inline-block">' +
+    //     '<img src="/images/noUserAvatar.png" style="width: 50px; height: 50px" alt="...">' +
+    //     '</div>' +
+    //     '<div class="align-items-top" style="display: inline-block; vertical-align: bottom">' +
+    //     // '<div class="align-items-top"><a class="align-top" href="#">' + info.authorName + '</a></div>' +
+    //     // '<div class="text-muted">'+ info.authorReputation + '</div>' +
+    //     '</div>' +
+    //     '</div>';
 
 
 </script>
+
 </body>
 </html>
