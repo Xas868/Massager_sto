@@ -13,4 +13,5 @@ public interface AnswerDtoDao {
     List<AnswerDTO> getAllUndeletedAnswerDtoByQuestionId(Long questionId);
 
     List<AnswerCommentDto> getAllCommentsDtoByAnswerId(Long answerId);
+
 }

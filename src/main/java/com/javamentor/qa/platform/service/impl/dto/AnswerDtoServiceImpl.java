@@ -46,11 +46,13 @@ public class AnswerDtoServiceImpl extends DtoServiceImpl<AnswerDTO> implements A
 
 
 
+
     }
 
     @Override
     public List<AnswerCommentDto> getAllCommentsDtoByAnswerId(Long answerId) {
         return answerDtoDao.getAllCommentsDtoByAnswerId(answerId);
+
     }
 }
 

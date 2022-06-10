@@ -73,4 +73,9 @@ public class UserDtoServiceImpl extends DtoServiceImpl<UserDto> implements UserD
         pageDto.getItems().forEach(u -> u.setListTagDto(map.get(u.getId())));
         return pageDto;
     }
+
+    @Override
+    public Long getCountAnswersPerWeekByUserId(Long userId) {
+        return userDtoDao.getCountAnswersPerWeekByUserId(userId);
+    }
 }

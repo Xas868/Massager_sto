@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.UserDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
+import com.javamentor.qa.platform.models.dto.AnswerDTO;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import org.hibernate.transform.ResultTransformer;
@@ -9,7 +10,11 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,10 +26,10 @@ public class UserDtoDaoImpl implements UserDtoDao {
     @Override
     public List<UserProfileQuestionDto> getAllUserProfileQuestionDtoById(Long id) {
         return entityManager.createQuery("select  new com.javamentor.qa.platform.models.dto.UserProfileQuestionDto(" +
-                "q.id,q.title," +
-                "coalesce((select count(a.id) from Answer a where a.question.id=q.id),0),q.persistDateTime ) " +
-                "from Question q where q.user.id=:id")
-                .setParameter("id",id)
+                        "q.id,q.title," +
+                        "coalesce((select count(a.id) from Answer a where a.question.id=q.id),0),q.persistDateTime ) " +
+                        "from Question q where q.user.id=:id")
+                .setParameter("id", id)
                 .getResultList();
     }
 
@@ -73,12 +78,12 @@ public class UserDtoDaoImpl implements UserDtoDao {
                     @Override
                     public UserDto transformTuple(Object[] objects, String[] strings) {
                         return new UserDto(
-                                (Long)objects[0],
-                                (String)objects[1],
-                                (String)objects[2],
-                                (String)objects[3],
-                                (String)objects[4],
-                                (Long)objects[5]);
+                                (Long) objects[0],
+                                (String) objects[1],
+                                (String) objects[2],
+                                (String) objects[3],
+                                (String) objects[4],
+                                (Long) objects[5]);
                     }
 
                     @Override
@@ -88,5 +93,22 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 })
                 .setMaxResults(10)
                 .getResultList();
+    }
+
+    @Override
+    public Long getCountAnswersPerWeekByUserId(Long userId) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+        LocalDateTime weekAgo = LocalDateTime.parse((LocalDateTime.now().minusDays(7)).format(formatter), formatter);
+        List<AnswerDTO> resultList = entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.AnswerDTO(answ.id, answ.user.id, " +
+                        "(select sum(r.count) from Reputation r where r.author.id = answ.user.id), " +
+                        "answ.question.id, answ.htmlBody, answ.persistDateTime, answ.isHelpful, answ.dateAcceptTime, " +
+                        "(select coalesce(sum(case when v.vote = 'UP_VOTE' then 1 else -1 end), 0) from VoteAnswer v " +
+                        "where v.answer.id = answ.id), answ.user.imageLink, answ.user.nickname)" +
+                        "from Answer as answ where answ.user.id = :user_id and answ.persistDateTime >= :week_ago", AnswerDTO.class)
+                .setParameter("user_id", userId)
+                .setParameter("week_ago", weekAgo)
+                .getResultList();
+
+        return (long) resultList.size();
     }
 }
