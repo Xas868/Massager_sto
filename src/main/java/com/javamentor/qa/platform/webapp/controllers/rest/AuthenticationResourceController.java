@@ -86,10 +86,10 @@ public class AuthenticationResourceController {
         return new ResponseEntity<>("User is authenticated", HttpStatus.OK);
     }
     @GetMapping(path = "/currentUser")
-    @Operation(summary = "Get current user dto", responses = {
-            @ApiResponse(description = "Get current user dto success", responseCode = "200",
+    @Operation(summary = "Получение текущего юзера", responses = {
+            @ApiResponse(description = "Мы получили текущего юзера", responseCode = "200",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
-            @ApiResponse(responseCode = "403", description = "user failed authorization")
+            @ApiResponse(responseCode = "403", description = "текущий юзер не получен")
     })
     public ResponseEntity <Object> getCurrentUserDto() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

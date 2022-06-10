@@ -1,7 +1,6 @@
-package com.javamentor.qa.platform.groupchat.websockets.Dto;
+package com.javamentor.qa.platform.models.dto;
 
 
-import com.javamentor.qa.platform.models.entity.user.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -25,12 +24,9 @@ public class MessageCreateDtoRequest implements Serializable {
     private String senderImage;
 
 
-
-
     @Override
     public String toString() {
         return "MessageCreateDtoRequest{" +
-
 
 
                 ", bodyMessage='" + message + '\'' +
