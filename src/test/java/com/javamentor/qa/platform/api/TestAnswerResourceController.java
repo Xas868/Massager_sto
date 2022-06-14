@@ -36,7 +36,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
             "dataset/testAnswerResourceController/rep.yml",
             "dataset/testAnswerResourceController/voteAnswer.yml"},
             tableOrdering = {
-                    "role",
+                    "role.yml",
                     "user_entity",
                     "question",
                     "comment_answer",
@@ -73,7 +73,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
             "dataset/testAnswerResourceController/rep.yml",
             "dataset/testAnswerResourceController/voteAnswer.yml"},
             tableOrdering = {
-                    "role",
+                    "role.yml",
                     "user_entity",
                     "question",
                     "comment_answer",
@@ -104,7 +104,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
             "dataset/testAnswerResourceController/rep.yml",
             "dataset/testAnswerResourceController/voteAnswer.yml"},
             tableOrdering = {
-                    "role",
+                    "role.yml",
                     "user_entity",
                     "question",
                     "comment_answer",
@@ -151,7 +151,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
             "dataset/testAnswerResourceController/rep.yml",
             "dataset/testAnswerResourceController/voteAnswer.yml"},
             tableOrdering = {
-                    "role",
+                    "role.yml",
                     "user_entity",
                     "question",
                     "comment_answer",
@@ -198,7 +198,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
             "dataset/testAnswerResourceController/rep.yml",
             "dataset/testAnswerResourceController/voteAnswer.yml"},
             tableOrdering = {
-                    "role",
+                    "role.yml",
                     "user_entity",
                     "question",
                     "comment_answer",
@@ -246,7 +246,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
             "dataset/testAnswerResourceController/rep.yml",
             "dataset/testAnswerResourceController/voteAnswer.yml"},
             tableOrdering = {
-                    "role",
+                    "role.yml",
                     "user_entity",
                     "question",
                     "comment_answer",
@@ -556,6 +556,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andExpect(jsonPath("$[0].text").value("Hello Test from Comment on the answer"))
                 .andExpect(jsonPath("$[0].reputation").value(100))
                 .andExpect(jsonPath("$[0].userId").value(100));
+
     }
 }
 

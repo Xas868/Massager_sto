@@ -7,15 +7,13 @@ import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.nullValue;
@@ -59,6 +57,75 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.city").value("Moscow"))
                 .andExpect(jsonPath("$.reputation").value(100))
                 .andExpect(jsonPath("$.listTagDto").isEmpty());
+    }
+
+    @Test
+    /*
+    Вычисление количества ответов аутентифицированного юзера.
+    У юзера user100 5 ответ, 3 из которых сделаны менее, чем неделю назад.
+     */
+    @DataSet (cleanBefore = true,
+            value = {
+                    "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/answers.yml",
+                    "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/users.yml",
+                    "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/role.yml",
+                    "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/questions.yml"
+            },
+            strategy = SeedStrategy.REFRESH)
+    public void testGetCountAnswersPerWeekByUserIdMustReturnThree() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "user100");
+        mockMvc.perform(get("/api/user/profile/question/week")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json("3"));
+    }
+
+    @Test
+    /*
+    Вычисление количества ответов аутентифицированного юзера.
+    У юзера user101 3 ответa, 1 из которых сделаны менее, чем неделю назад.
+     */
+    @DataSet (cleanBefore = true,
+            value = {
+                    "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/answers.yml",
+                    "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/users.yml",
+                    "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/role.yml",
+                    "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/questions.yml"
+            },
+            strategy = SeedStrategy.REFRESH)
+    public void testGetCountAnswersPerWeekByUserIdMustReturnOne() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("user101@mail.ru", "user101");
+        mockMvc.perform(get("/api/user/profile/question/week")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json("1"));
+    }
+
+    @Test
+    /*
+    Вычисление количества ответов аутентифицированного юзера.
+    У юзера user102 3 ответa, среди которых нет сделанных ранее, чем неделю назад.
+     */
+    @DataSet (cleanBefore = true,
+            value = {
+                    "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/answers.yml",
+                    "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/users.yml",
+                    "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/role.yml",
+                    "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/questions.yml"
+            },
+            strategy = SeedStrategy.REFRESH)
+    public void testGetCountAnswersPerWeekByUserIdMustReturnZero() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("user102@mail.ru", "user102");
+        mockMvc.perform(get("/api/user/profile/question/week")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json("0"));
     }
 
     @Test
@@ -196,7 +263,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
             "dataset/testUserResourceController/repFirst3DownVoteAndLast3UpVote.yml"
     },
             tableOrdering = {
-                    "role",
+                    "role.yml",
                     "user_entity",
                     "reputation"
             },

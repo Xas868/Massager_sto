@@ -251,6 +251,7 @@ public class AnswerResourceController {
     public ResponseEntity<List<AnswerCommentDto>> getCommentsByAnswer(@PathVariable Long answerId) {
         List<AnswerCommentDto> answerComments = answerDtoService.getAllCommentsDtoByAnswerId(answerId);
         return new ResponseEntity<>(answerComments, HttpStatus.OK);
+
     }
 
 

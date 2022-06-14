@@ -11,4 +11,6 @@ public interface UserDtoService extends PageDtoService<UserDto> {
     List<UserProfileQuestionDto> getAllUserProfileQuestionDtoById(Long id);
     List<UserProfileQuestionDto> getUserProfileQuestionDtoByUserIdIsDeleted(Long id);
     List<UserDto> getTop10UsersForWeekRankedByNumberOfQuestions();
+    Long getCountAnswersPerWeekByUserId (Long userId);
+
 }

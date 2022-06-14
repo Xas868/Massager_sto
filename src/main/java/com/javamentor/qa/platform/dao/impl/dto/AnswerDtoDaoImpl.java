@@ -73,6 +73,7 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                                 "FROM CommentAnswer c where c.answer.id=:id", AnswerCommentDto.class)
                 .setParameter("id", answerId)
                 .getResultList();
+
     }
 
 
