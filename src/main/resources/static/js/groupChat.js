@@ -8,12 +8,16 @@
     let senderNickname
     let senderImage
     let chatId = 1
+    let time = new Date();
+
+    console.log(time.toISOString() )
 
 
     const setCurrentUser = (currentUser) => {
     senderId = currentUser.id
     senderNickname = currentUser.nickname
     senderImage = currentUser.linkImage
+
 }
 
     $.ajax({
@@ -68,7 +72,8 @@
     senderNickname: senderNickname,
     senderImage: senderImage,
     chatId: chatId,
-    time: this.time,
+
+
 
 
 };
@@ -104,10 +109,10 @@
 
     const textElement = document.createElement('a');
     const messageText = document.createTextNode(messageRequestDto.message);
-    const messageTime = document.createTextNode(" " + messageRequestDto.time.replace("T", " в ").slice(0, -7) + " ")
+    const messageTime = document.createTextNode(" " + time.toISOString().replace("T", " в ").slice(0, -7) + " ");
     textElement.appendChild(messageText);
     textElement.appendChild(messageTime);
-
+    // .replace("T", " в ").slice(0, -7) + " ")
 
     messageElement.appendChild(textElement);
 

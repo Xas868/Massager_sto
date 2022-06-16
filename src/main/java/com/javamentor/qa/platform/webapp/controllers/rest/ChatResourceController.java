@@ -39,7 +39,7 @@ public class ChatResourceController {
                                                          Authentication auth){
           User user = (User) auth.getPrincipal();
           Long user_id = user.getId();
-          chatMessageDto.setUserSender_id(user_id);
+          chatMessageDto.setUserSenderId(user_id);
      return new ResponseEntity<>(chatMessageDto,HttpStatus.OK);
 
 
