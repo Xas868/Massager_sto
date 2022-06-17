@@ -1,35 +1,35 @@
 package com.javamentor.qa.platform.models.dto;
 
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+
+
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.Data;
+import lombok.Builder;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@Builder
+@Data
 public class MessageCreateDtoRequest implements Serializable {
 
 
-    @Schema(description = "Тело сообщения")
+
     private String message;
     private Long senderId;
-    private LocalDateTime time;
     private Long chatId;
     private String senderNickname;
     private String senderImage;
 
 
-    @Override
-    public String toString() {
-        return "MessageCreateDtoRequest{" +
 
-
-                ", bodyMessage='" + message + '\'' +
-                '}';
-    }
 }

@@ -109,14 +109,13 @@
 
     const textElement = document.createElement('a');
     const messageText = document.createTextNode(messageRequestDto.message);
-    const messageTime = document.createTextNode(" " + time.toISOString().replace("T", " в ").slice(0, -7) + " ");
+
     textElement.appendChild(messageText);
-    textElement.appendChild(messageTime);
-    // .replace("T", " в ").slice(0, -7) + " ")
+
 
     messageElement.appendChild(textElement);
 
-    messageElement.appendChild(messageTime);
+
 
     messageArea.appendChild(messageElement);
     messageArea.scrollTop = messageArea.scrollHeight
