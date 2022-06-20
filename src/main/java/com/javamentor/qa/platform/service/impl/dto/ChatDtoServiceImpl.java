@@ -23,8 +23,8 @@ public class ChatDtoServiceImpl extends DtoServiceImpl<MessageDto> implements Ch
     }
 
     @Override
-    public Optional<GroupChatDto> getGroupChatDtoById(long groupChatId, PaginationData properties) {
-        Optional<GroupChatDto> groupChatDtoOptional = chatDtoDao.getGroupChatDtoById(groupChatId);
+    public Optional<GroupChatDto> getGroupChatDtoById(long chatId, PaginationData properties) {
+        Optional<GroupChatDto> groupChatDtoOptional = chatDtoDao.getGroupChatDto(chatId);
         if (groupChatDtoOptional.isEmpty()) {
             return Optional.empty();
         } else {

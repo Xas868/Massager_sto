@@ -49,6 +49,7 @@ create table bookmarks (
 create table chat (
                       id int8 not null,
                       chat_type int2,
+                      image varchar (255),
                       persist_date timestamp,
                       title varchar(255),
                       primary key (id)

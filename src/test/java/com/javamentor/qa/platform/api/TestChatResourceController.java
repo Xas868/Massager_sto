@@ -81,8 +81,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.messages.currentPageNumber").value(1))
                 .andExpect(jsonPath("$.messages.itemsOnPage").value(10))
                 .andExpect(jsonPath("$.messages.items.length()").value(10))
-                .andExpect(jsonPath("$.messages.items[0].id").value(101))
-                .andExpect(jsonPath("$.messages.items[9].id").value(110));
+                .andExpect(jsonPath("$.messages.items[0].id").value(125))
+                .andExpect(jsonPath("$.messages.items[9].id").value(116));
     }
 
     @Test
@@ -108,8 +108,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.messages.currentPageNumber").value(3))
                 .andExpect(jsonPath("$.messages.itemsOnPage").value(5))
                 .andExpect(jsonPath("$.messages.items.length()").value(5))
-                .andExpect(jsonPath("$.messages.items[0].id").value(121))
-                .andExpect(jsonPath("$.messages.items[4].id").value(125));
+                .andExpect(jsonPath("$.messages.items[0].id").value(105))
+                .andExpect(jsonPath("$.messages.items[4].id").value(101));
     }
 
     @Test
@@ -135,8 +135,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.messages.currentPageNumber").value(1))
                 .andExpect(jsonPath("$.messages.itemsOnPage").value(15))
                 .andExpect(jsonPath("$.messages.items.length()").value(15))
-                .andExpect(jsonPath("$.messages.items[0].id").value(101))
-                .andExpect(jsonPath("$.messages.items[14].id").value(115));
+                .andExpect(jsonPath("$.messages.items[0].id").value(125))
+                .andExpect(jsonPath("$.messages.items[14].id").value(111));
     }
 
     @Test
@@ -162,8 +162,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.messages.currentPageNumber").value(2))
                 .andExpect(jsonPath("$.messages.itemsOnPage").value(10))
                 .andExpect(jsonPath("$.messages.items.length()").value(10))
-                .andExpect(jsonPath("$.messages.items[0].id").value(116))
-                .andExpect(jsonPath("$.messages.items[9].id").value(125));
+                .andExpect(jsonPath("$.messages.items[0].id").value(110))
+                .andExpect(jsonPath("$.messages.items[9].id").value(101));
     }
 
     @Test

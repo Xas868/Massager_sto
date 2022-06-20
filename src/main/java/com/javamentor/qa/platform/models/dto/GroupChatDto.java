@@ -13,20 +13,24 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class GroupChatDto {
     private long id;
+    private String image;
     private String chatName;
     private PageDTO<MessageDto> messages;
     private LocalDateTime persistDateTime;
-    //TODO должна быть картинка чата. Пока что неясно, откуда она должна взяться.
-//    private String image;
 
-    public GroupChatDto(long id, String chatName, LocalDateTime persistDateTime) {
+    public GroupChatDto(long id, String image, String chatName, LocalDateTime persistDateTime) {
         this.id = id;
+        this.image = image;
         this.chatName = chatName;
         this.persistDateTime = persistDateTime;
     }
 
     @Override
     public String toString() {
-        return ("Group chat: id = " + id + ", chat name = " + chatName + ", messages = " + messages + ", persist date = " + persistDateTime);
+        return ("Group chat: id = " + id +
+                ", image link = " + image +
+                ", chat name = " + chatName +
+                ", messages = " + messages +
+                ", persist date = " + persistDateTime);
     }
 }

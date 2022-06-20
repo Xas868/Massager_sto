@@ -24,29 +24,26 @@ public class ChatResourceController {
         this.chatDtoService = chatDtoService;
     }
 
-    @GetMapping("/group/{groupChatId}")
-    @Operation (summary = "Получение группового чата с сообщениями.", description = "Получение группового чата с пагинированным списком сообщений. " +
-            "Внимание! Передаваемый id описывает именно групповой чат: id чата может отличаться от соответствуюшего ему id группового чата.")
+
+    @Operation (summary = "Получение группового чата с сообщениями.", description = "Получение группового чата с пагинированным списком сообщений.")
     @ApiResponse (responseCode = "200", description = "Групповой чат найден", content ={
             @Content(mediaType = "application/json"),
     })
     @ApiResponse (responseCode = "400", description = "Групповой чат с указанными id не найден" , content ={
             @Content(mediaType = "application/json"),
     })
-
+    @GetMapping("/group/{groupChatId}")
     public ResponseEntity<GroupChatDto> getGroupChatDtoById(
             @PathVariable("groupChatId")
-            @Parameter(name = "Id группового чата.", required = true, description = "Id группового чата является обязательным параметром." +
-                    "Внимание! Передаваемый id описывает именно групповой чат: id чата может отличаться от соответствуюшего ему id группового чата.")
+            @Parameter(name = "Id группового чата.", required = true, description = "Id группового чата является обязательным параметром.")
                     long groupChatId,
             @RequestParam(name = "itemsOnPage", defaultValue = "10")
             @Parameter (name = "Количество сообщений на странице.",
                     description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
                     int itemsOnPage,
             @RequestParam(name = "currentPage", defaultValue = "1")
-            @Parameter (hidden = true, name = "Текущая пагинированная страница сообщений.",
-                    description = "Необязательный параметр. Служит для корректного постраничного отображения сообщений и обращения к ним. " +
-                            "Параметр технический, потому скрыт. По-умолчанию равен 1")
+            @Parameter (name = "Текущая страница сообщений.",
+                    description = "Необязательный параметр. Служит для корректного постраничного отображения сообщений и обращения к ним. По-умолчанию равен 1")
                     int currentPage) {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoByGroupChatId.class.getSimpleName());
         properties.getProps().put("groupChatId", groupChatId);

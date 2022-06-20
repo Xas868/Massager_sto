@@ -16,13 +16,16 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
     private EntityManager entityManager;
 
     @Override
-    public Optional<GroupChatDto> getGroupChatDtoById(long chatId) {
+    public Optional<GroupChatDto> getGroupChatDto(long chatId) {
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.GroupChatDto" +
-                "(" +
-                    "gc.id, " +
-                    "gc.chat.title, " +
-                    "gc.chat.persistDate" +
-                ") from GroupChat as gc where gc.id = :chatId", GroupChatDto.class )
+                        "(" +
+                        "gc.id, " +
+                        "gc.chat.image, " +
+                        "gc.chat.title, " +
+                        "gc.chat.persistDate" +
+                        ") " +
+                        "from GroupChat as gc where gc.id = :chatId " +
+                        "order by gc.chat.persistDate", GroupChatDto.class)
                 .setParameter("chatId", chatId));
     }
 }

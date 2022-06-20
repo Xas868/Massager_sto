@@ -27,7 +27,9 @@ public class MessagePageDtoByGroupChatId implements PageDtoDao<MessageDto> {
                 "m.userSender.nickname, " +
                 "m.userSender.id, " +
                 "m.userSender.imageLink, " +
-                "m.persistDate) from Message as m inner join GroupChat as gc on gc.chat.id = m.chat.id where m.chat.chatType = 1 and gc.id = :groupChatId", MessageDto.class)
+                "m.persistDate) from Message as m inner join GroupChat as gc on gc.chat.id = m.chat.id " +
+                        "where m.chat.chatType = 1 and gc.id = :groupChatId " +
+                        "order by m.persistDate desc", MessageDto.class)
                 .setParameter("groupChatId", groupChatId)
                 .setFirstResult(firstResultOffset)
                 .setMaxResults(itemsOnPage)

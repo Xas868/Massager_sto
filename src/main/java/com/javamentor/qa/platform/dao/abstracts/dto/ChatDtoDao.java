@@ -5,5 +5,5 @@ import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import java.util.Optional;
 
 public interface ChatDtoDao {
-    Optional<GroupChatDto> getGroupChatDtoById(long chatId);
+    Optional<GroupChatDto> getGroupChatDto(long chatId);
 }

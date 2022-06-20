@@ -6,5 +6,5 @@ import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import java.util.Optional;
 
 public interface ChatDtoService {
-    Optional<GroupChatDto> getGroupChatDtoById(long groupChatId, PaginationData properties);
+    Optional<GroupChatDto> getGroupChatDtoById(long chatId, PaginationData properties);
 }
