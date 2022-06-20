@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.converters;
 
 import com.javamentor.qa.platform.models.dto.MessageCreateDtoRequest;
+import com.javamentor.qa.platform.models.dto.MessageCreateDtoResponse;
 import com.javamentor.qa.platform.models.entity.chat.Chat;
 import com.javamentor.qa.platform.models.entity.chat.Message;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -43,7 +44,7 @@ public abstract class MessagesForGroupChatConverter {
     @Mapping(source = "message.userSender.id", target = "senderId")
     @Mapping(source = "message.userSender.imageLink", target = "senderImage")
     @Mapping(source = "message.userSender.nickname", target = "senderNickname")
-    public abstract MessageCreateDtoRequest MessageToMessageDto(Message message);
+    public abstract MessageCreateDtoResponse MessageToMessageDto(Message message);
 
 
 }

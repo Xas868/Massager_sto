@@ -1,8 +1,9 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.MessageCreateDtoRequest;
+import com.javamentor.qa.platform.models.dto.MessageCreateDtoResponse;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
-import com.javamentor.qa.platform.service.abstracts.model.ChatMessagesService;
+import com.javamentor.qa.platform.service.abstracts.model.MessageService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
 import com.javamentor.qa.platform.webapp.converters.MessagesForGroupChatConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,24 +18,23 @@ import org.springframework.transaction.annotation.Transactional;
 public class WebSocketBroadcastController {
 
     private final MessagesForGroupChatConverter messagesForGroupChatConverter;
-    private final GroupChatRoomService groupChatRoomService;
-    private final ChatMessagesService chatMessagesService;
+    private final MessageService messageService;
 
     @Autowired
-    public WebSocketBroadcastController(MessagesForGroupChatConverter messagesForGroupChatConverter, GroupChatRoomService groupChatRoomService, ChatMessagesService chatMessagesService) {
+    public WebSocketBroadcastController(MessagesForGroupChatConverter messagesForGroupChatConverter, MessageService messageService) {
         this.messagesForGroupChatConverter = messagesForGroupChatConverter;
-        this.groupChatRoomService = groupChatRoomService;
-        this.chatMessagesService = chatMessagesService;
+        this.messageService = messageService;
     }
 
     @MessageMapping("/broadcast")
     @SendTo("/topic/messages")
     @Transactional
-    public MessageCreateDtoRequest send(@Payload MessageCreateDtoRequest messageRequestDto) {
+    public MessageCreateDtoResponse send(@Payload MessageCreateDtoRequest messageRequestDto) {
 
 
-        groupChatRoomService.persist(groupChatRoomService.getById(messageRequestDto.getChatId()).orElse(new GroupChat()));
-        chatMessagesService.persist(messagesForGroupChatConverter.MessageDtoToMessage(messageRequestDto));
+
+
+        messageService.persist(messagesForGroupChatConverter.MessageDtoToMessage(messageRequestDto));
         return messagesForGroupChatConverter.MessageToMessageDto(messagesForGroupChatConverter.MessageDtoToMessage(messageRequestDto));
 
 

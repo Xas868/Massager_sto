@@ -1,9 +1,4 @@
 package com.javamentor.qa.platform.models.dto;
-
-
-
-
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,22 +8,17 @@ import lombok.Builder;
 
 import java.io.Serializable;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class MessageCreateDtoRequest implements Serializable {
-
-
+public class MessageCreateDtoResponse   implements Serializable {
 
     private String message;
     private Long senderId;
     private Long chatId;
-
-
-
-
+    private String senderNickname;
+    private String senderImage;
 }
