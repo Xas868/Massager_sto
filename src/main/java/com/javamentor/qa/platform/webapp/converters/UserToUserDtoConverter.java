@@ -6,8 +6,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Component;
 
 @Mapper
+@Component
 public abstract class UserToUserDtoConverter {
 
     public static UserToUserDtoConverter INSTANCE = Mappers.getMapper( UserToUserDtoConverter.class );

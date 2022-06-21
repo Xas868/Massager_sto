@@ -5,17 +5,20 @@ import com.javamentor.qa.platform.models.dto.AuthenticationResponse;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.security.JwtUtil;
 import com.javamentor.qa.platform.service.abstracts.model.RoleService;
+import com.javamentor.qa.platform.webapp.converters.UserToUserDtoConverter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +40,8 @@ public class AuthenticationResourceController {
     private final UserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
     private final RoleService roleService;
+
+
 
     @PostMapping("token")
     @Operation(summary = "Получение JWT токена для учетных данных пользователя")
@@ -79,5 +84,17 @@ public class AuthenticationResourceController {
         }
 
         return new ResponseEntity<>("User is authenticated", HttpStatus.OK);
+    }
+    @GetMapping(path = "/currentUser")
+    @Operation(summary = "Получение текущего юзера", responses = {
+            @ApiResponse(description = "Мы получили текущего юзера", responseCode = "200",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+            @ApiResponse(responseCode = "403", description = "текущий юзер не получен")
+    })
+    public ResponseEntity <Object> getCurrentUserDto() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return (principal instanceof User)
+                ? ResponseEntity.ok(((User) principal))
+                : ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not authorized");
     }
 }

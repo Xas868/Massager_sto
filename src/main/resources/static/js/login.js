@@ -1,4 +1,5 @@
 const button = document.querySelector("input[type=submit]")
+ let aut ;
 const formGroup = document.querySelector("input[type=email]")
 button.addEventListener('click', () => {
     const request = {}
@@ -18,7 +19,7 @@ function clearError() {
 
 function loadToken(request) {
 
-    fetch('http://localhost:8091/api/auth/token', {
+  aut =   fetch('http://localhost:8091/api/auth/token', {
             method: 'POST',
             headers: {
                 "Content-type": "application/json"

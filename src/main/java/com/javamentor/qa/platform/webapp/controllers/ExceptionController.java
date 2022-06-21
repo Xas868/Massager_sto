@@ -1,5 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.webapp.controllers.exceptions.ChatNotFoundException;
+import com.javamentor.qa.platform.webapp.controllers.exceptions.UserNotFoundException;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.WrongPasswordFormatException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,4 +35,22 @@ public class ExceptionController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleChatNotFoundException(ChatNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleUserNotFoundException (UserNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+    }
+
+
+
+
 }
