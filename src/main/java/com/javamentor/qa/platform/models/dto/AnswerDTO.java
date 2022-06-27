@@ -21,6 +21,7 @@ public class AnswerDTO {
     private String htmlBody;
     private LocalDateTime persistDateTime;
     private Boolean isHelpful;
+    private Boolean isUserVote;
     private LocalDateTime dateAccept; //+++
     private Long countValuable; //---
     private String image; //---
