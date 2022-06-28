@@ -7,21 +7,15 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AnswerCommentDto {
-
+public class SingleChatDto {
     private Long id;
-    private Long answerId;
-    private LocalDateTime lastRedactionDate;
-    private LocalDateTime persistDate;
-    private String text;
-    private Long userId;
-    private String imageLink;
-    private Long reputation;
+    private String name;
+    private String image;
+    private String lastMessage;
+    private LocalDateTime persistDateTimeLastMessage;
 
 }

@@ -53,6 +53,12 @@ public class Message {
         this.chat = chat;
     }
 
+    public Message(String message) {
+        this.message = message;
+    }
+
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

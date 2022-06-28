@@ -3,25 +3,37 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
 import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
+import com.javamentor.qa.platform.models.dto.SingleChatDto;
+import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
+@Tag(name = "ChatResourceController", description = "Позволяет работать с чатами")
 @RestController
 @RequestMapping("/api/user/chat")
-@Tag(name="Chat Resource Controller", description = "Управление сущностями, которые связаны с чатами.")
 public class ChatResourceController {
     private final ChatDtoService chatDtoService;
 
+    @Autowired
     public ChatResourceController(ChatDtoService chatDtoService) {
         this.chatDtoService = chatDtoService;
+    }
+
+    @GetMapping("/single")
+    public ResponseEntity <List<SingleChatDto>> getAllSingleChatDtoByUserId(Authentication authentication) {
+        User currentUser = (User) authentication.getPrincipal();
+        return new ResponseEntity<>(chatDtoService.getAllSingleChatDtoByUserId(currentUser.getId()), HttpStatus.OK);
     }
 
 
