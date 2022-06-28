@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.service.impl.model;
 
-import com.javamentor.qa.platform.dao.abstracts.model.TrackedTagDao;
+import com.javamentor.qa.platform.dao.impl.model.model.TrackedTagDao;
 import com.javamentor.qa.platform.models.entity.question.TrackedTag;
 import com.javamentor.qa.platform.service.abstracts.model.TrackedTagService;
 import org.springframework.stereotype.Service;

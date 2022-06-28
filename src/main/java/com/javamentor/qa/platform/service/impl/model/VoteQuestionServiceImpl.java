@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.service.impl.model;
 
-import com.javamentor.qa.platform.dao.abstracts.model.ReputationDao;
-import com.javamentor.qa.platform.dao.abstracts.model.VoteQuestionDao;
+import com.javamentor.qa.platform.dao.impl.model.model.ReputationDao;
+import com.javamentor.qa.platform.dao.impl.model.model.VoteQuestionDao;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.user.User;

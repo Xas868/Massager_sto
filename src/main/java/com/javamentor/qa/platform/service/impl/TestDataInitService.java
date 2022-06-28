@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.service.impl;
 
+import com.javamentor.qa.platform.models.entity.chat.*;
 import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.RelatedTag;
@@ -36,6 +37,9 @@ public class TestDataInitService {
     private final VoteQuestionService voteQuestionService;
     private final VoteAnswerService voteAnswerService;
     private final RelatedTagService relatedTagService;
+    private final MessageService messageService;
+    private final SingleChatService singleChatService;
+    private final GroupChatRoomService groupChatService;
 
     private final long NUM_OF_USERS = 100L;
     private final long NUM_OF_TAGS = 50L;
@@ -46,6 +50,10 @@ public class TestDataInitService {
     private final long NUM_OF_REPUTATIONS = 100L;
     private final long NUM_OF_VOTEQUESTIONS = 120L;
     private final long NUM_OF_VOTEANSWERS = 120L;
+    private final long NUM_OF_CHAT = 5L;
+    private final long NUM_OF_MESSAGE = 5L;
+    private final long NUM_OF_GROUPCHAT = 5L;
+    private final long NUM_OF_SINGLECHAT = 5L;
 
     public void init() {
         createRoles();
@@ -58,6 +66,59 @@ public class TestDataInitService {
         createReputations();
         createVoteQuestion();
         createVoteAnswer();
+        createChat();
+        createMessage();
+        createGroupChat();
+        createSingleChat();
+    }
+
+    public void createMessage() {
+        List<Message> messages = new ArrayList<>();
+        for (int i = 1; i <= NUM_OF_MESSAGE; i++) {
+            Message message = Message.builder()
+                    .message("message" + i)
+
+                    .persistDate(LocalDateTime.now())
+                    .build();
+            messages.add(message);
+        }
+        //messageService.persistAll(messages);
+    }
+
+    public void createChat() {
+        List<Chat> chats = new ArrayList<>();
+        for (int i = 1; i <= NUM_OF_CHAT; i++) {
+            Chat chat = Chat.builder()
+                    .title("Chat" + i)
+                    .persistDate(LocalDateTime.now())
+                    .build();
+            chats.add(chat);
+        }
+    }
+
+    public void createGroupChat() {
+        List<GroupChat> groupChats = new ArrayList<>();
+        for (int i = 1; i <= NUM_OF_GROUPCHAT; i++) {
+            Set<User> users = new HashSet<>();
+            GroupChat groupChat = GroupChat.builder()
+                    .chat(new Chat())
+                    .users(users)
+                    .build();
+            groupChats.add(groupChat);
+        }
+       //groupChatService.persistAll(groupChats);
+    }
+
+    public void createSingleChat() {
+        List<SingleChat> singleChats = new ArrayList<>();
+        for (int i = 1; i <= NUM_OF_SINGLECHAT; i++) {
+            SingleChat singleChat = SingleChat.builder()
+                    .userOne(getRandomUser())
+                    .useTwo(getRandomUser())
+                    .build();
+            singleChats.add(singleChat);
+        }
+      //  singleChatService.persistAll(singleChats);
     }
 
     public void createRoles() {
@@ -101,7 +162,6 @@ public class TestDataInitService {
                     .build();
             tags.add(tag);
         }
-
         tagService.persistAll(tags);
     }
 
