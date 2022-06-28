@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.service.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.ChatDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
+import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import com.javamentor.qa.platform.models.dto.MessageDto;
@@ -39,5 +40,10 @@ public class ChatDtoServiceImpl extends DtoServiceImpl<MessageDto> implements Ch
             groupChatDto.setMessages(getPageDto(properties));
             return Optional.of(groupChatDto);
         }
+    }
+
+    @Override
+    public PageDTO<MessageDto> getPagedMessagesOfSingleChat(PaginationData properties) {
+        return super.getPageDto(properties);
     }
 }

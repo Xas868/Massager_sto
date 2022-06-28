@@ -236,4 +236,50 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @DataSet(cleanBefore = true,
+            value = "dataset/ChatResourceController/testGetPagedMessagesOfSingleChat/testSingleChatWithTenMessages.yml"
+    )
+    public void testGetPagedMessagesOfSingleChatWithTenMessages() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("test102@mail.ru", "test102");
+        mockMvc.perform(get("/api/user/chat/101/single/message")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(10));
+    }
+
+    @Test
+    @DataSet(cleanBefore = true,
+            value = "dataset/ChatResourceController/testGetPagedMessagesOfSingleChat/testGetPagedMessagesOfSingleChatWithThreeChatsAndThreeUsers.yml"
+    )
+    public void testGetPagedMessagesOfSingleChatWithThreeChatsAndThreeUsers() throws Exception {
+        String USER_TOKEN_101 = "Bearer " + getToken("test101@mail.ru", "test101");
+        mockMvc.perform(get("/api/user/chat/101/single/message")
+                        .header(AUTHORIZATION, USER_TOKEN_101)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(5));
+        String USER_TOKEN_102 = "Bearer " + getToken("test102@mail.ru", "test102");
+        mockMvc.perform(get("/api/user/chat/102/single/message")
+                        .header(AUTHORIZATION, USER_TOKEN_102)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(5));
+        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test103");
+        mockMvc.perform(get("/api/user/chat/103/single/message")
+                        .header(AUTHORIZATION, USER_TOKEN_103)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(5));
+    }
 }
