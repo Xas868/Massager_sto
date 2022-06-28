@@ -1,11 +1,8 @@
 package com.javamentor.qa.platform.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
-import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
-import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -14,7 +11,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -22,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTests {
     //Тесты для SingleChatDTO авторизированного пользователя
     @Test
-    @DataSet(value = "dataset/ChatResourceController/getAllSingleChatDtoByUserId.yml"
+    @DataSet(cleanBefore = true, value = "dataset/ChatResourceController/getAllSingleChatDtoByUserId.yml"
             , strategy = SeedStrategy.REFRESH)
 
     public void shouldGetAllSingleChatDtoByUserId() throws Exception {
@@ -69,7 +65,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(
+    @DataSet(cleanBefore = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -92,7 +88,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(
+    @DataSet(cleanBefore = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -115,7 +111,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(
+    @DataSet(cleanBefore = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -142,7 +138,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(
+    @DataSet(cleanBefore = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -169,7 +165,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(
+    @DataSet(cleanBefore = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -196,7 +192,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(
+    @DataSet(cleanBefore = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -223,7 +219,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(
+    @DataSet(cleanBefore = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
