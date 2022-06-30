@@ -9,6 +9,7 @@ import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
+import com.javamentor.qa.platform.service.impl.dto.DtoServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,10 +27,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/user/chat")
 public class ChatResourceController {
+    private final DtoServiceImpl<MessageDto> messagesPaginationService;
     private final ChatDtoService chatDtoService;
 
     @Autowired
-    public ChatResourceController(ChatDtoService chatDtoService) {
+    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService) {
+        this.messagesPaginationService = dtoService;
         this.chatDtoService = chatDtoService;
     }
 
@@ -86,7 +89,6 @@ public class ChatResourceController {
                     int currentPage) {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoBySingleChatId.class.getSimpleName());
         properties.getProps().put("singleChatId", singleChatId);
-        return new ResponseEntity<>(chatDtoService.getPagedMessagesOfSingleChat(properties), HttpStatus.OK);
-
+        return new ResponseEntity<>(messagesPaginationService.getPageDto(properties), HttpStatus.OK);
     }
 }
