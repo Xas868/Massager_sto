@@ -30,11 +30,12 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                         " a.htmlBody," +
                         " a.persistDateTime," +
                         " a.isHelpful," +
-                        "(CASE WHEN  a.user.id = vr.user.id THEN true END), " +
+                        "(select distinct(CASE WHEN  a.user.id = v.user.id THEN true END) from VoteAnswer v " +
+                        "where v.answer.id = a.id), " +
                         " a.dateAcceptTime, " +
                         "(select coalesce(sum(case when v.vote = 'UP_VOTE' then 1 else -1 end), 0) from VoteAnswer v where v.answer.id = a.id)," +
                         "a.user.imageLink," +
-                        " a.user.nickname) from Answer as a join VoteAnswer vr on vr.answer.id = a.id " +
+                        " a.user.nickname) from Answer as a " +
                                "where a.id = :id and a.isDeleted = false ", AnswerDTO.class)
                 .setParameter("id", id));
     }
@@ -50,13 +51,14 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                         " a.htmlBody," +
                         " a.persistDateTime," +
                         " a.isHelpful," +
-                        "(CASE WHEN  a.user.id = vr.user.id THEN true END), " +
+                        "(select distinct(CASE WHEN  a.user.id = v.user.id THEN true END) from VoteAnswer v "  +
+                        "where v.answer.id = a.id), " +
                         "a.dateAcceptTime, " +
                         "(select coalesce(sum(case when v.vote = 'UP_VOTE' then 1 else -1 end), 0) from VoteAnswer v " +
                         "where v.answer.id = a.id)," +
                         " a.user.imageLink," +
                         " a.user.nickname) " +
-                        "from Answer as a JOIN VoteAnswer vr ON vr.answer.id = a.id "  +
+                        "from Answer as a "  +
                         "where a.question.id = :id and a.isDeleted = false order by a.id ", AnswerDTO.class)
                 .setParameter("id", questionId)
                 .getResultList();
