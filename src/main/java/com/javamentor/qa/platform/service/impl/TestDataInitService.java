@@ -37,9 +37,6 @@ public class TestDataInitService {
     private final VoteQuestionService voteQuestionService;
     private final VoteAnswerService voteAnswerService;
     private final RelatedTagService relatedTagService;
-    private final MessageService messageService;
-    private final SingleChatService singleChatService;
-    private final GroupChatRoomService groupChatService;
 
     private final long NUM_OF_USERS = 100L;
     private final long NUM_OF_TAGS = 50L;
@@ -82,7 +79,7 @@ public class TestDataInitService {
                     .build();
             messages.add(message);
         }
-        //messageService.persistAll(messages);
+
     }
 
     public void createChat() {
@@ -106,7 +103,6 @@ public class TestDataInitService {
                     .build();
             groupChats.add(groupChat);
         }
-       //groupChatService.persistAll(groupChats);
     }
 
     public void createSingleChat() {
@@ -118,7 +114,6 @@ public class TestDataInitService {
                     .build();
             singleChats.add(singleChat);
         }
-      //  singleChatService.persistAll(singleChats);
     }
 
     public void createRoles() {

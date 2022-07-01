@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.dao.impl.model.model;
+package com.javamentor.qa.platform.dao.abstracts.model;
 
 import java.util.Collection;
 
