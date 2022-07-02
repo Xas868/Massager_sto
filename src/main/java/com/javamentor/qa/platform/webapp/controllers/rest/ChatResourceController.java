@@ -31,16 +31,20 @@ public class ChatResourceController {
         this.chatDtoService = chatDtoService;
     }
 
-    @Operation(summary = "Some summary",
-            description = "Some description")
+    @Operation(summary = "Поиск и сортировка чатов по указанному имени",
+            description = "Получение листа чатов, (групповых и одиночных) содержащих заданное имя сортированных по убыванию даты последнего в них сообщения")
     @ApiResponse(responseCode = "200",
-            description = "Some description",
+            description = "Чаты найдены",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400",
-            description = "Some description",
+            description = "Чаты не найдены",
             content = @Content(mediaType = "application/json"))
     @GetMapping
-    public ResponseEntity<List<ChatDto>> getChatsByName(@RequestParam(name = "name") String chatName) {
+    public ResponseEntity<List<ChatDto>> getChatsByName(
+            @RequestParam(name = "name", defaultValue = "")
+            @Parameter(name = "Строка по которой будет проходить поиск чатов",
+                    description = "Необязательный параметр. Любое совпадение строки в названии чата, вернёт этот чат")
+            String chatName) {
         return new ResponseEntity<>(chatDtoService.getAllChatsByName(chatName), HttpStatus.OK);
     }
 
