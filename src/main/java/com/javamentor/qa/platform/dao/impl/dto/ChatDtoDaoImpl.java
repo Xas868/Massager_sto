@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.ChatDtoDao;
+import com.javamentor.qa.platform.models.dto.ChatDto;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.GroupChatDto;
@@ -46,5 +47,19 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
                         "from GroupChat as gc where gc.id = :chatId " +
                         "order by gc.chat.persistDate", GroupChatDto.class)
                 .setParameter("chatId", chatId));
+    }
+
+    @Override
+    public List<ChatDto> getAllChatsByName(String chatName) {
+        return entityManager.createQuery(
+                "SELECT NEW com.javamentor.qa.platform.models.dto.ChatDto(" +
+                        "chat.id, chat.title, chat.image, message.message, message.persistDate) " +
+                        "FROM Chat AS chat " +
+                        "JOIN Message AS message " +
+                        "ON chat.id = message.chat.id " +
+                        "WHERE chat.title LIKE :chatName " +
+                        "ORDER BY message.persistDate", ChatDto.class)
+                .setParameter("chatName", "%" + chatName + "%")
+                .getResultList();
     }
 }

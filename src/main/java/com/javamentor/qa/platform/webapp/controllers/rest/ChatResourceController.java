@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
+import com.javamentor.qa.platform.models.dto.ChatDto;
 import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
@@ -28,6 +29,19 @@ public class ChatResourceController {
     @Autowired
     public ChatResourceController(ChatDtoService chatDtoService) {
         this.chatDtoService = chatDtoService;
+    }
+
+    @Operation(summary = "Some summary",
+            description = "Some description")
+    @ApiResponse(responseCode = "200",
+            description = "Some description",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400",
+            description = "Some description",
+            content = @Content(mediaType = "application/json"))
+    @GetMapping
+    public ResponseEntity<List<ChatDto>> getChatsByName(@RequestParam(name = "name") String chatName) {
+        return new ResponseEntity<>(chatDtoService.getAllChatsByName(chatName), HttpStatus.OK);
     }
 
     @GetMapping("/single")

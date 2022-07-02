@@ -16,6 +16,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTests {
+
+    @Test
+    @DataSet(cleanBefore = true,
+            value = {
+                    "dataset/ChatResourceController/roles.yml",
+                    "dataset/ChatResourceController/users.yml",
+                    "dataset/ChatResourceController/group_chat.yml",
+                    "dataset/ChatResourceController/single_chat.yml",
+                    "dataset/ChatResourceController/chat.yml",
+                    "dataset/ChatResourceController/messages15.yml"
+    })
+    public void testGetChatsByName() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("test101@mail.ru", "test101");
+        mockMvc.perform(get("/api/user/chat")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .param("name", "chat")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].persistDateTimeLastMessage").value("2021-12-01T05:00:00"))
+                .andExpect(jsonPath("$.[1].persistDateTimeLastMessage").value("2021-12-02T05:00:00"))
+                .andExpect(jsonPath("$.[2].persistDateTimeLastMessage").value("2021-12-03T05:00:00"))
+                .andExpect(jsonPath("$.[3].persistDateTimeLastMessage").value("2021-12-04T05:00:00"))
+                .andExpect(jsonPath("$.[4].persistDateTimeLastMessage").value("2021-12-05T05:00:00"));
+    }
+
     //Тесты для SingleChatDTO авторизированного пользователя
     @Test
     @DataSet(cleanBefore = true, value = "dataset/ChatResourceController/getAllSingleChatDtoByUserId.yml"
