@@ -36,6 +36,7 @@ public class TestDataInitService {
     private final VoteQuestionService voteQuestionService;
     private final VoteAnswerService voteAnswerService;
     private final RelatedTagService relatedTagService;
+    private final QuestionViewedService questionViewedService;
 
     private final long NUM_OF_USERS = 100L;
     private final long NUM_OF_TAGS = 50L;
@@ -58,6 +59,7 @@ public class TestDataInitService {
         createReputations();
         createVoteQuestion();
         createVoteAnswer();
+        createQuestionViewed();
     }
 
     public void createRoles() {
@@ -185,6 +187,7 @@ public class TestDataInitService {
 
         answerService.persistAll(answers);
     }
+
     public void createReputations() {
         List<Reputation> reputations = new ArrayList<>();
         for (long i = 1; i <= NUM_OF_REPUTATIONS; i++) {
@@ -201,6 +204,7 @@ public class TestDataInitService {
         }
         reputationService.persistAll(reputations);
     }
+
     public void createVoteQuestion() {
         List<VoteQuestion> voteQuestions = new ArrayList<>();
         for (long i = 1; i <= NUM_OF_VOTEQUESTIONS; i++) {
@@ -241,6 +245,22 @@ public class TestDataInitService {
         voteAnswerService.persistAll(voteAnswers);
     }
 
+    public void createQuestionViewed() {
+        List<Question> questions = questionService.getAll();
+        for (int i = 0; i < NUM_OF_QUESTIONS; i++) {
+            int numberOfViews = new Random().nextInt((int) NUM_OF_USERS);
+            Question question = questions.get(i);
+            Set<User> users = new HashSet<>();
+            for (int j = 0; j < numberOfViews; j++) {
+                User user = getRandomUser();
+                users.add(user);
+            }
+            for (User user : users) {
+                questionViewedService.markQuestionLikeViewed(user, question);
+            }
+        }
+    }
+
     private List<Tag> getRandomTagList() {
         List<Tag> tags = tagService.getAll();
         int numOfDeleteTags = tags.size() - 5 + new Random().nextInt(5);
@@ -254,11 +274,12 @@ public class TestDataInitService {
         List<User> users = userService.getAll();
         return users.get(new Random().nextInt(users.size()));
     }
+
     private User getRandomAdmin() {
-         User admin = getRandomUser();
-             if (admin.getRole().getId() == 1) {
-                return admin;
-             }
+        User admin = getRandomUser();
+        if (admin.getRole().getId() == 1) {
+            return admin;
+        }
         return null;
     }
 
