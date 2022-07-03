@@ -38,3 +38,16 @@ user_entity:
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: 2021-12-09 19:41:18.252588
     role_id: 999
+  - id: 104
+    about: "I'm Test user #104"
+    city: "Moscow"
+    full_name: "test_104"
+    password: "$2a$12$jQfTt441cQqMlDur1Qpm9OOOwLpjzinvHrTpc4jvZOHB3sBlZqJSu"
+    email: "test104@mail.ru"
+    is_deleted: false
+    nickname: "test104"
+    image_link: "photo"
+    is_enabled: true
+    last_redaction_date: 2021-12-09 19:41:18.252588
+    persist_date: 2021-12-09 19:41:18.252588
+    role_id: 999

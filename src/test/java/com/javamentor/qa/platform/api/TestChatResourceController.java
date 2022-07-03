@@ -21,7 +21,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     @DataSet(cleanBefore = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
-                    "dataset/ChatResourceController/users.yml",
+                    "dataset/ChatResourceController/users4.yml",
                     "dataset/ChatResourceController/group_chat.yml",
                     "dataset/ChatResourceController/single_chat.yml",
                     "dataset/ChatResourceController/chat.yml",
