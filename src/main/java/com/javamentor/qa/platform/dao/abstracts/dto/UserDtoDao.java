@@ -11,6 +11,6 @@ public interface UserDtoDao {
 
     List<UserProfileQuestionDto> getAllUserProfileQuestionDtoByUserIdWhereQuestionIsDeleted(Long id);
     List<UserProfileQuestionDto> getAllUserProfileQuestionDtoById(Long id);
-    List<UserDto> getTop10UsersForWeekRankedByNumberOfQuestions();
+    List<UserDto> getTopUsersForDaysRankedByNumberOfQuestions(Integer daysCount, Integer userCount);
     Long getCountAnswersPerWeekByUserId (Long userId);
 }

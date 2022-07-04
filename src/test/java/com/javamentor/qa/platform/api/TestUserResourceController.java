@@ -654,7 +654,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
             strategy = SeedStrategy.CLEAN_INSERT)
     public void testOnlySortGetTop10UsersRankedByNumberOfQuestions() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
-        mockMvc.perform(get("/api/user/top10/week")
+        mockMvc.perform(get("/api/user/top")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
@@ -680,7 +680,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
             strategy = SeedStrategy.CLEAN_INSERT)
     public void testGetTop10UsersForWeekRankedByNumberOfQuestions() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
-        mockMvc.perform(get("/api/user/top10/week")
+        mockMvc.perform(get("/api/user/top")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
@@ -703,11 +703,35 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
             strategy = SeedStrategy.CLEAN_INSERT)
     public void testGetTop10UsersForWeekDeletedAnswersRankedByNumberOfQuestions() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
-        mockMvc.perform(get("/api/user/top10/week")
+        mockMvc.perform(get("/api/user/top")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].id").value(containsInRelativeOrder(105, 102, 108, 114, 109, 101, 106, 100, 107, 113)));
     }
+
+    // Получение списка из топ 20 пользователей за месяц с наибольшим количеством вопросов по убыванию.
+    @Test
+    @DataSet(cleanBefore = true, cleanAfter = true,
+            value = {
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/users.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/roles.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/questions.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/answers_deleted_ans.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/votes_on_answers.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/reputations.yml"
+            })
+    public void testGetTop20UsersForYearRankedByNumberOfQuestions() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
+        mockMvc.perform(get("/api/user/top")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("usersCount", "20")
+                        .param("period", "year"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[*].id").value(containsInRelativeOrder(105, 102, 108, 114, 109, 101, 106, 100, 107, 113, 110, 111, 104, 103, 112)));
+    }
 }
+

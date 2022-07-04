@@ -60,7 +60,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
     @Override
-    public List<UserDto> getTop10UsersForWeekRankedByNumberOfQuestions() {
+    public List<UserDto> getTopUsersForDaysRankedByNumberOfQuestions(Integer daysCount, Integer userCount) {
         String hql = "select u.id, u.email, u.fullName, u.imageLink, u.city, " +
                 "(select sum(case when r.count is null then 0 else r.count end) from Reputation r where r.author.id=u.id) as reputation, " +
                 "sum(case when voa.vote = 'UP_VOTE' then 1 when voa.vote = 'DOWN_VOTE' then -1 else 0 end) as sumVotes, " +
@@ -72,7 +72,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 "group by u.id " +
                 "order by answersCount desc, sumVotes desc, u.id";
         return entityManager.createQuery(hql)
-                .setParameter("date", LocalDateTime.now().minusDays(7))
+                .setParameter("date", LocalDateTime.now().minusDays(daysCount))
                 .unwrap(org.hibernate.query.Query.class)
                 .setResultTransformer(new ResultTransformer() {
                     @Override
@@ -91,7 +91,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
                         return list;
                     }
                 })
-                .setMaxResults(10)
+                .setMaxResults(userCount)
                 .getResultList();
     }
 

@@ -57,8 +57,8 @@ public class UserDtoServiceImpl extends DtoServiceImpl<UserDto> implements UserD
     }
 
     @Override
-    public List<UserDto> getTop10UsersForWeekRankedByNumberOfQuestions() {
-        var resultList = userDtoDao.getTop10UsersForWeekRankedByNumberOfQuestions();
+    public List<UserDto> getTopUsersForDaysRankedByNumberOfQuestions(Integer daysCount, Integer usersCount) {
+        var resultList = userDtoDao.getTopUsersForDaysRankedByNumberOfQuestions(daysCount, usersCount);
         var usersIdList = resultList.stream().map(UserDto::getId).collect(Collectors.toList());
         var map = usersIdList.stream().collect(Collectors.toMap(Function.identity(), tagDtoDao::getTop3TagsForUser));
         resultList.forEach(u -> u.setListTagDto(map.get(u.getId())));
