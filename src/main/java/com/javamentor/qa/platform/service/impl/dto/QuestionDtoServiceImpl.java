@@ -1,9 +1,10 @@
 package com.javamentor.qa.platform.service.impl.dto;
 
 
-
+import com.javamentor.qa.platform.dao.abstracts.dto.AnswerDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.QuestionDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
+import com.javamentor.qa.platform.dao.abstracts.model.VoteAnswerDao;
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
@@ -25,14 +26,15 @@ import java.util.stream.Collectors;
 public class QuestionDtoServiceImpl extends DtoServiceImpl<QuestionViewDto> implements QuestionDtoService {
     public final QuestionDtoDao questionDtoDao;
     public final TagDtoDao tagDtoDao;
+    public final AnswerDtoDao answerDtoDao;
 
-    public QuestionDtoServiceImpl(QuestionDtoDao questionDtoDao, TagDtoDao tagDtoDao,
-                                  Map<String, PageDtoDao<QuestionViewDto>> daoMap) {
+    public QuestionDtoServiceImpl(QuestionDtoDao questionDtoDao, TagDtoDao tagDtoDao, AnswerDtoDao answerDtoDao,
+                                   Map<String, PageDtoDao<QuestionViewDto>> daoMap) {
         super(daoMap);
         this.questionDtoDao = questionDtoDao;
         this.tagDtoDao = tagDtoDao;
+        this.answerDtoDao = answerDtoDao;
     }
-
 
     @Override
     public List<QuestionCommentDto> getQuestionByIdComment(Long id) {
@@ -45,12 +47,13 @@ public class QuestionDtoServiceImpl extends DtoServiceImpl<QuestionViewDto> impl
         User user = (User) auth.getPrincipal();
         Long userId = user.getId();
         Optional<QuestionDto> q = questionDtoDao.getQuestionDtoDaoById(id, userId);
-        if(q.isPresent()) {
+        if (q.isPresent()) {
+            q.get().setAnswerDTOList(answerDtoDao.getAllUndeletedAnswerDtoByQuestionId(id));
             q.get().setListTagDto(tagDtoDao.getTagDtoDaoById(id));
             q.get().setListQuestionCommentDto(questionDtoDao.getQuestionIdComment(id));
             return q;
         }
-            return Optional.empty();
+        return Optional.empty();
     }
 
     @Override
