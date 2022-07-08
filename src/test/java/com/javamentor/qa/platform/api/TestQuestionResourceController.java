@@ -212,7 +212,8 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.listQuestionCommentDto[1].persistDate")
                         .value("2021-12-13T21:09:52.716"))
                 .andExpect(jsonPath("$.listQuestionCommentDto[1].text").value("Hello Test2"))
-                .andExpect(jsonPath("$.isUserVote").value("DOWN_VOTE"));
+                .andExpect(jsonPath("$.isUserVote").value("DOWN_VOTE"))
+                .andExpect(jsonPath("$.answerDTOList[0].id").value(1));
 
         mockMvc.perform(get("/api/user/question/2")
                         .header(AUTHORIZATION, USER_TOKEN))
