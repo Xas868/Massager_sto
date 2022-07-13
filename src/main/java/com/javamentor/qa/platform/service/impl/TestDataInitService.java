@@ -15,6 +15,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.service.abstracts.model.*;
+import com.javamentor.qa.platform.service.impl.model.ChatRoomServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,9 @@ public class TestDataInitService {
     private final VoteQuestionService voteQuestionService;
     private final VoteAnswerService voteAnswerService;
     private final RelatedTagService relatedTagService;
+    private final MessageService messageService;
+    private final ChatRoomService chatRoomService;
+    private final GroupChatRoomService groupChatRoomService;
 
     private final long NUM_OF_USERS = 100L;
     private final long NUM_OF_TAGS = 50L;
@@ -69,18 +73,19 @@ public class TestDataInitService {
         createSingleChat();
     }
 
-    public void createMessage() {
-        List<Message> messages = new ArrayList<>();
-        for (int i = 1; i <= NUM_OF_MESSAGE; i++) {
-            Message message = Message.builder()
-                    .message("message" + i)
-
-                    .persistDate(LocalDateTime.now())
-                    .build();
-            messages.add(message);
-        }
-
-    }
+//    public void createMessage() {
+//        List<Message> messages = new ArrayList<>();
+//        for (int i = 1; i <= NUM_OF_MESSAGE; i++) {
+//            Message message = Message.builder()
+//                    .message("message" + i)
+//                    .persistDate(LocalDateTime.now())
+//                    .userSender(new User())
+//                    .id((long) i)
+//                    .build();
+//            messages.add(message);
+//        }
+//        messageService.persistAll(messages);
+//    }
 
     public void createChat() {
         List<Chat> chats = new ArrayList<>();
@@ -91,6 +96,7 @@ public class TestDataInitService {
                     .build();
             chats.add(chat);
         }
+        chatRoomService.persistAll(chats);
     }
 
     public void createGroupChat() {
@@ -103,6 +109,7 @@ public class TestDataInitService {
                     .build();
             groupChats.add(groupChat);
         }
+        //groupChatRoomService.persistAll(groupChats);
     }
 
     public void createSingleChat() {
@@ -343,5 +350,19 @@ public class TestDataInitService {
             }
         }
         return false;
+    }
+    public void createMessage() {
+        List<Message> messages = new ArrayList<>();
+        for (int i = 1; i <= NUM_OF_MESSAGE; i++) {
+            Message message = Message.builder()
+                    .message("message" + i)
+                    .persistDate(LocalDateTime.now())
+                    .userSender(new User())
+                    .id((long) i)
+                    .build();
+            messages.add(message);
+        }
+        messageService.updateAll(messages);
+           //     persistAll(messages);
     }
 }
