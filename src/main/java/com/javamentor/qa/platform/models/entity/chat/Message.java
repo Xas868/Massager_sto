@@ -42,7 +42,6 @@ public class Message {
     private LocalDateTime persistDate;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @Fetch(FetchMode.JOIN)
     private User userSender;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
