@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
@@ -9,15 +10,16 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.hamcrest.Matchers.greaterThan;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.hamcrest.Matchers.containsInRelativeOrder;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTests {
     //Тесты для SingleChatDTO авторизированного пользователя
@@ -310,5 +312,23 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.totalResultCount").value(5))
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(113, 112)));
+    }
+
+    @Test
+    @DataSet(cleanBefore = true,
+    value = "dataset/ChatResourceController/createGroupChat.yml")
+    public void testCreateGroupChat() throws Exception {
+        String USER_TOKEN_101 = "Bearer " + getToken("test101@mail.ru", "test101");
+
+        List<Long> userIds = new ArrayList<>();
+        userIds.add(1l);
+        userIds.add(2l);
+        userIds.add(3l);
+
+        this.mockMvc.perform(post("/api/user/chat/group/NewChat")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(userIds))
+                        .header(AUTHORIZATION, USER_TOKEN_101))
+                .andExpect(status().isCreated());
     }
 }

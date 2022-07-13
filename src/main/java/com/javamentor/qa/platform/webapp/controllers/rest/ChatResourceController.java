@@ -5,11 +5,14 @@ import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoB
 import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import com.javamentor.qa.platform.models.dto.MessageDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
 import com.javamentor.qa.platform.service.impl.dto.DtoServiceImpl;
+import com.javamentor.qa.platform.webapp.converters.GroupChatConverter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,11 +32,15 @@ import java.util.List;
 public class ChatResourceController {
     private final DtoServiceImpl<MessageDto> messagesPaginationService;
     private final ChatDtoService chatDtoService;
+    private final GroupChatRoomService groupChatRoomService;
+    private final GroupChatConverter groupChatConverter;
 
     @Autowired
-    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService) {
-        this.messagesPaginationService = dtoService;
+    public ChatResourceController(DtoServiceImpl<MessageDto> messagesPaginationService, ChatDtoService chatDtoService, GroupChatRoomService groupChatRoomService, GroupChatConverter groupChatConverter) {
+        this.messagesPaginationService = messagesPaginationService;
         this.chatDtoService = chatDtoService;
+        this.groupChatRoomService = groupChatRoomService;
+        this.groupChatConverter = groupChatConverter;
     }
 
     @GetMapping("/single")
@@ -90,5 +97,14 @@ public class ChatResourceController {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoBySingleChatId.class.getSimpleName());
         properties.getProps().put("singleChatId", singleChatId);
         return new ResponseEntity<>(messagesPaginationService.getPageDto(properties), HttpStatus.OK);
+    }
+
+    @PostMapping("/group/{chatName}")
+    public ResponseEntity<String> createGroupChatDto(@PathVariable String chatName, @RequestBody List<Long> userIds) {
+        GroupChatDto groupChatDto = new GroupChatDto();
+        groupChatDto.setChatName(chatName);
+
+        groupChatRoomService.persist(groupChatConverter.groupChatDTOToGroupChat(groupChatDto, userIds));
+        return new ResponseEntity<>("GroupChat created", HttpStatus.CREATED);
     }
 }
