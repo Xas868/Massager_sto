@@ -23,10 +23,13 @@ public class AnswerPageDtoDaoByBodyImpl implements PageDtoDao<AnswerDTO> {
         return entityManager
                 .createQuery("SELECT new com.javamentor.qa.platform.models.dto.AnswerDTO(" +
                         " a.id, a.user.id, (SELECT sum(r.count) FROM Reputation r where r.answer.user.id = a.user.id), " +
-                        " a.question.id, a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
+                        " a.question.id, a.htmlBody, a.persistDateTime, a.isHelpful," +
+                        "(select distinct(CASE WHEN  a.user.id = v.user.id THEN true END) from VoteAnswer v " +
+                        "where v.answer.id = a.id), " +
+                        " a.dateAcceptTime, " +
                         "(select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end)  from VoteAnswer v  where v.answer.id = a.id )," +
                         " a.user.imageLink, a.user.nickname) " +
-                        " FROM Answer as a" +
+                        " FROM Answer as a JOIN VoteAnswer vr ON vr.answer.id = a.id " +
                         " order by a.htmlBody", AnswerDTO.class)
                 .setFirstResult(offset)
                 .setMaxResults(itemsOnPage)
