@@ -2,13 +2,12 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
-import com.javamentor.qa.platform.models.dto.GroupChatDto;
-import com.javamentor.qa.platform.models.dto.MessageDto;
-import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
-import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatRoomService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.impl.dto.DtoServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Tag(name = "ChatResourceController", description = "Позволяет работать с чатами")
 @RestController
@@ -29,11 +29,15 @@ import java.util.List;
 public class ChatResourceController {
     private final DtoServiceImpl<MessageDto> messagesPaginationService;
     private final ChatDtoService chatDtoService;
+    private final SingleChatRoomService singleChatRoomService;
+    private final UserService userService;
 
     @Autowired
-    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService) {
+    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, SingleChatRoomService singleChatRoomService, UserService userService) {
         this.messagesPaginationService = dtoService;
         this.chatDtoService = chatDtoService;
+        this.singleChatRoomService = singleChatRoomService;
+        this.userService = userService;
     }
 
     @GetMapping("/single")
@@ -42,6 +46,13 @@ public class ChatResourceController {
         return new ResponseEntity<>(chatDtoService.getAllSingleChatDtoByUserId(currentUser.getId()), HttpStatus.OK);
     }
 
+    @PostMapping("/single")
+    public ResponseEntity<SingleChatDto> createSingleChatDtoByUserId(CreateSingleChatDto createSingleChatDto,Authentication authentication) {
+        User currentUser = (User) authentication.getPrincipal();
+        Optional<User> destinationUser = userService.getById(createSingleChatDto.getUserId());
+        SingleChatDto singleChatDto = singleChatRoomService.createSingleChatDto(currentUser, destinationUser.get(), createSingleChatDto.getMessage());
+        return new ResponseEntity<>(singleChatDto, HttpStatus.OK);
+    }
 
     @Operation (summary = "Получение группового чата с сообщениями.", description = "Получение группового чата с пагинированным списком сообщений.")
     @ApiResponse (responseCode = "200", description = "Групповой чат найден", content ={
