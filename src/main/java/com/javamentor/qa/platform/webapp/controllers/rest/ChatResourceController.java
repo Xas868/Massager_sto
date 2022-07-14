@@ -5,10 +5,12 @@ import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoB
 import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import com.javamentor.qa.platform.models.dto.MessageDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.ChatRoomService;
 import com.javamentor.qa.platform.service.impl.dto.DtoServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,11 +31,13 @@ import java.util.List;
 public class ChatResourceController {
     private final DtoServiceImpl<MessageDto> messagesPaginationService;
     private final ChatDtoService chatDtoService;
+    private final ChatRoomService chatRoomService;
 
     @Autowired
-    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService) {
+    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, ChatRoomService chatRoomService) {
         this.messagesPaginationService = dtoService;
         this.chatDtoService = chatDtoService;
+        this.chatRoomService = chatRoomService;
     }
 
     @GetMapping("/single")
@@ -90,5 +94,13 @@ public class ChatResourceController {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoBySingleChatId.class.getSimpleName());
         properties.getProps().put("singleChatId", singleChatId);
         return new ResponseEntity<>(messagesPaginationService.getPageDto(properties), HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<String> deleteChatById(@PathVariable Long id){
+
+        chatRoomService.deleteById(id);
+
+        return new ResponseEntity<>("Chat deleted", HttpStatus.OK);
     }
 }
