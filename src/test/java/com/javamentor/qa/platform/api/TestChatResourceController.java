@@ -316,19 +316,22 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
     @Test
     @DataSet(cleanBefore = true,
-    value = "dataset/ChatResourceController/createGroupChat.yml")
+    value = "dataset/ChatResourceController/createGroupChat.yml"
+    )
     public void testCreateGroupChat() throws Exception {
         String USER_TOKEN_101 = "Bearer " + getToken("test101@mail.ru", "test101");
+        String USER_TOKEN_102 = "Bearer " + getToken("test102@mail.ru", "test101");
+        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test101");
 
         List<Long> userIds = new ArrayList<>();
-        userIds.add(1l);
-        userIds.add(2l);
-        userIds.add(3l);
+        userIds.add(101L);
+        userIds.add(102l);
+        userIds.add(103l);
 
         this.mockMvc.perform(post("/api/user/chat/group/NewChat")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(userIds))
-                        .header(AUTHORIZATION, USER_TOKEN_101))
+                        .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
                 .andExpect(status().isCreated());
     }
 }

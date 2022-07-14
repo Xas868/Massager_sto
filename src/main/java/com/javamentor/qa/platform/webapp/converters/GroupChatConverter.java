@@ -12,6 +12,8 @@ import org.mapstruct.Mappings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -28,7 +30,10 @@ public abstract class GroupChatConverter {
     public abstract GroupChat groupChatDTOToGroupChat(GroupChatDto groupChatDto, List<Long> userIds);
 
     HashSet<User> idToUsers(List<Long> userIds) {
-        return new HashSet<>(userService.getAllByIds(userIds));
+        if (!userIds.isEmpty()){
+            return new HashSet<>(userService.getAllByIds(userIds));
+        }
+        return new HashSet<>();
     }
 
     Chat getChat(GroupChatDto groupChatDto) {
