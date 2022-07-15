@@ -22,14 +22,14 @@ public class SingleChatRoomServiceImpl extends ReadWriteServiceImpl<SingleChat, 
     }
     @Override
     public SingleChatDto createSingleChatDto(User currentUser, User destinationUser, String firstMessage) {
-        SingleChat singleChat = new SingleChat();
-        Message message = new Message();
-        message.setMessage(firstMessage);
-        message.setChat(singleChat.getChat());
-        message.setUserSender(currentUser);
-        singleChat.setUserOne(currentUser);
-        singleChat.setUseTwo(destinationUser);
-        singleChat.setChat(singleChat.getChat());
+        SingleChat singleChat = SingleChat.builder()
+                .userOne(currentUser)
+                .useTwo(destinationUser)
+                .build();
+        Message message = Message.builder()
+                .message(firstMessage)
+                .userSender(currentUser)
+                .build();
         SingleChatDto singleChatDto = new SingleChatDto();
         singleChatDto.setLastMessage(message.getMessage());
         this.persist(singleChat);
