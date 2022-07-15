@@ -311,6 +311,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(113, 112)));
     }
+    @Test
     public void shouldCreateSingleChat () throws Exception {
         // Проверка что API доступна
         this.mockMvc.perform(MockMvcRequestBuilders
