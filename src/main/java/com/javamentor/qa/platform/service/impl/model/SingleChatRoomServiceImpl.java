@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,7 +16,7 @@ public class SingleChatRoomServiceImpl extends ReadWriteServiceImpl<SingleChat, 
     private final MessageServiceImpl messageService;
 
 
-    public SingleChatRoomServiceImpl(ReadWriteDao<SingleChat, Long> readWriteDao, MessageServiceImpl messageService) {
+    public SingleChatRoomServiceImpl(@Qualifier("singleChatRoomDaoImpl") ReadWriteDao<SingleChat, Long> readWriteDao, MessageServiceImpl messageService) {
         super(readWriteDao);
         this.messageService = messageService;
     }
