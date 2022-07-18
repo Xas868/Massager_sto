@@ -1,16 +1,30 @@
 package com.javamentor.qa.platform.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
+import com.javamentor.qa.platform.dao.abstracts.model.SingleChatDao;
+import com.javamentor.qa.platform.dao.impl.model.SingleChatDaoImpl;
+import com.javamentor.qa.platform.models.entity.chat.Chat;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.models.entity.chat.SingleChat;
+import com.javamentor.qa.platform.models.entity.user.Role;
+import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
+import com.javamentor.qa.platform.service.impl.model.ChatRoomServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -20,6 +34,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 
 public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTests {
+    @Autowired
+    private SingleChatService singleChatDao;
+
     //Тесты для SingleChatDTO авторизированного пользователя
     @Test
     @DataSet(cleanBefore = true, value = "dataset/ChatResourceController/getAllSingleChatDtoByUserId.yml"
@@ -310,5 +327,36 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.totalResultCount").value(5))
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(113, 112)));
+    }
+
+    @Test
+    @DataSet(cleanBefore = true,
+            value = "dataset/ChatResourceController/deleteChat.yml")
+    public void testDeleteChat() throws Exception {
+        String USER_TOKEN_101 = "Bearer " + getToken("test101@mail.ru", "test101");
+        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test103");
+
+        SingleChat singleChat = new SingleChat();
+        singleChat.setId(1L);
+        singleChat.setUserOne(User.builder().id(101L).email("test101@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
+        singleChat.setUseTwo(User.builder().id(103L).email("test103@mail.ru").role(new Role(999L,"ROLE_USER")).password("test103").build());
+        singleChatDao.persist(singleChat);
+
+        Long userId = 101L;
+        Long id = 1L;
+
+        this.mockMvc.perform(post("/api/user/chat/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(String.valueOf(userId))
+                        .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_103))
+                .andExpect(status().isOk());
+
+        assertThat((boolean)entityManager.createQuery("update SingleChat s set s.userOne=null where s.id =:id and s.userOne=:userId" )
+                .setParameter("id", id)
+                .setParameter("userId", userId)
+                .getSingleResult())
+                .isEqualTo(true);
+
+                
     }
 }
