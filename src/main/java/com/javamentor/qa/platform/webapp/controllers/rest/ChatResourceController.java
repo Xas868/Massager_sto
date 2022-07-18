@@ -2,12 +2,8 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
-import com.javamentor.qa.platform.models.dto.GroupChatDto;
-import com.javamentor.qa.platform.models.dto.MessageDto;
-import com.javamentor.qa.platform.models.dto.PageDTO;
-import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
-import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
@@ -99,12 +95,10 @@ public class ChatResourceController {
         return new ResponseEntity<>(messagesPaginationService.getPageDto(properties), HttpStatus.OK);
     }
 
-    @PostMapping("/group/{chatName}")
-    public ResponseEntity<String> createGroupChatDto(@PathVariable String chatName, @RequestBody List<Long> userIds) {
-        GroupChatDto groupChatDto = new GroupChatDto();
-        groupChatDto.setChatName(chatName);
+    @PostMapping("/group")
+    public ResponseEntity<String> createGroupChatDto(@RequestBody CreateGroupChatDto createGroupChatDto) {
 
-        groupChatRoomService.persist(groupChatConverter.groupChatDTOToGroupChat(groupChatDto, userIds));
+        groupChatRoomService.persist(groupChatConverter.createGroupChatDTOToGroupChat(createGroupChatDto));
         return new ResponseEntity<>("GroupChat created", HttpStatus.CREATED);
     }
 }

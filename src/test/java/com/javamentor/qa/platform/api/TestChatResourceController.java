@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
+import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -327,10 +328,13 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         userIds.add(101L);
         userIds.add(102l);
         userIds.add(103l);
+        CreateGroupChatDto createGroupChatDto = new CreateGroupChatDto();
+        createGroupChatDto.setChatName("new Chat");
+        createGroupChatDto.setUserIds(userIds);
 
-        this.mockMvc.perform(post("/api/user/chat/group/NewChat")
+        this.mockMvc.perform(post("/api/user/chat/group")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(userIds))
+                        .content(new ObjectMapper().writeValueAsString(createGroupChatDto))
                         .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
                 .andExpect(status().isCreated());
     }
