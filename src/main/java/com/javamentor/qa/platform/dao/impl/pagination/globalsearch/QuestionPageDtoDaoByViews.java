@@ -26,11 +26,11 @@ public class QuestionPageDtoDaoByViews implements PageDtoDao<QuestionViewDto> {
         int offset = (properties.getCurrentPage() - 1) * itemsOnPage;
         return entityManager.createQuery(
                         "select " +
-                                " q.id, q.title, u.id, (select sum(r.count) from Reputation r where r.author.id =q.user.id)," +
+                                " q.id, q.title, u.id, (select sum(r.count) from Reputation r where r.author.id = q.user.id)," +
                                 " u.fullName, u.imageLink, q.description," +
                                 " (select count(qv.id) from QuestionViewed qv where qv.question.id = q.id)," +
                                 " (select count (a.id) from Answer a where a.question.id = q.id)," +
-                                " (select count(vq.id) from VoteQuestion vq where vq.question.id=q.id)," +
+                                " (select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id) as count_valuable," +
                                 " q.persistDateTime, q.lastUpdateDateTime" +
                                 " from Question q JOIN q.user u " +
                                 " WHERE (select count(qv.id) from QuestionViewed qv where qv.question.id = q.id) >= (:q0)" +

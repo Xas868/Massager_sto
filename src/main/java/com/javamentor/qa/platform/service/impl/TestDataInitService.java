@@ -88,7 +88,20 @@ public class TestDataInitService {
                     .build();
             users.add(user);
         }
-
+        Role role = roles.get(1);
+        User user = User.builder()
+                .email("zzzz") //"z@z.ru"
+                .password("zzzz")
+                .fullName("Zzzz")
+                .city("Moscow")
+                .about("I'm Z user")
+                .nickname("zuser")
+                .role(role)
+                .isEnabled(true)
+                .isDeleted(false)
+                .imageLink("/images/noUserAvatar.png")
+                .build();
+        users.add(user);
         userService.persistAll(users);
     }
 

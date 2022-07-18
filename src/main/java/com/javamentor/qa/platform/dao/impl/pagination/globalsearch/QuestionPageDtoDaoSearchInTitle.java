@@ -31,9 +31,9 @@ public class QuestionPageDtoDaoSearchInTitle implements PageDtoDao<QuestionViewD
                                 " u.fullName," +
                                 " u.imageLink," +
                                 " q.description," +
-                                "0 as viewCount," +
-                                " (select count (a.id) from Answer a where a.question.id = q.id)," +
-                                " (select count(vq.id) from VoteQuestion vq where vq.question.id=q.id)," +
+                                " (select count(qv.id) from QuestionViewed qv where qv.question.id = q.id) as viewCount," +
+                                " (select count(a.id) from Answer a where a.question.id = q.id)," +
+                                " (select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id) as count_valuable," +
                                 " q.persistDateTime," +
                                 " q.lastUpdateDateTime" +
                                 " from Question q JOIN q.user u" +

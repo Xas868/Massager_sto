@@ -66,7 +66,8 @@ public class QuestionPageDtoDaoAllSortedByPopular  implements PageDtoDao<Questio
                     "    COALESCE(a.countAnswer, 0) desc, " +
                     "    COALESCE(vq.countValuable, 0) desc, " +
                     "    COALESCE(qv.viewCount, 0) desc, " +
-                    "    q.last_redaction_date")
+                    "    q.last_redaction_date"
+                )
         .setParameter("trackedTag", properties.getProps().get("trackedTag") == null ? new ArrayList<Long>() : properties.getProps().get("trackedTag"))
         .setParameter("ignoredTag", properties.getProps().get("ignoredTag") == null ? new ArrayList<Long>() : properties.getProps().get("ignoredTag"))
         .setFirstResult(offset)
@@ -90,8 +91,9 @@ public class QuestionPageDtoDaoAllSortedByPopular  implements PageDtoDao<Questio
                 questionViewDto.setAuthorName((String) map.get("authorname"));
                 questionViewDto.setAuthorImage((String) map.get("authorimage"));
                 questionViewDto.setDescription((String) map.get("description"));
-                questionViewDto.setCountAnswer(((Number) map.get("countanswer")).intValue());
-                questionViewDto.setCountValuable(((BigInteger) map.get("countvaluable")).intValue());
+                questionViewDto.setViewCount(((Integer) map.get("viewCount")).intValue());
+                questionViewDto.setCountAnswer(((Integer) map.get("countanswer")).intValue());
+                questionViewDto.setCountValuable(((Integer) map.get("countvaluable")).intValue());
                 questionViewDto.setPersistDateTime(((Timestamp) map.get("persistdatetime")).toLocalDateTime());
                 questionViewDto.setLastUpdateDateTime(((Timestamp) map.get("lastupdatedatetime")).toLocalDateTime());
                 return questionViewDto;
