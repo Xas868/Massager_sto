@@ -4,15 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
-import com.javamentor.qa.platform.dao.abstracts.model.SingleChatDao;
-import com.javamentor.qa.platform.dao.impl.model.SingleChatDaoImpl;
-import com.javamentor.qa.platform.models.entity.chat.Chat;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
-import com.javamentor.qa.platform.service.impl.model.ChatRoomServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +17,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -35,7 +30,10 @@ import static org.hamcrest.Matchers.containsInRelativeOrder;
 
 public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTests {
     @Autowired
-    private SingleChatService singleChatDao;
+    private SingleChatService singleChatService;
+
+    @Autowired
+    private GroupChatRoomService groupChatRoomService;
 
     //Тесты для SingleChatDTO авторизированного пользователя
     @Test
@@ -332,31 +330,45 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     @Test
     @DataSet(cleanBefore = true,
             value = "dataset/ChatResourceController/deleteChat.yml")
-    public void testDeleteChat() throws Exception {
+    public void testDeleteSingleChat() throws Exception {
         String USER_TOKEN_101 = "Bearer " + getToken("test101@mail.ru", "test101");
-        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test103");
+        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test101");
 
         SingleChat singleChat = new SingleChat();
-        singleChat.setId(1L);
+        singleChat.setUserOneIsDeleted(false);
+        singleChat.setUserTwoIsDeleted(false);
         singleChat.setUserOne(User.builder().id(101L).email("test101@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
-        singleChat.setUseTwo(User.builder().id(103L).email("test103@mail.ru").role(new Role(999L,"ROLE_USER")).password("test103").build());
-        singleChatDao.persist(singleChat);
-
-        Long userId = 101L;
-        Long id = 1L;
+        singleChat.setUseTwo(User.builder().id(103L).email("test103@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
+        singleChatService.persist(singleChat);
 
         this.mockMvc.perform(post("/api/user/chat/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(String.valueOf(userId))
-                        .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_103))
+                        .content(new ObjectMapper().writeValueAsString(103L))
+                        .header(AUTHORIZATION,USER_TOKEN_103, USER_TOKEN_101))
                 .andExpect(status().isOk());
+    }
 
-        assertThat((boolean)entityManager.createQuery("update SingleChat s set s.userOne=null where s.id =:id and s.userOne=:userId" )
-                .setParameter("id", id)
-                .setParameter("userId", userId)
-                .getSingleResult())
-                .isEqualTo(true);
+    @Test
+    @DataSet(cleanBefore = true,
+            value = "dataset/ChatResourceController/deleteChat.yml")
+    public void testDeleteGroupChat() throws Exception {
+        String USER_TOKEN_101 = "Bearer " + getToken("test101@mail.ru", "test101");
+        String USER_TOKEN_102 = "Bearer " + getToken("test102@mail.ru", "test101");
+        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test101");
 
-                
+        Set<User> users = new HashSet<>();
+        users.add(User.builder().id(101L).email("test101@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
+        users.add(User.builder().id(102L).email("test102@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
+        users.add(User.builder().id(103L).email("test103@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
+
+        GroupChat groupChat = new GroupChat();
+        groupChat.setUsers(users);
+        groupChatRoomService.persist(groupChat);
+
+        this.mockMvc.perform(post("/api/user/chat/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(103L))
+                        .header(AUTHORIZATION,USER_TOKEN_103, USER_TOKEN_101, USER_TOKEN_102))
+                .andExpect(status().isOk());
     }
 }

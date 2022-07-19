@@ -15,8 +15,8 @@ public class SingleChatDaoImpl extends ReadWriteDaoImpl<SingleChat, Long> implem
 
     public void deleteById(Long id, Long userId){
         entityManager
-                .createQuery("update SingleChat s set s.userOne = case when s.userOne = :userId then nullif(s.userOne, :userId) else s.userOne end," +
-                           "s.useTwo = case when s.useTwo = :userId then nullif(s.useTwo,:userId) else s.useTwo end where s.id = :id" )
+                .createQuery("update SingleChat s set s.userOneIsDeleted = case when s.userOne.id = :userId then true else s.userOneIsDeleted end," +
+                           "s.userTwoIsDeleted = case when s.useTwo.id = :userId then true else s.userTwoIsDeleted end where s.id = :id" )
                 .setParameter("userId", userId)
                 .setParameter("id", id)
                 .executeUpdate();

@@ -9,6 +9,7 @@ import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.service.abstracts.model.ChatRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ChatRoomServiceImpl extends ReadWriteServiceImpl<Chat, Long> implements ChatRoomService {
@@ -27,11 +28,12 @@ public class ChatRoomServiceImpl extends ReadWriteServiceImpl<Chat, Long> implem
         this.chatRoomDao = chatRoomDao;
     }
 
+    @Transactional
     public void deleteUserFromChatById(Long chatId, Long userId) {
 
-        ChatType chatName = chatRoomDao.getById(chatId).get().getChatType();
-        if (chatName.equals(ChatType.GROUP)) {
-            groupChatRoomDao.deleteById(userId);
+        ChatType chatType = chatRoomDao.getById(chatId).get().getChatType();
+        if (chatType.equals(ChatType.GROUP)) {
+            groupChatRoomDao.deleteById(chatId,userId);
         } else {
             singleChatDao.deleteById(chatId, userId);
         }

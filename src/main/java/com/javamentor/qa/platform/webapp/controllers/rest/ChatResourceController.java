@@ -97,7 +97,7 @@ public class ChatResourceController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<String> deleteChatById(@PathVariable Long chatId, @RequestBody Long userId){
+    public ResponseEntity<String> deleteChatById(@PathVariable("id") Long chatId, @RequestBody Long userId){
         chatRoomServiceIml.deleteUserFromChatById(chatId,userId);
 
         return new ResponseEntity<>("Chat deleted", HttpStatus.OK);

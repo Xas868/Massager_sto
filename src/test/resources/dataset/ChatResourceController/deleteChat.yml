@@ -16,19 +16,19 @@ user_entity:
     persist_date: 2021-12-01 00:00:00.000000
     role_id: 999
 
-#  - id: 102
-#    about: "I'm Test user #102"
-#    city: "Moscow"
-#    full_name: "test_102"
-#    password: "$2a$12$nxNhCjpphuKnzex/4c3cQ.9QDIeFvZIlWQIMZ/oyP6gKufWY3Wh.S"
-#    email: "test102@mail.ru"
-#    is_deleted: false
-#    nickname: "test102"
-#    image_link: "photo"
-#    is_enabled: true
-#    last_redaction_date: 2021-12-01 00:00:00.000000
-#    persist_date: 2021-12-01 00:00:00.000000
-#    role_id: 999
+  - id: 102
+    about: "I'm Test user #102"
+    city: "Moscow"
+    full_name: "test_102"
+    password: "$2a$12$nxNhCjpphuKnzex/4c3cQ.9QDIeFvZIlWQIMZ/oyP6gKufWY3Wh.S"
+    email: "test102@mail.ru"
+    is_deleted: false
+    nickname: "test102"
+    image_link: "photo"
+    is_enabled: true
+    last_redaction_date: 2021-12-01 00:00:00.000000
+    persist_date: 2021-12-01 00:00:00.000000
+    role_id: 999
 
 
   - id: 103

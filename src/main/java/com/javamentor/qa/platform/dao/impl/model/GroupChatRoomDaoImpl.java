@@ -14,10 +14,11 @@ public class GroupChatRoomDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> impl
     @PersistenceContext
     public EntityManager entityManager;
 
-    public void deleteById(Long id){
+    public void deleteById(Long id, Long userId){
         entityManager
-                .createNativeQuery("update groupchat_has_users c set c.user_id=null where c.chat_id=:id")
+                .createNativeQuery("delete from groupchat_has_users where chat_id=:id and user_id=:userId")
                 .setParameter("id", id)
+                .setParameter("userId", userId)
                 .executeUpdate();
     }
 }
