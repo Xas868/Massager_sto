@@ -19,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "ChatResourceController", description = "Позволяет работать с чатами")
 @RestController
@@ -44,8 +45,10 @@ public class ChatResourceController {
             @RequestParam(name = "name", defaultValue = "")
             @Parameter(name = "Строка по которой будет проходить поиск чатов",
                     description = "Необязательный параметр. Любое совпадение строки в названии чата, вернёт этот чат")
-            String chatName) {
-        return new ResponseEntity<>(chatDtoService.getAllChatsByName(chatName), HttpStatus.OK);
+            String chatName,
+            Authentication authentication) {
+        User currentUser = (User) authentication.getPrincipal();
+        return new ResponseEntity<>(chatDtoService.getAllChatsByNameAndUserId(chatName, currentUser.getId()), HttpStatus.OK);
     }
 
     @GetMapping("/single")

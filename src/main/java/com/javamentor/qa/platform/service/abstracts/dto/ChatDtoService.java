@@ -12,5 +12,5 @@ public interface ChatDtoService {
 
     Optional<GroupChatDto> getGroupChatDtoById(long chatId, PaginationData properties);
     List<SingleChatDto> getAllSingleChatDtoByUserId(Long userId);
-    List<ChatDto> getAllChatsByName(String name);
+    List<ChatDto> getAllChatsByNameAndUserId(String name, Long userId);
 }
