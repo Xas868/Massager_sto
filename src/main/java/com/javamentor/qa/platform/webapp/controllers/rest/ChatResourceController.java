@@ -96,7 +96,7 @@ public class ChatResourceController {
     }
 
     @PostMapping("/group")
-    public ResponseEntity<String> createGroupChatDto(@RequestBody CreateGroupChatDto createGroupChatDto) {
+    public ResponseEntity<String> createGroupChatDto(@RequestBody CreateGroupChatDto createGroupChatDto) throws NullPointerException {
 
         groupChatRoomService.persist(groupChatConverter.createGroupChatDTOToGroupChat(createGroupChatDto));
         return new ResponseEntity<>("GroupChat created", HttpStatus.CREATED);

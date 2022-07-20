@@ -27,11 +27,11 @@ public abstract class GroupChatConverter {
     })
     public abstract GroupChat createGroupChatDTOToGroupChat(CreateGroupChatDto createGroupChatDto);
 
-    HashSet<User> idToUsers(List<Long> userIds) {
+    HashSet<User> idToUsers(List<Long> userIds) throws NullPointerException {
         if (!userIds.isEmpty()){
             return new HashSet<>(userService.getAllByIds(userIds));
         }
-        return new HashSet<>();
+        throw new NullPointerException();
     }
 
     Chat getChat(CreateGroupChatDto createGroupChatDto) {
