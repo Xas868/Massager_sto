@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -330,7 +331,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     @Test
     @DataSet(cleanBefore = true,
             value = "dataset/ChatResourceController/deleteChat.yml")
-    public void testDeleteSingleChat() throws Exception {
+    public void testDeleteUserFromSingleChat() throws Exception {
         String USER_TOKEN_101 = "Bearer " + getToken("test101@mail.ru", "test101");
         String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test101");
 
@@ -346,12 +347,16 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                         .content(new ObjectMapper().writeValueAsString(103L))
                         .header(AUTHORIZATION,USER_TOKEN_103, USER_TOKEN_101))
                 .andExpect(status().isOk());
+
+        //Проверка, что boolean поменялся, у удалённого пользователя, в чате.
+        SingleChat updatedChat = singleChatService.getById(1l).get();
+        Assertions.assertTrue(updatedChat.getUserTwoIsDeleted());
     }
 
     @Test
     @DataSet(cleanBefore = true,
             value = "dataset/ChatResourceController/deleteChat.yml")
-    public void testDeleteGroupChat() throws Exception {
+    public void testDeleteUserFromGroupChat() throws Exception {
         String USER_TOKEN_101 = "Bearer " + getToken("test101@mail.ru", "test101");
         String USER_TOKEN_102 = "Bearer " + getToken("test102@mail.ru", "test101");
         String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test101");

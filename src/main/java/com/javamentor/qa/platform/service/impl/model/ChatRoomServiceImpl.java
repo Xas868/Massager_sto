@@ -33,9 +33,9 @@ public class ChatRoomServiceImpl extends ReadWriteServiceImpl<Chat, Long> implem
 
         ChatType chatType = chatRoomDao.getById(chatId).get().getChatType();
         if (chatType.equals(ChatType.GROUP)) {
-            groupChatRoomDao.deleteById(chatId,userId);
+            groupChatRoomDao.deleteUserFromGroupChatById(chatId,userId);
         } else {
-            singleChatDao.deleteById(chatId, userId);
+            singleChatDao.deleteUserFromSingleChatById(chatId, userId);
         }
     }
 }
