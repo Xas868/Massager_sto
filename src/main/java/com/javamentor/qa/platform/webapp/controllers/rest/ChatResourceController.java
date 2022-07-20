@@ -5,11 +5,14 @@ import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoB
 import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import com.javamentor.qa.platform.models.dto.MessageDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.ChatRoomService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import com.javamentor.qa.platform.service.impl.dto.DtoServiceImpl;
 import com.javamentor.qa.platform.service.impl.model.ChatRoomServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,12 +35,16 @@ public class ChatResourceController {
     private final DtoServiceImpl<MessageDto> messagesPaginationService;
     private final ChatDtoService chatDtoService;
     private final ChatRoomServiceImpl chatRoomServiceIml;
+    private final GroupChatRoomService groupChatRoomService;
+    private final SingleChatService singleChatService;
 
     @Autowired
-    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, ChatRoomService chatRoomService, ChatRoomServiceImpl chatRoomServiceIml) {
+    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, ChatRoomService chatRoomService, ChatRoomServiceImpl chatRoomServiceIml, GroupChatRoomService groupChatRoomService, SingleChatService singleChatService) {
         this.messagesPaginationService = dtoService;
         this.chatDtoService = chatDtoService;
         this.chatRoomServiceIml = chatRoomServiceIml;
+        this.groupChatRoomService = groupChatRoomService;
+        this.singleChatService = singleChatService;
     }
 
     @GetMapping("/single")
@@ -98,8 +105,12 @@ public class ChatResourceController {
 
     @PostMapping("/{id}")
     public ResponseEntity<String> deleteChatById(@PathVariable("id") Long chatId, @RequestBody Long userId){
-        chatRoomServiceIml.deleteUserFromChatById(chatId,userId);
-
+        ChatType chatType = chatRoomServiceIml.getById(chatId).get().getChatType();
+        if (chatType.equals(ChatType.GROUP)) {
+            groupChatRoomService.deleteUserFromGroupChatById(chatId,userId);
+        } else {
+            singleChatService.deleteUserFromSingleChatById(chatId, userId);
+        }
         return new ResponseEntity<>("Chat deleted", HttpStatus.OK);
     }
 }

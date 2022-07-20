@@ -348,7 +348,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                         .header(AUTHORIZATION,USER_TOKEN_103, USER_TOKEN_101))
                 .andExpect(status().isOk());
 
-        //Проверка, что boolean поменялся, у удалённого пользователя, в чате.
+        //Проверка, что boolean поменялся, у удалённого пользователя в чате.
         SingleChat updatedChat = singleChatService.getById(1l).get();
         Assertions.assertTrue(updatedChat.getUserTwoIsDeleted());
     }

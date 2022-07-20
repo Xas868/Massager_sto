@@ -13,6 +13,7 @@ public class SingleChatDaoImpl extends ReadWriteDaoImpl<SingleChat, Long> implem
     @PersistenceContext
     public EntityManager entityManager;
 
+    @Override
     public void deleteUserFromSingleChatById(Long id, Long userId){
         entityManager
                 .createQuery("update SingleChat s set s.userOneIsDeleted = case when s.userOne.id = :userId then true else s.userOneIsDeleted end," +
