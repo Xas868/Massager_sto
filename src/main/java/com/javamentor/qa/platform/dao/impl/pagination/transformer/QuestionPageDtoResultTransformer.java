@@ -21,7 +21,8 @@ public class QuestionPageDtoResultTransformer implements ResultTransformer {
         questionViewDto.setAuthorReputation((Long) tuple[8]);
         questionViewDto.setCountAnswer(((Number) tuple[9]).intValue());
         questionViewDto.setCountValuable(((Number) tuple[10]).intValue());
-        questionViewDto.setIsUserBookmark(((Number) tuple[11]).intValue() >0 ? true : false );
+        questionViewDto.setIsUserBookmark((Boolean) tuple[11]);
+        questionViewDto.setViewCount(((Number) tuple[12]).intValue());
         return questionViewDto;
     }
 
