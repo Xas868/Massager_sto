@@ -5,8 +5,11 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -23,6 +26,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTests {
+
+    @Autowired
+    private GroupChatRoomService groupChatRoomService;
+
     //Тесты для SingleChatDTO авторизированного пользователя
     @Test
     @DataSet(cleanBefore = true, value = "dataset/ChatResourceController/getAllSingleChatDtoByUserId.yml"
@@ -332,10 +339,66 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         createGroupChatDto.setChatName("new Chat");
         createGroupChatDto.setUserIds(userIds);
 
+        //Передаю для создания чата, id всех существующих пользователей
         this.mockMvc.perform(post("/api/user/chat/group")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(createGroupChatDto))
                         .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
                 .andExpect(status().isCreated());
+
+
+        List<Long> notUserIds = new ArrayList<>();
+        CreateGroupChatDto createGroupChatDto2 = new CreateGroupChatDto();
+        createGroupChatDto2.setChatName("new Chat2");
+        createGroupChatDto2.setUserIds(notUserIds);
+
+        //Передаю для создания чата пустой список id пользователей
+        this.mockMvc.perform(post("/api/user/chat/group")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(createGroupChatDto2))
+                        .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
+                .andExpect(status().isBadRequest());
+
+        //Передаю null
+        this.mockMvc.perform(post("/api/user/chat/group")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(null))
+                        .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
+                .andExpect(status().isBadRequest());
+
+        //Передаю для создания чата список с одним не существующим пользователем
+        List<Long> not1UserIds = new ArrayList<>();
+        not1UserIds.add(101L);
+        not1UserIds.add(102L);
+        not1UserIds.add(104L);
+        CreateGroupChatDto createGroupChatDto3 = new CreateGroupChatDto();
+        createGroupChatDto3.setChatName("new Chat3");
+        createGroupChatDto3.setUserIds(not1UserIds);
+
+        this.mockMvc.perform(post("/api/user/chat/group")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(createGroupChatDto3))
+                        .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
+                .andExpect(status().isCreated());
+
+        //Проверка, что несуществующий пользователь не добавился в чат
+        GroupChat groupChatgetUsers = groupChatRoomService.getById(2L).get();
+        Assertions.assertNotEquals(not1UserIds, groupChatgetUsers.getUsers());
+
+
+        //Передаю для создания чата список со всеми не существующим пользователем
+        List<Long> notAllUserIds = new ArrayList<>();
+        not1UserIds.add(106L);
+        not1UserIds.add(107L);
+        not1UserIds.add(105L);
+        CreateGroupChatDto createGroupChatDto4 = new CreateGroupChatDto();
+        createGroupChatDto4.setChatName("new Chat4");
+        createGroupChatDto4.setUserIds(notAllUserIds);
+
+        this.mockMvc.perform(post("/api/user/chat/group")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(createGroupChatDto4))
+                        .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
+                .andExpect(status().isBadRequest());
     }
 }

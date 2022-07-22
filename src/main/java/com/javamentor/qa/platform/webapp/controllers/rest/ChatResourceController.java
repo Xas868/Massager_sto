@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Tag(name = "ChatResourceController", description = "Позволяет работать с чатами")
 @RestController
 @RequestMapping("/api/user/chat")
@@ -97,8 +99,11 @@ public class ChatResourceController {
 
     @PostMapping("/group")
     public ResponseEntity<String> createGroupChatDto(@RequestBody CreateGroupChatDto createGroupChatDto) throws NullPointerException {
-
-        groupChatRoomService.persist(groupChatConverter.createGroupChatDTOToGroupChat(createGroupChatDto));
-        return new ResponseEntity<>("GroupChat created", HttpStatus.CREATED);
+        if (isNull(createGroupChatDto)) {
+            return new ResponseEntity<>("List userIds is empty in createGroupChatDto", HttpStatus.INTERNAL_SERVER_ERROR);
+        } else {
+            groupChatRoomService.persist(groupChatConverter.createGroupChatDTOToGroupChat(createGroupChatDto));
+            return new ResponseEntity<>("GroupChat created", HttpStatus.CREATED);
+        }
     }
 }
