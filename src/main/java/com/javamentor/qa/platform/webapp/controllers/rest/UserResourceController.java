@@ -240,7 +240,7 @@ public class UserResourceController {
             @Parameter (name = "Количество дней, по которым будет идти поиск", description = "Необязательный параметр. Позволяет настроить пероид времени, " +
                     "по которому будет идти поиск. Значение по умолчанию \"week\" ")
             CalendarPeriod calendarPeriod) {
-        return new ResponseEntity<>(userDtoService.getTopUsersForDaysRankedByNumberOfQuestions(calendarPeriod.getDays(), usersCount), HttpStatus.OK);
+        return new ResponseEntity<>(userDtoService.getTopUsersForDaysRankedByNumberOfQuestions(calendarPeriod), HttpStatus.OK);
     }
 
     @Operation(summary = "Получение количества ответов авторизованного пользователя." ,

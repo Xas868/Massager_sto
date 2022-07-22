@@ -711,7 +711,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$[*].id").value(containsInRelativeOrder(105, 102, 108, 114, 109, 101, 106, 100, 107, 113)));
     }
 
-    // Получение списка из топ 20 пользователей за месяц с наибольшим количеством вопросов по убыванию.
+    // Получение списка из топ 10 пользователей за месяц с наибольшим количеством вопросов по убыванию.
     @Test
     @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
@@ -722,18 +722,18 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                     "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/votes_on_answers.yml",
                     "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/reputations.yml"
             })
-    public void testGetTop20UsersForYearRankedByNumberOfQuestions() throws Exception {
+    public void testGetTop10UsersForYearRankedByNumberOfQuestions() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
         mockMvc.perform(get("/api/user/top")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("usersCount", "20")
-                        .param("period", "year"))
+                        .param("calendarPeriod", "year"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[*].id").value(containsInRelativeOrder(105, 102, 108, 114, 109, 101, 106, 100, 107, 113, 110, 111, 104, 103, 112)));
+                .andExpect(jsonPath("$[*].id").value(containsInRelativeOrder(105, 102, 108, 114, 109, 101, 106, 100, 107, 113)));
     }
 
+    // Получение списка из топ 10 пользователей за месяц с наибольшим количеством вопросов по убыванию.
     @Test
     @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
@@ -744,16 +744,15 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                     "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/votes_on_answers.yml",
                     "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/reputations.yml"
             })
-    public void testGetTop3UsersForDayRankedByNumberOfQuestions() throws Exception {
+    public void testGetTop10UsersForMonthRankedByNumberOfQuestions() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
         mockMvc.perform(get("/api/user/top")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("usersCount", "3")
-                        .param("period", "week"))
+                        .param("calendarPeriod", "month"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[*].id").value(containsInRelativeOrder(105, 102, 108)));
+                .andExpect(jsonPath("$[*].id").value(containsInRelativeOrder(105, 102, 108, 114, 109, 101, 106, 100, 107, 113)));
     }
 }
 

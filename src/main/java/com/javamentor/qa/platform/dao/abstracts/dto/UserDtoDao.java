@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.dao.abstracts.dto;
 
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.util.CalendarPeriod;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +12,6 @@ public interface UserDtoDao {
 
     List<UserProfileQuestionDto> getAllUserProfileQuestionDtoByUserIdWhereQuestionIsDeleted(Long id);
     List<UserProfileQuestionDto> getAllUserProfileQuestionDtoById(Long id);
-    List<UserDto> getTopUsersForDaysRankedByNumberOfQuestions(Integer daysCount, Integer userCount);
+    List<UserDto> getTopUsersForDaysRankedByNumberOfQuestions(CalendarPeriod calendarPeriod);
     Long getCountAnswersPerWeekByUserId (Long userId);
 }
