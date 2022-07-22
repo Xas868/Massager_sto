@@ -2,7 +2,11 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
-import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
+import com.javamentor.qa.platform.models.dto.GroupChatDto;
+import com.javamentor.qa.platform.models.dto.MessageDto;
+import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
@@ -42,32 +46,32 @@ public class ChatResourceController {
     }
 
     @GetMapping("/single")
-    public ResponseEntity <List<SingleChatDto>> getAllSingleChatDtoByUserId(Authentication authentication) {
+    public ResponseEntity<List<SingleChatDto>> getAllSingleChatDtoByUserId(Authentication authentication) {
         User currentUser = (User) authentication.getPrincipal();
         return new ResponseEntity<>(chatDtoService.getAllSingleChatDtoByUserId(currentUser.getId()), HttpStatus.OK);
     }
 
 
-    @Operation (summary = "Получение группового чата с сообщениями.", description = "Получение группового чата с пагинированным списком сообщений.")
-    @ApiResponse (responseCode = "200", description = "Групповой чат найден", content ={
+    @Operation(summary = "Получение группового чата с сообщениями.", description = "Получение группового чата с пагинированным списком сообщений.")
+    @ApiResponse(responseCode = "200", description = "Групповой чат найден", content = {
             @Content(mediaType = "application/json"),
     })
-    @ApiResponse (responseCode = "400", description = "Групповой чат с указанными id не найден" , content ={
+    @ApiResponse(responseCode = "400", description = "Групповой чат с указанными id не найден", content = {
             @Content(mediaType = "application/json"),
     })
     @GetMapping("/group/{groupChatId}")
     public ResponseEntity<GroupChatDto> getGroupChatDtoById(
             @PathVariable("groupChatId")
             @Parameter(name = "Id группового чата.", required = true, description = "Id группового чата является обязательным параметром.")
-                    long groupChatId,
+            long groupChatId,
             @RequestParam(name = "itemsOnPage", defaultValue = "10")
-            @Parameter (name = "Количество сообщений на странице.",
+            @Parameter(name = "Количество сообщений на странице.",
                     description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
-                    int itemsOnPage,
+            int itemsOnPage,
             @RequestParam(name = "currentPage", defaultValue = "1")
-            @Parameter (name = "Текущая страница сообщений.",
+            @Parameter(name = "Текущая страница сообщений.",
                     description = "Необязательный параметр. Служит для корректного постраничного отображения сообщений и обращения к ним. По-умолчанию равен 1")
-                    int currentPage) {
+            int currentPage) {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoByGroupChatId.class.getSimpleName());
         properties.getProps().put("groupChatId", groupChatId);
         if (chatDtoService.getGroupChatDtoById(groupChatId, properties).isPresent()) {
@@ -78,20 +82,20 @@ public class ChatResourceController {
 
     }
 
-    @Operation (summary = "Получение сообщений single чата.", description = "Получение пагинированного списка сообщений single чата по его id.")
+    @Operation(summary = "Получение сообщений single чата.", description = "Получение пагинированного списка сообщений single чата по его id.")
     @GetMapping("/{singleChatId}/single/message")
     public ResponseEntity<PageDTO<MessageDto>> getPagedMessagesOfSingleChat(
             @PathVariable("singleChatId")
             @Parameter(name = "Id single чата.", required = true, description = "Id single чата является обязательным параметром.")
-                    long singleChatId,
+            long singleChatId,
             @RequestParam(name = "itemsOnPage", defaultValue = "10")
-            @Parameter (name = "Количество сообщений на странице.",
+            @Parameter(name = "Количество сообщений на странице.",
                     description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
-                    int itemsOnPage,
+            int itemsOnPage,
             @RequestParam(name = "currentPage", defaultValue = "1")
-            @Parameter (name = "Текущая страница сообщений.",
+            @Parameter(name = "Текущая страница сообщений.",
                     description = "Необязательный параметр. Служит для корректного постраничного отображения сообщений и обращения к ним. По-умолчанию равен 1")
-                    int currentPage) {
+            int currentPage) {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoBySingleChatId.class.getSimpleName());
         properties.getProps().put("singleChatId", singleChatId);
         return new ResponseEntity<>(messagesPaginationService.getPageDto(properties), HttpStatus.OK);
@@ -99,11 +103,10 @@ public class ChatResourceController {
 
     @PostMapping("/group")
     public ResponseEntity<String> createGroupChatDto(@RequestBody CreateGroupChatDto createGroupChatDto) throws NullPointerException {
-        if (isNull(createGroupChatDto)) {
-            return new ResponseEntity<>("List userIds is empty in createGroupChatDto", HttpStatus.INTERNAL_SERVER_ERROR);
-        } else {
-            groupChatRoomService.persist(groupChatConverter.createGroupChatDTOToGroupChat(createGroupChatDto));
-            return new ResponseEntity<>("GroupChat created", HttpStatus.CREATED);
+        if (createGroupChatDto.getUserIds().isEmpty()) {
+            return new ResponseEntity<>("List userIds is empty in createGroupChatDto", HttpStatus.BAD_REQUEST);
         }
+        groupChatRoomService.persist(groupChatConverter.createGroupChatDTOToGroupChat(createGroupChatDto));
+        return new ResponseEntity<>("GroupChat created", HttpStatus.CREATED);
     }
 }
