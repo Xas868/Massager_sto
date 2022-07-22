@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.dao.abstracts.model.VoteAnswerDao;
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
 import com.javamentor.qa.platform.models.dto.AnswerCommentDto;
 import com.javamentor.qa.platform.models.dto.AnswerDTO;
+import com.javamentor.qa.platform.models.dto.AnswerUserDto;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -99,6 +100,12 @@ public class AnswerDtoServiceImpl extends DtoServiceImpl<AnswerDTO> implements A
         for (AnswerDTO answer : answers) {
             answer.setCommentOnTheAnswerToTheQuestion(getAllCommentsDtoByAnswerId(answer.getId()));
         }
+    }
+
+
+    @Override
+    public List<AnswerUserDto> getLastAnswersForWeek(Long userId) {
+        return answerDtoDao.getLastAnswersForWeek(userId);
     }
 }
 
