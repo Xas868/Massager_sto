@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.service.impl;
 
+import com.javamentor.qa.platform.models.entity.chat.*;
 import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.RelatedTag;
@@ -14,6 +15,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.service.abstracts.model.*;
+import com.javamentor.qa.platform.service.impl.model.ChatRoomServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
@@ -36,7 +38,10 @@ public class TestDataInitService {
     private final VoteQuestionService voteQuestionService;
     private final VoteAnswerService voteAnswerService;
     private final RelatedTagService relatedTagService;
-    private final QuestionViewedService questionViewedService;
+    private final MessageService messageService;
+    private final ChatRoomService chatRoomService;
+    private final GroupChatRoomService groupChatRoomService;
+    private final SingleChatService singleChatService;
 
     private final long NUM_OF_USERS = 100L;
     private final long NUM_OF_TAGS = 50L;
@@ -47,6 +52,10 @@ public class TestDataInitService {
     private final long NUM_OF_REPUTATIONS = 100L;
     private final long NUM_OF_VOTEQUESTIONS = 120L;
     private final long NUM_OF_VOTEANSWERS = 120L;
+    private final long NUM_OF_CHAT = 5L;
+    private final long NUM_OF_MESSAGE = 5L;
+    private final long NUM_OF_GROUPCHAT = 5L;
+    private final long NUM_OF_SINGLECHAT = 5L;
 
     public void init() {
         createRoles();
@@ -59,7 +68,61 @@ public class TestDataInitService {
         createReputations();
         createVoteQuestion();
         createVoteAnswer();
-        createQuestionViewed();
+        createChat();
+        createMessage();
+        createGroupChat();
+        createSingleChat();
+    }
+
+    public void createMessage() {
+        List<Message> messages = new ArrayList<>();
+        for (int i = 1; i <= NUM_OF_MESSAGE; i++) {
+            Message message = Message.builder()
+                    .message("message" + i)
+                    .persistDate(LocalDateTime.now())
+                    .userSender(getRandomUser())
+                    .chat(Chat.builder().id((long) i).build())
+                    .id((long) i)
+                    .build();
+            messages.add(message);
+        }
+        messageService.updateAll(messages);
+    }
+
+    public void createChat() {
+        List<Chat> chats = new ArrayList<>();
+        for (int i = 1; i <= NUM_OF_CHAT; i++) {
+            Chat chat = Chat.builder()
+                    .title("Chat" + i)
+                    .persistDate(LocalDateTime.now())
+                    .build();
+            chats.add(chat);
+        }
+        chatRoomService.persistAll(chats);
+    }
+
+    public void createGroupChat() {
+        List<GroupChat> groupChats = new ArrayList<>();
+        for (int i = 1; i <= NUM_OF_GROUPCHAT; i++) {
+            GroupChat groupChat = GroupChat.builder()
+                    .chat(Chat.builder().chatType(ChatType.GROUP).build())
+                    .build();
+            groupChats.add(groupChat);
+        }
+        groupChatRoomService.persistAll(groupChats);
+    }
+
+    public void createSingleChat() {
+        List<SingleChat> singleChats = new ArrayList<>();
+        for (int i = 1; i <= NUM_OF_SINGLECHAT; i++) {
+            SingleChat singleChat = SingleChat.builder()
+                    .chat(Chat.builder().chatType(ChatType.SINGLE).build())
+                    .userOne(getRandomUser())
+                    .useTwo(getRandomUser())
+                    .build();
+            singleChats.add(singleChat);
+        }
+        singleChatService.persistAll(singleChats);
     }
 
     public void createRoles() {
@@ -116,7 +179,6 @@ public class TestDataInitService {
                     .build();
             tags.add(tag);
         }
-
         tagService.persistAll(tags);
     }
 
@@ -200,7 +262,6 @@ public class TestDataInitService {
 
         answerService.persistAll(answers);
     }
-
     public void createReputations() {
         List<Reputation> reputations = new ArrayList<>();
         for (long i = 1; i <= NUM_OF_REPUTATIONS; i++) {
@@ -217,7 +278,6 @@ public class TestDataInitService {
         }
         reputationService.persistAll(reputations);
     }
-
     public void createVoteQuestion() {
         List<VoteQuestion> voteQuestions = new ArrayList<>();
         for (long i = 1; i <= NUM_OF_VOTEQUESTIONS; i++) {
@@ -258,22 +318,6 @@ public class TestDataInitService {
         voteAnswerService.persistAll(voteAnswers);
     }
 
-    public void createQuestionViewed() {
-        List<Question> questions = questionService.getAll();
-        for (int i = 0; i < NUM_OF_QUESTIONS; i++) {
-            int numberOfViews = new Random().nextInt((int) NUM_OF_USERS);
-            Question question = questions.get(i);
-            Set<User> users = new HashSet<>();
-            for (int j = 0; j < numberOfViews; j++) {
-                User user = getRandomUser();
-                users.add(user);
-            }
-            for (User user : users) {
-                questionViewedService.markQuestionLikeViewed(user, question);
-            }
-        }
-    }
-
     private List<Tag> getRandomTagList() {
         List<Tag> tags = tagService.getAll();
         int numOfDeleteTags = tags.size() - 5 + new Random().nextInt(5);
@@ -287,12 +331,11 @@ public class TestDataInitService {
         List<User> users = userService.getAll();
         return users.get(new Random().nextInt(users.size()));
     }
-
     private User getRandomAdmin() {
-        User admin = getRandomUser();
-        if (admin.getRole().getId() == 1) {
-            return admin;
-        }
+         User admin = getRandomUser();
+             if (admin.getRole().getId() == 1) {
+                return admin;
+             }
         return null;
     }
 
