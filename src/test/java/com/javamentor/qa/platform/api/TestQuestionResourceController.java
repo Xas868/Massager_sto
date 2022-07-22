@@ -212,7 +212,8 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.listQuestionCommentDto[1].persistDate")
                         .value("2021-12-13T21:09:52.716"))
                 .andExpect(jsonPath("$.listQuestionCommentDto[1].text").value("Hello Test2"))
-                .andExpect(jsonPath("$.isUserVote").value("DOWN_VOTE"));
+                .andExpect(jsonPath("$.isUserVote").value("DOWN_VOTE"))
+                .andExpect(jsonPath("$.answerDTOList[0].id").value(1));
 
         mockMvc.perform(get("/api/user/question/2")
                         .header(AUTHORIZATION, USER_TOKEN))
@@ -1503,19 +1504,16 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
         //проверка на - отображается ли вопрос в метке, который добавил себе авторизованный юзер
 
         mockMvc.perform(get("/api/user/question/101")
-                        .contentType("application/json")
-                        .header("Authorization", token100));
-         Long id = 101L;
-       Long userId =100L ;
-      List<BookMarks> bookMarks = (List<BookMarks>) entityManager.createQuery("select count(*) from BookMarks bm " +
-                "where bm.question.id = :id and bm.user.id=:userId ")
-                .setParameter("id",id)
-                .setParameter("userId",userId)
-              .getResultList();
+                .contentType("application/json")
+                .header("Authorization", token100));
+        Long id = 101L;
+        Long userId = 100L;
+        List<BookMarks> bookMarks = (List<BookMarks>) entityManager.createQuery("select count(*) from BookMarks bm " +
+                        "where bm.question.id = :id and bm.user.id=:userId ")
+                .setParameter("id", id)
+                .setParameter("userId", userId)
+                .getResultList();
         assertThat(bookMarks).isNotNull();
-
-
-
     }
 
     @Test
@@ -1562,4 +1560,130 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @DataSet(value = {
+            "dataset/QuestionResourceController/roles.yml",
+            "dataset/QuestionResourceController/checkAnswersSort/users.yml",
+            "dataset/QuestionResourceController/tags.yml",
+            "dataset/QuestionResourceController/questions.yml",
+            "dataset/QuestionResourceController/questions_has_tag.yml",
+            "dataset/QuestionResourceController/checkAnswersSort/answers.yml",
+            "dataset/QuestionResourceController/checkAnswersSort/answerVotes.yml"
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
+    )
+    public void getSortedAnswersOnQuestionIdWhereIsHelpfulAnswerHasLessVotes() throws Exception {
+
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+        authenticationRequest.setPassword("test15");
+        authenticationRequest.setUsername("test15@mail.ru");
+
+        String USER_TOKEN = mockMvc.perform(
+                        post("/api/auth/token")
+                                .content(new ObjectMapper().writeValueAsString(authenticationRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        USER_TOKEN = "Bearer " + USER_TOKEN.substring(USER_TOKEN.indexOf(":") + 2, USER_TOKEN.length() - 2);
+
+        mockMvc.perform(get("/api/user/question/1")
+                        .header(AUTHORIZATION, USER_TOKEN))
+                .andDo(print())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.answerDTOList[0].id").value(3))
+                .andExpect(jsonPath("$.answerDTOList[0].isHelpful").value(true))
+                .andExpect(jsonPath("$.answerDTOList[0].countValuable").value(-3))
+                .andExpect(jsonPath("$.answerDTOList[1].id").value(2))
+                .andExpect(jsonPath("$.answerDTOList[1].countValuable").value(3))
+                .andExpect(jsonPath("$.answerDTOList[2].id").value(1))
+                .andExpect(jsonPath("$.answerDTOList[2].countValuable").value(1))
+                .andExpect(jsonPath("$.answerDTOList[3].id").value(4))
+                .andExpect(jsonPath("$.answerDTOList[3].countValuable").value(-1));
+    }
+
+    @Test
+    @DataSet(value = {
+            "dataset/QuestionResourceController/roles.yml",
+            "dataset/QuestionResourceController/checkAnswersSort/users.yml",
+            "dataset/QuestionResourceController/tags.yml",
+            "dataset/QuestionResourceController/questions.yml",
+            "dataset/QuestionResourceController/questions_has_tag.yml",
+            "dataset/QuestionResourceController/checkAnswersSort/answersWithoutIsHelpful.yml",
+            "dataset/QuestionResourceController/checkAnswersSort/answerVotes.yml"
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
+    )
+    public void getSortedAnswersOnQuestionIdWhereFieldIsHelpfulIsMissing() throws Exception {
+
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+        authenticationRequest.setPassword("test15");
+        authenticationRequest.setUsername("test15@mail.ru");
+
+        String USER_TOKEN = mockMvc.perform(
+                        post("/api/auth/token")
+                                .content(new ObjectMapper().writeValueAsString(authenticationRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        USER_TOKEN = "Bearer " + USER_TOKEN.substring(USER_TOKEN.indexOf(":") + 2, USER_TOKEN.length() - 2);
+
+        mockMvc.perform(get("/api/user/question/1")
+                        .header(AUTHORIZATION, USER_TOKEN))
+                .andDo(print())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.answerDTOList[0].id").value(2))
+                .andExpect(jsonPath("$.answerDTOList[0].countValuable").value(3))
+                .andExpect(jsonPath("$.answerDTOList[1].id").value(1))
+                .andExpect(jsonPath("$.answerDTOList[1].countValuable").value(1))
+                .andExpect(jsonPath("$.answerDTOList[2].id").value(4))
+                .andExpect(jsonPath("$.answerDTOList[2].countValuable").value(-1))
+                .andExpect(jsonPath("$.answerDTOList[3].id").value(3))
+                .andExpect(jsonPath("$.answerDTOList[3].countValuable").value(-3));
+    }
+
+    @Test
+    @DataSet(value = {
+            "dataset/QuestionResourceController/roles.yml",
+            "dataset/QuestionResourceController/checkAnswersSort/users.yml",
+            "dataset/QuestionResourceController/tags.yml",
+            "dataset/QuestionResourceController/questions.yml",
+            "dataset/QuestionResourceController/questions_has_tag.yml",
+            "dataset/QuestionResourceController/checkAnswersSort/null_answers.yml",
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
+    )
+    public void getNullSortedAnswersOnQuestionIdWhereAnswersIsNull() throws Exception {
+
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+        authenticationRequest.setPassword("test15");
+        authenticationRequest.setUsername("test15@mail.ru");
+
+        String USER_TOKEN = mockMvc.perform(
+                        post("/api/auth/token")
+                                .content(new ObjectMapper().writeValueAsString(authenticationRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        USER_TOKEN = "Bearer " + USER_TOKEN.substring(USER_TOKEN.indexOf(":") + 2, USER_TOKEN.length() - 2);
+
+        mockMvc.perform(get("/api/user/question/1")
+                        .header(AUTHORIZATION, USER_TOKEN))
+                .andDo(print())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.answerDTOList").isEmpty());
+    }
 }
+
