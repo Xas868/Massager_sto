@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
+import com.javamentor.qa.platform.models.dto.ChatDto;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
 import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
 import com.javamentor.qa.platform.models.dto.GroupChatDto;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static java.sql.DriverManager.getConnection;
 import static org.thymeleaf.util.ListUtils.containsAll;
@@ -48,6 +50,25 @@ public class ChatResourceController {
         this.groupChatRoomService = groupChatRoomService;
         this.groupChatConverter = groupChatConverter;
         this.userDao = userDao;
+    }
+
+    @Operation(summary = "Поиск и сортировка чатов по указанному имени",
+            description = "Получение листа чатов, (групповых и одиночных) содержащих заданное имя сортированных по убыванию даты последнего в них сообщения")
+    @ApiResponse(responseCode = "200",
+            description = "Чаты найдены",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400",
+            description = "Чаты не найдены",
+            content = @Content(mediaType = "application/json"))
+    @GetMapping
+    public ResponseEntity<List<ChatDto>> getChatsByName(
+            @RequestParam(name = "name", defaultValue = "")
+            @Parameter(name = "Строка по которой будет проходить поиск чатов",
+                    description = "Необязательный параметр. Любое совпадение строки в названии чата, вернёт этот чат")
+            String chatName,
+            Authentication authentication) {
+        User currentUser = (User) authentication.getPrincipal();
+        return new ResponseEntity<>(chatDtoService.getAllChatsByNameAndUserId(chatName, currentUser.getId()), HttpStatus.OK);
     }
 
     @GetMapping("/single")
