@@ -342,9 +342,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         singleChat.setUseTwo(User.builder().id(103L).email("test103@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
         singleChatService.persist(singleChat);
 
-        this.mockMvc.perform(post("/api/user/chat/1")
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/user/chat/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(103L))
                         .header(AUTHORIZATION,USER_TOKEN_103, USER_TOKEN_101))
                 .andExpect(status().isOk());
 
@@ -370,9 +369,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         groupChat.setUsers(users);
         groupChatRoomService.persist(groupChat);
 
-        this.mockMvc.perform(post("/api/user/chat/1")
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/user/chat/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(103L))
                         .header(AUTHORIZATION,USER_TOKEN_103, USER_TOKEN_101, USER_TOKEN_102))
                 .andExpect(status().isOk());
     }

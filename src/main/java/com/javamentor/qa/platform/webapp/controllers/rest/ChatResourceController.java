@@ -48,32 +48,32 @@ public class ChatResourceController {
     }
 
     @GetMapping("/single")
-    public ResponseEntity <List<SingleChatDto>> getAllSingleChatDtoByUserId(Authentication authentication) {
+    public ResponseEntity<List<SingleChatDto>> getAllSingleChatDtoByUserId(Authentication authentication) {
         User currentUser = (User) authentication.getPrincipal();
         return new ResponseEntity<>(chatDtoService.getAllSingleChatDtoByUserId(currentUser.getId()), HttpStatus.OK);
     }
 
 
-    @Operation (summary = "Получение группового чата с сообщениями.", description = "Получение группового чата с пагинированным списком сообщений.")
-    @ApiResponse (responseCode = "200", description = "Групповой чат найден", content ={
+    @Operation(summary = "Получение группового чата с сообщениями.", description = "Получение группового чата с пагинированным списком сообщений.")
+    @ApiResponse(responseCode = "200", description = "Групповой чат найден", content = {
             @Content(mediaType = "application/json"),
     })
-    @ApiResponse (responseCode = "400", description = "Групповой чат с указанными id не найден" , content ={
+    @ApiResponse(responseCode = "400", description = "Групповой чат с указанными id не найден", content = {
             @Content(mediaType = "application/json"),
     })
     @GetMapping("/group/{groupChatId}")
     public ResponseEntity<GroupChatDto> getGroupChatDtoById(
             @PathVariable("groupChatId")
             @Parameter(name = "Id группового чата.", required = true, description = "Id группового чата является обязательным параметром.")
-                    long groupChatId,
+            long groupChatId,
             @RequestParam(name = "itemsOnPage", defaultValue = "10")
-            @Parameter (name = "Количество сообщений на странице.",
+            @Parameter(name = "Количество сообщений на странице.",
                     description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
-                    int itemsOnPage,
+            int itemsOnPage,
             @RequestParam(name = "currentPage", defaultValue = "1")
-            @Parameter (name = "Текущая страница сообщений.",
+            @Parameter(name = "Текущая страница сообщений.",
                     description = "Необязательный параметр. Служит для корректного постраничного отображения сообщений и обращения к ним. По-умолчанию равен 1")
-                    int currentPage) {
+            int currentPage) {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoByGroupChatId.class.getSimpleName());
         properties.getProps().put("groupChatId", groupChatId);
         if (chatDtoService.getGroupChatDtoById(groupChatId, properties).isPresent()) {
@@ -84,32 +84,34 @@ public class ChatResourceController {
 
     }
 
-    @Operation (summary = "Получение сообщений single чата.", description = "Получение пагинированного списка сообщений single чата по его id.")
+    @Operation(summary = "Получение сообщений single чата.", description = "Получение пагинированного списка сообщений single чата по его id.")
     @GetMapping("/{singleChatId}/single/message")
     public ResponseEntity<PageDTO<MessageDto>> getPagedMessagesOfSingleChat(
             @PathVariable("singleChatId")
             @Parameter(name = "Id single чата.", required = true, description = "Id single чата является обязательным параметром.")
-                    long singleChatId,
+            long singleChatId,
             @RequestParam(name = "itemsOnPage", defaultValue = "10")
-            @Parameter (name = "Количество сообщений на странице.",
+            @Parameter(name = "Количество сообщений на странице.",
                     description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
-                    int itemsOnPage,
+            int itemsOnPage,
             @RequestParam(name = "currentPage", defaultValue = "1")
-            @Parameter (name = "Текущая страница сообщений.",
+            @Parameter(name = "Текущая страница сообщений.",
                     description = "Необязательный параметр. Служит для корректного постраничного отображения сообщений и обращения к ним. По-умолчанию равен 1")
-                    int currentPage) {
+            int currentPage) {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoBySingleChatId.class.getSimpleName());
         properties.getProps().put("singleChatId", singleChatId);
         return new ResponseEntity<>(messagesPaginationService.getPageDto(properties), HttpStatus.OK);
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<String> deleteChatById(@PathVariable("id") Long chatId, @RequestBody Long userId){
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUserFromChatById(@PathVariable("id") Long chatId, Authentication authentication) {
         ChatType chatType = chatRoomServiceIml.getById(chatId).get().getChatType();
+        User currentUser = (User) authentication.getPrincipal();
+
         if (chatType.equals(ChatType.GROUP)) {
-            groupChatRoomService.deleteUserFromGroupChatById(chatId,userId);
+            groupChatRoomService.deleteUserFromGroupChatById(chatId, currentUser.getId());
         } else {
-            singleChatService.deleteUserFromSingleChatById(chatId, userId);
+            singleChatService.deleteUserFromSingleChatById(chatId, currentUser.getId());
         }
         return new ResponseEntity<>("Chat deleted", HttpStatus.OK);
     }
