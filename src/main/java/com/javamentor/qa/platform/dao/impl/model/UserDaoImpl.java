@@ -49,6 +49,13 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
     }
 
     @Override
+    public Boolean ifExistsById(Long id) {
+        TypedQuery<User> query = (TypedQuery<User>) entityManager.createQuery("select u FROM User u where u.id=:id")
+                .setParameter("id", id);
+        return SingleResultUtil.getSingleResultOrNull(query).isPresent();
+    }
+
+    @Override
     public void deleteById(Long id) {
         entityManager
                 .createQuery("update User u set u.isDeleted=true where u.id=:id")

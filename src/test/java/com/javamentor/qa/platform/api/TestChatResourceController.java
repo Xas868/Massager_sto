@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
+import com.javamentor.qa.platform.dao.impl.model.UserDaoImpl;
 import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
@@ -379,18 +380,18 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(createGroupChatDto3))
                         .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
-                .andExpect(status().isCreated());
+                .andExpect(status().isBadRequest());
 
-        //Проверка, что несуществующий пользователь не добавился в чат
-        GroupChat groupChatgetUsers = groupChatRoomService.getById(2L).get();
-        Assertions.assertNotEquals(not1UserIds, groupChatgetUsers.getUsers());
+//        //Проверка, что несуществующий пользователь не добавился в чат
+//        GroupChat groupChatgetUsers = groupChatRoomService.getById(2L).get();
+//        Assertions.assertNotEquals(not1UserIds, groupChatgetUsers.getUsers());
 
 
         //Передаю для создания чата список со всеми не существующим пользователем
         List<Long> notAllUserIds = new ArrayList<>();
-        not1UserIds.add(106L);
-        not1UserIds.add(107L);
-        not1UserIds.add(105L);
+        notAllUserIds.add(106L);
+        notAllUserIds.add(107L);
+        notAllUserIds.add(105L);
         CreateGroupChatDto createGroupChatDto4 = new CreateGroupChatDto();
         createGroupChatDto4.setChatName("new Chat4");
         createGroupChatDto4.setUserIds(notAllUserIds);

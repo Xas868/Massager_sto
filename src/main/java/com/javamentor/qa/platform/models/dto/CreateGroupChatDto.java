@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Id;
 import java.util.List;
 
 @Getter
@@ -13,8 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateGroupChatDto {
-
-    private long id;
 
     private String chatName;
 

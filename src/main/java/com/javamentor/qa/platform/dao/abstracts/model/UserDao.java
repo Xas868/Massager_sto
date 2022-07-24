@@ -8,6 +8,8 @@ public interface UserDao extends ReadWriteDao<User, Long> {
 
     Optional<User> getWithRoleByEmail(String email);
 
+    Boolean ifExistsById(Long id);
+
     void changePassword(String password, String username);
 
     boolean isUserExistByEmail(String email);

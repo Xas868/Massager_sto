@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
 import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
@@ -24,9 +25,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Objects.isNull;
+import static java.sql.DriverManager.getConnection;
+import static org.thymeleaf.util.ListUtils.containsAll;
 
 @Tag(name = "ChatResourceController", description = "Позволяет работать с чатами")
 @RestController
@@ -36,13 +39,15 @@ public class ChatResourceController {
     private final ChatDtoService chatDtoService;
     private final GroupChatRoomService groupChatRoomService;
     private final GroupChatConverter groupChatConverter;
+    private final UserDao userDao;
 
     @Autowired
-    public ChatResourceController(DtoServiceImpl<MessageDto> messagesPaginationService, ChatDtoService chatDtoService, GroupChatRoomService groupChatRoomService, GroupChatConverter groupChatConverter) {
+    public ChatResourceController(DtoServiceImpl<MessageDto> messagesPaginationService, ChatDtoService chatDtoService, GroupChatRoomService groupChatRoomService, GroupChatConverter groupChatConverter, UserDao userDao) {
         this.messagesPaginationService = messagesPaginationService;
         this.chatDtoService = chatDtoService;
         this.groupChatRoomService = groupChatRoomService;
         this.groupChatConverter = groupChatConverter;
+        this.userDao = userDao;
     }
 
     @GetMapping("/single")
@@ -102,9 +107,17 @@ public class ChatResourceController {
     }
 
     @PostMapping("/group")
-    public ResponseEntity<String> createGroupChatDto(@RequestBody CreateGroupChatDto createGroupChatDto) throws NullPointerException {
-        if (createGroupChatDto.getUserIds().isEmpty()) {
-            return new ResponseEntity<>("List userIds is empty in createGroupChatDto", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> createGroupChatDto(@RequestBody CreateGroupChatDto createGroupChatDto) {
+        ArrayList<Long> userIds = new ArrayList<>(createGroupChatDto.getUserIds());
+
+        if (!userIds.isEmpty()) {
+            for (Long id: userIds){
+                if (!userDao.ifExistsById(id)){
+                    return new ResponseEntity<>("User " + id.toString() + "not registered", HttpStatus.BAD_REQUEST);
+                }
+            }
+        } else {
+            return new ResponseEntity<>("List of user's ids is empty", HttpStatus.BAD_REQUEST);
         }
         groupChatRoomService.persist(groupChatConverter.createGroupChatDTOToGroupChat(createGroupChatDto));
         return new ResponseEntity<>("GroupChat created", HttpStatus.CREATED);
