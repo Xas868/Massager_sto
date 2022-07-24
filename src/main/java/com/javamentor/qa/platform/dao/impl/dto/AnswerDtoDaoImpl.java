@@ -55,11 +55,11 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                         "where v.answer.id = a.id), " +
                         "a.dateAcceptTime, " +
                         "(select coalesce(sum(case when v.vote = 'UP_VOTE' then 1 else -1 end), 0) from VoteAnswer v " +
-                        "where v.answer.id = a.id)," +
+                        "where v.answer.id = a.id) as countVotes," +
                         " a.user.imageLink," +
                         " a.user.nickname) " +
                         "from Answer as a "  +
-                        "where a.question.id = :id and a.isDeleted = false order by a.id ", AnswerDTO.class)
+                        "where a.question.id = :id and a.isDeleted = false order by a.isHelpful desc,countVotes desc ", AnswerDTO.class)
                 .setParameter("id", questionId)
                 .getResultList();
     }
