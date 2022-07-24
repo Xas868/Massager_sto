@@ -1,0 +1,56 @@
+user_entity:
+  - id: 15
+    about: "I'm Test user #15"
+    city: "Moscow"
+    full_name: "test 15"
+    password: "$2a$10$p94zVhwJKsg6CzDQAg1tPOwgUUa66.ITiPyhvJbYKIIZQ1i86UEpm"
+    email: "test15@mail.ru"
+    is_deleted: false
+    nickname: "test15"
+    image_link: "photo"
+    is_enabled: true
+    last_redaction_date: 2021-12-09 19:41:18.252518
+    persist_date: 2021-12-09 19:41:18.252388
+    role_id: 1
+
+  - id: 1
+    about: "I'm Test user #1"
+    city: "Moscow"
+    full_name: "test 1"
+    password: "$2a$10$p94zVhwJKsg6CzDQAg1tPOwgUUa66.ITiPyhvJbYKIIZQ1i86UEpm"
+    email: "test1@mail.ru"
+    is_deleted: false
+    nickname: "test1"
+    image_link: "photo"
+    is_enabled: true
+    last_redaction_date: 2021-12-09 19:41:18.232511
+    persist_date: 2021-12-09 19:41:18.254511
+    role_id: 1
+
+  - id: 2
+    about: "I'm Test user #2"
+    city: "Moscow"
+    full_name: "test 2"
+    password: "$2a$10$p94zVhwJKsg6CzDQAg1tPOwgUUa66.ITiPyhvJbYKIIZQ1i86UEpm"
+    email: "test2@mail.ru"
+    is_deleted: false
+    nickname: "test2"
+    image_link: "photo"
+    is_enabled: true
+    last_redaction_date: 2021-12-09 19:41:18.252511
+    persist_date: 2021-12-09 19:41:18.252533
+    role_id: 1
+
+  - id: 3
+    about: "I'm Test user #3"
+    city: "Moscow"
+    full_name: "test 3"
+    password: "$2a$10$p94zVhwJKsg6CzDQAg1tPOwgUUa66.ITiPyhvJbYKIIZQ1i86UEpm"
+    email: "test3@mail.ru"
+    is_deleted: false
+    nickname: "test3"
+    image_link: "photo"
+    is_enabled: true
+    last_redaction_date: 2021-12-09 19:41:18.252344
+    persist_date: 2021-12-09 19:41:18.2512333
+    role_id: 1

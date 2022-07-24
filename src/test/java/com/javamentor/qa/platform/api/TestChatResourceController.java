@@ -10,10 +10,14 @@ import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
@@ -30,11 +34,100 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 
 public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTests {
+
     @Autowired
     private SingleChatService singleChatService;
 
     @Autowired
     private GroupChatRoomService groupChatRoomService;
+
+    @Test
+    @DataSet(cleanBefore = true,
+            value = {
+                    "dataset/ChatResourceController/ChatSearch/roles.yml",
+                    "dataset/ChatResourceController/ChatSearch/users.yml",
+                    "dataset/ChatResourceController/ChatSearch/group_chat.yml",
+                    "dataset/ChatResourceController/ChatSearch/group_chat_has_users.yml",
+                    "dataset/ChatResourceController/ChatSearch/single_chat.yml",
+                    "dataset/ChatResourceController/ChatSearch/chat.yml",
+                    "dataset/ChatResourceController/ChatSearch/messages.yml"
+    })
+    public void testGetChatsByName() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("test101@mail.ru", "test101");
+        mockMvc.perform(get("/api/user/chat")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andDo(MockMvcResultHandlers.print())
+                // status check
+                .andExpect(status().isOk())
+                // Expected to get three chats: 101, 102, 104 and 105 since user101 is not in chat 103
+                .andExpect(jsonPath("$[0].id").value(105))
+                .andExpect(jsonPath("$[1].id").value(104))
+                .andExpect(jsonPath("$[2].id").value(102))
+                .andExpect(jsonPath("$[3].id").value(101))
+                // since $[1] and $[2] chats are single chats their name should be the name of opposing person who our user chatting with
+                .andExpect(jsonPath("$[0].name").value("group chat with id = 105"))
+                .andExpect(jsonPath("$[1].name").value("test105"))
+                .andExpect(jsonPath("$[2].name").value("test102"))
+                .andExpect(jsonPath("$[3].name").value("group chat with id = 101"))
+                // test if all chats sorted according to the date of last persistent message in them
+                .andExpect(jsonPath("$[0].persistDateTimeLastMessage").value("2021-12-15T05:00:00"))
+                .andExpect(jsonPath("$[1].persistDateTimeLastMessage").value("2021-12-12T05:00:00"))
+                .andExpect(jsonPath("$[2].persistDateTimeLastMessage").value("2021-12-06T05:00:00"))
+                .andExpect(jsonPath("$[3].persistDateTimeLastMessage").value("2021-12-03T05:00:00"));
+    }
+
+
+    @Test
+    @DataSet(cleanBefore = true,
+            value = {
+                    "dataset/ChatResourceController/ChatSearch/roles.yml",
+                    "dataset/ChatResourceController/ChatSearch/users.yml",
+                    "dataset/ChatResourceController/ChatSearch/group_chat.yml",
+                    "dataset/ChatResourceController/ChatSearch/group_chat_has_users.yml",
+                    "dataset/ChatResourceController/ChatSearch/single_chat.yml",
+                    "dataset/ChatResourceController/ChatSearch/chat.yml",
+                    "dataset/ChatResourceController/ChatSearch/messages.yml"
+            })
+    public void testGetChatsByNameEmptyList() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("test101@mail.ru", "test101");
+        mockMvc.perform(get("/api/user/chat")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                //Sending 105 as param so we expect to get only chats that contain '105' in the title or have user with this name if it's a single chat
+                        .param("name", "105")
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("group chat with id = 105"))
+                .andExpect(jsonPath("$[1].name").value("test105"));
+    }
+
+    @Test
+    @DataSet(cleanBefore = true,
+            value = {
+                    "dataset/ChatResourceController/ChatSearch/roles.yml",
+                    "dataset/ChatResourceController/ChatSearch/users.yml",
+                    "dataset/ChatResourceController/ChatSearch/group_chat.yml",
+                    "dataset/ChatResourceController/ChatSearch/group_chat_has_users.yml",
+                    "dataset/ChatResourceController/ChatSearch/single_chat.yml",
+                    "dataset/ChatResourceController/ChatSearch/chat.yml",
+                    "dataset/ChatResourceController/ChatSearch/messages.yml"
+            })
+    public void testGetChatsByOnlyOneResult() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("test101@mail.ru", "test101");
+        mockMvc.perform(get("/api/user/chat")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        // There is no chat with this name so we expect to not get any results
+                        .param("name", "102")
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andDo(MockMvcResultHandlers.print())
+                // status check
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("test102"));
+    }
 
     //Тесты для SingleChatDTO авторизированного пользователя
     @Test

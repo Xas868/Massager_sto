@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
+import com.javamentor.qa.platform.models.dto.ChatDto;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
 import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import com.javamentor.qa.platform.models.dto.MessageDto;
@@ -27,6 +28,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "ChatResourceController", description = "Позволяет работать с чатами")
 @RestController
@@ -45,6 +47,25 @@ public class ChatResourceController {
         this.chatRoomServiceIml = chatRoomServiceIml;
         this.groupChatRoomService = groupChatRoomService;
         this.singleChatService = singleChatService;
+    }
+
+    @Operation(summary = "Поиск и сортировка чатов по указанному имени",
+            description = "Получение листа чатов, (групповых и одиночных) содержащих заданное имя сортированных по убыванию даты последнего в них сообщения")
+    @ApiResponse(responseCode = "200",
+            description = "Чаты найдены",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400",
+            description = "Чаты не найдены",
+            content = @Content(mediaType = "application/json"))
+    @GetMapping
+    public ResponseEntity<List<ChatDto>> getChatsByName(
+            @RequestParam(name = "name", defaultValue = "")
+            @Parameter(name = "Строка по которой будет проходить поиск чатов",
+                    description = "Необязательный параметр. Любое совпадение строки в названии чата, вернёт этот чат")
+            String chatName,
+            Authentication authentication) {
+        User currentUser = (User) authentication.getPrincipal();
+        return new ResponseEntity<>(chatDtoService.getAllChatsByNameAndUserId(chatName, currentUser.getId()), HttpStatus.OK);
     }
 
     @GetMapping("/single")

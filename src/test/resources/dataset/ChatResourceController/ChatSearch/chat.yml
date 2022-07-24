@@ -1,0 +1,35 @@
+chat:
+  - id: 101
+    chat_type: 1
+    image: "image for chat id 101"
+    persist_date: 2021-12-09 19:41:18.252588
+    title: "group chat with id = 101"
+
+  - id: 102
+    chat_type: 2
+    image: "image for single chat id 102"
+    persist_date: 2021-12-09 19:42:18.252588
+    title: "single chat with id = 102"
+
+  - id: 103
+    chat_type: 2
+    image: "image for single chat id 103"
+    persist_date: 2021-12-09 19:43:18.252588
+    title: "single chat with id = 103"
+
+  - id: 104
+    chat_type: 2
+    image: "image for single chat id 104"
+    persist_date: 2021-12-09 19:44:18.252588
+    title: "single chat with id = 104"
+
+  - id: 105
+    chat_type: 1
+    image: "image for chat id 105"
+    persist_date: 2021-12-10 19:44:18.252588
+    title: "group chat with id = 105"
+
+
+
+
+
