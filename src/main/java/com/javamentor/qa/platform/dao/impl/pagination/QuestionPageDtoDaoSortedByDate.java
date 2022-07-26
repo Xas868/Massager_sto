@@ -31,9 +31,11 @@ public class QuestionPageDtoDaoSortedByDate implements PageDtoDao<QuestionViewDt
                         " where q.id = q1.id and (t.id in :trackedTag))" +
                         " and not exists (select q.id from Question q1 JOIN q1.tags t " +
                         " where q.id = q1.id and t.id in :ignoredTag )" +
+                        ":dateFilter = 0 or question.persistDateTime > current_date - :dateFilter" +
                         " ORDER BY q.persistDateTime desc")
                 .setParameter("trackedTag", properties.getProps().get("trackedTag"))
                 .setParameter("ignoredTag", properties.getProps().get("ignoredTag"))
+                .setParameter("dateFilter", properties.getProps().get("dateFilter"))
                 .setFirstResult(offset)
                 .setMaxResults(itemsOnPage)
                 .unwrap(org.hibernate.query.Query.class)

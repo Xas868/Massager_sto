@@ -23,8 +23,14 @@ public class QuestionPageDtoDaoByTagId implements PageDtoDao<QuestionViewDto> {
         int offset = (properties.getCurrentPage() - 1) * itemsOnPage;
         return (List<QuestionViewDto>) entityManager.createQuery(
                         "select " +
-                                "q.id, q.title, u.id, u.fullName, u.imageLink, " +
-                                " q.description, q.persistDateTime, q.lastUpdateDateTime, " +
+                                "q.id, " +
+                                "q.title, " +
+                                "u.id, " +
+                                "u.fullName, " +
+                                "u.imageLink, " +
+                                "q.description," +
+                                "q.persistDateTime, " +
+                                "q.lastUpdateDateTime, " +
                                 "(select sum(r.count) from Reputation r WHERE r.author.id = u.id), " +
                                 "count(a.id), " +
                                 "sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) " +
@@ -32,10 +38,12 @@ public class QuestionPageDtoDaoByTagId implements PageDtoDao<QuestionViewDto> {
                                 "JOIN q.user u on q.user.id = u.id " +
                                 "join Answer a ON a.question.id = q.id " +
                                 "JOIN VoteQuestion v  ON v.question.id = q.id " +
-                                "WHERE q.id IN (select q1.id from Question q1 join q1.tags t WHERE t.id = :id)" +
+                                "WHERE q.id IN (select q1.id from Question q1 join q1.tags t WHERE t.id = :id) and " +
+                                ":dateFilter = 0  OR question.persistDateTime > current_date - :dateFilter" +
                                 "group by q.id, q.persistDateTime, u.id " +
                                 "order by q.persistDateTime desc")
                 .setParameter("id", properties.getProps().get("id"))
+                .setParameter("dateFilter", properties.getProps().get("dateFilter"))
                 .unwrap(org.hibernate.query.Query.class)
                 .setResultTransformer(new QuestionPageDtoResultTransformer())
                 .setFirstResult(offset)

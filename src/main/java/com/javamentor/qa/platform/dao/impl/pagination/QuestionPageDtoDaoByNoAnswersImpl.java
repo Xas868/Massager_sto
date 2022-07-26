@@ -25,11 +25,17 @@ public class QuestionPageDtoDaoByNoAnswersImpl implements PageDtoDao<QuestionVie
                         " u.fullName, u.imageLink, q.description, q.persistDateTime," +
                         " q.lastUpdateDateTime, (SELECT SUM(r.count) from Reputation r WHERE r.author.id = q.user.id), " +
                         " (select count (a.id) from Question q JOIN Answer a ON a.question.id = q.id)," +
-                        " (select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v JOIN Question q" +
+                        " (select sum(" +
+                        "               case " +
+                        "                       when v.vote = 'UP_VOTE' then 1 " +
+                        "                       else -1 " +
+                        "               end) " +
+                        "from VoteQuestion v JOIN Question q" +
                         " ON v.question.id = q.id)" +
                         " from Question q JOIN q.user u JOIN q.tags t " +
                         " WHERE q.answers IS EMPTY AND ((:trackedTags) IS NULL OR t.id IN (:trackedTags)) AND" +
-                        " ((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags)))")
+                        " ((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags))) AND" +
+                        ":dateFilter = 0 or question.persistDateTime > current_date - :dateFilter ")
                 .setParameter("trackedTags", properties.getProps().get("trackedTags"))
                 .setParameter("ignoredTags", properties.getProps().get("ignoredTags"))
                 .setFirstResult(offset)

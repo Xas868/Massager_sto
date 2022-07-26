@@ -34,14 +34,16 @@ public class QuestionPageDtoDaoSortedByWeightForTheWeekImpl implements PageDtoDa
                                 " q.persistDateTime, q.lastUpdateDateTime" +
                                 " from Question q JOIN q.user u " +
                                 " WHERE ((:trackedTags) IS NULL OR q.id IN (select q.id from Question q join q.tags t where t.id in (:trackedTags))) AND" +
-                                " ((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags)))" +
-                                " AND q.persistDateTime >= date_trunc('week', current_timestamp)" +
+                                " ((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags))) AND" +
+                                ":dateFilter = 0  OR question.persistDateTime > current_date - :dateFilter " +
                                 " ORDER BY " +
                                 "(select count (a.id) from Answer a where a.question.id = q.id) + " +
                                 "(select count(vq.id) from VoteQuestion vq where vq.question.id=q.id) + 0 " +
                                 "desc")
                 .setParameter("trackedTags", properties.getProps().get("trackedTags"))
                 .setParameter("ignoredTags", properties.getProps().get("ignoredTags"))
+                .setParameter("dateFilter", properties.getProps().get("dateFilter"))
+
                 .setFirstResult(offset)
                 .setMaxResults(itemsOnPage)
                 .unwrap(org.hibernate.query.Query.class)
