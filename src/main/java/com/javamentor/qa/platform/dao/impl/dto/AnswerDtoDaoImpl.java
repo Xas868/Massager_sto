@@ -4,10 +4,12 @@ import com.javamentor.qa.platform.dao.abstracts.dto.AnswerDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.AnswerCommentDto;
 import com.javamentor.qa.platform.models.dto.AnswerDTO;
+import com.javamentor.qa.platform.models.dto.AnswerUserDto;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -84,4 +86,20 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
     }
 
 
+    @Override
+    public List<AnswerUserDto> getLastAnswersForWeek(Long userId) {
+        return entityManager.createQuery(
+                        "SELECT NEW com.javamentor.qa.platform.models.dto.AnswerUserDto(" +
+                                "a.id," +
+                                "a.question.id," +
+                                "(select coalesce(sum(case when v.vote = 'UP_VOTE' then 1 else -1 end), 0) " +
+                                "from VoteAnswer v where v.answer.id = a.id) as countVotes," +
+                                "a.persistDateTime," +
+                                "a.htmlBody)" +
+                                "FROM Answer AS a WHERE a.user.id=:id AND a.persistDateTime >= :date",
+                        AnswerUserDto.class)
+                .setParameter("date", LocalDateTime.now().minusDays(7))
+                .setParameter("id",userId)
+                .getResultList();
+    }
 }
