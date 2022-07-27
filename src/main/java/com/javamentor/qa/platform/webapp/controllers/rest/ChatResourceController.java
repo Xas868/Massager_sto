@@ -6,10 +6,13 @@ import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoB
 import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import com.javamentor.qa.platform.models.dto.MessageDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.impl.dto.DtoServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,7 +26,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 @Tag(name = "ChatResourceController", description = "Позволяет работать с чатами")
 @RestController
@@ -31,11 +35,15 @@ import java.util.Map;
 public class ChatResourceController {
     private final DtoServiceImpl<MessageDto> messagesPaginationService;
     private final ChatDtoService chatDtoService;
+    private final GroupChatRoomService groupChatRoomService;
+    private final UserService userService;
 
     @Autowired
-    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService) {
+    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, GroupChatRoomService groupChatRoomService, UserService userService) {
         this.messagesPaginationService = dtoService;
         this.chatDtoService = chatDtoService;
+        this.groupChatRoomService = groupChatRoomService;
+        this.userService = userService;
     }
 
     @Operation(summary = "Поиск и сортировка чатов по указанному имени",
@@ -51,24 +59,24 @@ public class ChatResourceController {
             @RequestParam(name = "name", defaultValue = "")
             @Parameter(name = "Строка по которой будет проходить поиск чатов",
                     description = "Необязательный параметр. Любое совпадение строки в названии чата, вернёт этот чат")
-            String chatName,
+                    String chatName,
             Authentication authentication) {
         User currentUser = (User) authentication.getPrincipal();
         return new ResponseEntity<>(chatDtoService.getAllChatsByNameAndUserId(chatName, currentUser.getId()), HttpStatus.OK);
     }
 
     @GetMapping("/single")
-    public ResponseEntity <List<SingleChatDto>> getAllSingleChatDtoByUserId(Authentication authentication) {
+    public ResponseEntity<List<SingleChatDto>> getAllSingleChatDtoByUserId(Authentication authentication) {
         User currentUser = (User) authentication.getPrincipal();
         return new ResponseEntity<>(chatDtoService.getAllSingleChatDtoByUserId(currentUser.getId()), HttpStatus.OK);
     }
 
 
-    @Operation (summary = "Получение группового чата с сообщениями.", description = "Получение группового чата с пагинированным списком сообщений.")
-    @ApiResponse (responseCode = "200", description = "Групповой чат найден", content ={
+    @Operation(summary = "Получение группового чата с сообщениями.", description = "Получение группового чата с пагинированным списком сообщений.")
+    @ApiResponse(responseCode = "200", description = "Групповой чат найден", content = {
             @Content(mediaType = "application/json"),
     })
-    @ApiResponse (responseCode = "400", description = "Групповой чат с указанными id не найден" , content ={
+    @ApiResponse(responseCode = "400", description = "Групповой чат с указанными id не найден", content = {
             @Content(mediaType = "application/json"),
     })
     @GetMapping("/group/{groupChatId}")
@@ -77,11 +85,11 @@ public class ChatResourceController {
             @Parameter(name = "Id группового чата.", required = true, description = "Id группового чата является обязательным параметром.")
                     long groupChatId,
             @RequestParam(name = "itemsOnPage", defaultValue = "10")
-            @Parameter (name = "Количество сообщений на странице.",
+            @Parameter(name = "Количество сообщений на странице.",
                     description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
                     int itemsOnPage,
             @RequestParam(name = "currentPage", defaultValue = "1")
-            @Parameter (name = "Текущая страница сообщений.",
+            @Parameter(name = "Текущая страница сообщений.",
                     description = "Необязательный параметр. Служит для корректного постраничного отображения сообщений и обращения к ним. По-умолчанию равен 1")
                     int currentPage) {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoByGroupChatId.class.getSimpleName());
@@ -94,22 +102,45 @@ public class ChatResourceController {
 
     }
 
-    @Operation (summary = "Получение сообщений single чата.", description = "Получение пагинированного списка сообщений single чата по его id.")
+    @Operation(summary = "Получение сообщений single чата.", description = "Получение пагинированного списка сообщений single чата по его id.")
     @GetMapping("/{singleChatId}/single/message")
     public ResponseEntity<PageDTO<MessageDto>> getPagedMessagesOfSingleChat(
             @PathVariable("singleChatId")
             @Parameter(name = "Id single чата.", required = true, description = "Id single чата является обязательным параметром.")
                     long singleChatId,
             @RequestParam(name = "itemsOnPage", defaultValue = "10")
-            @Parameter (name = "Количество сообщений на странице.",
+            @Parameter(name = "Количество сообщений на странице.",
                     description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
                     int itemsOnPage,
             @RequestParam(name = "currentPage", defaultValue = "1")
-            @Parameter (name = "Текущая страница сообщений.",
+            @Parameter(name = "Текущая страница сообщений.",
                     description = "Необязательный параметр. Служит для корректного постраничного отображения сообщений и обращения к ним. По-умолчанию равен 1")
                     int currentPage) {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoBySingleChatId.class.getSimpleName());
         properties.getProps().put("singleChatId", singleChatId);
         return new ResponseEntity<>(messagesPaginationService.getPageDto(properties), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Добавление пользователя в group чат.", description = "Добавление пользователя в group чат по его id")
+    @PostMapping("/group/{id}/join")
+    public ResponseEntity<String> addUserInGroupChat(
+            @PathVariable("id")
+            @Parameter(name = "Id group чата.", required = true, description = "Id group чата является обязательным параметром.")
+                    Long id,
+            @RequestParam("userId")
+            @Parameter(name = "id Пользователя", required = true, description = "Id пользователя является обязательным параметром.")
+                    Long userId) {
+        Optional<GroupChat> groupChat = groupChatRoomService.getById(id);
+        Optional<User> user = userService.getById(userId);
+
+        if (groupChat.isPresent() && user.isPresent()) {
+            Set<User> userSet = groupChat.get().getUsers();
+            userSet.add(user.get());
+            groupChatRoomService.update(groupChat.get());
+
+            return new ResponseEntity<>("userAdded", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("it's bad request", HttpStatus.BAD_REQUEST);
     }
 }

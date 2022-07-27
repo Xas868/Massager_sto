@@ -3,16 +3,15 @@ package com.javamentor.qa.platform.api;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.models.entity.user.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-import java.time.LocalDateTime;
-
-import static org.hamcrest.Matchers.greaterThan;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -32,7 +31,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                     "dataset/ChatResourceController/ChatSearch/single_chat.yml",
                     "dataset/ChatResourceController/ChatSearch/chat.yml",
                     "dataset/ChatResourceController/ChatSearch/messages.yml"
-    })
+            })
     public void testGetChatsByName() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("test101@mail.ru", "test101");
         mockMvc.perform(get("/api/user/chat")
@@ -75,7 +74,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         String USER_TOKEN = "Bearer " + getToken("test101@mail.ru", "test101");
         mockMvc.perform(get("/api/user/chat")
                         .header(AUTHORIZATION, USER_TOKEN)
-                //Sending 105 as param so we expect to get only chats that contain '105' in the title or have user with this name if it's a single chat
+                        //Sending 105 as param so we expect to get only chats that contain '105' in the title or have user with this name if it's a single chat
                         .param("name", "105")
                         .contentType(MediaType.APPLICATION_JSON))
 
@@ -400,5 +399,50 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.totalResultCount").value(5))
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(113, 112)));
+    }
+
+    @Test
+    @DataSet(cleanBefore = true,
+            value = {
+                    "dataset/ChatResourceController/roles.yml",
+                    "dataset/ChatResourceController/users.yml",
+                    "dataset/ChatResourceController/group_chat.yml",
+                    "dataset/ChatResourceController/chat.yml",
+                    "dataset/ChatResourceController/groupchat_has_users.yml"}
+
+    )
+    void testAddingUserToGroupChatWithCorrectData() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("test102@mail.ru", "test102");
+
+        mockMvc.perform(post("/api/user/chat/group/101/join?userId=102")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value("userAdded"));
+
+        GroupChat groupChat = entityManager.createQuery("select group_chat from GroupChat group_chat WHERE group_chat.id = 101", GroupChat.class).getSingleResult();
+        User user = entityManager.createQuery("select user from User user WHERE user.id = 101", User.class).getSingleResult();
+        assertThat(groupChat.getUsers().contains(user)).isTrue();
+    }
+
+    @Test
+    @DataSet(cleanBefore = true,
+            value = {
+                    "dataset/ChatResourceController/roles.yml",
+                    "dataset/ChatResourceController/users.yml",
+                    "dataset/ChatResourceController/group_chat.yml",
+                    "dataset/ChatResourceController/chat.yml",
+                    "dataset/ChatResourceController/groupchat_has_users.yml"}
+    )
+    void testAddingUserToGroupChatWithIncorrectUserId() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("test102@mail.ru", "test102");
+
+        mockMvc.perform(post("/api/user/chat/group/101/join?userId=10")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$").value("it's bad request"));
     }
 }
