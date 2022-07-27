@@ -28,10 +28,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import static java.sql.DriverManager.getConnection;
-import static org.thymeleaf.util.ListUtils.containsAll;
 
 @Tag(name = "ChatResourceController", description = "Позволяет работать с чатами")
 @RestController
@@ -132,15 +128,13 @@ public class ChatResourceController {
         ArrayList<Long> userIds = new ArrayList<>(createGroupChatDto.getUserIds());
 
         if (!userIds.isEmpty()) {
-            for (Long id: userIds){
-                if (!userDao.ifExistsById(id)){
-                    return new ResponseEntity<>("User " + id.toString() + "not registered", HttpStatus.BAD_REQUEST);
-                }
+            List<Long> notExistUsers = userDao.ifExistsById(userIds);
+            if (!notExistUsers.isEmpty()) {
+                return new ResponseEntity<>("Users: " + notExistUsers + "are not registered", HttpStatus.BAD_REQUEST);
             }
-        } else {
-            return new ResponseEntity<>("List of user's ids is empty", HttpStatus.BAD_REQUEST);
+            groupChatRoomService.persist(groupChatConverter.createGroupChatDTOToGroupChat(createGroupChatDto));
+            return new ResponseEntity<>("GroupChat created", HttpStatus.CREATED);
         }
-        groupChatRoomService.persist(groupChatConverter.createGroupChatDTOToGroupChat(createGroupChatDto));
-        return new ResponseEntity<>("GroupChat created", HttpStatus.CREATED);
+        return new ResponseEntity<>("List of user's ids is empty", HttpStatus.BAD_REQUEST);
     }
 }

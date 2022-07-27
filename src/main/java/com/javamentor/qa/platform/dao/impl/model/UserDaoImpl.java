@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -49,10 +51,16 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
     }
 
     @Override
-    public Boolean ifExistsById(Long id) {
-        TypedQuery<User> query = (TypedQuery<User>) entityManager.createQuery("select u FROM User u where u.id=:id")
-                .setParameter("id", id);
-        return SingleResultUtil.getSingleResultOrNull(query).isPresent();
+    public List<Long> ifExistsById(List<Long> ids) {
+        List<Long> notFoundIds = new ArrayList<>();
+        List<Long> foundIds = (List<Long>) entityManager.createQuery("select id FROM User ").getResultList();
+        
+        for (Long id: ids){
+          if(!foundIds.contains(id)){
+              notFoundIds.add(id);
+          }
+        }
+        return notFoundIds;
     }
 
     @Override
