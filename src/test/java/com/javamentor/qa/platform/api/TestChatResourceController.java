@@ -443,6 +443,19 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         //Проверка, что boolean поменялся, у удалённого пользователя в чате.
         SingleChat updatedChat = singleChatService.getById(1l).get();
         Assertions.assertTrue(updatedChat.getUserTwoIsDeleted());
+
+        SingleChat secondSingleChat = new SingleChat();
+        secondSingleChat.setUserOneIsDeleted(true);
+        secondSingleChat.setUserTwoIsDeleted(false);
+        secondSingleChat.setUserOne(User.builder().id(101L).email("test101@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
+        secondSingleChat.setUseTwo(User.builder().id(103L).email("test103@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
+        singleChatService.persist(secondSingleChat);
+
+        //Проверка, на отсутствие чата у юзера
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/user/chat/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION,USER_TOKEN_103, USER_TOKEN_101))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
