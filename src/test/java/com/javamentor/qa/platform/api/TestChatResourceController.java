@@ -1,8 +1,11 @@
 package com.javamentor.qa.platform.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
+import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
+import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -11,6 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.time.LocalDateTime;
 
+import static org.apache.http.client.protocol.HttpClientContext.USER_TOKEN;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -312,13 +316,33 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(113, 112)));
     }
     @Test
-    public void shouldCreateSingleChat () throws Exception {
+    @DataSet(cleanBefore = true, value = "dataset/ChatResourceController/getAllSingleChatDtoByUserId.yml", strategy = SeedStrategy.REFRESH)
+    public void shouldCreateSingleChatAndMessage () throws Exception {
+        CreateSingleChatDto createSingleChatDto = new CreateSingleChatDto();
+        createSingleChatDto.setUserId(1L);
+        createSingleChatDto.setMessage("Fucking Shit!");
         // Проверка что API доступна
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+        authenticationRequest.setPassword("user1");
+        authenticationRequest.setUsername("user1@mail.ru");
+
+        String USER_TOKEN = mockMvc.perform(
+                        post("/api/auth/token")
+                                .content(new ObjectMapper().writeValueAsString(authenticationRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        USER_TOKEN = "Bearer " + USER_TOKEN.substring(USER_TOKEN.indexOf(":") + 2, USER_TOKEN.length() - 2);
         this.mockMvc.perform(MockMvcRequestBuilders
                         .post("/api/user/chat/single")
-                        .contentType("application/json")
-                        .header("Authorization", "Bearer " + getToken("user1@mail.ru", "user1")))
+                        .content(new ObjectMapper().writeValueAsString(createSingleChatDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, USER_TOKEN))
+//                        .header("Authorization", "Bearer " + getToken("user1@mail.ru", "user1")))
+//                        .requestAttr("createSingleChatDto", createSingleChatDto))
                 .andDo(print())
                 .andExpect(status().isOk());
+//
     }
 }

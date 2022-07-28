@@ -3,9 +3,13 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
 import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.entity.chat.Message;
+import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
+import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.MessageService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.impl.dto.DtoServiceImpl;
@@ -18,8 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,13 +38,15 @@ public class ChatResourceController {
     private final ChatDtoService chatDtoService;
     private final SingleChatRoomService singleChatRoomService;
     private final UserService userService;
+    private final MessageService messageService;
 
     @Autowired
-    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, SingleChatRoomService singleChatRoomService, UserService userService) {
+    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, SingleChatRoomService singleChatRoomService, UserService userService, MessageService messageService) {
         this.messagesPaginationService = dtoService;
         this.chatDtoService = chatDtoService;
         this.singleChatRoomService = singleChatRoomService;
         this.userService = userService;
+        this.messageService = messageService;
     }
 
     @GetMapping("/single")
@@ -45,13 +54,37 @@ public class ChatResourceController {
         User currentUser = (User) authentication.getPrincipal();
         return new ResponseEntity<>(chatDtoService.getAllSingleChatDtoByUserId(currentUser.getId()), HttpStatus.OK);
     }
-
+    @Operation(summary = "Создание single чата с первым сообщением.", description = "Создание single чата.")
+    @ApiResponse(responseCode = "200", description = "Single чат создан.", content = {
+            @Content(mediaType = "application/json")
+    })
+    @ApiResponse(responseCode = "400", description = "Single чат не создан.", content = {
+            @Content(mediaType = "application/json")
+    })
     @PostMapping("/single")
-    public ResponseEntity<SingleChatDto> createSingleChatDtoByUserId(CreateSingleChatDto createSingleChatDto,Authentication authentication) {
-        User currentUser = (User) authentication.getPrincipal();
-        Optional<User> destinationUser = userService.getById(createSingleChatDto.getUserId());
-        SingleChatDto singleChatDto = singleChatRoomService.createSingleChatDto(currentUser, destinationUser.get(), createSingleChatDto.getMessage());
-        return new ResponseEntity<>(singleChatDto, HttpStatus.OK);
+    public ResponseEntity<SingleChat> createSingleChatByUserId(@RequestBody CreateSingleChatDto createSingleChatDto) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) auth.getPrincipal();
+//        Optional<User> destinationUser = userService.getById(createSingleChatDto.getUserId());
+        User destinationUser = new User(2L, "qweer@mail.ru", "qwer", "QWERqwer", LocalDateTime.now(), true, false, "huiti", "huitisite", "huitiHub", "huitiVk",
+                "hiyaut", "imageLink", LocalDateTime.MAX, "USERTEST", new Role("TESTROLE"));
+        SingleChat singleChat = SingleChat.builder()
+                .userOne(currentUser)
+                .useTwo(destinationUser)
+                .build();
+        singleChatRoomService.persist(singleChat);
+        Message message = Message.builder()
+                .message(createSingleChatDto.getMessage())
+                .userSender(singleChat.getUserOne())
+                .chat(singleChat.getChat())
+                .build();
+        messageService.persist(message);
+//        SingleChatDto singleChatDto = SingleChatDto.builder()
+//                .id(singleChat.getId())
+//                .name(singleChat.getUserOne().getNickname())
+//                .lastMessage(createSingleChatDto.getMessage())
+//                .build();
+        return new ResponseEntity<>(singleChat, HttpStatus.OK);
     }
 
     @Operation (summary = "Получение группового чата с сообщениями.", description = "Получение группового чата с пагинированным списком сообщений.")
