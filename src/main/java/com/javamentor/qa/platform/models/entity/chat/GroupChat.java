@@ -25,7 +25,7 @@ public class GroupChat {
     @Id
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
     @MapsId
     private Chat chat = new Chat(ChatType.GROUP);
 
