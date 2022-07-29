@@ -201,7 +201,7 @@ public class QuestionResourceController {
                 page, items, QuestionPageDtoDaoByTagId.class.getSimpleName()
         );
         data.getProps().put("id", id);
-        data.getProps().put("dateFilter", dateFilter.getI());
+        data.getProps().put("dateFilter", dateFilter.getDay());
 
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
@@ -220,7 +220,7 @@ public class QuestionResourceController {
                 QuestionPageDtoDaoSortedByDate.class.getSimpleName());
         data.getProps().put("trackedTag", trackedTag);
         data.getProps().put("ignoredTag", ignoredTag);
-        data.getProps().put("dateFilter", dateFilter.getI());
+        data.getProps().put("dateFilter", dateFilter.getDay());
 
 
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
@@ -250,7 +250,7 @@ public class QuestionResourceController {
         PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoByNoAnswersImpl.class.getSimpleName());
         data.getProps().put("trackedTags", trackedTag);
         data.getProps().put("ignoredTags", ignoredTag);
-        data.getProps().put("dateFilter", dateFilter.getI());
+        data.getProps().put("dateFilter", dateFilter.getDay());
 
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
@@ -277,7 +277,7 @@ public class QuestionResourceController {
         data.getProps().put("trackedTags", trackedTag);
         data.getProps().put("ignoredTags", ignoredTag);
         data.getProps().put("userId", user.getId());
-        data.getProps().put("dateFilter", dateFilter.getI());
+        data.getProps().put("dateFilter", dateFilter.getDay());
 
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
@@ -327,7 +327,7 @@ public class QuestionResourceController {
         data.getProps().put("trackedTag", trackedTag);
         data.getProps().put("ignoredTag", ignoredTag);
         data.getProps().put("userId",user.getId());
-        data.getProps().put("dateFilter", dateFilter.getI());
+        data.getProps().put("dateFilter", dateFilter.getDay());
 
 
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
@@ -352,7 +352,7 @@ public class QuestionResourceController {
         PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoSortedByWeightForTheWeekImpl.class.getSimpleName());
         data.getProps().put("trackedTags", trackedTag);
         data.getProps().put("ignoredTags", ignoredTag);
-        data.getProps().put("dateFilter", dateFilter.getI());
+        data.getProps().put("dateFilter", dateFilter.getDay());
 
 
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
@@ -380,7 +380,7 @@ public class QuestionResourceController {
         PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoSortedByImpl.class.getSimpleName());
         data.getProps().put("trackedTags", trackedTag);
         data.getProps().put("ignoredTags", ignoredTag);
-        data.getProps().put("dateFilter", dateFilter.getI());
+        data.getProps().put("dateFilter", dateFilter.getDay());
 
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }

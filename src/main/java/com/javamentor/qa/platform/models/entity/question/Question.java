@@ -47,8 +47,7 @@ public class Question implements Serializable {
     @NotEmpty
     @Type(type = "org.hibernate.type.TextType")
     private String description;
-    //@CreationTimestamp // Для работы
-    @Timestamp // Для тестов
+    @CreationTimestamp
     @Column(name = "persist_date", updatable = false)
     @Type(type = "org.hibernate.type.LocalDateTimeType")
     private LocalDateTime persistDateTime;
@@ -63,10 +62,9 @@ public class Question implements Serializable {
             joinColumns = @JoinColumn(name = "question_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags = new ArrayList<>();
-    //@UpdateTimestamp // Для работы
+    @UpdateTimestamp
     @Column(name = "last_redaction_date", nullable = false)
     @Type(type = "org.hibernate.type.LocalDateTimeType")
-    @Timestamp //Для тестов
     private LocalDateTime lastUpdateDateTime;
 
     @Column(name = "is_deleted")
