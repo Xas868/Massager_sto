@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.dao.impl.model;
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.entity.user.User;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -53,8 +54,10 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
     @Override
     public List<Long> ifExistsById(List<Long> ids) {
         List<Long> notFoundIds = new ArrayList<>();
-        List<Long> foundIds = (List<Long>) entityManager.createQuery("select id FROM User ").getResultList();
-        
+        List<Long> foundIds =  entityManager.createQuery("select id from User where id in(:ids)")
+                .setParameter("ids", ids)
+                .getResultList();
+
         for (Long id: ids){
           if(!foundIds.contains(id)){
               notFoundIds.add(id);
