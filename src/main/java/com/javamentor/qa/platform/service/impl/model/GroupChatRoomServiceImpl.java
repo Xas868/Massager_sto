@@ -5,8 +5,9 @@ import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class GroupChatRoomServiceImpl extends ReadWriteServiceImpl<GroupChat, Long> implements GroupChatRoomService {
@@ -20,7 +21,8 @@ public class GroupChatRoomServiceImpl extends ReadWriteServiceImpl<GroupChat, Lo
 
 
     @Override
-    public GroupChat getGroupChatAndUsers(long id) {
+    public Optional<GroupChat> getGroupChatAndUsers(long id) {
         return groupChatRoomDao.getGroupChatAndUsers(id);
     }
 }
+
