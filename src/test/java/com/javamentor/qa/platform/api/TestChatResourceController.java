@@ -421,7 +421,10 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value("userAdded"));
 
-        GroupChat groupChat = entityManager.createQuery("select group_chat from GroupChat group_chat WHERE group_chat.id = 101", GroupChat.class).getSingleResult();
+        GroupChat groupChat = entityManager.createQuery
+                        ("select groupChat from GroupChat groupChat join fetch groupChat.chat join fetch groupChat.users where groupChat.id=:id", GroupChat.class)
+                .setParameter("id", 101l)
+                .getSingleResult();
         User user = entityManager.createQuery("select user from User user WHERE user.id = 101", User.class).getSingleResult();
         assertThat(groupChat.getUsers().contains(user)).isTrue();
     }

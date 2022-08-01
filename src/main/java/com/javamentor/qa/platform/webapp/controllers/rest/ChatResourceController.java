@@ -130,13 +130,13 @@ public class ChatResourceController {
             @RequestParam("userId")
             @Parameter(name = "id Пользователя", required = true, description = "Id пользователя является обязательным параметром.")
                     Long userId) {
-        Optional<GroupChat> groupChat = groupChatRoomService.getById(id);
+        GroupChat groupChat = groupChatRoomService.getGroupChatAndUsers(id);
         Optional<User> user = userService.getById(userId);
 
-        if (groupChat.isPresent() && user.isPresent()) {
-            Set<User> userSet = groupChat.get().getUsers();
+        if (user.isPresent() && groupChat != null) {
+            Set<User> userSet = groupChat.getUsers();
             userSet.add(user.get());
-            groupChatRoomService.update(groupChat.get());
+            groupChatRoomService.update(groupChat);
 
             return new ResponseEntity<>("userAdded", HttpStatus.OK);
         }
