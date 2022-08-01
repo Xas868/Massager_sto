@@ -128,7 +128,7 @@ public class ChatResourceController {
         ArrayList<Long> userIds = new ArrayList<>(createGroupChatDto.getUserIds());
 
         if (!userIds.isEmpty()) {
-            List<Long> notExistUsers = userDao.ifExistsById(userIds);
+            List<Long> notExistUsers = userDao.checkExistsUserById(userIds);
             if (!notExistUsers.isEmpty()) {
                 return new ResponseEntity<>("Users: " + notExistUsers + "are not registered", HttpStatus.BAD_REQUEST);
             }

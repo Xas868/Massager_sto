@@ -9,7 +9,7 @@ public interface UserDao extends ReadWriteDao<User, Long> {
 
     Optional<User> getWithRoleByEmail(String email);
 
-    List<Long> ifExistsById(List<Long> ids);
+    List<Long> checkExistsUserById(List<Long> ids);
 
     void changePassword(String password, String username);
 
