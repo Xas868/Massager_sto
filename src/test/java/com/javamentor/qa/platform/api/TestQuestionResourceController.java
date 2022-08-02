@@ -160,7 +160,8 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
             "dataset/QuestionResourceController/Fix/reputations.yml",
             "dataset/QuestionResourceController/votes_on_questions.yml",
             "dataset/testQuestionIdCommentResource/comment.yml",
-            "dataset/testQuestionIdCommentResource/commentquestion.yml"
+            "dataset/testQuestionIdCommentResource/commentquestion.yml",
+            "dataset/QuestionResourceController/question_viewed/qv_viewCount1.yml"
     },
             strategy = SeedStrategy.CLEAN_INSERT,
             cleanAfter = true, cleanBefore = true
@@ -193,7 +194,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.authorName").value("test 15"))
                 .andExpect(jsonPath("$.authorImage").value("photo"))
                 .andExpect(jsonPath("$.description").value("test"))
-                .andExpect(jsonPath("$.viewCount").value(0L))
+                .andExpect(jsonPath("$.viewCount").value(2))
                 .andExpect(jsonPath("$.countAnswer").value(1))
                 .andExpect(jsonPath("$.countValuable").value(-1))
                 .andExpect(jsonPath("$.countAnswer").value(1))
@@ -221,6 +222,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.viewCount").value(1))
                 .andExpect(jsonPath("$.isUserVote").value(nullValue()));
 
         mockMvc.perform(get("/api/user/question/3")
@@ -859,7 +861,8 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                     "dataset/testQuestionTagIdResource/answers.yml",
                     "dataset/testQuestionTagIdResource/users.yml",
                     "dataset/testQuestionTagIdResource/votes_on_questions.yml",
-                    "dataset/testQuestionTagIdResource/role.yml"
+                    "dataset/testQuestionTagIdResource/role.yml",
+                    "dataset/QuestionResourceController/question_viewed/qv_viewCount2.yml"
             },
             strategy = SeedStrategy.CLEAN_INSERT)
     public void shouldReturnAllQuestionsByTagId() throws Exception {
@@ -896,7 +899,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items[0].authorName").value("USER"))
                 .andExpect(jsonPath("$.items[0].authorImage").value("image"))
                 .andExpect(jsonPath("$.items[0].description").value("test1"))
-                .andExpect(jsonPath("$.items[0].viewCount").value("0"))
+                .andExpect(jsonPath("$.items[0].viewCount").value("2"))
                 .andExpect(jsonPath("$.items[0].countAnswer").value("1"))
                 .andExpect(jsonPath("$.items[0].countValuable").value("-1"))
                 .andExpect(jsonPath("$.items[0].persistDateTime").value("2021-12-13T18:09:55"))
@@ -912,7 +915,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items[1].authorName").value("USER"))
                 .andExpect(jsonPath("$.items[1].authorImage").value("image"))
                 .andExpect(jsonPath("$.items[1].description").value("test2"))
-                .andExpect(jsonPath("$.items[1].viewCount").value("0"))
+                .andExpect(jsonPath("$.items[1].viewCount").value("1"))
                 .andExpect(jsonPath("$.items[1].countAnswer").value("1"))
                 .andExpect(jsonPath("$.items[1].countValuable").value("-1"))
                 .andExpect(jsonPath("$.items[1].persistDateTime").value("2021-12-13T18:09:54"))
@@ -941,7 +944,8 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
             "dataset/QuestionResourceController/questions.yml",
             "dataset/QuestionResourceController/more_questions_has_tags.yml",
             "dataset/QuestionResourceController/answers.yml",
-            "dataset/QuestionResourceController/votes_on_questions.yml"
+            "dataset/QuestionResourceController/votes_on_questions.yml",
+            "dataset/QuestionResourceController/question_viewed/qv_viewCount1.yml"
     }
     )
     // Получение json по вопросам без ответов
@@ -954,8 +958,10 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andDo(print())
+                .andExpect(jsonPath("$.items[0].viewCount").value("1"))
                 .andExpect(jsonPath("$.items.[0].id").value(2))
                 .andExpect(jsonPath("$.items.[1].id").value(3))
+                .andExpect(jsonPath("$.items[1].viewCount").value("0"))
                 .andExpect(jsonPath("$.totalResultCount").value(3))
                 .andExpect(jsonPath("$.items.size()").value(2))
                 .andExpect(jsonPath("$.totalPageCount").value(2));
@@ -1570,7 +1576,8 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
             "dataset/QuestionResourceController/questions.yml",
             "dataset/QuestionResourceController/questions_has_tag.yml",
             "dataset/QuestionResourceController/checkAnswersSort/answers.yml",
-            "dataset/QuestionResourceController/checkAnswersSort/answerVotes.yml"
+            "dataset/QuestionResourceController/checkAnswersSort/answerVotes.yml",
+            "dataset/QuestionResourceController/question_viewed/qv_viewCount1.yml"
     },
             strategy = SeedStrategy.CLEAN_INSERT,
             cleanAfter = true, cleanBefore = true
@@ -1596,6 +1603,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(content().contentType("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.viewCount").value(2))
                 .andExpect(jsonPath("$.answerDTOList[0].id").value(3))
                 .andExpect(jsonPath("$.answerDTOList[0].isHelpful").value(true))
                 .andExpect(jsonPath("$.answerDTOList[0].countValuable").value(-3))
@@ -1615,7 +1623,8 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
             "dataset/QuestionResourceController/questions.yml",
             "dataset/QuestionResourceController/questions_has_tag.yml",
             "dataset/QuestionResourceController/checkAnswersSort/answersWithoutIsHelpful.yml",
-            "dataset/QuestionResourceController/checkAnswersSort/answerVotes.yml"
+            "dataset/QuestionResourceController/checkAnswersSort/answerVotes.yml",
+            "dataset/QuestionResourceController/question_viewed/qv_viewCount1.yml"
     },
             strategy = SeedStrategy.CLEAN_INSERT,
             cleanAfter = true, cleanBefore = true
@@ -1641,6 +1650,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(content().contentType("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.viewCount").value(2))
                 .andExpect(jsonPath("$.answerDTOList[0].id").value(2))
                 .andExpect(jsonPath("$.answerDTOList[0].countValuable").value(3))
                 .andExpect(jsonPath("$.answerDTOList[1].id").value(1))
@@ -1659,6 +1669,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
             "dataset/QuestionResourceController/questions.yml",
             "dataset/QuestionResourceController/questions_has_tag.yml",
             "dataset/QuestionResourceController/checkAnswersSort/null_answers.yml",
+            "dataset/QuestionResourceController/question_viewed/qv_viewCount1.yml"
     },
             strategy = SeedStrategy.CLEAN_INSERT,
             cleanAfter = true, cleanBefore = true
@@ -1684,6 +1695,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(content().contentType("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.viewCount").value(2))
                 .andExpect(jsonPath("$.answerDTOList").isEmpty());
     }
     @Test
