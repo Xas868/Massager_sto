@@ -35,9 +35,10 @@ public class QuestionPageDtoDaoByNoAnswersImpl implements PageDtoDao<QuestionVie
                         " from Question q JOIN q.user u JOIN q.tags t " +
                         " WHERE q.answers IS EMPTY AND ((:trackedTags) IS NULL OR t.id IN (:trackedTags)) AND" +
                         " ((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags))) AND" +
-                        ":dateFilter = 0 or question.persistDateTime > current_date - :dateFilter ")
+                        ":dateFilter = 0 or q.persistDateTime >= current_date - :dateFilter ")
                 .setParameter("trackedTags", properties.getProps().get("trackedTags"))
                 .setParameter("ignoredTags", properties.getProps().get("ignoredTags"))
+                .setParameter("dateFilter", properties.getProps().get("dateFilter"))
                 .setFirstResult(offset)
                 .setMaxResults(itemsOnPage)
                 .unwrap(org.hibernate.query.Query.class)

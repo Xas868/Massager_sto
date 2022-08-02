@@ -34,17 +34,17 @@ public class QuestionPageDtoDaoSortedByImpl implements PageDtoDao<QuestionViewDt
                         "(coalesce((select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id),0)) as voteCounter " +
                         "from Question q join User u on q.user.id=u.id " +
                         "where ((:trackedTags) IS NULL OR q.id IN (select q.id from Question q join q.tags t where t.id in (:trackedTags))) and" +
-                        "((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags))) AND" +
-                        ":dateFilter = 0  OR question.persistDateTime > current_date - :dateFilter  " +
+                        "((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags)))" +
+                        "and q.persistDateTime > date_trunc('month', current_timestamp) " +
                         "order by answerCounter, voteCounter ")
                 .setParameter("trackedTags",properties.getProps().get("trackedTags"))
                 .setParameter("ignoredTags",properties.getProps().get("ignoredTags"))
-                .setParameter("dateFilter", properties.getProps().get("dateFilter"))
                 .setFirstResult(offset)
                 .setMaxResults(itemsOnPage)
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionPageDtoResultTransformer())
                 .getResultList();
+
     }
 
     @Override

@@ -62,7 +62,7 @@ public class QuestionPageDtoDaoAllSortedByPopular  implements PageDtoDao<Questio
                     "where not q.is_deleted " +
                     "      and case when :trackedTag is null then true else tag.tag_id in (:trackedTag) end " +
                     "      and case when :ignoredTag is null then true else tag.tag_id not in (:ignoredTag) end" +
-                    "      and :dateFilter = 0 OR q.persist_date > current_date - :dateFilter " +
+                    "      and :dateFilter = 0 OR q.persist_date >= current_date - :dateFilter " +
                     "order by " +
                     "    COALESCE(a.countAnswer, 0) desc, " +
                     "    COALESCE(vq.countValuable, 0) desc, " +

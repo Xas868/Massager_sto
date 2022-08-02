@@ -1694,33 +1694,188 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
             strategy = SeedStrategy.CLEAN_INSERT,
             cleanAfter = true, cleanBefore = true
     )
-    void questionViewDtoWithDateFilter() throws Exception {
+    void getQuestionPageDtoDaoAllQuestionsWithDateFilter() throws Exception {
 
-        mockMvc.perform(get("/api/user/question?page=1")
+        mockMvc.perform(get("/api/user/question?page=1&dateFilter=ALL")
                         .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
                 .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T15:07:52"))
+                .andExpect(jsonPath("$.items.length()").value(8))
                 .andExpect(status().isOk());
 
-        String sqlCount = "select question from Question question where :dateFilter = 0 OR question.persistDateTime >= current_date - :dateFilter";
-        int countq =  entityManager.createQuery(sqlCount).
-                setParameter("dateFilter", DateFilter.ALL.getDay()).getResultList().size();
-                Assertions.assertEquals(8, countq);
-        countq =  entityManager.createQuery(sqlCount).
-                setParameter("dateFilter", DateFilter.YEAR.getDay()).getResultList().size();
-        Assertions.assertEquals(3, countq);
+        mockMvc.perform(get("/api/user/question?page=1&dateFilter=YEAR")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2021-12-13T15:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(3))
+                .andExpect(status().isOk());
 
-        countq =  entityManager.createQuery(sqlCount).
-                setParameter("dateFilter", DateFilter.MONTH.getDay()).getResultList().size();
-        Assertions.assertEquals(2, countq);
+        mockMvc.perform(get("/api/user/question?page=1&dateFilter=MONTH")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-13T15:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(2))
+                .andExpect(status().isOk());
 
-        countq =  entityManager.createQuery(sqlCount).
-                setParameter("dateFilter", DateFilter.WEEK.getDay()).getResultList().size();
-        Assertions.assertEquals(1, countq);
+        mockMvc.perform(get("/api/user/question?page=1&dateFilter=WEEK")
+                .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(1))
+                .andExpect(status().isOk());
 
     }
 
+    @Test
+    @DataSet(value = {
+            "dataset/QuestionResourceController/questionsWithDateFilter.yml",
 
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
+    )
+    void getQuestionPageDtoDaoAllSortedByPopularWithDateFilter() throws Exception {
 
+        mockMvc.perform(get("/api/user/popular?page=1&dateFilter=ALL")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T15:07:52"))
+                .andExpect(jsonPath("$.items.length()").value(8))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/popular?page=1&dateFilter=YEAR")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(3))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/popular?page=1&dateFilter=MONTH")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(2))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/popular?page=1&dateFilter=WEEK")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(1))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    @DataSet(value = {
+            "dataset/QuestionResourceController/questionsWithDateFilter.yml",
+
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
+    )
+    void getQuestionPageDtoDaoByNoAnswersImplWithDateFilter() throws Exception {
+
+        mockMvc.perform(get("/api/user/question/noAnswer?page=1&dateFilter=ALL")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T15:07:52"))
+                .andExpect(jsonPath("$.items.length()").value(8))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/question/noAnswer?page=1&dateFilter=YEAR")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(3))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/question/noAnswer?page=1&dateFilter=MONTH")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(2))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/question/noAnswer?page=1&dateFilter=WEEK")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(1))
+                .andExpect(status().isOk());
+
+    }
+    @Test
+    @DataSet(value = {
+            "dataset/QuestionResourceController/questionsWithDateFilter.yml",
+
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
+    )
+    void getQuestionPageDtoDaoSortedByDateWithDateFilter() throws Exception {
+
+        mockMvc.perform(get("/api/user/question/new?page=1&dateFilter=ALL")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T15:07:52"))
+                .andExpect(jsonPath("$.items.length()").value(8))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/question/new?page=1&dateFilter=YEAR")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(3))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/question/new?page=1&dateFilter=MONTH")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(2))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/question/new?page=1&dateFilter=WEEK")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(1))
+                .andExpect(status().isOk());
+
+    }
 
 }
 

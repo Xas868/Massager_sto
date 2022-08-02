@@ -47,7 +47,7 @@ public class QuestionPageDtoDaoAllQuestionsImpl implements PageDtoDao<QuestionVi
                         "where " +
                         "((:trackedTags) IS NULL OR question.id IN (select question.id from Question question join question.tags t where t.id in (:trackedTags))) and " +
                         "((:ignoredTags) IS NULL OR question.id not IN (select question.id from Question question join question.tags t where t.id in (:ignoredTags))) and " +
-                        " :dateFilter = 0  OR question.persistDateTime > current_date - :dateFilter ")
+                        " :dateFilter = 0  OR question.persistDateTime >= current_date - :dateFilter ")
 
                 .setParameter("trackedTags", properties.getProps().get("trackedTags"))
                 .setParameter("ignoredTags", properties.getProps().get("ignoredTags"))
