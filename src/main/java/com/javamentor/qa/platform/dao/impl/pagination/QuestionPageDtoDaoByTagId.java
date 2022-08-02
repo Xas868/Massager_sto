@@ -39,8 +39,8 @@ public class QuestionPageDtoDaoByTagId implements PageDtoDao<QuestionViewDto> {
                                 "join Answer a ON a.question.id = q.id " +
                                 "JOIN VoteQuestion v  ON v.question.id = q.id " +
                                 "WHERE q.id IN (select q1.id from Question q1 join q1.tags t WHERE t.id = :id) and " +
-                                ":dateFilter = 0  OR question.persistDateTime > current_date - :dateFilter" +
-                                "group by q.id, q.persistDateTime, u.id " +
+                                ":dateFilter = 0  OR q.persistDateTime >= current_date - :dateFilter " +
+                                "group by q.id, q.persistDateTime, u.id  " +
                                 "order by q.persistDateTime desc")
                 .setParameter("id", properties.getProps().get("id"))
                 .setParameter("dateFilter", properties.getProps().get("dateFilter"))
