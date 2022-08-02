@@ -8,11 +8,13 @@ import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
 import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import com.javamentor.qa.platform.models.dto.MessageDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
-import com.javamentor.qa.platform.models.dto.SingleChatDto;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
+import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.impl.dto.DtoServiceImpl;
 import com.javamentor.qa.platform.webapp.converters.GroupChatConverter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,6 +30,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Tag(name = "ChatResourceController", description = "Позволяет работать с чатами")
 @RestController
@@ -38,14 +42,16 @@ public class ChatResourceController {
     private final GroupChatRoomService groupChatRoomService;
     private final GroupChatConverter groupChatConverter;
     private final UserDao userDao;
+    private final UserService userService;
 
     @Autowired
-    public ChatResourceController(DtoServiceImpl<MessageDto> messagesPaginationService, ChatDtoService chatDtoService, GroupChatRoomService groupChatRoomService, GroupChatConverter groupChatConverter, UserDao userDao) {
-        this.messagesPaginationService = messagesPaginationService;
+    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, GroupChatRoomService groupChatRoomService, GroupChatConverter groupChatConverter, UserDao userDao, UserService userService) {
+        this.messagesPaginationService = dtoService;
         this.chatDtoService = chatDtoService;
-        this.groupChatRoomService = groupChatRoomService;
         this.groupChatConverter = groupChatConverter;
         this.userDao = userDao;
+        this.groupChatRoomService = groupChatRoomService;
+        this.userService = userService;
     }
 
     @Operation(summary = "Поиск и сортировка чатов по указанному имени",
@@ -61,7 +67,7 @@ public class ChatResourceController {
             @RequestParam(name = "name", defaultValue = "")
             @Parameter(name = "Строка по которой будет проходить поиск чатов",
                     description = "Необязательный параметр. Любое совпадение строки в названии чата, вернёт этот чат")
-            String chatName,
+                    String chatName,
             Authentication authentication) {
         User currentUser = (User) authentication.getPrincipal();
         return new ResponseEntity<>(chatDtoService.getAllChatsByNameAndUserId(chatName, currentUser.getId()), HttpStatus.OK);
@@ -136,5 +142,28 @@ public class ChatResourceController {
             return new ResponseEntity<>("GroupChat created", HttpStatus.CREATED);
         }
         return new ResponseEntity<>("List of user's ids is empty", HttpStatus.BAD_REQUEST);
+    }
+
+    @Operation(summary = "Добавление пользователя в group чат.", description = "Добавление пользователя в group чат по его id")
+    @PostMapping("/group/{id}/join")
+    public ResponseEntity<String> addUserInGroupChat(
+            @PathVariable("id")
+            @Parameter(name = "Id group чата.", required = true, description = "Id group чата является обязательным параметром.")
+                    Long id,
+            @RequestParam("userId")
+            @Parameter(name = "id Пользователя", required = true, description = "Id пользователя является обязательным параметром.")
+                    Long userId) {
+        Optional<GroupChat> groupChat = groupChatRoomService.getGroupChatAndUsers(id);
+        Optional<User> user = userService.getById(userId);
+
+        if (user.isPresent() && groupChat.isPresent()) {
+            Set<User> userSet = groupChat.get().getUsers();
+            userSet.add(user.get());
+            groupChatRoomService.update(groupChat.get());
+
+            return new ResponseEntity<>("userAdded", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("it's bad request", HttpStatus.BAD_REQUEST);
     }
 }
