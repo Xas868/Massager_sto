@@ -131,7 +131,7 @@ public class ChatResourceController {
 
     @PostMapping("/group")
     public ResponseEntity<String> createGroupChatDto(@RequestBody CreateGroupChatDto createGroupChatDto) {
-        ArrayList<Long> userIds = new ArrayList<>(createGroupChatDto.getUserIds());
+        List<Long> userIds = new ArrayList<>(createGroupChatDto.getUserIds());
 
         if (!userIds.isEmpty()) {
             List<Long> notExistUsers = userDao.checkExistsUserById(userIds);
