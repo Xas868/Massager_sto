@@ -38,8 +38,8 @@ public class QuestionPageDtoDaoAllQuestionsImpl implements PageDtoDao<QuestionVi
                         " (select count(bm.id) > 0 from BookMarks bm where bm.question.id = q.id and bm.user.id = :userId) as is_user_bookmark, " +
                         " (coalesce((select count(qv.id) from QuestionViewed qv where qv.question.id = q.id), 0)) as view_count" +
                         " from Question q" +
-                        " where ((:trackedTags) IS NULL OR q.id IN (select q.id from Question q join q.tags t where t.id in (:trackedTags))) and " +
-                        " ((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags)))"
+                        " where ((:trackedTags) IS NULL OR q.id IN (select q.id from Question q join q.tags t where t.id in (:trackedTags)))" +
+                        " and ((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags)))"
                 )
                 .setParameter("trackedTags", properties.getProps().get("trackedTags"))
                 .setParameter("ignoredTags", properties.getProps().get("ignoredTags"))

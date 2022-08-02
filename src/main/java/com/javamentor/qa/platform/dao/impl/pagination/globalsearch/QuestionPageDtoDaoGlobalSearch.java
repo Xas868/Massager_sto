@@ -24,12 +24,18 @@ public class QuestionPageDtoDaoGlobalSearch implements PageDtoDao<QuestionViewDt
         int offset = (properties.getCurrentPage() - 1) * itemsOnPage;
         return entityManager.createQuery(
                         "select " +
-                                " q.id, q.title, u.id, (select sum(r.count) from Reputation r where r.author.id =q.user.id)," +
-                                " u.fullName, u.imageLink, q.description," +
+                                " q.id," +
+                                " q.title," +
+                                " u.id," +
+                                " (select sum(r.count) from Reputation r where r.author.id = q.user.id),"+
+                                " u.fullName," +
+                                " u.imageLink," +
+                                " q.description," +
                                 " (select count(qv.id) from QuestionViewed qv where qv.question.id = q.id) as viewCount," +
-                                " (select count (a.id) from Answer a where a.question.id = q.id)," +
-                                " (select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id) as count_valuable," +
-                                " q.persistDateTime, q.lastUpdateDateTime" +
+                                " (select count(a.id) from Answer a where a.question.id = q.id)," +
+                                " (coalesce((select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id), 0)) as count_valuable," +
+                                " q.persistDateTime," +
+                                " q.lastUpdateDateTime" +
                                 " from Question q JOIN q.user u" +
                                 " WHERE lower(q.title) like lower(concat('%',:q,'%')) OR lower(q.description) like lower(concat('%',:q,'%')) OR" +
                                 " ((:q) is null or q.id in (select q.id from Question q join q.tags t where lower(t.name) like lower(concat('%',:q,'%'))))" +

@@ -38,8 +38,8 @@ public class QuestionPageDtoDaoByNoAnswersImpl implements PageDtoDao<QuestionVie
                         " (coalesce((select count(qv.id) from QuestionViewed qv where qv.question.id = q.id), 0)) as view_count" +
                         " from Question q" +
                         " JOIN q.tags t " +
-                        " WHERE q.answers IS EMPTY AND ((:trackedTags) IS NULL OR t.id IN (:trackedTags)) AND" +
-                        " ((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags)))"
+                        " WHERE q.answers IS EMPTY AND ((:trackedTags) IS NULL OR t.id IN (:trackedTags)) " +
+                        " AND ((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags)))"
                 )
                 .setParameter("trackedTags", properties.getProps().get("trackedTags"))
                 .setParameter("ignoredTags", properties.getProps().get("ignoredTags"))

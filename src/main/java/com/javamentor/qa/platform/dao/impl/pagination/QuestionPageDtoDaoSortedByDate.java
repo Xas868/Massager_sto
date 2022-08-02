@@ -37,10 +37,8 @@ public class QuestionPageDtoDaoSortedByDate implements PageDtoDao<QuestionViewDt
                         " false as is_user_bookmark," +//" (select count(bm.id) > 0 from BookMarks bm where bm.question.id = q.id and bm.user.id = :userId) as is_user_bookmark, " +
                         " (coalesce((select count(qv.id) from QuestionViewed qv where qv.question.id = q.id), 0)) as view_count" +
                         " from Question q JOIN q.user u" +
-                        " where exists (select q.id from Question q1 JOIN q1.tags t " +
-                        " where q.id = q1.id and (t.id in :trackedTag))" +
-                        " and not exists (select q.id from Question q1 JOIN q1.tags t " +
-                        " where q.id = q1.id and t.id in :ignoredTag )" +
+                        " where exists (select q.id from Question q1 JOIN q1.tags t where q.id = q1.id and (t.id in :trackedTag))" +
+                        " and not exists (select q.id from Question q1 JOIN q1.tags t where q.id = q1.id and t.id in :ignoredTag )" +
                         " ORDER BY q.persistDateTime desc"
                 )
                 .setParameter("trackedTag", properties.getProps().get("trackedTag"))

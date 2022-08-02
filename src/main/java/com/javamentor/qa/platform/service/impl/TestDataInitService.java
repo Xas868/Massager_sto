@@ -42,7 +42,7 @@ public class TestDataInitService {
     private final ChatRoomService chatRoomService;
     private final GroupChatRoomService groupChatRoomService;
     private final SingleChatService singleChatService;
-
+    private final QuestionViewedService questionViewedService;
     private final long NUM_OF_USERS = 100L;
     private final long NUM_OF_TAGS = 50L;
     private final long NUM_OF_QUESTIONS = 100L;
@@ -72,6 +72,7 @@ public class TestDataInitService {
         createMessage();
         createGroupChat();
         createSingleChat();
+        createQuestionViewed();
     }
 
     public void createMessage() {
@@ -316,6 +317,22 @@ public class TestDataInitService {
             voteAnswers.add(voteAnswer);
         }
         voteAnswerService.persistAll(voteAnswers);
+    }
+
+    public void createQuestionViewed() {
+        List<Question> questions = questionService.getAll();
+        for (int i = 0; i < NUM_OF_QUESTIONS; i++) {
+            int numberOfViews = new Random().nextInt((int) NUM_OF_USERS);
+            Question question = questions.get(i);
+            Set<User> users = new HashSet<>();
+            for (int j = 0; j < numberOfViews; j++) {
+                User user = getRandomUser();
+                users.add(user);
+            }
+            for (User user : users) {
+                questionViewedService.markQuestionLikeViewed(user, question);
+            }
+        }
     }
 
     private List<Tag> getRandomTagList() {
