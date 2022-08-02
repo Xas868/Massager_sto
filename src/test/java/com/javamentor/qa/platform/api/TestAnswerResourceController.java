@@ -559,6 +559,33 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andExpect(jsonPath("$[0].userId").value(100));
 
     }
+
+
+    @Test
+    @DataSet(value = {
+            "dataset/testAnswerResourceController/getLastAnswerForWeek/answers.yml",
+            "dataset/testAnswerResourceController/getLastAnswerForWeek/voteAnswer.yml",
+            "dataset/testAnswerResourceController/users.yml",
+            "dataset/testAnswerResourceController/questions.yml",
+            "dataset/testAnswerResourceController/roles.yml"
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true)
+    // Получение всех ответов пользователя за неделю
+    public void getLastAnswersForWeek() throws Exception {
+        mockMvc.perform(get("/api/user/question/100/answer/100/answers")
+                        .contentType("application/json")
+                        .header("Authorization",
+                                "Bearer " + getToken("user100@mail.ru", "password")))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content()
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].answerId").value(100))
+                .andExpect(jsonPath("$[0].questionId").value(100))
+                .andExpect(jsonPath("$[0].persistDate").value("2022-07-20T02:41:35.721"))
+                .andExpect(jsonPath("$[0].htmlBody").value(""));
+    }
 }
 
 
