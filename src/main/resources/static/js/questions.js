@@ -341,7 +341,7 @@ async function fetchQuestionTags(URL){
 }
 
 let questionPagination;
-let numberOfQuestionPerPage = 10;
+let numberOfQuestionPerPage = null;
 function createPagination() {
     questionPagination = new Pagination(
         '/api/user/question',

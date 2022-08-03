@@ -5,18 +5,27 @@ import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
-public class GroupChatRoomServiceImpl extends ReadWriteServiceImpl<GroupChat, Long> implements GroupChatRoomService {
+public class GroupChatRoomServiceImpl extends ReadWriteServiceImpl<GroupChat,Long> implements GroupChatRoomService {
 
-    private final GroupChatRoomDao groupChatRoomDao;
+    @Autowired
+    private GroupChatRoomDao groupChatRoomDao;
 
     public GroupChatRoomServiceImpl(ReadWriteDao<GroupChat, Long> readWriteDao, GroupChatRoomDao groupChatRoomDao) {
         super(readWriteDao);
         this.groupChatRoomDao = groupChatRoomDao;
+    }
+
+    @Override
+    @Transactional
+    public void deleteUserFromGroupChatById(Long chatId, Long userId) {
+        groupChatRoomDao.deleteUserFromGroupChatById(chatId, userId);
     }
 
 
