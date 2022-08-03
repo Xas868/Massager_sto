@@ -51,7 +51,7 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
     }
 
     @Override
-    public List<Long> checkExistsUserById(List<Long> ids) {
+    public List<Long> getUnregisteredUserIds(List<Long> ids) {
         List<Long> foundIds =  entityManager.createQuery("select id from User where id in(:ids)")
                 .setParameter("ids", ids)
                 .getResultList();

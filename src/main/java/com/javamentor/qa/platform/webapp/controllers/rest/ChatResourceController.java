@@ -129,12 +129,19 @@ public class ChatResourceController {
         return new ResponseEntity<>(messagesPaginationService.getPageDto(properties), HttpStatus.OK);
     }
 
+    @Operation(summary = "Создание group чата.", description = "Создание group чата")
+    @ApiResponse(responseCode = "200",
+            description = "Групповой чат создан",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400",
+            description = "Групповой чат не создан",
+            content = @Content(mediaType = "application/json"))
     @PostMapping("/group")
     public ResponseEntity<String> createGroupChatDto(@RequestBody CreateGroupChatDto createGroupChatDto) {
         List<Long> userIds = new ArrayList<>(createGroupChatDto.getUserIds());
 
         if (!userIds.isEmpty()) {
-            List<Long> notExistUsers = userDao.checkExistsUserById(userIds);
+            List<Long> notExistUsers = userDao.getUnregisteredUserIds(userIds);
             if (!notExistUsers.isEmpty()) {
                 return new ResponseEntity<>("Users: " + notExistUsers + "are not registered", HttpStatus.BAD_REQUEST);
             }
