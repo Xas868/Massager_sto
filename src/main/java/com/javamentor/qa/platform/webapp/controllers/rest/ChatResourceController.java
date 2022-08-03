@@ -129,17 +129,23 @@ public class ChatResourceController {
         return new ResponseEntity<>(messagesPaginationService.getPageDto(properties), HttpStatus.OK);
     }
 
+    @Operation(summary = "Удаление пользователя из чата.", description = "Удаление пользователя из чата по его id.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUserFromChatById(@PathVariable("id") Long chatId, Authentication authentication) {
+    public ResponseEntity<String> deleteUserFromChatById(
+            @PathVariable("id")
+            @Parameter(name = "Id чата.", required = true, description = "Id чата является обязательным параметром.")
+            Long chatId,
+            Authentication authentication) {
         ChatType chatType = chatRoomServiceIml.getById(chatId).get().getChatType();
         User currentUser = (User) authentication.getPrincipal();
 
         if (chatType.equals(ChatType.GROUP)) {
             groupChatRoomService.deleteUserFromGroupChatById(chatId, currentUser.getId());
-        } else {
-            singleChatService.deleteUserFromSingleChatById(chatId, currentUser.getId());
+            return new ResponseEntity<>("GroupChat deleted", HttpStatus.OK);
         }
-        return new ResponseEntity<>("Chat deleted", HttpStatus.OK);
+
+        singleChatService.deleteUserFromSingleChatById(chatId, currentUser.getId());
+        return new ResponseEntity<>("SingleChat deleted", HttpStatus.OK);
     }
 
     @Operation(summary = "Добавление пользователя в group чат.", description = "Добавление пользователя в group чат по его id")

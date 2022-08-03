@@ -25,9 +25,6 @@ public class GroupChatRoomDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> impl
                 .executeUpdate();
     }
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Override
     public Optional<GroupChat> getGroupChatAndUsers(long id) {
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery
