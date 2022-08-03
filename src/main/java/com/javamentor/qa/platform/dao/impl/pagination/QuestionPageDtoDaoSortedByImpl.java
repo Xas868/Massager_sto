@@ -48,6 +48,7 @@ public class QuestionPageDtoDaoSortedByImpl implements PageDtoDao<QuestionViewDt
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionPageDtoResultTransformer())
                 .getResultList();
+
     }
 
     @Override

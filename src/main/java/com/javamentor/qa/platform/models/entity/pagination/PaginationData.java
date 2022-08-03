@@ -19,6 +19,8 @@ public class PaginationData {
     private String daoName;
     private String filter;
 
+
+
     public PaginationData(int currentPage, int itemsOnPage, String daoName) {
         this.currentPage = currentPage;
         this.itemsOnPage = itemsOnPage;

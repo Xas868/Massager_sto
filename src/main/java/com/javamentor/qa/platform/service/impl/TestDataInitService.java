@@ -237,13 +237,15 @@ public class TestDataInitService {
                     .title("Question " + i)
                     .description("What do you think about question " + i + "?")
                     .persistDateTime(LocalDateTime.now().minusDays(i))
+                    .lastUpdateDateTime(LocalDateTime.now().minusDays(i).plusHours(12))
                     .user(getRandomUser())
                     .tags(getRandomTagList())
                     .build();
-            questions.add(question);
+                    questions.add(question);
         }
 
         questionService.persistAll(questions);
+
     }
 
     public void createAnswers() {
