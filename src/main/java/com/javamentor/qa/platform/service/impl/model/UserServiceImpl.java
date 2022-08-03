@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.WrongPasswordFormatException;
+import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +19,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Service
+@ToString
 public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements UserService {
 
     private final UserDao userDao;

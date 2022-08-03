@@ -24,7 +24,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Builder
-@ToString
+//@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_entity")

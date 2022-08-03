@@ -316,8 +316,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(113, 112)));
     }
     @Test
-    @DataSet(cleanBefore = true, value = "dataset/ChatResourceController/getAllSingleChatDtoByUserId.yml", strategy = SeedStrategy.REFRESH)
-    public void shouldCreateSingleChatAndMessage () throws Exception {
+    @DataSet(cleanBefore = true, value = "dataset/ChatResourceController/createSingleChatAndFirstMessage.yml", strategy = SeedStrategy.REFRESH)
+    public void shouldCreateSingleChatAndFirstMessage () throws Exception {
         CreateSingleChatDto createSingleChatDto = new CreateSingleChatDto();
         createSingleChatDto.setUserId(1L);
         createSingleChatDto.setMessage("Fucking Shit!");
@@ -339,10 +339,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                         .content(new ObjectMapper().writeValueAsString(createSingleChatDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, USER_TOKEN))
-//                        .header("Authorization", "Bearer " + getToken("user1@mail.ru", "user1")))
-//                        .requestAttr("createSingleChatDto", createSingleChatDto))
                 .andDo(print())
                 .andExpect(status().isOk());
-//
     }
 }
