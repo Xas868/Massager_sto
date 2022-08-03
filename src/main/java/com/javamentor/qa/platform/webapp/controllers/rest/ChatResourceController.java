@@ -7,13 +7,17 @@ import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import com.javamentor.qa.platform.models.dto.MessageDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.ChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.impl.dto.DtoServiceImpl;
+import com.javamentor.qa.platform.service.impl.model.ChatRoomServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,13 +39,17 @@ import java.util.Set;
 public class ChatResourceController {
     private final DtoServiceImpl<MessageDto> messagesPaginationService;
     private final ChatDtoService chatDtoService;
+    private final ChatRoomServiceImpl chatRoomServiceIml;
     private final GroupChatRoomService groupChatRoomService;
+    private final SingleChatService singleChatService;
     private final UserService userService;
 
     @Autowired
-    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, GroupChatRoomService groupChatRoomService, UserService userService) {
+    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, ChatRoomServiceImpl chatRoomServiceIml, GroupChatRoomService groupChatRoomService, SingleChatService singleChatService, UserService userService) {
         this.messagesPaginationService = dtoService;
         this.chatDtoService = chatDtoService;
+        this.chatRoomServiceIml = chatRoomServiceIml;
+        this.singleChatService = singleChatService;
         this.groupChatRoomService = groupChatRoomService;
         this.userService = userService;
     }
@@ -83,15 +91,15 @@ public class ChatResourceController {
     public ResponseEntity<GroupChatDto> getGroupChatDtoById(
             @PathVariable("groupChatId")
             @Parameter(name = "Id группового чата.", required = true, description = "Id группового чата является обязательным параметром.")
-                    long groupChatId,
+            long groupChatId,
             @RequestParam(name = "itemsOnPage", defaultValue = "10")
             @Parameter(name = "Количество сообщений на странице.",
                     description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
-                    int itemsOnPage,
+            int itemsOnPage,
             @RequestParam(name = "currentPage", defaultValue = "1")
             @Parameter(name = "Текущая страница сообщений.",
                     description = "Необязательный параметр. Служит для корректного постраничного отображения сообщений и обращения к ним. По-умолчанию равен 1")
-                    int currentPage) {
+            int currentPage) {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoByGroupChatId.class.getSimpleName());
         properties.getProps().put("groupChatId", groupChatId);
         if (chatDtoService.getGroupChatDtoById(groupChatId, properties).isPresent()) {
@@ -107,18 +115,37 @@ public class ChatResourceController {
     public ResponseEntity<PageDTO<MessageDto>> getPagedMessagesOfSingleChat(
             @PathVariable("singleChatId")
             @Parameter(name = "Id single чата.", required = true, description = "Id single чата является обязательным параметром.")
-                    long singleChatId,
+            long singleChatId,
             @RequestParam(name = "itemsOnPage", defaultValue = "10")
             @Parameter(name = "Количество сообщений на странице.",
                     description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
-                    int itemsOnPage,
+            int itemsOnPage,
             @RequestParam(name = "currentPage", defaultValue = "1")
             @Parameter(name = "Текущая страница сообщений.",
                     description = "Необязательный параметр. Служит для корректного постраничного отображения сообщений и обращения к ним. По-умолчанию равен 1")
-                    int currentPage) {
+            int currentPage) {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoBySingleChatId.class.getSimpleName());
         properties.getProps().put("singleChatId", singleChatId);
         return new ResponseEntity<>(messagesPaginationService.getPageDto(properties), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Удаление пользователя из чата.", description = "Удаление пользователя из чата по его id.")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUserFromChatById(
+            @PathVariable("id")
+            @Parameter(name = "Id чата.", required = true, description = "Id чата является обязательным параметром.")
+            Long chatId,
+            Authentication authentication) {
+        ChatType chatType = chatRoomServiceIml.getById(chatId).get().getChatType();
+        User currentUser = (User) authentication.getPrincipal();
+
+        if (chatType.equals(ChatType.GROUP)) {
+            groupChatRoomService.deleteUserFromGroupChatById(chatId, currentUser.getId());
+            return new ResponseEntity<>("GroupChat deleted", HttpStatus.OK);
+        }
+
+        singleChatService.deleteUserFromSingleChatById(chatId, currentUser.getId());
+        return new ResponseEntity<>("SingleChat deleted", HttpStatus.OK);
     }
 
     @Operation(summary = "Добавление пользователя в group чат.", description = "Добавление пользователя в group чат по его id")
