@@ -30,7 +30,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                                 "c.comment.text," +
                                 "c.comment.user.id," +
                                 "c.comment.user.imageLink," +
-                                "(select sum(r.count) from Reputation r where r.author.id=c.id)) " +
+                                "(select sum(r.count) + 0L from Reputation r where r.author.id=c.id))" +
                                 "FROM CommentQuestion c where c.question.id=:id")
                 .setParameter("id", id)
                 .getResultList();
@@ -40,25 +40,23 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
     public Optional<QuestionDto> getQuestionDtoDaoById(Long id, Long userId) {
 
         TypedQuery<QuestionDto> dto = entityManager.createQuery(
-                        "select q.id," +
-                                " q.title," +
-                                " u.id," +
-                                " u.fullName," +
-                                " u.imageLink," +
-                                " q.description," +
-                                " q.persistDateTime," +
-                                " q.lastUpdateDateTime," +
-                                "(select sum(r.count) from Reputation r where r.author.id =u.id), " +
-                                " (select count (a.id) from Question q JOIN Answer a ON  a.question.id = q.id WHERE q.id =:id)," +
-                                " (select sum( case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v JOIN Question " +
-                                " q ON v.question.id = q.id where q.id =:id)," +
-                                " v.vote," +
-                                "(select count(*)from BookMarks bm where bm.question.id=:id and bm.user.id=: userId)" +
-                                " from Question q " +
-                                " LEFT JOIN q.user u " +
-                                " LEFT JOIN VoteQuestion v " +
-                                " ON v.question.id = q.id " +
-                                "and v.user.id = :userId where q.id = :id and q.isDeleted=false")
+                "select" +
+                        " q.id as question_id," +
+                        " q.title," +
+                        " q.user.id as author_id," +
+                        " q.user.fullName," +
+                        " q.user.imageLink," +
+                        " q.description," +
+                        " q.persistDateTime," +
+                        " q.lastUpdateDateTime," +
+                        " (select sum(r.count) from Reputation r where r.author.id = q.user.id) as author_reputation," +
+                        " (select count(a.id) from Answer a WHERE a.question.id = q.id) as count_answer," +
+                        " (select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id) as count_valuable," +
+                        " (select v.vote from VoteQuestion v where v.question.id = q.id and v.user.id = :userId) as is_user_vote," +
+                        " (select count(bm.id) > 0 from BookMarks bm where bm.question.id = q.id and bm.user.id = :userId) as is_user_bookmark," +
+                        " (select count(qv.id) from QuestionViewed qv where qv.question.id = q.id) as view_count" +
+                        " from Question q where q.id = :id and q.isDeleted = false")
+
                 .setParameter("id", id)
                 .setParameter("userId", userId)
                 .unwrap(Query.class)

@@ -24,11 +24,18 @@ public class QuestionPageDtoDaoSearchInBody implements PageDtoDao<QuestionViewDt
         int offset = (properties.getCurrentPage() - 1) * itemsOnPage;
         return entityManager.createQuery(
                         "select " +
-                                " q.id, q.title, u.id, (select sum(r.count) from Reputation r where r.author.id =q.user.id)," +
-                                " u.fullName, u.imageLink, q.description,0 as viewCount," +
-                                " (select count (a.id) from Answer a where a.question.id = q.id)," +
-                                " (select count(vq.id) from VoteQuestion vq where vq.question.id=q.id)," +
-                                " q.persistDateTime, q.lastUpdateDateTime" +
+                                " q.id," +
+                                " q.title," +
+                                " u.id," +
+                                " (select sum(r.count) from Reputation r where r.author.id = q.user.id),"+
+                                " u.fullName," +
+                                " u.imageLink," +
+                                " q.description," +
+                                " (select count(qv.id) from QuestionViewed qv where qv.question.id = q.id) as viewCount," +
+                                " (select count(a.id) from Answer a where a.question.id = q.id)," +
+                                " (coalesce((select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id), 0)) as count_valuable," +
+                                " q.persistDateTime," +
+                                " q.lastUpdateDateTime" +
                                 " from Question q JOIN q.user u" +
                                 " WHERE lower(q.description) like lower(concat('%',:q,'%'))" +
                                 " ORDER BY q.persistDateTime desc"

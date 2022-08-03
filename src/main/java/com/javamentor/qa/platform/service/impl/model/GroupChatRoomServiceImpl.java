@@ -9,14 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class GroupChatRoomServiceImpl extends ReadWriteServiceImpl<GroupChat,Long> implements GroupChatRoomService {
 
     @Autowired
     private GroupChatRoomDao groupChatRoomDao;
 
-    public GroupChatRoomServiceImpl(ReadWriteDao<GroupChat, Long> readWriteDao) {
+    public GroupChatRoomServiceImpl(ReadWriteDao<GroupChat, Long> readWriteDao, GroupChatRoomDao groupChatRoomDao) {
         super(readWriteDao);
+        this.groupChatRoomDao = groupChatRoomDao;
     }
 
     @Override
@@ -24,4 +27,11 @@ public class GroupChatRoomServiceImpl extends ReadWriteServiceImpl<GroupChat,Lon
     public void deleteUserFromGroupChatById(Long chatId, Long userId) {
         groupChatRoomDao.deleteUserFromGroupChatById(chatId, userId);
     }
+
+
+    @Override
+    public Optional<GroupChat> getGroupChatAndUsers(long id) {
+        return groupChatRoomDao.getGroupChatAndUsers(id);
+    }
 }
+

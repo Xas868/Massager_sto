@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
+
 import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
@@ -19,7 +20,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "group_chat")
-public class GroupChat{
+public class GroupChat {
 
     @Id
     private Long id;
