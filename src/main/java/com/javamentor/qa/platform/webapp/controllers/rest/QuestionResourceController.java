@@ -9,7 +9,6 @@ import com.javamentor.qa.platform.models.dto.QuestionViewDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCommentDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
-import com.javamentor.qa.platform.models.entity.question.DateFilter;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
@@ -176,241 +175,241 @@ public class QuestionResourceController {
     }
 
 
-    @GetMapping("api/user/question/tag/{id}")
-    @Operation(
-            summary = "Получение списка вопросов по tag id",
-            description = "Получение пагинированного списка dto вопросов по id тэга"
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "Возвращает пагинированный список QuestionDto " +
-                    "(id, title, authorId, authorReputation, authorName, authorImage, description, viewCount," +
-                    "countAnswer, countValuable, persistDateTime, lastUpdateDateTime, listTagDto)",
-            content = {
-                    @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = QuestionViewDto.class)
-                    )
-            }
-    )
-    public ResponseEntity<PageDTO<QuestionViewDto>> getPageQuestionsByTagId(@PathVariable Long id,
-                                                                            @RequestParam int page,
-                                                                            @RequestParam(defaultValue = "10") int items,
-                                                                            @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter) {
-        PaginationData data = new PaginationData(
-                page, items, QuestionPageDtoDaoByTagId.class.getSimpleName()
-        );
-        data.getProps().put("id", id);
-        data.getProps().put("dateFilter", dateFilter.getDay());
+//    @GetMapping("api/user/question/tag/{id}")
+//    @Operation(
+//            summary = "Получение списка вопросов по tag id",
+//            description = "Получение пагинированного списка dto вопросов по id тэга"
+//    )
+//    @ApiResponse(
+//            responseCode = "200",
+//            description = "Возвращает пагинированный список QuestionDto " +
+//                    "(id, title, authorId, authorReputation, authorName, authorImage, description, viewCount," +
+//                    "countAnswer, countValuable, persistDateTime, lastUpdateDateTime, listTagDto)",
+//            content = {
+//                    @Content(
+//                            mediaType = "application/json",
+//                            schema = @Schema(implementation = QuestionViewDto.class)
+//                    )
+//            }
+//    )
+//      public ResponseEntity<PageDTO<QuestionViewDto>> getPageQuestionsByTagId(@PathVariable Long id,
+//                                                                            @RequestParam int page,
+//                                                                            @RequestParam(defaultValue = "10") int items,
+//                                                                            @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter) {
+//        PaginationData data = new PaginationData(
+//                page, items, QuestionPageDtoDaoByTagId.class.getSimpleName()
+//        );
+//        data.getProps().put("id", id);
+//        data.getProps().put("dateFilter", dateFilter.getDay());
+//
+//        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
+//    }
 
-        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
-    }
+//    @GetMapping("api/user/question/new")
+//    @Operation(
+//            summary = "Получение вопросов",
+//            description = "Сортировка по дате добавления(сначала самые новые)"
+//    )
+//    public ResponseEntity<PageDTO<QuestionViewDto>> getQuestionsSortedByDate(@RequestParam int page,
+//                                                                             @RequestParam(defaultValue = "10") int items,
+//                                                                             @RequestParam(required = false) List<Long> trackedTag,
+//                                                                             @RequestParam(required = false) List<Long> ignoredTag,
+//                                                                             @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter) {
+//        PaginationData data = new PaginationData(page, items,
+//                QuestionPageDtoDaoSortedByDate.class.getSimpleName());
+//        data.getProps().put("trackedTag", trackedTag);
+//        data.getProps().put("ignoredTag", ignoredTag);
+//        data.getProps().put("dateFilter", dateFilter.getDay());
+//
+//
+//        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
+//    }
 
-    @GetMapping("api/user/question/new")
-    @Operation(
-            summary = "Получение вопросов",
-            description = "Сортировка по дате добавления(сначала самые новые)"
-    )
-    public ResponseEntity<PageDTO<QuestionViewDto>> getQuestionsSortedByDate(@RequestParam int page,
-                                                                             @RequestParam(defaultValue = "10") int items,
-                                                                             @RequestParam(required = false) List<Long> trackedTag,
-                                                                             @RequestParam(required = false) List<Long> ignoredTag,
-                                                                             @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter) {
-        PaginationData data = new PaginationData(page, items,
-                QuestionPageDtoDaoSortedByDate.class.getSimpleName());
-        data.getProps().put("trackedTag", trackedTag);
-        data.getProps().put("ignoredTag", ignoredTag);
-        data.getProps().put("dateFilter", dateFilter.getDay());
+//    @GetMapping("api/user/question/noAnswer")
+//    @Operation(summary = "Получение пагинированного списка всех вопросов, на которые еще не дан ответ. " +
+//            "В запросе указываем page - номер страницы, items (по умолчанию 10) - количество результатов на странице",
+//            description = "Получение пагинированного списка всех вопросов, на которые еще не дан ответ.")
+//    @ApiResponses(value = {
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Возвращает пагинированный список PageDTO<QuestionDTO> (id, title, authorId" +
+//                            "authorReputation, authorName, authorImage, description, viewCount, countAnswer" +
+//                            "countValuable, LocalDateTime, LocalDateTime, listTagDto",
+//                    content = {
+//                            @Content(
+//                                    mediaType = "application/json")
+//                    }),
+//    })
+//    public ResponseEntity<PageDTO<QuestionViewDto>> getQuestionsWithNoAnswer(@RequestParam int page,
+//                                                                             @RequestParam(required = false, defaultValue = "10") int items,
+//                                                                             @RequestParam(required = false) List<Long> trackedTag,
+//                                                                             @RequestParam(required = false) List<Long> ignoredTag,
+//                                                                             @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter) {
+//
+//        PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoByNoAnswersImpl.class.getSimpleName());
+//        data.getProps().put("trackedTags", trackedTag);
+//        data.getProps().put("ignoredTags", ignoredTag);
+//        data.getProps().put("dateFilter", dateFilter.getDay());
+//
+//        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
+//    }
 
-
-        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
-    }
-
-    @GetMapping("api/user/question/noAnswer")
-    @Operation(summary = "Получение пагинированного списка всех вопросов, на которые еще не дан ответ. " +
-            "В запросе указываем page - номер страницы, items (по умолчанию 10) - количество результатов на странице",
-            description = "Получение пагинированного списка всех вопросов, на которые еще не дан ответ.")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Возвращает пагинированный список PageDTO<QuestionDTO> (id, title, authorId" +
-                            "authorReputation, authorName, authorImage, description, viewCount, countAnswer" +
-                            "countValuable, LocalDateTime, LocalDateTime, listTagDto",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json")
-                    }),
-    })
-    public ResponseEntity<PageDTO<QuestionViewDto>> getQuestionsWithNoAnswer(@RequestParam int page,
-                                                                             @RequestParam(required = false, defaultValue = "10") int items,
-                                                                             @RequestParam(required = false) List<Long> trackedTag,
-                                                                             @RequestParam(required = false) List<Long> ignoredTag,
-                                                                             @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter) {
-
-        PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoByNoAnswersImpl.class.getSimpleName());
-        data.getProps().put("trackedTags", trackedTag);
-        data.getProps().put("ignoredTags", ignoredTag);
-        data.getProps().put("dateFilter", dateFilter.getDay());
-
-        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
-    }
-
-    @GetMapping("/api/user/question")
-    @Operation(summary = "Получение пагинированного списка вопросов с возможностью учета trackedTag и ignoredTag",
-            description = "Получение пагинированного списка вопросов пользователя, " +
-                    "в запросе указываем page - номер страницы, обязательный параметр, items (по умолчанию 10) - количество результатов на странице," +
-                    "не обязательный на фронте, trackedTag - не обязательный параметр, ignoredTag - не обязательный параметр")
-    @ApiResponse(responseCode = "200", description = "Возвращает пагинированный список PageDTO<QuestionDTO> (id, title, authorId," +
-            " authorReputation, authorName, authorImage, description, viewCount, countAnswer, countValuable," +
-            " LocalDateTime, LocalDateTime, listTagDto", content = {
-            @Content(mediaType = "application/json")
-    })
-    public ResponseEntity<PageDTO<QuestionViewDto>> allQuestionsWithTrackedTagsAndIgnoredTags(@RequestParam int page,
-                                                                                              @RequestParam(required = false, defaultValue = "10") int items,
-                                                                                              @RequestParam(required = false) List<Long> trackedTag,
-                                                                                              @RequestParam(required = false) List<Long> ignoredTag,
-                                                                                              @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter,
-                                                                                              Authentication auth) {
-
-        PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoAllQuestionsImpl.class.getSimpleName());
-        User user = (User) auth.getPrincipal();
-        data.getProps().put("trackedTags", trackedTag);
-        data.getProps().put("ignoredTags", ignoredTag);
-        data.getProps().put("userId", user.getId());
-        data.getProps().put("dateFilter", dateFilter.getDay());
-
-        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
-    }
-
-    @Operation(
-            summary = "Помечает вопрос как прочитанный",
-            description = "Помечает вопрос как прочитанный"
-    )
-    @ApiResponse(responseCode = "200", description = "Метод выполнен без ошибок", content = {
-            @Content(mediaType = "application/json")
-    })
-    @ApiResponse(responseCode = "403", description = "Пользователь не аутентифицирован", content = {
-            @Content(mediaType = "application/json")
-    })
-    @GetMapping("api/user/question/{id}/view")
-    public ResponseEntity<String> markQuestionLikeViewed(@PathVariable Long id, Authentication auth) {
-
-        User user = (User) auth.getPrincipal();
-        Optional<Question> question = questionService.getById(id);
-
-        if (question.isPresent()) {
-            questionViewedService.markQuestionLikeViewed(user, question.get());
-            return new ResponseEntity<>("OK", HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>("There is no question " + id.toString(), HttpStatus.BAD_REQUEST);
-    }
-
-    @GetMapping("/api/user/popular")
-    @Operation(summary = "Получение полного пагинированного списка популярных вопросов",
-            description = "Получение пагинированного списка вопросов пользователя, " +
-                    "в запросе указываем page - номер страницы, обязательный параметр, items (по умолчанию 10) - количество результатов на странице")
-    @ApiResponse(responseCode = "200", description = "Возвращает пагинированный список PageDTO<QuestionDTO> (id, title, authorId," +
-            " authorReputation, authorName, authorImage, description, viewCount, countAnswer, countValuable," +
-            " LocalDateTime, LocalDateTime, listTagDto", content = {
-            @Content(mediaType = "application/json")
-    })
-    public ResponseEntity<PageDTO<QuestionViewDto>> AllQuestionSortedByPopular(@RequestParam int page,
-                                                                               @RequestParam(required = false, defaultValue = "10") int items,
-                                                                               @RequestParam(required = false) List<Long> trackedTag,
-                                                                               @RequestParam(required = false) List<Long> ignoredTag,
-                                                                               @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter,
-                                                                               Authentication auth) {
-
-        PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoAllSortedByPopular.class.getSimpleName());
-        User user = (User) auth.getPrincipal();
-        data.getProps().put("trackedTag", trackedTag);
-        data.getProps().put("ignoredTag", ignoredTag);
-        data.getProps().put("userId",user.getId());
-        data.getProps().put("dateFilter", dateFilter.getDay());
-
-
-        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
-    }
-
-    @GetMapping("api/user/question/paginationForWeek")
-    @Operation(summary = "Получение пагинированного списка вопросов за неделю по наибольшим голосам,просмотрам и ответам " +
-            "с возможностью учета trackedTag и ignoredTag",
-            description = "Получение пагинированного списка вопросов за неделю, " +
-                    "в запросе указываем page - номер страницы, обязательный параметр, items (по умолчанию 10) - количество результатов на странице," +
-                    "не обязательный на фронте, trackedTag - не обязательный параметр, ignoredTag - не обязательный параметр")
-    @ApiResponse(responseCode = "200", description = "Возвращает пагинированный список PageDTO<QuestionDTO> (id, title, authorId," +
-            " authorReputation, authorName, authorImage, description, viewCount, countAnswer, countValuable," +
-            " LocalDateTime, LocalDateTime, listTagDto", content = {
-            @Content(mediaType = "application/json")
-    })
-    public ResponseEntity<PageDTO<QuestionViewDto>> paginationForTheWeek(@RequestParam int page, @RequestParam(required = false, defaultValue = "10") int items,
-                                                                         @RequestParam(required = false) List<Long> trackedTag,
-                                                                         @RequestParam(required = false) List<Long> ignoredTag,
-                                                                         @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter) {
-
-        PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoSortedByWeightForTheWeekImpl.class.getSimpleName());
-        data.getProps().put("trackedTags", trackedTag);
-        data.getProps().put("ignoredTags", ignoredTag);
-        data.getProps().put("dateFilter", dateFilter.getDay());
-
-
-        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
-
-    }
-
-    @GetMapping("api/user/question/paginationForMonth")
-    @Operation(summary = "Получение пагинированного списка вопросов за месяц по наибольшему количеству ответов,голосам," +
-            "(?просмотрам)(приоритет соответствует порядку)",
-            description = "Получение пагинированного списка вопросов за месяц, " +
-                    "в запросе указываем page - номер страницы, обязательный параметр, items (по умолчанию 10) - " +
-                    "количество результатов на странице, так же можно отфильтровать по ignoredTag и trackedTag" +
-                    "(указываются как параметр в HTTP запросе списком)")
-    @ApiResponse(responseCode = "200", description = "Возвращает пагинированный список PageDTO<QuestionViewDTO> " +
-            "(id, title, authorId," +
-            " authorReputation, authorName, authorImage, description, viewCount, countAnswer, countValuable," +
-            " LocalDateTime, LocalDateTime, listTagDto", content = {
-            @Content(mediaType = "application/json")
-    })
-    public ResponseEntity<PageDTO<QuestionViewDto>> paginationForTheMonth(@RequestParam int page,
-                                                                          @RequestParam(required = false, defaultValue = "10") int items,
-                                                                          @RequestParam(required = false) List<Long>trackedTag,
-                                                                          @RequestParam(required = false) List<Long>ignoredTag,
-                                                                          @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter){
-        PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoSortedByImpl.class.getSimpleName());
-        data.getProps().put("trackedTags", trackedTag);
-        data.getProps().put("ignoredTags", ignoredTag);
-        data.getProps().put("dateFilter", dateFilter.getDay());
-
-        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
-    }
-
-    @Operation(
-            summary = "Добавление вопроса в закладки",
-            description = "Добавление вопроса в закладки"
-    )
-    @ApiResponse(responseCode = "200", description = "Закладка успешно добавлена", content = {
-            @Content(mediaType = "application/json")
-    })
-    @ApiResponse(responseCode = "400", description = "По переданному id нет вопроса или закладка уже существует", content = {
-            @Content(mediaType = "application/json")
-    })
-    @ApiResponse(responseCode = "403", description = "Пользователь не аутентифицирован", content = {
-            @Content(mediaType = "application/json")
-    })
-    @GetMapping("api/user/question/{id}/bookmark")
-    public ResponseEntity<String> addQuestionInBookmarks(@PathVariable Long id, Authentication auth) {
-
-        User user = (User) auth.getPrincipal();
-        Optional<Question> question = questionService.getById(id);
-
-        if (question.isPresent()) {
-            bookmarksService.addQuestionInBookmarks(user, question.get());
-            return new ResponseEntity<>("Bookmark successfully added", HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>("There is no question with id: " + id.toString(), HttpStatus.BAD_REQUEST);
-    }
+//    @GetMapping("/api/user/question")
+//    @Operation(summary = "Получение пагинированного списка вопросов с возможностью учета trackedTag и ignoredTag",
+//            description = "Получение пагинированного списка вопросов пользователя, " +
+//                    "в запросе указываем page - номер страницы, обязательный параметр, items (по умолчанию 10) - количество результатов на странице," +
+//                    "не обязательный на фронте, trackedTag - не обязательный параметр, ignoredTag - не обязательный параметр")
+//    @ApiResponse(responseCode = "200", description = "Возвращает пагинированный список PageDTO<QuestionDTO> (id, title, authorId," +
+//            " authorReputation, authorName, authorImage, description, viewCount, countAnswer, countValuable," +
+//            " LocalDateTime, LocalDateTime, listTagDto", content = {
+//            @Content(mediaType = "application/json")
+//    })
+//    public ResponseEntity<PageDTO<QuestionViewDto>> allQuestionsWithTrackedTagsAndIgnoredTags(@RequestParam int page,
+//                                                                                              @RequestParam(required = false, defaultValue = "10") int items,
+//                                                                                              @RequestParam(required = false) List<Long> trackedTag,
+//                                                                                              @RequestParam(required = false) List<Long> ignoredTag,
+//                                                                                              @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter,
+//                                                                                              Authentication auth) {
+//
+//        PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoAllQuestionsImpl.class.getSimpleName());
+//        User user = (User) auth.getPrincipal();
+//        data.getProps().put("trackedTags", trackedTag);
+//        data.getProps().put("ignoredTags", ignoredTag);
+//        data.getProps().put("userId", user.getId());
+//        data.getProps().put("dateFilter", dateFilter.getDay());
+//
+//        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
+//    }
+//
+//    @Operation(
+//            summary = "Помечает вопрос как прочитанный",
+//            description = "Помечает вопрос как прочитанный"
+//    )
+//    @ApiResponse(responseCode = "200", description = "Метод выполнен без ошибок", content = {
+//            @Content(mediaType = "application/json")
+//    })
+//    @ApiResponse(responseCode = "403", description = "Пользователь не аутентифицирован", content = {
+//            @Content(mediaType = "application/json")
+//    })
+//    @GetMapping("api/user/question/{id}/view")
+//    public ResponseEntity<String> markQuestionLikeViewed(@PathVariable Long id, Authentication auth) {
+//
+//        User user = (User) auth.getPrincipal();
+//        Optional<Question> question = questionService.getById(id);
+//
+//        if (question.isPresent()) {
+//            questionViewedService.markQuestionLikeViewed(user, question.get());
+//            return new ResponseEntity<>("OK", HttpStatus.OK);
+//        }
+//
+//        return new ResponseEntity<>("There is no question " + id.toString(), HttpStatus.BAD_REQUEST);
+//    }
+//
+//    @GetMapping("/api/user/popular")
+//    @Operation(summary = "Получение полного пагинированного списка популярных вопросов",
+//            description = "Получение пагинированного списка вопросов пользователя, " +
+//                    "в запросе указываем page - номер страницы, обязательный параметр, items (по умолчанию 10) - количество результатов на странице")
+//    @ApiResponse(responseCode = "200", description = "Возвращает пагинированный список PageDTO<QuestionDTO> (id, title, authorId," +
+//            " authorReputation, authorName, authorImage, description, viewCount, countAnswer, countValuable," +
+//            " LocalDateTime, LocalDateTime, listTagDto", content = {
+//            @Content(mediaType = "application/json")
+//    })
+//    public ResponseEntity<PageDTO<QuestionViewDto>> AllQuestionSortedByPopular(@RequestParam int page,
+//                                                                               @RequestParam(required = false, defaultValue = "10") int items,
+//                                                                               @RequestParam(required = false) List<Long> trackedTag,
+//                                                                               @RequestParam(required = false) List<Long> ignoredTag,
+//                                                                               @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter,
+//                                                                               Authentication auth) {
+//
+//        PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoAllSortedByPopular.class.getSimpleName());
+//        User user = (User) auth.getPrincipal();
+//        data.getProps().put("trackedTag", trackedTag);
+//        data.getProps().put("ignoredTag", ignoredTag);
+//        data.getProps().put("userId",user.getId());
+//        data.getProps().put("dateFilter", dateFilter.getDay());
+//
+//
+//        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
+//    }
+//
+//    @GetMapping("api/user/question/paginationForWeek")
+//    @Operation(summary = "Получение пагинированного списка вопросов за неделю по наибольшим голосам,просмотрам и ответам " +
+//            "с возможностью учета trackedTag и ignoredTag",
+//            description = "Получение пагинированного списка вопросов за неделю, " +
+//                    "в запросе указываем page - номер страницы, обязательный параметр, items (по умолчанию 10) - количество результатов на странице," +
+//                    "не обязательный на фронте, trackedTag - не обязательный параметр, ignoredTag - не обязательный параметр")
+//    @ApiResponse(responseCode = "200", description = "Возвращает пагинированный список PageDTO<QuestionDTO> (id, title, authorId," +
+//            " authorReputation, authorName, authorImage, description, viewCount, countAnswer, countValuable," +
+//            " LocalDateTime, LocalDateTime, listTagDto", content = {
+//            @Content(mediaType = "application/json")
+//    })
+//    public ResponseEntity<PageDTO<QuestionViewDto>> paginationForTheWeek(@RequestParam int page, @RequestParam(required = false, defaultValue = "10") int items,
+//                                                                         @RequestParam(required = false) List<Long> trackedTag,
+//                                                                         @RequestParam(required = false) List<Long> ignoredTag,
+//                                                                         @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter) {
+//
+//        PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoSortedByWeightForTheWeekImpl.class.getSimpleName());
+//        data.getProps().put("trackedTags", trackedTag);
+//        data.getProps().put("ignoredTags", ignoredTag);
+//        data.getProps().put("dateFilter", dateFilter.getDay());
+//
+//
+//        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
+//
+//    }
+//
+//    @GetMapping("api/user/question/paginationForMonth")
+//    @Operation(summary = "Получение пагинированного списка вопросов за месяц по наибольшему количеству ответов,голосам," +
+//            "(?просмотрам)(приоритет соответствует порядку)",
+//            description = "Получение пагинированного списка вопросов за месяц, " +
+//                    "в запросе указываем page - номер страницы, обязательный параметр, items (по умолчанию 10) - " +
+//                    "количество результатов на странице, так же можно отфильтровать по ignoredTag и trackedTag" +
+//                    "(указываются как параметр в HTTP запросе списком)")
+//    @ApiResponse(responseCode = "200", description = "Возвращает пагинированный список PageDTO<QuestionViewDTO> " +
+//            "(id, title, authorId," +
+//            " authorReputation, authorName, authorImage, description, viewCount, countAnswer, countValuable," +
+//            " LocalDateTime, LocalDateTime, listTagDto", content = {
+//            @Content(mediaType = "application/json")
+//    })
+//    public ResponseEntity<PageDTO<QuestionViewDto>> paginationForTheMonth(@RequestParam int page,
+//                                                                          @RequestParam(required = false, defaultValue = "10") int items,
+//                                                                          @RequestParam(required = false) List<Long>trackedTag,
+//                                                                          @RequestParam(required = false) List<Long>ignoredTag,
+//                                                                          @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter){
+//        PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoSortedByImpl.class.getSimpleName());
+//        data.getProps().put("trackedTags", trackedTag);
+//        data.getProps().put("ignoredTags", ignoredTag);
+//        data.getProps().put("dateFilter", dateFilter.getDay());
+//
+//        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
+//    }
+//
+//    @Operation(
+//            summary = "Добавление вопроса в закладки",
+//            description = "Добавление вопроса в закладки"
+//    )
+//    @ApiResponse(responseCode = "200", description = "Закладка успешно добавлена", content = {
+//            @Content(mediaType = "application/json")
+//    })
+//    @ApiResponse(responseCode = "400", description = "По переданному id нет вопроса или закладка уже существует", content = {
+//            @Content(mediaType = "application/json")
+//    })
+//    @ApiResponse(responseCode = "403", description = "Пользователь не аутентифицирован", content = {
+//            @Content(mediaType = "application/json")
+//    })
+//    @GetMapping("api/user/question/{id}/bookmark")
+//    public ResponseEntity<String> addQuestionInBookmarks(@PathVariable Long id, Authentication auth) {
+//
+//        User user = (User) auth.getPrincipal();
+//        Optional<Question> question = questionService.getById(id);
+//
+//        if (question.isPresent()) {
+//            bookmarksService.addQuestionInBookmarks(user, question.get());
+//            return new ResponseEntity<>("Bookmark successfully added", HttpStatus.OK);
+//        }
+//
+//        return new ResponseEntity<>("There is no question with id: " + id.toString(), HttpStatus.BAD_REQUEST);
+//    }
 
     @Operation(
             summary = "Добавление комментария к вопросу",
