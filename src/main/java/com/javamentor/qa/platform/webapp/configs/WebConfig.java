@@ -19,6 +19,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addViewController("/accessDenied").setViewName("accessDenied");
         registry.addViewController("/questions/{id}").setViewName("question");
         registry.addViewController("/user/{id}").setViewName("userProfile");
+        registry.addViewController("/unanswered").setViewName("unanswered");
+
     }
 
     @Override
