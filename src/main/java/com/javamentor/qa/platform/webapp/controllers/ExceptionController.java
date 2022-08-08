@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.ChatNotFoundException;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.UserNotFoundException;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.WrongPasswordFormatException;
+import com.javamentor.qa.platform.webapp.controllers.exceptions.IsEmptyUserIdsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -49,8 +50,4 @@ public class ExceptionController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
     }
-
-
-
-
 }

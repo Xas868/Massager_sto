@@ -11,7 +11,9 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao {
@@ -46,6 +48,17 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
                 .createQuery("update User u set u.isDeleted=true where u.email=:email")
                 .setParameter("email", email)
                 .executeUpdate();
+    }
+
+    @Override
+    public List<Long> getUnregisteredUserIds(List<Long> ids) {
+        List<Long> foundIds =  entityManager.createQuery("select id from User where id in(:ids)")
+                .setParameter("ids", ids)
+                .getResultList();
+
+        List<Long> notFoundIds = ids.stream().filter(aObject -> !foundIds.contains(aObject)).collect(Collectors.toList());
+
+        return notFoundIds;
     }
 
     @Override

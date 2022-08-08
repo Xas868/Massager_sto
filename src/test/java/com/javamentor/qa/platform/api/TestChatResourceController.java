@@ -10,6 +10,7 @@ import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
+import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +19,20 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsInRelativeOrder;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.hamcrest.Matchers.containsInRelativeOrder;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTests {
 
@@ -524,5 +528,80 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION,USER_TOKEN_103, USER_TOKEN_101, USER_TOKEN_102))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DataSet(cleanBefore = true,
+    value = "dataset/ChatResourceController/createGroupChat.yml"
+    )
+    public void testCreateGroupChat() throws Exception {
+        String USER_TOKEN_101 = "Bearer " + getToken("test101@mail.ru", "test101");
+        String USER_TOKEN_102 = "Bearer " + getToken("test102@mail.ru", "test101");
+        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test101");
+
+        List<Long> userIds = new ArrayList<>();
+        userIds.add(101L);
+        userIds.add(102l);
+        userIds.add(103l);
+        CreateGroupChatDto createGroupChatDto = new CreateGroupChatDto();
+        createGroupChatDto.setChatName("new Chat");
+        createGroupChatDto.setUserIds(userIds);
+
+        //Передаю для создания чата, id всех существующих пользователей
+        this.mockMvc.perform(post("/api/user/chat/group")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(createGroupChatDto))
+                        .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
+                .andExpect(status().isCreated());
+
+
+        List<Long> notUserIds = new ArrayList<>();
+        CreateGroupChatDto createGroupChatDto2 = new CreateGroupChatDto();
+        createGroupChatDto2.setChatName("new Chat2");
+        createGroupChatDto2.setUserIds(notUserIds);
+
+        //Передаю для создания чата пустой список id пользователей
+        this.mockMvc.perform(post("/api/user/chat/group")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(createGroupChatDto2))
+                        .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
+                .andExpect(status().isBadRequest());
+
+        //Передаю null
+        this.mockMvc.perform(post("/api/user/chat/group")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(null))
+                        .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
+                .andExpect(status().isBadRequest());
+
+        //Передаю для создания чата список с одним не существующим пользователем
+        List<Long> not1UserIds = new ArrayList<>();
+        not1UserIds.add(101L);
+        not1UserIds.add(102L);
+        not1UserIds.add(104L);
+        CreateGroupChatDto createGroupChatDto3 = new CreateGroupChatDto();
+        createGroupChatDto3.setChatName("new Chat3");
+        createGroupChatDto3.setUserIds(not1UserIds);
+
+        this.mockMvc.perform(post("/api/user/chat/group")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(createGroupChatDto3))
+                        .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
+                .andExpect(status().isBadRequest());
+
+        //Передаю для создания чата список со всеми не существующим пользователем
+        List<Long> notAllUserIds = new ArrayList<>();
+        notAllUserIds.add(106L);
+        notAllUserIds.add(107L);
+        notAllUserIds.add(105L);
+        CreateGroupChatDto createGroupChatDto4 = new CreateGroupChatDto();
+        createGroupChatDto4.setChatName("new Chat4");
+        createGroupChatDto4.setUserIds(notAllUserIds);
+
+        this.mockMvc.perform(post("/api/user/chat/group")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(createGroupChatDto4))
+                        .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
+                .andExpect(status().isBadRequest());
     }
 }
