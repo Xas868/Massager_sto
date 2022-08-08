@@ -13,6 +13,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import static org.apache.http.client.protocol.HttpClientContext.USER_TOKEN;
 import static org.hamcrest.Matchers.greaterThan;
@@ -318,13 +320,15 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     @Test
     @DataSet(cleanBefore = true, value = "dataset/ChatResourceController/createSingleChatAndFirstMessage.yml", strategy = SeedStrategy.REFRESH)
     public void shouldCreateSingleChatAndFirstMessage () throws Exception {
-        CreateSingleChatDto createSingleChatDto = new CreateSingleChatDto();
-        createSingleChatDto.setUserId(1L);
-        createSingleChatDto.setMessage("Fucking Shit!");
-        // Проверка что API доступна
+        // Проверка, что API доступна
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
         authenticationRequest.setPassword("user1");
         authenticationRequest.setUsername("user1@mail.ru");
+
+        // Проверка пользователя получателя и первого сообщения
+        CreateSingleChatDto createSingleChatDto = new CreateSingleChatDto();
+        createSingleChatDto.setUserId(2L);
+        createSingleChatDto.setMessage("Тестовое сообщение №1");
 
         String USER_TOKEN = mockMvc.perform(
                         post("/api/auth/token")
