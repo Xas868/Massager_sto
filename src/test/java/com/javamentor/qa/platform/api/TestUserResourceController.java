@@ -15,10 +15,16 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.time.LocalDateTime;
+
+import static com.javamentor.qa.platform.models.util.CalendarPeriod.day;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static com.javamentor.qa.platform.models.util.CalendarPeriod.week;
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpHeaders.DATE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -753,6 +759,45 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].id").value(containsInRelativeOrder(105, 102, 108, 114, 109, 101, 106, 100, 107, 113)));
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, cleanAfter = true,
+            value = {
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/users.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/roles.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/questions.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/answers_4_ans_out_of_week.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/votes_on_answers.yml",
+                    "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/reputations.yml"
+            })
+    public void testGetDateTimeForUsers() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
+        mockMvc.perform(get("/api/user/top")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("calendarPeriod", "month"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[*].id").value(containsInRelativeOrder(105, 102, 108, 114, 109, 101, 106, 100, 107, 113)));
+        // There are 4 answers in dataset with persist date more than 7 days.
+        // Test to be sure these answers don't appear in the test
+        assertThat(entityManager.createQuery(
+                        "select ans.persistDateTime " +
+                                "from User as usr " +
+                                "join Answer as ans " +
+                                "on usr.id = ans.user.id " +
+                                "left join VoteAnswer as vot " +
+                                "on ans.id = vot.answer.id " +
+                                "where ans.persistDateTime > :date " +
+                                "and ans.isDeleted = false " +
+                                "and usr.isDeleted = false ",
+                        LocalDateTime.class)
+                .setParameter("date", LocalDateTime.now().minusDays(week.getDays()))
+                .getResultList()
+                .stream()
+                .anyMatch(time -> time.isAfter(LocalDateTime.now().minusDays(7))))
+                .isTrue();
     }
 }
 
