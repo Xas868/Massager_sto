@@ -15,9 +15,10 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Component
 public class CreateSingleChatDto {
-    @NotBlank(message = "Это поле не может быть пустым")
+
     @NotNull(message = "Это поле не может быть null")
     private Long userId;
+
     @NotBlank(message = "Это поле не может быть пустым")
     @NotNull(message = "Это поле не может быть null")
     private String message;

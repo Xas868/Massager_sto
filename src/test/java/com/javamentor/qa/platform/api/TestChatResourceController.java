@@ -12,18 +12,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-import java.time.LocalDateTime;
-import java.util.LinkedList;
-import java.util.Queue;
-
-import static org.apache.http.client.protocol.HttpClientContext.USER_TOKEN;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.hamcrest.Matchers.containsInRelativeOrder;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTests {
     //Тесты для SingleChatDTO авторизированного пользователя
@@ -317,6 +312,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(113, 112)));
     }
+
     @Test
     @DataSet(cleanBefore = true, value = "dataset/ChatResourceController/createSingleChatAndFirstMessage.yml", strategy = SeedStrategy.REFRESH)
     public void shouldCreateSingleChatAndFirstMessage () throws Exception {

@@ -7,5 +7,5 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import java.util.Optional;
 
 public interface SingleChatRoomService extends ReadWriteService<SingleChat, Long> {
-    SingleChat createSingleChatAndFirstMessage(CreateSingleChatDto createSingleChatDto, User currentUser, Optional<User> destinationUser);
+    SingleChat createSingleChatAndFirstMessage(String stringMessage, User currentUser, Optional<User> destinationUser);
 }

@@ -31,15 +31,17 @@ public class Message {
     @Type(type = "org.hibernate.type.TextType")
     private String message;
 
+    @Column(name = "persist_date", updatable = false)
+    @Type(type = "org.hibernate.type.LocalDateTimeType")
+    @CreationTimestamp
+    private LocalDateTime persistDate;
+
     @Column(name = "last_redaction_date", nullable = false)
     @Type(type = "org.hibernate.type.LocalDateTimeType")
     @UpdateTimestamp
     private LocalDateTime lastRedactionDate;
 
-    @Column(name = "persist_date", updatable = false)
-    @Type(type = "org.hibernate.type.LocalDateTimeType")
-    @CreationTimestamp
-    private LocalDateTime persistDate;
+
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User userSender;

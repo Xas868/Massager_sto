@@ -25,7 +25,7 @@ public class SingleChat{
     @Id
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.MERGE}, optional = false)
     @MapsId
     private Chat chat = new Chat(ChatType.SINGLE);
 

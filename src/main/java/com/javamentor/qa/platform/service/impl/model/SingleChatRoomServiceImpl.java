@@ -24,7 +24,7 @@ public class SingleChatRoomServiceImpl extends ReadWriteServiceImpl<SingleChat, 
     }
 
     @Transactional
-    public SingleChat createSingleChatAndFirstMessage(CreateSingleChatDto createSingleChatDto, User currentUser, Optional<User> destinationUser) {
+    public SingleChat createSingleChatAndFirstMessage(String stringMessage, User currentUser, Optional<User> destinationUser) {
         SingleChat singleChat;
         try {
             singleChat = SingleChat.builder()
@@ -32,12 +32,12 @@ public class SingleChatRoomServiceImpl extends ReadWriteServiceImpl<SingleChat, 
                     .userOne(currentUser)
                     .useTwo(destinationUser.orElseThrow())
                     .build();
-        } catch (NullPointerException ex) {
+        } catch (Exception ex) {
             throw new NullPointerException("User not found!");
         }
         singleChatService.persist(singleChat);
         Message message = Message.builder()
-                .message(createSingleChatDto.getMessage())
+                .message(stringMessage)
                 .userSender(singleChat.getUserOne())
                 .chat(singleChat.getChat())
                 .build();

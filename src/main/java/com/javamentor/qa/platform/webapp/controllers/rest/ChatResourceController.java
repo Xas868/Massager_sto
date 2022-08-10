@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +47,7 @@ public class ChatResourceController {
         return new ResponseEntity<>(chatDtoService.getAllSingleChatDtoByUserId(currentUser.getId()), HttpStatus.OK);
     }
 
-    @Operation(summary = "Создание single чата с первым сообщением.", description = "Создание single чата.")
+    @Operation(summary = "Создание single чата с первым сообщением.", description = "Создание single чата и первого сообщения.")
     @ApiResponse(responseCode = "200", description = "Single чат создан.", content = {
             @Content(mediaType = "application/json")
     })
@@ -54,14 +55,14 @@ public class ChatResourceController {
             @Content(mediaType = "application/json")
     })
     @PostMapping("/single")
-    public ResponseEntity<SingleChatDto> createSingleChatDto(@RequestBody CreateSingleChatDto createSingleChatDto) {
+    public ResponseEntity<?> createSingleChatAndFirstMessageDto(@Valid @RequestBody CreateSingleChatDto createSingleChatDto) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) auth.getPrincipal();
         Optional<User> destinationUser = userService.getById(createSingleChatDto.getUserId());
-        if (destinationUser.isEmpty() || createSingleChatDto.getMessage() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (destinationUser.isEmpty()) {
+            return new ResponseEntity<>("Single чат не создан", HttpStatus.BAD_REQUEST);
         }
-        SingleChat singleChat = singleChatRoomService.createSingleChatAndFirstMessage(createSingleChatDto, currentUser, destinationUser);
+        SingleChat singleChat = singleChatRoomService.createSingleChatAndFirstMessage(createSingleChatDto.getMessage(), currentUser, destinationUser);
         SingleChatDto singleChatDto = SingleChatDto.builder()
                 .id(singleChat.getId())
                 .name(singleChat.getUseTwo().getNickname())
