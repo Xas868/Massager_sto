@@ -1,8 +1,10 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
 import com.javamentor.qa.platform.models.dto.ChatDto;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
+import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
 import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import com.javamentor.qa.platform.models.dto.MessageDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
@@ -18,6 +20,7 @@ import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.impl.dto.DtoServiceImpl;
 import com.javamentor.qa.platform.service.impl.model.ChatRoomServiceImpl;
+import com.javamentor.qa.platform.webapp.converters.GroupChatConverter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,6 +32,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -41,15 +45,19 @@ public class ChatResourceController {
     private final ChatDtoService chatDtoService;
     private final ChatRoomServiceImpl chatRoomServiceIml;
     private final GroupChatRoomService groupChatRoomService;
+    private final GroupChatConverter groupChatConverter;
+    private final UserDao userDao;
     private final SingleChatService singleChatService;
     private final UserService userService;
 
     @Autowired
-    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, ChatRoomServiceImpl chatRoomServiceIml, GroupChatRoomService groupChatRoomService, SingleChatService singleChatService, UserService userService) {
+    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, ChatRoomServiceImpl chatRoomServiceIml, GroupChatConverter groupChatConverter, UserDao userDao, GroupChatRoomService groupChatRoomService, SingleChatService singleChatService, UserService userService) {
         this.messagesPaginationService = dtoService;
         this.chatDtoService = chatDtoService;
         this.chatRoomServiceIml = chatRoomServiceIml;
         this.singleChatService = singleChatService;
+        this.groupChatConverter = groupChatConverter;
+        this.userDao = userDao;
         this.groupChatRoomService = groupChatRoomService;
         this.userService = userService;
     }
@@ -146,6 +154,28 @@ public class ChatResourceController {
 
         singleChatService.deleteUserFromSingleChatById(chatId, currentUser.getId());
         return new ResponseEntity<>("SingleChat deleted", HttpStatus.OK);
+    }
+
+    @Operation(summary = "Создание group чата.", description = "Создание group чата")
+    @ApiResponse(responseCode = "200",
+            description = "Групповой чат создан",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400",
+            description = "Групповой чат не создан",
+            content = @Content(mediaType = "application/json"))
+    @PostMapping("/group")
+    public ResponseEntity<String> createGroupChatDto(@RequestBody CreateGroupChatDto createGroupChatDto) {
+        List<Long> userIds = new ArrayList<>(createGroupChatDto.getUserIds());
+
+        if (!userIds.isEmpty()) {
+            List<Long> notExistUsers = userDao.getUnregisteredUserIds(userIds);
+            if (!notExistUsers.isEmpty()) {
+                return new ResponseEntity<>("Users: " + notExistUsers + "are not registered", HttpStatus.BAD_REQUEST);
+            }
+            groupChatRoomService.persist(groupChatConverter.createGroupChatDTOToGroupChat(createGroupChatDto));
+            return new ResponseEntity<>("GroupChat created", HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>("List of user's ids is empty", HttpStatus.BAD_REQUEST);
     }
 
     @Operation(summary = "Добавление пользователя в group чат.", description = "Добавление пользователя в group чат по его id")

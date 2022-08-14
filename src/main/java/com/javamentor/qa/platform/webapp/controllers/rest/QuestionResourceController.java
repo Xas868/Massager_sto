@@ -193,7 +193,7 @@ public class QuestionResourceController {
                     )
             }
     )
-    public ResponseEntity<PageDTO<QuestionViewDto>> getPageQuestionsByTagId(@PathVariable Long id,
+      public ResponseEntity<PageDTO<QuestionViewDto>> getPageQuestionsByTagId(@PathVariable Long id,
                                                                             @RequestParam int page,
                                                                             @RequestParam(defaultValue = "10") int items,
                                                                             @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter) {
