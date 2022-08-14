@@ -34,16 +34,16 @@ public class QuestionPageDtoDaoAllQuestionsImpl implements PageDtoDao<QuestionVi
                                 " q.description," +
                                 " q.persistDateTime," +
                                 " q.lastUpdateDateTime," +
-                                " (select sum(r.count) from Reputation r where r.author.id = q.user.id) as author_reputation," +
+                                " (coalesce((select sum(r.count) from Reputation r where r.author.id = q.user.id),0)) as author_reputation," +
                                 " (coalesce((select count(a.id) from Answer a where a.question.id = q.id),0)) as answerCounter, " +
                                 " (coalesce((select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id), 0)) as count_valuable," +
                                 " (select count(bm.id) > 0 from BookMarks bm where bm.question.id = q.id and bm.user.id = :userId) as is_user_bookmark, " +
                                 " (coalesce((select count(qv.id) from QuestionViewed qv where qv.question.id = q.id), 0)) as view_count" +
                                 " from Question q" +
                                 " where ((:trackedTags) IS NULL OR q.id IN (select q.id from Question q join q.tags t where t.id in (:trackedTags))) " +
-                                " and ((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags))) and " +
-                        " :dateFilter = 0  OR q.persistDateTime >= current_date - :dateFilter ")
-rrr
+                                " and ((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags)))  " +
+                                " and (:dateFilter = 0  OR q.persistDateTime >= current_date - :dateFilter) "
+                )
                 .setParameter("trackedTags", properties.getProps().get("trackedTags"))
                 .setParameter("ignoredTags", properties.getProps().get("ignoredTags"))
                 .setParameter("userId",properties.getProps().get("userId"))
