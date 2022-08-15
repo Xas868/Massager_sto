@@ -9,6 +9,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatRoomService;
 import com.javamentor.qa.platform.service.impl.dto.DtoServiceImpl;
+import com.javamentor.qa.platform.webapp.converters.SingleChatConverter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,13 +31,14 @@ public class ChatResourceController {
     private final DtoServiceImpl<MessageDto> messagesPaginationService;
     private final ChatDtoService chatDtoService;
     private final SingleChatRoomService singleChatRoomService;
+    private final SingleChatConverter singleChatConverter;
 
 
-    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, SingleChatRoomService singleChatRoomService) {
+    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, SingleChatRoomService singleChatRoomService, SingleChatConverter singleChatConverter) {
         this.messagesPaginationService = dtoService;
         this.chatDtoService = chatDtoService;
         this.singleChatRoomService = singleChatRoomService;
-
+        this.singleChatConverter = singleChatConverter;
     }
 
     @GetMapping("/single")
@@ -53,8 +55,8 @@ public class ChatResourceController {
             @Content(mediaType = "application/json")
     })
     @PostMapping("/single")
-    public ResponseEntity<?> createSingleChatAndFirstMessageDto(@Valid @RequestBody CreateSingleChatDto createSingleChatDto) {
-        SingleChat singleChat = singleChatRoomService.createSingleChatAndFirstMessage(createSingleChatDto.getMessage(), createSingleChatDto.getUserId());
+    public ResponseEntity<?> createSingleChatAndFirstMessageDto(@Valid @RequestBody CreateSingleChatDto createSingleChatDto) throws Exception {
+        SingleChat singleChat = singleChatRoomService.createSingleChatAndFirstMessage(createSingleChatDto.getMessage(),singleChatConverter.createSingleChatDtoToSingleChat(createSingleChatDto));
         SingleChatDto singleChatDto = SingleChatDto.builder()
                 .id(singleChat.getId())
                 .name(singleChat.getUseTwo().getNickname())

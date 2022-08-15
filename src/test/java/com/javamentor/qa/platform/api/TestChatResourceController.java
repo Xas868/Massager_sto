@@ -6,8 +6,12 @@ import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
+import com.javamentor.qa.platform.service.abstracts.model.MessageService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -21,6 +25,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTests {
+    @Autowired
+    private MessageService messageService;
+
+    @Autowired
+    private SingleChatService singleChatService;
     //Тесты для SingleChatDTO авторизированного пользователя
     @Test
     @DataSet(cleanBefore = true, value = "dataset/ChatResourceController/getAllSingleChatDtoByUserId.yml"
@@ -316,6 +325,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     @Test
     @DataSet(cleanBefore = true, value = "dataset/ChatResourceController/createSingleChatAndFirstMessage.yml", strategy = SeedStrategy.REFRESH)
     public void shouldCreateSingleChatAndFirstMessage () throws Exception {
+
         // Проверка, что API доступна
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
         authenticationRequest.setPassword("user1");
@@ -341,5 +351,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                         .header(AUTHORIZATION, USER_TOKEN))
                 .andDo(print())
                 .andExpect(status().isOk());
+        //Проверка что сообщение сохранено в базу
+        Assert.assertTrue(messageService.getAll().stream().anyMatch(message -> message.getMessage() .contains("Тестовое сообщение №1")));
     }
 }

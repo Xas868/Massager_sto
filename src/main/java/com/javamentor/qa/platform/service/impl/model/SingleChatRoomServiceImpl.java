@@ -4,43 +4,36 @@ import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
 import com.javamentor.qa.platform.models.entity.chat.*;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.*;
+import com.javamentor.qa.platform.webapp.converters.SingleChatConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 public class SingleChatRoomServiceImpl extends ReadWriteServiceImpl<SingleChat, Long> implements SingleChatRoomService {
 
     private final SingleChatService singleChatService;
     private final MessageService messageService;
-    private final UserService userService;
+    private final SingleChatConverter singleChatConverter;
 
-    public SingleChatRoomServiceImpl(@Qualifier("singleChatRoomDaoImpl") ReadWriteDao<SingleChat, Long> readWriteDao, SingleChatService singleChatService, MessageService messageService, UserService userService) {
+    public SingleChatRoomServiceImpl(@Qualifier("singleChatRoomDaoImpl") ReadWriteDao<SingleChat, Long> readWriteDao, SingleChatService singleChatService, MessageService messageService, SingleChatConverter singleChatConverter) {
         super(readWriteDao);
         this.singleChatService = singleChatService;
         this.messageService = messageService;
-        this.userService = userService;
+        this.singleChatConverter = singleChatConverter;
     }
 
     @Transactional
-    public SingleChat createSingleChatAndFirstMessage(String stringMessage, Long id) {
+    public SingleChat createSingleChatAndFirstMessage(String stringMessage, SingleChat singleChat) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) auth.getPrincipal();
-        Optional<User> destinationUser = userService.getById(id);
-        SingleChat singleChat;
-        try {
-            singleChat = SingleChat.builder()
+        singleChat = SingleChat.builder()
                     .chat(new Chat(ChatType.SINGLE))
                     .userOne(currentUser)
-                    .useTwo(destinationUser.orElseThrow())
+                    .useTwo(singleChat.getUseTwo())
                     .build();
-        } catch (Exception ex) {
-            throw new NullPointerException("User not found!");
-        }
         singleChatService.persist(singleChat);
         Message message = Message.builder()
                 .message(stringMessage)
