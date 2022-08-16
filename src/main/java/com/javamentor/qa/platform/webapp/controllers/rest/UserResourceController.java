@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoByVo
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.util.CalendarPeriod;
 import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
+import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Optional;
 
@@ -228,9 +230,17 @@ public class UserResourceController {
                                     array = @ArraySchema(schema = @Schema(implementation = UserDto.class)))
                     })
     })
-    @GetMapping("/api/user/top10/week")
-    public ResponseEntity<List<UserDto>> getTop10UsersForWeekRankedByNumberOfQuestions() {
-        return new ResponseEntity<>(userDtoService.getTop10UsersForWeekRankedByNumberOfQuestions(), HttpStatus.OK);
+    @GetMapping("/api/user/top")
+    public ResponseEntity<List<UserDto>> getTopUsersForDaysRankedByNumberOfQuestions(
+            @RequestParam(name = "usersCount", required = false, defaultValue = "10")
+            @Parameter (name = "Количество юзеров, которых необходимо получить.",
+                    description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
+            Integer usersCount,
+            @RequestParam(name = "period", required = false, defaultValue = "week")
+            @Parameter (name = "Количество дней, по которым будет идти поиск", description = "Необязательный параметр. Позволяет настроить пероид времени, " +
+                    "по которому будет идти поиск. Значение по умолчанию \"week\" ")
+            CalendarPeriod calendarPeriod) {
+        return new ResponseEntity<>(userDtoService.getTopUsersForDaysRankedByNumberOfQuestions(calendarPeriod), HttpStatus.OK);
     }
 
     @Operation(summary = "Получение количества ответов авторизованного пользователя." ,
