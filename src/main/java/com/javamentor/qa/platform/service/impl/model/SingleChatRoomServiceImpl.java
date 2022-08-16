@@ -4,7 +4,6 @@ import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
 import com.javamentor.qa.platform.models.entity.chat.*;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.*;
-import com.javamentor.qa.platform.webapp.converters.SingleChatConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,13 +15,11 @@ public class SingleChatRoomServiceImpl extends ReadWriteServiceImpl<SingleChat, 
 
     private final SingleChatService singleChatService;
     private final MessageService messageService;
-    private final SingleChatConverter singleChatConverter;
 
-    public SingleChatRoomServiceImpl(@Qualifier("singleChatRoomDaoImpl") ReadWriteDao<SingleChat, Long> readWriteDao, SingleChatService singleChatService, MessageService messageService, SingleChatConverter singleChatConverter) {
+    public SingleChatRoomServiceImpl(@Qualifier("singleChatRoomDaoImpl") ReadWriteDao<SingleChat, Long> readWriteDao, SingleChatService singleChatService, MessageService messageService) {
         super(readWriteDao);
         this.singleChatService = singleChatService;
         this.messageService = messageService;
-        this.singleChatConverter = singleChatConverter;
     }
 
     @Transactional

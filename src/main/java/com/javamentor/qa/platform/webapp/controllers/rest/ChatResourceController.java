@@ -10,13 +10,11 @@ import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatRoomService;
 import com.javamentor.qa.platform.service.impl.dto.DtoServiceImpl;
 import com.javamentor.qa.platform.webapp.converters.SingleChatConverter;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
