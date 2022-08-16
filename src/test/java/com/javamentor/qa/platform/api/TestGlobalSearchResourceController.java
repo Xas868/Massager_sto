@@ -122,7 +122,9 @@ public class TestGlobalSearchResourceController extends AbstractClassForDRRiderM
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items[0].id").value(1))
+                .andExpect(jsonPath("$.items[0].viewCount").value(2))
                 .andExpect(jsonPath("$.items[1].id").value(2))
+                .andExpect(jsonPath("$.items[1].viewCount").value(1))
                 .andExpect(jsonPath("$.items.length()").value(2));
 
         //поиск сообщений по просмотрам
@@ -131,7 +133,9 @@ public class TestGlobalSearchResourceController extends AbstractClassForDRRiderM
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items[0].id").value(1))
+                .andExpect(jsonPath("$.items[0].viewCount").value(2))
                 .andExpect(jsonPath("$.items[1].id").value(2))
+                .andExpect(jsonPath("$.items[1].viewCount").value(1))
                 .andExpect(jsonPath("$.items.length()").value(2));
 
         //поиск сообщений по ответам

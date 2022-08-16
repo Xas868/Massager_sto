@@ -29,6 +29,10 @@ public class SingleChat{
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User useTwo;
+    @Column(name = "user_one_is_deleted", nullable = false, columnDefinition = "boolean default false")
+    private Boolean userOneIsDeleted;
+    @Column(name = "user_two_is_deleted", nullable = false, columnDefinition = "boolean default false")
+    private Boolean userTwoIsDeleted;
 
     @PrePersist
     private void prePersistFunction() {

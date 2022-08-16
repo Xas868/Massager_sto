@@ -13,38 +13,22 @@
 
     <meta charset="UTF-8">
     <title>Title</title>
-    <link href="/css/questions.css" rel="stylesheet" media="screen">
+    <link href="/css/unanswered.css" rel="stylesheet" media="screen">
 </head>
 <body>
 <div id="main">
     <div class="row">
         <div class="col-8">
             <div class="d-flex justify-content-between mb-3 align-items-center">
-                <h1>Все вопросы</h1>
-                <button class="btn btn-info h-50" onclick="window.location.href='/questions/add'">Задать вопрос</button>
+                <h1>Неотвеченные</h1>
             </div>
             <div class="d-flex justify-content-between mb-3 align-items-center">
                 <h4 class="m-0" style="font-weight: 400">
                     <span>Всего вопросов: </span>
                     <span id="questions-number"></span></h4>
-                <div class="form-group m-0">
-                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                        <label class="btn btn-secondary active">
-                            <input type="radio" name="options" id="new_btn" checked> Новые
-                        </label>
-                        <label class="btn btn-secondary">
-                            <input type="radio" name="options" id="current_btn"> Текущие
-                        </label>
-                        <label class="btn btn-secondary">
-                            <input type="radio" name="options" id="competition_btn"> Конкурсные
-                        </label>
-                        <label class="btn btn-secondary">
-                            <input type="radio" name="options" id="unanswered_btn"> Неотвеченные
-                        </label>
-                    </div>
-                </div>
             </div>
-                        <!--Questions-->
+
+            <!--Questions-->
             <div id="pagination_objects" class="col mt-2 p-0"></div>
             <div id="navigation" class="col mt-2"></div>
         </div>
@@ -124,9 +108,10 @@
 
 
 
-<script type="text/javascript" src="/js/groupChat.js"></script>
 <script type="text/javascript" src="/js/initScriptAuthorized.js"></script>
 <script type="text/javascript" src="/js/getPagination.js"></script>
-<script type="text/javascript" src="/js/questions.js"></script>
+<script type="text/javascript" src="/js/unanswered.js"></script>
+
+
 </body>
 </html>

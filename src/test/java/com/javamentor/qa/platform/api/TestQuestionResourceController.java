@@ -35,6 +35,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,7 +100,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
     @Test
     //Голосуем ПРОТИВ вопроса (DOWN_VOTE) и получаем ответ с количеством голосов: 1 и репутацией -5
     @DataSet(cleanAfter = true, cleanBefore = true,
-            value = "dataset/questionresourcecontroller/data.yml",
+            value = "dataset/QuestionResourceController/data.yml",
             strategy = SeedStrategy.REFRESH)
     public void shouldReturnSetupDownVoteDownReputation() throws Exception {
         this.mockMvc.perform(post("/api/user/question/2/downVote")
@@ -116,7 +117,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
 
     @Test
     @DataSet(cleanAfter = true, cleanBefore = true,
-            value = "dataset/questionresourcecontroller/data.yml",
+            value = "dataset/QuestionResourceController/data.yml",
             strategy = SeedStrategy.REFRESH)
     //Голосуем ЗА вопрос (UP_VOTE) и получаем ответ с количеством голосов: 1 и репутация увеличена на +10.
     public void shouldReturnSetupUpVoteUpReputation() throws Exception {
@@ -136,7 +137,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
     //Повторно голосуем ПРОТИВ вопроса (DOWN_VOTE) и получаем ответ: "User was voting"
     // повторный голос не учитывается.
     @DataSet(cleanAfter = true, cleanBefore = true,
-            value = "dataset/questionresourcecontroller/data2.yml",
+            value = "dataset/QuestionResourceController/data2.yml",
             strategy = SeedStrategy.REFRESH)
     public void shouldValidateUserVoteDownVote() throws Exception {
         this.mockMvc.perform(post("/api/user/question/2/downVote")
@@ -150,7 +151,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
     //Повторно голосуем ЗА вопроса (UP_VOTE) и получаем ответ: "User was voting"
     // повторный голос не учитывается.
     @DataSet(cleanAfter = true, cleanBefore = true,
-            value = "dataset/questionresourcecontroller/data2.yml",
+            value = "dataset/QuestionResourceController/data2.yml",
             strategy = SeedStrategy.REFRESH)
     public void shouldValidateUserVoteUpVote() throws Exception {
         this.mockMvc.perform(post("/api/user/question/1/upVote").header("Authorization", "Bearer " + getToken("test15@mail.ru", "test15"))).andDo(print()).andExpect(status().isBadRequest())
@@ -168,7 +169,8 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
             "dataset/QuestionResourceController/Fix/reputations.yml",
             "dataset/QuestionResourceController/votes_on_questions.yml",
             "dataset/testQuestionIdCommentResource/comment.yml",
-            "dataset/testQuestionIdCommentResource/commentquestion.yml"
+            "dataset/testQuestionIdCommentResource/commentquestion.yml",
+            "dataset/QuestionResourceController/question_viewed/qv_viewCount1.yml"
     },
             strategy = SeedStrategy.CLEAN_INSERT,
             cleanAfter = true, cleanBefore = true
@@ -201,7 +203,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.authorName").value("test 15"))
                 .andExpect(jsonPath("$.authorImage").value("photo"))
                 .andExpect(jsonPath("$.description").value("test"))
-                .andExpect(jsonPath("$.viewCount").value(0L))
+                .andExpect(jsonPath("$.viewCount").value(2))
                 .andExpect(jsonPath("$.countAnswer").value(1))
                 .andExpect(jsonPath("$.countValuable").value(-1))
                 .andExpect(jsonPath("$.countAnswer").value(1))
@@ -221,13 +223,15 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.listQuestionCommentDto[1].persistDate")
                         .value("2021-12-13T21:09:52.716"))
                 .andExpect(jsonPath("$.listQuestionCommentDto[1].text").value("Hello Test2"))
-                .andExpect(jsonPath("$.isUserVote").value("DOWN_VOTE"));
+                .andExpect(jsonPath("$.isUserVote").value("DOWN_VOTE"))
+                .andExpect(jsonPath("$.answerDTOList[0].id").value(1));
 
         mockMvc.perform(get("/api/user/question/2")
                         .header(AUTHORIZATION, USER_TOKEN))
                 .andDo(print())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.viewCount").value(1))
                 .andExpect(jsonPath("$.isUserVote").value(nullValue()));
 
         mockMvc.perform(get("/api/user/question/3")
@@ -277,7 +281,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanAfter = true, cleanBefore = true,
             value = {
                     "dataset/testQuestionResourceController/question.yml",
                     "dataset/testQuestionResourceController/tag.yml",
@@ -857,8 +861,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
 
     @Test
 //  Получаем все вопросы по id тега, с items и без
-    @DataSet(cleanBefore = true,
-            value = {
+    @DataSet(value = {
                     "dataset/testQuestionTagIdResource/questions.yml",
                     "dataset/testQuestionTagIdResource/tag.yml",
                     "dataset/testQuestionTagIdResource/questions_has_tag.yml",
@@ -866,9 +869,11 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                     "dataset/testQuestionTagIdResource/answers.yml",
                     "dataset/testQuestionTagIdResource/users.yml",
                     "dataset/testQuestionTagIdResource/votes_on_questions.yml",
-                    "dataset/testQuestionTagIdResource/role.yml"
+                    "dataset/testQuestionTagIdResource/role.yml",
+                    "dataset/QuestionResourceController/question_viewed/qv_viewCount2.yml"
             },
-            strategy = SeedStrategy.CLEAN_INSERT)
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true)
     public void shouldReturnAllQuestionsByTagId() throws Exception {
 
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
@@ -903,7 +908,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items[0].authorName").value("USER"))
                 .andExpect(jsonPath("$.items[0].authorImage").value("image"))
                 .andExpect(jsonPath("$.items[0].description").value("test1"))
-                .andExpect(jsonPath("$.items[0].viewCount").value("0"))
+                .andExpect(jsonPath("$.items[0].viewCount").value("2"))
                 .andExpect(jsonPath("$.items[0].countAnswer").value("1"))
                 .andExpect(jsonPath("$.items[0].countValuable").value("-1"))
                 .andExpect(jsonPath("$.items[0].persistDateTime").value("2021-12-13T18:09:55"))
@@ -919,7 +924,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items[1].authorName").value("USER"))
                 .andExpect(jsonPath("$.items[1].authorImage").value("image"))
                 .andExpect(jsonPath("$.items[1].description").value("test2"))
-                .andExpect(jsonPath("$.items[1].viewCount").value("0"))
+                .andExpect(jsonPath("$.items[1].viewCount").value("1"))
                 .andExpect(jsonPath("$.items[1].countAnswer").value("1"))
                 .andExpect(jsonPath("$.items[1].countValuable").value("-1"))
                 .andExpect(jsonPath("$.items[1].persistDateTime").value("2021-12-13T18:09:54"))
@@ -948,8 +953,11 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
             "dataset/QuestionResourceController/questions.yml",
             "dataset/QuestionResourceController/more_questions_has_tags.yml",
             "dataset/QuestionResourceController/answers.yml",
-            "dataset/QuestionResourceController/votes_on_questions.yml"
-    }
+            "dataset/QuestionResourceController/votes_on_questions.yml",
+            "dataset/QuestionResourceController/question_viewed/qv_viewCount1.yml"
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
     )
     // Получение json по вопросам без ответов
     public void getCorrectListOfQuestionsWithoutAnswers() throws Exception {
@@ -961,8 +969,10 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andDo(print())
+                .andExpect(jsonPath("$.items[0].viewCount").value("1"))
                 .andExpect(jsonPath("$.items.[0].id").value(2))
                 .andExpect(jsonPath("$.items.[1].id").value(3))
+                .andExpect(jsonPath("$.items[1].viewCount").value("0"))
                 .andExpect(jsonPath("$.totalResultCount").value(3))
                 .andExpect(jsonPath("$.items.size()").value(2))
                 .andExpect(jsonPath("$.totalPageCount").value(2));
@@ -1019,7 +1029,9 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
             "dataset/QuestionResourceController/more_questions_has_tags.yml",
             "dataset/QuestionResourceController/answers_for_all_questions.yml",
             "dataset/QuestionResourceController/votes_on_questions.yml"
-    }
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
     )
     // Получение json по вопросам без ответов, когда нет таких ответов
     public void getQuestionsWithoutAnswersWhenThereIsNoSuchQuestions() throws Exception {
@@ -1252,16 +1264,17 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
 
     @Transactional
     @Test
-    @DataSet(cleanBefore = true,
-            value = {
+    @DataSet(value = {
                     "dataset/testQuestionResourceController/question_different_date.yml",
                     "dataset/testQuestionResourceController/tag.yml",
+                    "dataset/testQuestionResourceController/answer.yml",
                     "dataset/testQuestionResourceController/questions_has_tag1.yml",
                     "dataset/QuestionResourceController/users.yml",
                     "dataset/testQuestionResourceController/role.yml",
                     "dataset/QuestionResourceController/votes_on_questions.yml"
             },
-            strategy = SeedStrategy.CLEAN_INSERT
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
     )
     public void getQuestionSortedByWeightForTheWeek() throws Exception {
 
@@ -1386,21 +1399,21 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.totalResultCount").value(7))
                 .andExpect(jsonPath("$.totalPageCount").value(1))
                 .andExpect(jsonPath("$.items.length()").value(7))
-                .andExpect(jsonPath("$.items[0].id").value(5))
-                .andExpect(jsonPath("$.items[0].title").value("test5"))
+                .andExpect(jsonPath("$.items[0].id").value(11))
+                .andExpect(jsonPath("$.items[0].title").value("test11"))
                 .andExpect(jsonPath("$.items[0].authorId").value(15))
                 .andExpect(jsonPath("$.items[0].authorReputation").value(0))
                 .andExpect(jsonPath("$.items[0].authorName").value("test 15"))
                 .andExpect(jsonPath("$.items[0].authorImage").value("photo"))
-                .andExpect(jsonPath("$.items[0].description").value("test5"))
+                .andExpect(jsonPath("$.items[0].description").value("test11"))
                 .andExpect(jsonPath("$.items[0].viewCount").value(0))
-                .andExpect(jsonPath("$.items[0].countAnswer").value(0))
+                .andExpect(jsonPath("$.items[0].countAnswer").value(8))
                 .andExpect(jsonPath("$.items[0].countValuable").value(-1))
-                .andExpect(jsonPath("$.items[1].id").value(10))
-                .andExpect(jsonPath("$.items[2].id").value(3))
+                .andExpect(jsonPath("$.items[1].id").value(1))
+                .andExpect(jsonPath("$.items[2].id").value(2))
                 .andExpect(jsonPath("$.items[3].id").value(4))
-                .andExpect(jsonPath("$.items[4].id").value(2))
-                .andExpect(jsonPath("$.items[6].id").value(11));
+                .andExpect(jsonPath("$.items[4].id").value(3))
+                .andExpect(jsonPath("$.items[6].id").value(5));
         /* Проверка на :
         1) корректности запроса при запросе второй странице и количестве items на странице 5;
         2) корректность количества записей(totalResultCount=7);
@@ -1418,7 +1431,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.totalPageCount").value(2))
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(jsonPath("$.currentPageNumber").value(2))
-                .andExpect(jsonPath("$.items[1].id").value(11));
+                .andExpect(jsonPath("$.items[1].id").value(5));
         /*Проверка запроса при параметре items=0*/
         mockMvc.perform(get("/api/user/question/paginationForMonth?page=3&items=0")
                         .header(AUTHORIZATION, USER_TOKEN)
@@ -1433,8 +1446,8 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalResultCount").value(2))
-                .andExpect(jsonPath("$.items[0].id").value(4))
-                .andExpect(jsonPath("$.items[1].id").value(11));
+                .andExpect(jsonPath("$.items[0].id").value(11))
+                .andExpect(jsonPath("$.items[1].id").value(4));
         //Проверка корректности возвращаемых json при поиске записей по 2м тэгам
         mockMvc.perform(get("/api/user/question/paginationForMonth?page=1&items=4&trackedTag=4,2")
                         .header(AUTHORIZATION, USER_TOKEN)
@@ -1442,9 +1455,9 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalResultCount").value(3))
-                .andExpect(jsonPath("$.items[0].id").value(4))
+                .andExpect(jsonPath("$.items[0].id").value(11))
                 .andExpect(jsonPath("$.items[1].id").value(2))
-                .andExpect(jsonPath("$.items[2].id").value(11));
+                .andExpect(jsonPath("$.items[2].id").value(4));
         //Проверка корректности возвращаемых json при поиске записей по 2м тэгам и отсутсвию 1го тэга
         mockMvc.perform(get("/api/user/question/paginationForMonth?page=1&items=4&trackedTag=4,1&ignoredTag=2")
                         .header(AUTHORIZATION, USER_TOKEN)
@@ -1452,10 +1465,10 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalResultCount").value(6))
-                .andExpect(jsonPath("$.items[0].id").value(5))
-                .andExpect(jsonPath("$.items[1].id").value(10))
-                .andExpect(jsonPath("$.items[2].id").value(3))
-                .andExpect(jsonPath("$.items[3].id").value(4));
+                .andExpect(jsonPath("$.items[0].id").value(11))
+                .andExpect(jsonPath("$.items[1].id").value(1))
+                .andExpect(jsonPath("$.items[2].id").value(4))
+                .andExpect(jsonPath("$.items[3].id").value(3));
     }
 
     @Test
@@ -1512,19 +1525,16 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
         //проверка на - отображается ли вопрос в метке, который добавил себе авторизованный юзер
 
         mockMvc.perform(get("/api/user/question/101")
-                        .contentType("application/json")
-                        .header("Authorization", token100));
-         Long id = 101L;
-       Long userId =100L ;
-      List<BookMarks> bookMarks = (List<BookMarks>) entityManager.createQuery("select count(*) from BookMarks bm " +
-                "where bm.question.id = :id and bm.user.id=:userId ")
-                .setParameter("id",id)
-                .setParameter("userId",userId)
-              .getResultList();
+                .contentType("application/json")
+                .header("Authorization", token100));
+        Long id = 101L;
+        Long userId = 100L;
+        List<BookMarks> bookMarks = (List<BookMarks>) entityManager.createQuery("select count(*) from BookMarks bm " +
+                        "where bm.question.id = :id and bm.user.id=:userId ")
+                .setParameter("id", id)
+                .setParameter("userId", userId)
+                .getResultList();
         assertThat(bookMarks).isNotNull();
-
-
-
     }
 
     @Test
@@ -1571,4 +1581,327 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @DataSet(value = {
+            "dataset/QuestionResourceController/roles.yml",
+            "dataset/QuestionResourceController/checkAnswersSort/users.yml",
+            "dataset/QuestionResourceController/tags.yml",
+            "dataset/QuestionResourceController/questions.yml",
+            "dataset/QuestionResourceController/questions_has_tag.yml",
+            "dataset/QuestionResourceController/checkAnswersSort/answers.yml",
+            "dataset/QuestionResourceController/checkAnswersSort/answerVotes.yml",
+            "dataset/QuestionResourceController/question_viewed/qv_viewCount1.yml"
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
+    )
+    public void getSortedAnswersOnQuestionIdWhereIsHelpfulAnswerHasLessVotes() throws Exception {
+
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+        authenticationRequest.setPassword("test15");
+        authenticationRequest.setUsername("test15@mail.ru");
+
+        String USER_TOKEN = mockMvc.perform(
+                        post("/api/auth/token")
+                                .content(new ObjectMapper().writeValueAsString(authenticationRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        USER_TOKEN = "Bearer " + USER_TOKEN.substring(USER_TOKEN.indexOf(":") + 2, USER_TOKEN.length() - 2);
+
+        mockMvc.perform(get("/api/user/question/1")
+                        .header(AUTHORIZATION, USER_TOKEN))
+                .andDo(print())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.viewCount").value(2))
+                .andExpect(jsonPath("$.answerDTOList[0].id").value(3))
+                .andExpect(jsonPath("$.answerDTOList[0].isHelpful").value(true))
+                .andExpect(jsonPath("$.answerDTOList[0].countValuable").value(-3))
+                .andExpect(jsonPath("$.answerDTOList[1].id").value(2))
+                .andExpect(jsonPath("$.answerDTOList[1].countValuable").value(3))
+                .andExpect(jsonPath("$.answerDTOList[2].id").value(1))
+                .andExpect(jsonPath("$.answerDTOList[2].countValuable").value(1))
+                .andExpect(jsonPath("$.answerDTOList[3].id").value(4))
+                .andExpect(jsonPath("$.answerDTOList[3].countValuable").value(-1));
+    }
+
+    @Test
+    @DataSet(value = {
+            "dataset/QuestionResourceController/roles.yml",
+            "dataset/QuestionResourceController/checkAnswersSort/users.yml",
+            "dataset/QuestionResourceController/tags.yml",
+            "dataset/QuestionResourceController/questions.yml",
+            "dataset/QuestionResourceController/questions_has_tag.yml",
+            "dataset/QuestionResourceController/checkAnswersSort/answersWithoutIsHelpful.yml",
+            "dataset/QuestionResourceController/checkAnswersSort/answerVotes.yml",
+            "dataset/QuestionResourceController/question_viewed/qv_viewCount1.yml"
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
+    )
+    public void getSortedAnswersOnQuestionIdWhereFieldIsHelpfulIsMissing() throws Exception {
+
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+        authenticationRequest.setPassword("test15");
+        authenticationRequest.setUsername("test15@mail.ru");
+
+        String USER_TOKEN = mockMvc.perform(
+                        post("/api/auth/token")
+                                .content(new ObjectMapper().writeValueAsString(authenticationRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        USER_TOKEN = "Bearer " + USER_TOKEN.substring(USER_TOKEN.indexOf(":") + 2, USER_TOKEN.length() - 2);
+
+        mockMvc.perform(get("/api/user/question/1")
+                        .header(AUTHORIZATION, USER_TOKEN))
+                .andDo(print())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.viewCount").value(2))
+                .andExpect(jsonPath("$.answerDTOList[0].id").value(2))
+                .andExpect(jsonPath("$.answerDTOList[0].countValuable").value(3))
+                .andExpect(jsonPath("$.answerDTOList[1].id").value(1))
+                .andExpect(jsonPath("$.answerDTOList[1].countValuable").value(1))
+                .andExpect(jsonPath("$.answerDTOList[2].id").value(4))
+                .andExpect(jsonPath("$.answerDTOList[2].countValuable").value(-1))
+                .andExpect(jsonPath("$.answerDTOList[3].id").value(3))
+                .andExpect(jsonPath("$.answerDTOList[3].countValuable").value(-3));
+    }
+
+    @Test
+    @DataSet(value = {
+            "dataset/QuestionResourceController/roles.yml",
+            "dataset/QuestionResourceController/checkAnswersSort/users.yml",
+            "dataset/QuestionResourceController/tags.yml",
+            "dataset/QuestionResourceController/questions.yml",
+            "dataset/QuestionResourceController/questions_has_tag.yml",
+            "dataset/QuestionResourceController/checkAnswersSort/null_answers.yml",
+            "dataset/QuestionResourceController/question_viewed/qv_viewCount1.yml"
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
+    )
+    public void getNullSortedAnswersOnQuestionIdWhereAnswersIsNull() throws Exception {
+
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+        authenticationRequest.setPassword("test15");
+        authenticationRequest.setUsername("test15@mail.ru");
+
+        String USER_TOKEN = mockMvc.perform(
+                        post("/api/auth/token")
+                                .content(new ObjectMapper().writeValueAsString(authenticationRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        USER_TOKEN = "Bearer " + USER_TOKEN.substring(USER_TOKEN.indexOf(":") + 2, USER_TOKEN.length() - 2);
+
+        mockMvc.perform(get("/api/user/question/1")
+                        .header(AUTHORIZATION, USER_TOKEN))
+                .andDo(print())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.viewCount").value(2))
+                .andExpect(jsonPath("$.answerDTOList").isEmpty());
+    }
+    @Test
+    @DataSet(value = {
+            "dataset/QuestionResourceController/questionsWithDateFilter.yml",
+
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
+    )
+    void getQuestionPageDtoDaoAllQuestionsWithDateFilter() throws Exception {
+
+        mockMvc.perform(get("/api/user/question?page=1&dateFilter=ALL")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T13:07:52"))
+                .andExpect(jsonPath("$.items.length()").value(8))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/question?page=1&dateFilter=YEAR")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2021-12-13T13:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(3))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/question?page=1&dateFilter=MONTH")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-23T13:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(2))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/question?page=1&dateFilter=WEEK")
+                .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-08-14T13:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(1))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    @DataSet(value = {
+            "dataset/QuestionResourceController/questionsWithDateFilter.yml",
+
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
+    )
+    void getQuestionPageDtoDaoAllSortedByPopularWithDateFilter() throws Exception {
+
+        mockMvc.perform(get("/api/user/popular?page=1&dateFilter=ALL")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T13:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(8))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/popular?page=1&dateFilter=YEAR")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2021-12-13T13:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(3))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/popular?page=1&dateFilter=MONTH")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-23T13:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(2))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/popular?page=1&dateFilter=WEEK")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-08-14T13:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(1))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    @DataSet(value = {
+            "dataset/QuestionResourceController/questionsWithDateFilter1.yml",
+
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
+    )
+    void getQuestionPageDtoDaoByNoAnswersImplWithDateFilter() throws Exception {
+
+        mockMvc.perform(get("/api/user/question/noAnswer?page=1&dateFilter=ALL")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T13:07:52"))
+                .andExpect(jsonPath("$.items.length()").value(8))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/question/noAnswer?page=1&dateFilter=YEAR")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2021-12-13T13:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(3))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/question/noAnswer?page=1&dateFilter=MONTH")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-23T13:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(2))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/question/noAnswer?page=1&dateFilter=WEEK")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-08-14T13:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(1))
+                .andExpect(status().isOk());
+
+    }
+    @Test
+    @DataSet(value = {
+            "dataset/QuestionResourceController/questionsWithDateFilter.yml",
+
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
+    )
+    void getQuestionPageDtoDaoSortedByDateWithDateFilter() throws Exception {
+
+        mockMvc.perform(get("/api/user/question/new?page=1&dateFilter=ALL")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[7].persistDateTime").value("2020-12-13T13:07:52"))
+                .andExpect(jsonPath("$.items.length()").value(8))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/question/new?page=1&dateFilter=YEAR")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[2].persistDateTime").value("2021-12-13T13:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(3))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/question/new?page=1&dateFilter=MONTH")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[1].persistDateTime").value("2022-07-23T13:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(2))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/user/question/new?page=1&dateFilter=WEEK")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect((content()).contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-08-14T13:07:52.716"))
+                .andExpect(jsonPath("$.items.length()").value(1))
+                .andExpect(status().isOk());
+
+    }
+
 }
+

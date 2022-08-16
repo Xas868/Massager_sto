@@ -1,7 +1,7 @@
 activateSideBar()
 
 function activateSideBar () {
-    document.querySelector("#sidebar_questions").classList.add("active")
+    document.querySelector("#sidebar_unanswered").classList.add("active")
 }
 
 function getCookie(name){
@@ -80,13 +80,13 @@ function makeTrackedCard(){
     btnMakeTrackedCard.parentElement.innerHTML =
         '<div class="mb-1" id="trackedList"></div>' +
         '<div>' +
-            '<span class="d-inline-block">' +
-                '<input class="form-control" list="listTrackedTag" type="text" id="ipt_add_tag_tracked">' +
-                '<datalist id="listTrackedTag"></datalist>' +
-            '</span>' +
-            '<span class="d-inline-block">' +
+        '<span class="d-inline-block">' +
+        '<input class="form-control" list="listTrackedTag" type="text" id="ipt_add_tag_tracked">' +
+        '<datalist id="listTrackedTag"></datalist>' +
+        '</span>' +
+        '<span class="d-inline-block">' +
         '       <a class="btn btn-info mb-1" id="btn_add_tracked_tag" href="#">+</a>' +
-            '</span>' +
+        '</span>' +
         '</div>';
 
     listTrackedTag = document.querySelector("#listTrackedTag");
@@ -129,13 +129,13 @@ function makeIgnoredCard(){
     btnMakeIgnoredCard.parentElement.innerHTML =
         '<div class="mb-1" id="ignoredList"> </div>' +
         '<div>' +
-            '<div class="d-inline-block">' +
-                '<input class="form-control" list="listIgnoredTag" type="text" id="ipt_add_tag_ignored">' +
-                '<datalist id="listIgnoredTag"></datalist>' +
-            '</div>' +
-            '<div class="d-inline-block">' +
-                '<a class="btn btn-info mb-1" id="btn_add_ignored_tag" href="#">+</a>' +
-            '</div>' +
+        '<div class="d-inline-block">' +
+        '<input class="form-control" list="listIgnoredTag" type="text" id="ipt_add_tag_ignored">' +
+        '<datalist id="listIgnoredTag"></datalist>' +
+        '</div>' +
+        '<div class="d-inline-block">' +
+        '<a class="btn btn-info mb-1" id="btn_add_ignored_tag" href="#">+</a>' +
+        '</div>' +
         '</div>';
 
     listIgnoredTag = document.querySelector("#listIgnoredTag");
@@ -207,9 +207,9 @@ function tagInputKeyPressEvent(){
 async function addTagClickEvent(addTags, addTagInCard, divList, iptAddTag, mode){
 
     await addTag(selectedValue, mode)
-            .then(
-                tags => {addTagInCard(tags, divList, mode)}
-            );
+        .then(
+            tags => {addTagInCard(tags, divList, mode)}
+        );
     iptAddTag.value = "";
 }
 
@@ -218,9 +218,9 @@ async function tagInputEvent(value, tagsList, iptAddTag){
     tagsList.innerHTML = "";
 
     await getTagsListLike(value)
-            .then(
-                tags => {fillDataList(tags, tagsList)}
-            );
+        .then(
+            tags => {fillDataList(tags, tagsList)}
+        );
 
     if(iptAddTag.list.options.length === 1){
         selectedValue = [...iptAddTag.list.options].find(option => option.innerText === iptAddTag.value).id;
@@ -341,16 +341,16 @@ async function fetchQuestionTags(URL){
 }
 
 let questionPagination;
-let numberOfQuestionPerPage = null;
+let numberOfQuestionPerPage = 10;
 function createPagination() {
     questionPagination = new Pagination(
-        '/api/user/question',
+        '/api/user/question/noAnswer',
         numberOfQuestionPerPage,
         'pagination_objects',
         'navigation',
         function (arrayObjects) {
             let divFirst = document.createElement('div');
-            fetchQuestionTags('http://localhost:8091/api/user/question?page=1')
+            fetchQuestionTags('http://localhost:8091/api/user/question/noAnswer?page=1')
                 .then(result => result.totalResultCount)
                 .then(res => numberOfQuestionsHtml.innerHTML = res.toString());
             if (arrayObjects != null && arrayObjects.length > 0) {
@@ -364,60 +364,60 @@ function createPagination() {
                     let formId = 'question-tags' + questionId;
                     let questionTagsList = document.createElement('div');
                     questionTagsList.setAttribute('id', formId);
-                    fetchQuestionTags('http://localhost:8091/api/user/question?page=1')
+                    fetchQuestionTags('http://localhost:8091/api/user/question/noAnswer?page=1')
                         .then(result => result.totalResultCount)
-                        .then(totalNumberOfQuestions => fetchQuestionTags('http://localhost:8091/api/user/question?page=1&items=' + totalNumberOfQuestions))
+                        .then(totalNumberOfQuestions => fetchQuestionTags('http://localhost:8091/api/user/question/noAnswer?page=1&items=' + totalNumberOfQuestions))
                         .then(result => result.items[questionId - 1].listTagDto)
                         .then(tags => showTagsForQuestion(tags, questionTagsList));
                     divCard.innerHTML = '';
                     divCard.innerHTML +=
                         '<div class="card-body p-1">' +
-                            '<div class="row">' +
-                                '<div class="col-2 align-items-center">' +
-                                    '<div class="text-center">' +
-                                        '<div>' + arrayObjects[num].countValuable + '</div>' +
-                                        '<small>голосов</small>' +
-                                    '</div>' +
-                                    '<div class="text-center text-info border border-info rounded">' +
-                                        '<div>' + arrayObjects[num].countAnswer + '</div>' +
-                                        '<small>ответов</small>' +
-                                    '</div>' +
-                                    '<div class="text-center">' +
-                                        '<div>' + arrayObjects[num].viewCount + '</div>' +
-                                        '<small>показов</small>' +
-                                    '</div>' +
-                                '</div>' +
-                                '<div class="col-10">' +
-                                    '<a class="mb-1" href="#">' + questionTitle + '</a>' +
-                                    '<p class="mb-1">' + questionDescription + '</p>' +
-                                    '<div class="row">' +
-                                        '<div class="col-7">' +
-                                            // адрес - children[0].children[0].children[1].children[2].children[0]
-                                            // сюда будет вставлен questionTagsList
-                                        '</div>' +
-                                        '<div class="col-5">' +
-                                            '<div>' +
-                                                '<div>' +
-                                                    '<small class="text-muted">' +
-                                                        'задан <span>26 дек \'21 в 00:00</span>' +
-                                                    '</small>' +
-                                                '</div>' +
-                                                '<div style="display: inline-block">' +
-                                                    '<img src="/images/noUserAvatar.png"' +
-                                                         ' style="width: 50px; height: 50px" alt="...">' +
-                                                '</div>' +
-                                                '<div class="align-items-top"' +
-                                                     ' style="display: inline-block; vertical-align: bottom">' +
-                                                    '<div class="align-items-top">' +
-                                                        '<a class="align-top" href="#">' + arrayObjects[num].authorName + '</a>' +
-                                                    '</div>' +
-                                                    '<div class="text-muted">'+ arrayObjects[num].authorReputation +'</div>' +
-                                                '</div>' +
-                                            '</div>' +
-                                        '</div>' +
-                                    '</div>' +
-                                '</div>' +
-                            '</div>' +
+                        '<div class="row">' +
+                        '<div class="col-2 align-items-center">' +
+                        '<div class="text-center">' +
+                        '<div>' + arrayObjects[num].countValuable + '</div>' +
+                        '<small>голосов</small>' +
+                        '</div>' +
+                        '<div class="text-center text-info border border-info rounded">' +
+                        '<div>' + arrayObjects[num].countAnswer + '</div>' +
+                        '<small>ответов</small>' +
+                        '</div>' +
+                        '<div class="text-center">' +
+                        '<div>' + arrayObjects[num].viewCount + '</div>' +
+                        '<small>показов</small>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="col-10">' +
+                        '<a class="mb-1" href="#">' + questionTitle + '</a>' +
+                        '<p class="mb-1">' + questionDescription + '</p>' +
+                        '<div class="row">' +
+                        '<div class="col-7">' +
+                        // адрес - children[0].children[0].children[1].children[2].children[0]
+                        // сюда будет вставлен questionTagsList
+                        '</div>' +
+                        '<div class="col-5">' +
+                        '<div>' +
+                        '<div>' +
+                        '<small class="text-muted">' +
+                        'задан <span>26 дек \'21 в 00:00</span>' +
+                        '</small>' +
+                        '</div>' +
+                        '<div style="display: inline-block">' +
+                        '<img src="/images/noUserAvatar.png"' +
+                        ' style="width: 50px; height: 50px" alt="...">' +
+                        '</div>' +
+                        '<div class="align-items-top"' +
+                        ' style="display: inline-block; vertical-align: bottom">' +
+                        '<div class="align-items-top">' +
+                        '<a class="align-top" href="#">' + arrayObjects[num].authorName + '</a>' +
+                        '</div>' +
+                        '<div class="text-muted">'+ arrayObjects[num].authorReputation +'</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
                         '</div>';
                     divCard.children[0].children[0].children[1].children[2].children[0].appendChild(questionTagsList);
                     divFirst.appendChild(divCard);
