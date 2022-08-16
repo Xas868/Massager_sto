@@ -6,7 +6,11 @@ import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
+import com.javamentor.qa.platform.models.dto.UserDto;
+import com.javamentor.qa.platform.models.util.CalendarPeriod;
+import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
@@ -16,6 +20,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.javamentor.qa.platform.models.util.CalendarPeriod.day;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -35,6 +41,8 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     private UserDao userDao;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserDtoService userDtoService;
     @Autowired
     private CacheManager cacheManager;
 
@@ -773,13 +781,18 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
             })
     public void testGetDateTimeForUsers() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
-        mockMvc.perform(get("/api/user/top")
+        var result = mockMvc.perform(get("/api/user/top")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("calendarPeriod", "month"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].id").value(containsInRelativeOrder(105, 102, 108, 114, 109, 101, 106, 100, 107, 113)));
+        List<Long> listOfIds = userDtoService
+                .getTopUsersForDaysRankedByNumberOfQuestions(CalendarPeriod.month)
+                .stream()
+                .map(UserDto::getId)
+                .collect(Collectors.toList());
         // There are 4 answers in dataset with persist date more than 7 days.
         // Test to be sure these answers don't appear in the test
         assertThat(entityManager.createQuery(
@@ -790,20 +803,12 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                                 "left join VoteAnswer as vot " +
                                 "on ans.id = vot.answer.id " +
                                 "where ans.persistDateTime > :date " +
-                                "and usr.id = 105 " +
-                                "or  usr.id = 102 " +
-                                "or  usr.id = 108 " +
-                                "or  usr.id = 114 " +
-                                "or  usr.id = 109 " +
-                                "or  usr.id = 101 " +
-                                "or  usr.id = 106 " +
-                                "or  usr.id = 100 " +
-                                "or  usr.id = 107 " +
-                                "or  usr.id = 113 " +
+                                "and usr.id in :userId " +
                                 "and ans.isDeleted = false " +
                                 "and usr.isDeleted = false ",
                         LocalDateTime.class)
                 .setParameter("date", LocalDateTime.now().minusDays(week.getDays()))
+                .setParameter("userId", listOfIds)
                 .getResultList()
                 .stream()
                 .anyMatch(time -> time.isAfter(LocalDateTime.now().minusDays(7))))
