@@ -42,7 +42,7 @@ public class TestDataInitService {
     private final ChatRoomService chatRoomService;
     private final GroupChatRoomService groupChatRoomService;
     private final SingleChatService singleChatService;
-
+    private final QuestionViewedService questionViewedService;
     private final long NUM_OF_USERS = 100L;
     private final long NUM_OF_TAGS = 50L;
     private final long NUM_OF_QUESTIONS = 100L;
@@ -72,6 +72,7 @@ public class TestDataInitService {
         createMessage();
         createGroupChat();
         createSingleChat();
+        createQuestionViewed();
     }
 
     public void createMessage() {
@@ -119,6 +120,8 @@ public class TestDataInitService {
                     .chat(Chat.builder().chatType(ChatType.SINGLE).build())
                     .userOne(getRandomUser())
                     .useTwo(getRandomUser())
+                    .userOneIsDeleted(false)
+                    .userTwoIsDeleted(false)
                     .build();
             singleChats.add(singleChat);
         }
@@ -151,7 +154,20 @@ public class TestDataInitService {
                     .build();
             users.add(user);
         }
-
+        Role role = roles.get(1);
+        User user = User.builder()
+                .email("zzzz") //"z@z.ru"
+                .password("zzzz")
+                .fullName("Zzzz")
+                .city("Moscow")
+                .about("I'm Z user")
+                .nickname("zuser")
+                .role(role)
+                .isEnabled(true)
+                .isDeleted(false)
+                .imageLink("/images/noUserAvatar.png")
+                .build();
+        users.add(user);
         userService.persistAll(users);
     }
 
@@ -223,13 +239,15 @@ public class TestDataInitService {
                     .title("Question " + i)
                     .description("What do you think about question " + i + "?")
                     .persistDateTime(LocalDateTime.now().minusDays(i))
+                    .lastUpdateDateTime(LocalDateTime.now().minusDays(i).plusHours(12))
                     .user(getRandomUser())
                     .tags(getRandomTagList())
                     .build();
-            questions.add(question);
+                    questions.add(question);
         }
 
         questionService.persistAll(questions);
+
     }
 
     public void createAnswers() {
@@ -303,6 +321,22 @@ public class TestDataInitService {
             voteAnswers.add(voteAnswer);
         }
         voteAnswerService.persistAll(voteAnswers);
+    }
+
+    public void createQuestionViewed() {
+        List<Question> questions = questionService.getAll();
+        for (int i = 0; i < NUM_OF_QUESTIONS; i++) {
+            int numberOfViews = new Random().nextInt((int) NUM_OF_USERS);
+            Question question = questions.get(i);
+            Set<User> users = new HashSet<>();
+            for (int j = 0; j < numberOfViews; j++) {
+                User user = getRandomUser();
+                users.add(user);
+            }
+            for (User user : users) {
+                questionViewedService.markQuestionLikeViewed(user, question);
+            }
+        }
     }
 
     private List<Tag> getRandomTagList() {

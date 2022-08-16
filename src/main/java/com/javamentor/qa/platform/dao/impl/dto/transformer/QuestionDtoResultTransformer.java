@@ -23,7 +23,8 @@ public class QuestionDtoResultTransformer implements ResultTransformer {
         questionDto.setCountAnswer(((Number) tuple[9]).intValue());
         questionDto.setCountValuable(tuple[10] == null ? 0 : ((Number) tuple[10]).intValue());
         questionDto.setIsUserVote(tuple[11] == null ? null : (VoteType) tuple[11]);
-        questionDto.setIsUserBookmark(((Number) tuple[12]).intValue() >0 ? true : false );
+        questionDto.setIsUserBookmark((Boolean) tuple[12]);
+        questionDto.setViewCount(tuple[13] == null ? 0 : ((Number) tuple[13]).intValue());
         return questionDto;
     }
 

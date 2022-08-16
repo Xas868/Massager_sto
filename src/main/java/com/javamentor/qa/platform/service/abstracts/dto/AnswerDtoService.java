@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.service.abstracts.dto;
 
 import com.javamentor.qa.platform.models.dto.AnswerCommentDto;
 import com.javamentor.qa.platform.models.dto.AnswerDTO;
+import com.javamentor.qa.platform.models.dto.AnswerUserDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,4 +14,5 @@ public interface AnswerDtoService extends PageDtoService<AnswerDTO> {
 
      List<AnswerCommentDto> getAllCommentsDtoByAnswerId(Long answerId);
 
+     List<AnswerUserDto> getLastAnswersForWeek(Long userId);
 }

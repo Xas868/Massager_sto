@@ -21,17 +21,30 @@ public class QuestionPageDtoDaoByNoAnswersImpl implements PageDtoDao<QuestionVie
     public List<QuestionViewDto> getPaginationItems(PaginationData properties) {
         int itemsOnPage = properties.getItemsOnPage();
         int offset = (properties.getCurrentPage() - 1) * itemsOnPage;
-        return (List<QuestionViewDto>) entityManager.createQuery("SELECT DISTINCT q.id, q.title, u.id," +
-                        " u.fullName, u.imageLink, q.description, q.persistDateTime," +
-                        " q.lastUpdateDateTime, (SELECT SUM(r.count) from Reputation r WHERE r.author.id = q.user.id), " +
-                        " (select count (a.id) from Question q JOIN Answer a ON a.question.id = q.id)," +
-                        " (select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v JOIN Question q" +
-                        " ON v.question.id = q.id)" +
-                        " from Question q JOIN q.user u JOIN q.tags t " +
-                        " WHERE q.answers IS EMPTY AND ((:trackedTags) IS NULL OR t.id IN (:trackedTags)) AND" +
-                        " ((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags)))")
+        return (List<QuestionViewDto>) entityManager.createQuery(
+                "SELECT DISTINCT" +
+                        " q.id as question_id," +
+                        " q.title," +
+                        " q.user.id as author_id," +
+                        " q.user.fullName," +
+                        " q.user.imageLink," +
+                        " q.description," +
+                        " q.persistDateTime," +
+                        " q.lastUpdateDateTime," +
+                        " (coalesce((select sum(r.count) from Reputation r where r.author.id = q.user.id),0)) as author_reputation," +
+                        " (coalesce((select count(a.id) from Answer a where a.question.id = q.id),0)) as answerCounter, " +
+                        " (coalesce((select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id), 0)) as count_valuable," +
+                        " false as is_user_bookmark," +//" (select count(bm.id) > 0 from BookMarks bm where bm.question.id = q.id and bm.user.id = :userId) as is_user_bookmark, " +
+                        " (coalesce((select count(qv.id) from QuestionViewed qv where qv.question.id = q.id), 0)) as view_count" +
+                        " from Question q" +
+                        " left JOIN q.tags t " +
+                        " WHERE q.answers IS EMPTY AND ((:trackedTags) IS NULL OR t.id IN (:trackedTags)) " +
+                        " AND ((:ignoredTags) IS NULL OR q.id not IN (select q.id from Question q join q.tags t where t.id in (:ignoredTags)))  " +
+                        " and (:dateFilter = 0 or q.persistDateTime >= current_date - :dateFilter) "
+                )
                 .setParameter("trackedTags", properties.getProps().get("trackedTags"))
                 .setParameter("ignoredTags", properties.getProps().get("ignoredTags"))
+                .setParameter("dateFilter", properties.getProps().get("dateFilter"))
                 .setFirstResult(offset)
                 .setMaxResults(itemsOnPage)
                 .unwrap(org.hibernate.query.Query.class)

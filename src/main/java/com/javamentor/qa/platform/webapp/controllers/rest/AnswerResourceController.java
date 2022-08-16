@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.AnswerCommentDto;
 import com.javamentor.qa.platform.models.dto.AnswerDTO;
+import com.javamentor.qa.platform.models.dto.AnswerUserDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
@@ -255,5 +256,18 @@ public class AnswerResourceController {
     }
 
 
+    @Operation(
+            summary = "Получить список всех ответов пользователя за неделю",
+            description = "Получение всех ответов пользователя за неделю"
+    )
+    @ApiResponse(responseCode = "200",
+            description = "Ответы пользователя за неделю", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = AnswerUserDto.class))
+    })
+    @GetMapping("/{userId}/answers")
+    public ResponseEntity<List<AnswerUserDto>> getLastAnswersForWeek(@PathVariable Long userId) {
+        List<AnswerUserDto> answerUser = answerDtoService.getLastAnswersForWeek(userId);
+        return new ResponseEntity<>(answerUser, HttpStatus.OK);
+    }
 }
 

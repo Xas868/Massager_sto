@@ -157,7 +157,7 @@ function createSideBar() {
             <a class="nav-link" href="/questions" id="sidebar_questions">Вопросы</a>
             <a class="nav-link" href="/tags" id="sidebar_tags">Метки</a>
             <a class="nav-link" href="/users" id="sidebar_users">Участники</a>
-            <a class="nav-link" href="#" id="sidebar_unanswered">Неотвеченные</a>
+            <a class="nav-link" href="/unanswered" id="sidebar_unanswered">Неотвеченные</a>
         </div>
     `
     sideBar.classList.add("sidebar")
