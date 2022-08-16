@@ -30,7 +30,7 @@ public class QuestionPageDtoDaoSortedByImpl implements PageDtoDao<QuestionViewDt
                         " q.description," +
                         " q.persistDateTime," +
                         " q.lastUpdateDateTime," +
-                        " (select sum(r.count) from Reputation r where r.author.id = q.user.id) as author_reputation," +
+                        " (coalesce((select sum(r.count) from Reputation r where r.author.id = q.user.id),0)) as author_reputation," +
                         " (coalesce((select count(a.id) from Answer a where a.question.id = q.id),0)) as answerCounter, " +
                         " (coalesce((select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id), 0)) as count_valuable," +
                         " false as is_user_bookmark," +//" (select count(bm.id) > 0 from BookMarks bm where bm.question.id = q.id and bm.user.id = :userId) as is_user_bookmark, " +

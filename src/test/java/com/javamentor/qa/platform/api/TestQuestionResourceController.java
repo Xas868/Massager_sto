@@ -35,6 +35,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -271,7 +272,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanAfter = true, cleanBefore = true,
             value = {
                     "dataset/testQuestionResourceController/question.yml",
                     "dataset/testQuestionResourceController/tag.yml",
@@ -851,8 +852,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
 
     @Test
 //  Получаем все вопросы по id тега, с items и без
-    @DataSet(cleanBefore = true,
-            value = {
+    @DataSet(value = {
                     "dataset/testQuestionTagIdResource/questions.yml",
                     "dataset/testQuestionTagIdResource/tag.yml",
                     "dataset/testQuestionTagIdResource/questions_has_tag.yml",
@@ -863,7 +863,8 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                     "dataset/testQuestionTagIdResource/role.yml",
                     "dataset/QuestionResourceController/question_viewed/qv_viewCount2.yml"
             },
-            strategy = SeedStrategy.CLEAN_INSERT)
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true)
     public void shouldReturnAllQuestionsByTagId() throws Exception {
 
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
@@ -945,7 +946,9 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
             "dataset/QuestionResourceController/answers.yml",
             "dataset/QuestionResourceController/votes_on_questions.yml",
             "dataset/QuestionResourceController/question_viewed/qv_viewCount1.yml"
-    }
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
     )
     // Получение json по вопросам без ответов
     public void getCorrectListOfQuestionsWithoutAnswers() throws Exception {
@@ -1017,7 +1020,9 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
             "dataset/QuestionResourceController/more_questions_has_tags.yml",
             "dataset/QuestionResourceController/answers_for_all_questions.yml",
             "dataset/QuestionResourceController/votes_on_questions.yml"
-    }
+    },
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
     )
     // Получение json по вопросам без ответов, когда нет таких ответов
     public void getQuestionsWithoutAnswersWhenThereIsNoSuchQuestions() throws Exception {
@@ -1250,16 +1255,17 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
 
     @Transactional
     @Test
-    @DataSet(cleanBefore = true,
-            value = {
+    @DataSet(value = {
                     "dataset/testQuestionResourceController/question_different_date.yml",
                     "dataset/testQuestionResourceController/tag.yml",
+                    "dataset/testQuestionResourceController/answer.yml",
                     "dataset/testQuestionResourceController/questions_has_tag1.yml",
                     "dataset/QuestionResourceController/users.yml",
                     "dataset/testQuestionResourceController/role.yml",
                     "dataset/QuestionResourceController/votes_on_questions.yml"
             },
-            strategy = SeedStrategy.CLEAN_INSERT
+            strategy = SeedStrategy.CLEAN_INSERT,
+            cleanAfter = true, cleanBefore = true
     )
     public void getQuestionSortedByWeightForTheWeek() throws Exception {
 
@@ -1384,21 +1390,21 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.totalResultCount").value(7))
                 .andExpect(jsonPath("$.totalPageCount").value(1))
                 .andExpect(jsonPath("$.items.length()").value(7))
-                .andExpect(jsonPath("$.items[0].id").value(5))
-                .andExpect(jsonPath("$.items[0].title").value("test5"))
+                .andExpect(jsonPath("$.items[0].id").value(11))
+                .andExpect(jsonPath("$.items[0].title").value("test11"))
                 .andExpect(jsonPath("$.items[0].authorId").value(15))
                 .andExpect(jsonPath("$.items[0].authorReputation").value(0))
                 .andExpect(jsonPath("$.items[0].authorName").value("test 15"))
                 .andExpect(jsonPath("$.items[0].authorImage").value("photo"))
-                .andExpect(jsonPath("$.items[0].description").value("test5"))
+                .andExpect(jsonPath("$.items[0].description").value("test11"))
                 .andExpect(jsonPath("$.items[0].viewCount").value(0))
-                .andExpect(jsonPath("$.items[0].countAnswer").value(0))
+                .andExpect(jsonPath("$.items[0].countAnswer").value(8))
                 .andExpect(jsonPath("$.items[0].countValuable").value(-1))
-                .andExpect(jsonPath("$.items[1].id").value(10))
-                .andExpect(jsonPath("$.items[2].id").value(3))
+                .andExpect(jsonPath("$.items[1].id").value(1))
+                .andExpect(jsonPath("$.items[2].id").value(2))
                 .andExpect(jsonPath("$.items[3].id").value(4))
-                .andExpect(jsonPath("$.items[4].id").value(2))
-                .andExpect(jsonPath("$.items[6].id").value(11));
+                .andExpect(jsonPath("$.items[4].id").value(3))
+                .andExpect(jsonPath("$.items[6].id").value(5));
         /* Проверка на :
         1) корректности запроса при запросе второй странице и количестве items на странице 5;
         2) корректность количества записей(totalResultCount=7);
@@ -1416,7 +1422,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.totalPageCount").value(2))
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(jsonPath("$.currentPageNumber").value(2))
-                .andExpect(jsonPath("$.items[1].id").value(11));
+                .andExpect(jsonPath("$.items[1].id").value(5));
         /*Проверка запроса при параметре items=0*/
         mockMvc.perform(get("/api/user/question/paginationForMonth?page=3&items=0")
                         .header(AUTHORIZATION, USER_TOKEN)
@@ -1431,8 +1437,8 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalResultCount").value(2))
-                .andExpect(jsonPath("$.items[0].id").value(4))
-                .andExpect(jsonPath("$.items[1].id").value(11));
+                .andExpect(jsonPath("$.items[0].id").value(11))
+                .andExpect(jsonPath("$.items[1].id").value(4));
         //Проверка корректности возвращаемых json при поиске записей по 2м тэгам
         mockMvc.perform(get("/api/user/question/paginationForMonth?page=1&items=4&trackedTag=4,2")
                         .header(AUTHORIZATION, USER_TOKEN)
@@ -1440,9 +1446,9 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalResultCount").value(3))
-                .andExpect(jsonPath("$.items[0].id").value(4))
+                .andExpect(jsonPath("$.items[0].id").value(11))
                 .andExpect(jsonPath("$.items[1].id").value(2))
-                .andExpect(jsonPath("$.items[2].id").value(11));
+                .andExpect(jsonPath("$.items[2].id").value(4));
         //Проверка корректности возвращаемых json при поиске записей по 2м тэгам и отсутсвию 1го тэга
         mockMvc.perform(get("/api/user/question/paginationForMonth?page=1&items=4&trackedTag=4,1&ignoredTag=2")
                         .header(AUTHORIZATION, USER_TOKEN)
@@ -1450,10 +1456,10 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalResultCount").value(6))
-                .andExpect(jsonPath("$.items[0].id").value(5))
-                .andExpect(jsonPath("$.items[1].id").value(10))
-                .andExpect(jsonPath("$.items[2].id").value(3))
-                .andExpect(jsonPath("$.items[3].id").value(4));
+                .andExpect(jsonPath("$.items[0].id").value(11))
+                .andExpect(jsonPath("$.items[1].id").value(1))
+                .andExpect(jsonPath("$.items[2].id").value(4))
+                .andExpect(jsonPath("$.items[3].id").value(3));
     }
 
     @Test
@@ -1712,7 +1718,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T15:07:52"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T13:07:52"))
                 .andExpect(jsonPath("$.items.length()").value(8))
                 .andExpect(status().isOk());
 
@@ -1721,7 +1727,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2021-12-13T15:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2021-12-13T13:07:52.716"))
                 .andExpect(jsonPath("$.items.length()").value(3))
                 .andExpect(status().isOk());
 
@@ -1730,7 +1736,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-13T15:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-23T13:07:52.716"))
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(status().isOk());
 
@@ -1739,7 +1745,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-08-14T13:07:52.716"))
                 .andExpect(jsonPath("$.items.length()").value(1))
                 .andExpect(status().isOk());
 
@@ -1760,7 +1766,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T15:07:52"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T13:07:52.716"))
                 .andExpect(jsonPath("$.items.length()").value(8))
                 .andExpect(status().isOk());
 
@@ -1769,7 +1775,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2021-12-13T13:07:52.716"))
                 .andExpect(jsonPath("$.items.length()").value(3))
                 .andExpect(status().isOk());
 
@@ -1778,7 +1784,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-23T13:07:52.716"))
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(status().isOk());
 
@@ -1787,7 +1793,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-08-14T13:07:52.716"))
                 .andExpect(jsonPath("$.items.length()").value(1))
                 .andExpect(status().isOk());
 
@@ -1795,7 +1801,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
 
     @Test
     @DataSet(value = {
-            "dataset/QuestionResourceController/questionsWithDateFilter.yml",
+            "dataset/QuestionResourceController/questionsWithDateFilter1.yml",
 
     },
             strategy = SeedStrategy.CLEAN_INSERT,
@@ -1808,7 +1814,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T15:07:52"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T13:07:52"))
                 .andExpect(jsonPath("$.items.length()").value(8))
                 .andExpect(status().isOk());
 
@@ -1817,7 +1823,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2021-12-13T13:07:52.716"))
                 .andExpect(jsonPath("$.items.length()").value(3))
                 .andExpect(status().isOk());
 
@@ -1826,7 +1832,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-23T13:07:52.716"))
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(status().isOk());
 
@@ -1835,7 +1841,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-08-14T13:07:52.716"))
                 .andExpect(jsonPath("$.items.length()").value(1))
                 .andExpect(status().isOk());
 
@@ -1855,7 +1861,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T15:07:52"))
+                .andExpect(jsonPath("$.items[7].persistDateTime").value("2020-12-13T13:07:52"))
                 .andExpect(jsonPath("$.items.length()").value(8))
                 .andExpect(status().isOk());
 
@@ -1864,7 +1870,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items[2].persistDateTime").value("2021-12-13T13:07:52.716"))
                 .andExpect(jsonPath("$.items.length()").value(3))
                 .andExpect(status().isOk());
 
@@ -1873,7 +1879,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items[1].persistDateTime").value("2022-07-23T13:07:52.716"))
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(status().isOk());
 
@@ -1882,7 +1888,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-28T15:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-08-14T13:07:52.716"))
                 .andExpect(jsonPath("$.items.length()").value(1))
                 .andExpect(status().isOk());
 
