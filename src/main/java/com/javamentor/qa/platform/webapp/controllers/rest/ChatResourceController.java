@@ -1,15 +1,23 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
-import com.javamentor.qa.platform.models.dto.GroupChatDto;
-import com.javamentor.qa.platform.models.dto.MessageDto;
-import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.entity.chat.ChatType;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
-import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatRoomService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.impl.dto.DtoServiceImpl;
+import com.javamentor.qa.platform.service.impl.model.ChatRoomServiceImpl;
+import com.javamentor.qa.platform.webapp.converters.GroupChatConverter;
+import com.javamentor.qa.platform.webapp.converters.SingleChatConverter;
 import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -19,7 +27,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Tag(name = "ChatResourceController", description = "Позволяет работать с чатами")
 @RestController
@@ -29,13 +40,24 @@ public class ChatResourceController {
     private final ChatDtoService chatDtoService;
     private final SingleChatRoomService singleChatRoomService;
     private final SingleChatConverter singleChatConverter;
+    private final ChatRoomServiceImpl chatRoomServiceImpl;
+    private final GroupChatRoomService groupChatRoomService;
+    private final SingleChatService singleChatService;
+    private final UserDao userDao;
+    private final GroupChatConverter groupChatConverter;
+    private final UserService userService;
 
-
-    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, SingleChatRoomService singleChatRoomService, SingleChatConverter singleChatConverter) {
+    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, SingleChatRoomService singleChatRoomService, SingleChatConverter singleChatConverter, ChatRoomServiceImpl chatRoomServiceImpl, GroupChatRoomService groupChatRoomService, SingleChatService singleChatService, UserDao userDao, GroupChatConverter groupChatConverter, UserService userService) {
         this.messagesPaginationService = dtoService;
         this.chatDtoService = chatDtoService;
         this.singleChatRoomService = singleChatRoomService;
         this.singleChatConverter = singleChatConverter;
+        this.chatRoomServiceImpl = chatRoomServiceImpl;
+        this.groupChatRoomService = groupChatRoomService;
+        this.singleChatService = singleChatService;
+        this.userDao = userDao;
+        this.groupChatConverter = groupChatConverter;
+        this.userService = userService;
     }
 
     @GetMapping("/single")
@@ -119,7 +141,7 @@ public class ChatResourceController {
             @Parameter(name = "Id чата.", required = true, description = "Id чата является обязательным параметром.")
             Long chatId,
             Authentication authentication) {
-        ChatType chatType = chatRoomServiceIml.getById(chatId).get().getChatType();
+        ChatType chatType = chatRoomServiceImpl.getById(chatId).get().getChatType();
         User currentUser = (User) authentication.getPrincipal();
 
         if (chatType.equals(ChatType.GROUP)) {
