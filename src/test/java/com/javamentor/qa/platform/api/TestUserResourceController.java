@@ -70,7 +70,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     Вычисление количества ответов аутентифицированного юзера.
     У юзера user100 5 ответ, 3 из которых сделаны менее, чем неделю назад.
      */
-    @DataSet (cleanBefore = true,
+    @DataSet(cleanBefore = true,
             value = {
                     "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/answers.yml",
                     "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/users.yml",
@@ -93,7 +93,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     Вычисление количества ответов аутентифицированного юзера.
     У юзера user101 3 ответa, 1 из которых сделаны менее, чем неделю назад.
      */
-    @DataSet (cleanBefore = true,
+    @DataSet(cleanBefore = true,
             value = {
                     "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/answers.yml",
                     "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/users.yml",
@@ -116,7 +116,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     Вычисление количества ответов аутентифицированного юзера.
     У юзера user102 3 ответa, среди которых нет сделанных ранее, чем неделю назад.
      */
-    @DataSet (cleanBefore = true,
+    @DataSet(cleanBefore = true,
             value = {
                     "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/answers.yml",
                     "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/users.yml",
@@ -790,6 +790,16 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                                 "left join VoteAnswer as vot " +
                                 "on ans.id = vot.answer.id " +
                                 "where ans.persistDateTime > :date " +
+                                "and usr.id = 105 " +
+                                "or  usr.id = 102 " +
+                                "or  usr.id = 108 " +
+                                "or  usr.id = 114 " +
+                                "or  usr.id = 109 " +
+                                "or  usr.id = 101 " +
+                                "or  usr.id = 106 " +
+                                "or  usr.id = 100 " +
+                                "or  usr.id = 107 " +
+                                "or  usr.id = 113 " +
                                 "and ans.isDeleted = false " +
                                 "and usr.isDeleted = false ",
                         LocalDateTime.class)
