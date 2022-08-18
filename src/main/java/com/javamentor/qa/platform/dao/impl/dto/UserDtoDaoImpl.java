@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.AnswerDTO;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.util.CalendarPeriod;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -60,7 +61,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
     @Override
-    public List<UserDto> getTop10UsersForWeekRankedByNumberOfQuestions() {
+    public List<UserDto> getTopUsersForDaysRankedByNumberOfQuestions(CalendarPeriod calendarPeriod) {
         String hql = "select u.id, u.email, u.fullName, u.imageLink, u.city, " +
                 "(select sum(case when r.count is null then 0 else r.count end) from Reputation r where r.author.id=u.id) as reputation, " +
                 "sum(case when voa.vote = 'UP_VOTE' then 1 when voa.vote = 'DOWN_VOTE' then -1 else 0 end) as sumVotes, " +
@@ -72,7 +73,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 "group by u.id " +
                 "order by answersCount desc, sumVotes desc, u.id";
         return entityManager.createQuery(hql)
-                .setParameter("date", LocalDateTime.now().minusDays(7))
+                .setParameter("date", LocalDateTime.now().minusDays(calendarPeriod.getDays()))
                 .unwrap(org.hibernate.query.Query.class)
                 .setResultTransformer(new ResultTransformer() {
                     @Override

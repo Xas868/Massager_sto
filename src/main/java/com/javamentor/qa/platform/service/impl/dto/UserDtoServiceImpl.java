@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
+import com.javamentor.qa.platform.models.util.CalendarPeriod;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import org.springframework.stereotype.Service;
 
@@ -57,8 +58,8 @@ public class UserDtoServiceImpl extends DtoServiceImpl<UserDto> implements UserD
     }
 
     @Override
-    public List<UserDto> getTop10UsersForWeekRankedByNumberOfQuestions() {
-        var resultList = userDtoDao.getTop10UsersForWeekRankedByNumberOfQuestions();
+    public List<UserDto> getTopUsersForDaysRankedByNumberOfQuestions(CalendarPeriod calendarPeriod) {
+        var resultList = userDtoDao.getTopUsersForDaysRankedByNumberOfQuestions(calendarPeriod);
         var usersIdList = resultList.stream().map(UserDto::getId).collect(Collectors.toList());
         var map = usersIdList.stream().collect(Collectors.toMap(Function.identity(), tagDtoDao::getTop3TagsForUser));
         resultList.forEach(u -> u.setListTagDto(map.get(u.getId())));
