@@ -2,13 +2,16 @@ package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
 import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
-import com.javamentor.qa.platform.models.entity.chat.*;
+import com.javamentor.qa.platform.models.entity.chat.Chat;
+import com.javamentor.qa.platform.models.entity.chat.ChatType;
+import com.javamentor.qa.platform.models.entity.chat.Message;
+import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.model.*;
+import com.javamentor.qa.platform.service.abstracts.model.MessageService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatRoomService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
 
 @Service
@@ -23,7 +26,6 @@ public class SingleChatRoomServiceImpl extends ReadWriteServiceImpl<SingleChat, 
         this.messageService = messageService;
     }
 
-    @Transactional
     public SingleChat createSingleChatAndFirstMessage(CreateSingleChatDto createSingleChatDto, User currentUser, Optional<User> destinationUser) {
         SingleChat singleChat;
         try {

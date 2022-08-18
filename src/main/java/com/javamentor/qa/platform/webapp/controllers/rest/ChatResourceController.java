@@ -2,14 +2,15 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
-import com.javamentor.qa.platform.models.dto.ChatDto;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
-import com.javamentor.qa.platform.models.dto.*;
-import com.javamentor.qa.platform.models.entity.chat.SingleChat;
-import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
-import com.javamentor.qa.platform.models.dto.GroupChatDto;
+import com.javamentor.qa.platform.models.dto.ChatDto;
+import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
 import com.javamentor.qa.platform.models.dto.MessageDto;
+import com.javamentor.qa.platform.models.dto.SingleChatDto;
+import com.javamentor.qa.platform.models.dto.GroupChatDto;
+import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
@@ -17,10 +18,8 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import com.javamentor.qa.platform.service.abstracts.model.ChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.impl.dto.DtoServiceImpl;
 import com.javamentor.qa.platform.service.impl.model.ChatRoomServiceImpl;
 import com.javamentor.qa.platform.webapp.converters.GroupChatConverter;
@@ -29,15 +28,16 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Optional;
 import java.util.Set;
 
@@ -54,21 +54,18 @@ public class ChatResourceController {
     private final GroupChatConverter groupChatConverter;
     private final UserDao userDao;
     private final SingleChatService singleChatService;
-    private final UserService userService;
 
-    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, SingleChatRoomService singleChatRoomService, UserService userService) {
     @Autowired
-    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, ChatRoomServiceImpl chatRoomServiceIml, GroupChatConverter groupChatConverter, UserDao userDao, GroupChatRoomService groupChatRoomService, SingleChatService singleChatService, UserService userService) {
-        this.messagesPaginationService = dtoService;
+    private ChatResourceController(DtoServiceImpl<MessageDto> messagesPaginationService, ChatDtoService chatDtoService, SingleChatRoomService singleChatRoomService, UserService userService, ChatRoomServiceImpl chatRoomServiceIml, GroupChatRoomService groupChatRoomService, GroupChatConverter groupChatConverter, UserDao userDao, SingleChatService singleChatService) {
+        this.messagesPaginationService = messagesPaginationService;
         this.chatDtoService = chatDtoService;
         this.singleChatRoomService = singleChatRoomService;
         this.userService = userService;
         this.chatRoomServiceIml = chatRoomServiceIml;
-        this.singleChatService = singleChatService;
+        this.groupChatRoomService = groupChatRoomService;
         this.groupChatConverter = groupChatConverter;
         this.userDao = userDao;
-        this.groupChatRoomService = groupChatRoomService;
-        this.userService = userService;
+        this.singleChatService = singleChatService;
     }
 
     @Operation(summary = "Поиск и сортировка чатов по указанному имени",
