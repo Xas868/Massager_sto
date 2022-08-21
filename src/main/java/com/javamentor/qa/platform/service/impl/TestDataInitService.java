@@ -418,13 +418,15 @@ public class TestDataInitService {
     }
 
     private boolean isUserPresentedChat(User user, Message message) {
-        Chat chat = message.getChat();
+        Chat chat = chatRoomService.getById(message.getChat().getId()).get();
 
-        if (chat.getChatType() == ChatType.SINGLE) {
+        if (chat.getChatType() == null) {
+            return false;
+        }
+        if (ChatType.SINGLE == chat.getChatType()) {
             SingleChat singleChat = singleChatService.getById(chat.getId()).get();
             return List.of(singleChat.getUserOne(), singleChat.getUseTwo()).contains(user);
         }
-
         GroupChat groupChat = groupChatRoomService.getById(chat.getId()).get();
         return groupChat.getUsers().contains(user);
     }
