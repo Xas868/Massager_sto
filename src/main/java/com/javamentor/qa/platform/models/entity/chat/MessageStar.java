@@ -9,8 +9,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Setter
 @Getter
 @Builder
@@ -21,11 +21,11 @@ public class MessageStar {
     @GeneratedValue(generator = "Message_star_seq")
     private Long id;
 
-    @JoinColumn
+    @JoinColumn(name = "message_id")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Message message;
 
-    @JoinColumn
+    @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User user;
 

@@ -43,6 +43,7 @@ public class TestDataInitService {
     private final GroupChatRoomService groupChatRoomService;
     private final SingleChatService singleChatService;
     private final QuestionViewedService questionViewedService;
+    private final MessageStarService messageStarService;
     private final long NUM_OF_USERS = 100L;
     private final long NUM_OF_TAGS = 50L;
     private final long NUM_OF_QUESTIONS = 100L;
@@ -56,6 +57,8 @@ public class TestDataInitService {
     private final long NUM_OF_MESSAGE = 5L;
     private final long NUM_OF_GROUPCHAT = 5L;
     private final long NUM_OF_SINGLECHAT = 5L;
+
+    private final long NUM_OF_FAVORITE_MESSAGES = 3L;
 
     public void init() {
         createRoles();
@@ -73,6 +76,7 @@ public class TestDataInitService {
         createGroupChat();
         createSingleChat();
         createQuestionViewed();
+        createMessageStar();
     }
 
     public void createMessage() {
@@ -243,7 +247,7 @@ public class TestDataInitService {
                     .user(getRandomUser())
                     .tags(getRandomTagList())
                     .build();
-                    questions.add(question);
+            questions.add(question);
         }
 
         questionService.persistAll(questions);
@@ -267,6 +271,7 @@ public class TestDataInitService {
 
         answerService.persistAll(answers);
     }
+
     public void createReputations() {
         List<Reputation> reputations = new ArrayList<>();
         for (long i = 1; i <= NUM_OF_REPUTATIONS; i++) {
@@ -283,6 +288,7 @@ public class TestDataInitService {
         }
         reputationService.persistAll(reputations);
     }
+
     public void createVoteQuestion() {
         List<VoteQuestion> voteQuestions = new ArrayList<>();
         for (long i = 1; i <= NUM_OF_VOTEQUESTIONS; i++) {
@@ -339,6 +345,23 @@ public class TestDataInitService {
         }
     }
 
+    public void createMessageStar() {
+        Set<MessageStar> favoriteMessages = new HashSet<>();
+
+        for (int i = 0; i < NUM_OF_FAVORITE_MESSAGES; i++) {
+            User user = getRandomUser();
+            Message message = getRandomMessage();
+            if (favoriteMessages.size() <= NUM_OF_FAVORITE_MESSAGES || isUserPresentedChat(user, message)) {
+                favoriteMessages.add(
+                        MessageStar.builder()
+                                .message(messageService.getById(message.getId()).get())
+                                .user(userService.getById(user.getId()).get())
+                                .build());
+            }
+        }
+        messageStarService.persistAll(favoriteMessages);
+    }
+
     private List<Tag> getRandomTagList() {
         List<Tag> tags = tagService.getAll();
         int numOfDeleteTags = tags.size() - 5 + new Random().nextInt(5);
@@ -352,11 +375,12 @@ public class TestDataInitService {
         List<User> users = userService.getAll();
         return users.get(new Random().nextInt(users.size()));
     }
+
     private User getRandomAdmin() {
-         User admin = getRandomUser();
-             if (admin.getRole().getId() == 1) {
-                return admin;
-             }
+        User admin = getRandomUser();
+        if (admin.getRole().getId() == 1) {
+            return admin;
+        }
         return null;
     }
 
@@ -386,5 +410,22 @@ public class TestDataInitService {
             }
         }
         return false;
+    }
+
+    private Message getRandomMessage() {
+        List<Message> messages = messageService.getAll();
+        return messages.get(new Random().nextInt(messages.size()));
+    }
+
+    private boolean isUserPresentedChat(User user, Message message) {
+        Chat chat = message.getChat();
+
+        if (chat.getChatType() == ChatType.SINGLE) {
+            SingleChat singleChat = singleChatService.getById(chat.getId()).get();
+            return List.of(singleChat.getUserOne(), singleChat.getUseTwo()).contains(user);
+        }
+
+        GroupChat groupChat = groupChatRoomService.getById(chat.getId()).get();
+        return groupChat.getUsers().contains(user);
     }
 }

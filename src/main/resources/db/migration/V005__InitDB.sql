@@ -2,8 +2,8 @@ create sequence message_star_seq start 1 increment 1;
 
 create table message_star (
     id bigint not null,
-    user varchar(255) not null,
-    message varchar(2048)  not null,
+    user_id bigint not null,
+    message_id bigint not null,
     persist_date timestamp,
     primary key (id)
 );
