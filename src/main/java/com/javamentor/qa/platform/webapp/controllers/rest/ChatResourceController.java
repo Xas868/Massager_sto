@@ -19,10 +19,13 @@ import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.impl.dto.DtoServiceImpl;
 import com.javamentor.qa.platform.service.impl.model.ChatRoomServiceImpl;
 import com.javamentor.qa.platform.webapp.converters.GroupChatConverter;
+import com.javamentor.qa.platform.webapp.converters.SingleChatConverter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,10 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -48,43 +49,25 @@ public class ChatResourceController {
     private final DtoServiceImpl<MessageDto> messagesPaginationService;
     private final ChatDtoService chatDtoService;
     private final SingleChatRoomService singleChatRoomService;
-    private final UserService userService;
-    private final ChatRoomServiceImpl chatRoomServiceIml;
+    private final SingleChatConverter singleChatConverter;
+    private final ChatRoomServiceImpl chatRoomServiceImpl;
     private final GroupChatRoomService groupChatRoomService;
-    private final GroupChatConverter groupChatConverter;
-    private final UserDao userDao;
     private final SingleChatService singleChatService;
+    private final UserDao userDao;
+    private final GroupChatConverter groupChatConverter;
+    private final UserService userService;
 
-    @Autowired
-    private ChatResourceController(DtoServiceImpl<MessageDto> messagesPaginationService, ChatDtoService chatDtoService, SingleChatRoomService singleChatRoomService, UserService userService, ChatRoomServiceImpl chatRoomServiceIml, GroupChatRoomService groupChatRoomService, GroupChatConverter groupChatConverter, UserDao userDao, SingleChatService singleChatService) {
-        this.messagesPaginationService = messagesPaginationService;
+    private ChatResourceController(DtoServiceImpl<MessageDto> dtoService, ChatDtoService chatDtoService, SingleChatRoomService singleChatRoomService, SingleChatConverter singleChatConverter, ChatRoomServiceImpl chatRoomServiceImpl, GroupChatRoomService groupChatRoomService, SingleChatService singleChatService, UserDao userDao, GroupChatConverter groupChatConverter, UserService userService) {
+        this.messagesPaginationService = dtoService;
         this.chatDtoService = chatDtoService;
         this.singleChatRoomService = singleChatRoomService;
-        this.userService = userService;
-        this.chatRoomServiceIml = chatRoomServiceIml;
+        this.singleChatConverter = singleChatConverter;
+        this.chatRoomServiceImpl = chatRoomServiceImpl;
         this.groupChatRoomService = groupChatRoomService;
-        this.groupChatConverter = groupChatConverter;
-        this.userDao = userDao;
         this.singleChatService = singleChatService;
-    }
-
-    @Operation(summary = "Поиск и сортировка чатов по указанному имени",
-            description = "Получение листа чатов, (групповых и одиночных) содержащих заданное имя сортированных по убыванию даты последнего в них сообщения")
-    @ApiResponse(responseCode = "200",
-            description = "Чаты найдены",
-            content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "400",
-            description = "Чаты не найдены",
-            content = @Content(mediaType = "application/json"))
-    @GetMapping
-    public ResponseEntity<List<ChatDto>> getChatsByName(
-            @RequestParam(name = "name", defaultValue = "")
-            @Parameter(name = "Строка по которой будет проходить поиск чатов",
-                    description = "Необязательный параметр. Любое совпадение строки в названии чата, вернёт этот чат")
-                    String chatName,
-            Authentication authentication) {
-        User currentUser = (User) authentication.getPrincipal();
-        return new ResponseEntity<>(chatDtoService.getAllChatsByNameAndUserId(chatName, currentUser.getId()), HttpStatus.OK);
+        this.userDao = userDao;
+        this.groupChatConverter = groupChatConverter;
+        this.userService = userService;
     }
 
     @GetMapping("/single")
@@ -93,7 +76,7 @@ public class ChatResourceController {
         return new ResponseEntity<>(chatDtoService.getAllSingleChatDtoByUserId(currentUser.getId()), HttpStatus.OK);
     }
 
-    @Operation(summary = "Создание single чата с первым сообщением.", description = "Создание single чата.")
+    @Operation(summary = "Создание single чата с первым сообщением.", description = "Создание single чата и первого сообщения.")
     @ApiResponse(responseCode = "200", description = "Single чат создан.", content = {
             @Content(mediaType = "application/json")
     })
@@ -101,14 +84,8 @@ public class ChatResourceController {
             @Content(mediaType = "application/json")
     })
     @PostMapping("/single")
-    public ResponseEntity<SingleChatDto> createSingleChatDto(@RequestBody CreateSingleChatDto createSingleChatDto) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = (User) auth.getPrincipal();
-        Optional<User> destinationUser = userService.getById(createSingleChatDto.getUserId());
-        if (destinationUser.isEmpty() || createSingleChatDto.getMessage() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        SingleChat singleChat = singleChatRoomService.createSingleChatAndFirstMessage(createSingleChatDto, currentUser, destinationUser);
+    public ResponseEntity<?> createSingleChatAndFirstMessageDto(@Valid @RequestBody CreateSingleChatDto createSingleChatDto) throws Exception {
+        SingleChat singleChat = singleChatRoomService.createSingleChatAndFirstMessage(createSingleChatDto.getMessage(),singleChatConverter.createSingleChatDtoToSingleChat(createSingleChatDto));
         SingleChatDto singleChatDto = SingleChatDto.builder()
                 .id(singleChat.getId())
                 .name(singleChat.getUseTwo().getNickname())
@@ -147,6 +124,7 @@ public class ChatResourceController {
 
     }
 
+
     @Operation(summary = "Получение сообщений single чата.", description = "Получение пагинированного списка сообщений single чата по его id.")
     @GetMapping("/{singleChatId}/single/message")
     public ResponseEntity<PageDTO<MessageDto>> getPagedMessagesOfSingleChat(
@@ -173,7 +151,7 @@ public class ChatResourceController {
             @Parameter(name = "Id чата.", required = true, description = "Id чата является обязательным параметром.")
             Long chatId,
             Authentication authentication) {
-        ChatType chatType = chatRoomServiceIml.getById(chatId).get().getChatType();
+        ChatType chatType = chatRoomServiceImpl.getById(chatId).get().getChatType();
         User currentUser = (User) authentication.getPrincipal();
 
         if (chatType.equals(ChatType.GROUP)) {

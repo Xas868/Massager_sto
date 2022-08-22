@@ -3,14 +3,25 @@ package com.javamentor.qa.platform.models.entity.chat;
 
 import com.javamentor.qa.platform.exception.ApiRequestException;
 import com.javamentor.qa.platform.models.entity.user.User;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 
-import javax.persistence.*;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.CascadeType;
+import javax.persistence.MapsId;
+import javax.persistence.ManyToOne;
+import javax.persistence.Column;
+import javax.persistence.PreUpdate;
+import javax.persistence.PrePersist;
+import javax.persistence.Entity;
+
 import java.util.Objects;
 
 @Entity
@@ -25,7 +36,7 @@ public class SingleChat{
     @Id
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.MERGE, CascadeType.PERSIST}, optional = false)
     @MapsId
     private Chat chat = new Chat(ChatType.SINGLE);
 
