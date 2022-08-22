@@ -1,16 +1,24 @@
 package com.javamentor.qa.platform.models.entity.chat;
 
 import com.javamentor.qa.platform.models.entity.user.User;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.AllArgsConstructor;
-import org.hibernate.annotations.*;
+import lombok.Builder;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
+
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Column;
+import javax.persistence.ManyToOne;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -31,15 +39,17 @@ public class Message {
     @Type(type = "org.hibernate.type.TextType")
     private String message;
 
+    @Column(name = "persist_date", updatable = false)
+    @Type(type = "org.hibernate.type.LocalDateTimeType")
+    @CreationTimestamp
+    private LocalDateTime persistDate;
+
     @Column(name = "last_redaction_date", nullable = false)
     @Type(type = "org.hibernate.type.LocalDateTimeType")
     @UpdateTimestamp
     private LocalDateTime lastRedactionDate;
 
-    @Column(name = "persist_date", updatable = false)
-    @Type(type = "org.hibernate.type.LocalDateTimeType")
-    @CreationTimestamp
-    private LocalDateTime persistDate;
+
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User userSender;
