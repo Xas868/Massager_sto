@@ -6,9 +6,13 @@ import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
-import com.javamentor.qa.platform.service.abstracts.model.MessageService;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.models.entity.chat.SingleChat;
+import com.javamentor.qa.platform.models.entity.user.Role;
+import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
-import org.junit.Assert;
+import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.apache.http.client.protocol.HttpClientContext.USER_TOKEN;
+import static org.hamcrest.Matchers.greaterThan;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -424,6 +430,35 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.totalResultCount").value(5))
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(113, 112)));
+    }
+    @Test
+    @DataSet(cleanBefore = true, value = "dataset/ChatResourceController/createSingleChatAndFirstMessage.yml", strategy = SeedStrategy.REFRESH)
+    public void shouldCreateSingleChatAndFirstMessage () throws Exception {
+        // Проверка, что API доступна
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+        authenticationRequest.setPassword("user1");
+        authenticationRequest.setUsername("user1@mail.ru");
+
+        // Проверка пользователя получателя и первого сообщения
+        CreateSingleChatDto createSingleChatDto = new CreateSingleChatDto();
+        createSingleChatDto.setUserId(2L);
+        createSingleChatDto.setMessage("Тестовое сообщение №1");
+
+        String USER_TOKEN = mockMvc.perform(
+                        post("/api/auth/token")
+                                .content(new ObjectMapper().writeValueAsString(authenticationRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        USER_TOKEN = "Bearer " + USER_TOKEN.substring(USER_TOKEN.indexOf(":") + 2, USER_TOKEN.length() - 2);
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .post("/api/user/chat/single")
+                        .content(new ObjectMapper().writeValueAsString(createSingleChatDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, USER_TOKEN))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
