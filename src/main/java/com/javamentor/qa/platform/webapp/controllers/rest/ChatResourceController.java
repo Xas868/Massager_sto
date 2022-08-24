@@ -155,9 +155,7 @@ public class ChatResourceController {
             @Parameter(name = "Слово или словосочетание, по которому будет производиться поиск.",
                     required = true,
                     description = "Обязательный параметр. Служит для передачи искомого текста.")
-            String searchWord)
-
-    {
+            String searchWord) {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoFindInChatByWord.class.getSimpleName());
         properties.getProps().put("chatId", chatId);
         properties.getProps().put("searchWord", searchWord);

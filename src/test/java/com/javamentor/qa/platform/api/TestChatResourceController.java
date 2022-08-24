@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -373,6 +374,43 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.totalResultCount").value(10))
                 .andExpect(jsonPath("$.items.length()").value(10))
                 .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(110, 109, 108, 107, 106, 105, 104, 103, 102, 101)));
+    }
+
+
+    @Test
+    @DataSet(cleanBefore = true,
+            value = "dataset/ChatResourceController/testGetPagedMessagesFromChatByKeyword/testGetPagedMessagesFromChatByKeyword.yml"
+    )
+    public void testGetPagedMessagesFromChatByKeyword() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("test102@mail.ru", "test102");
+        mockMvc.perform(get("/api/user/chat/101/message/find?currentPage=1&word=message")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(8))
+                .andExpect(jsonPath("$.items.length()").value(8))
+                .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(110, 109, 107, 105, 104, 103, 102, 101)));
+    }
+
+
+    @Test
+    @DataSet(cleanBefore = true,
+            value = "dataset/ChatResourceController/testGetPagedMessagesFromChatByKeyword/testGetPagedMessagesFromChatByKeyword.yml"
+    )
+    public void testGetPagedMessagesFromChatByKeywordWithThreePages() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("test102@mail.ru", "test102");
+        mockMvc.perform(get("/api/user/chat/101/message/find?currentPage=2&word=message&items=3")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").value(2))
+                .andExpect(jsonPath("$.totalPageCount").value(3))
+                .andExpect(jsonPath("$.totalResultCount").value(8))
+                .andExpect(jsonPath("$.items.length()").value(3))
+                .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(105, 104, 103)));
     }
 
     @Test
