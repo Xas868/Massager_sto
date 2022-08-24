@@ -7,10 +7,12 @@ import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.IsEmptyUserIdsException;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.List;
 
+@Component
 @Mapper(componentModel = "spring")
 public abstract class GroupChatConverter {
     @Autowired
