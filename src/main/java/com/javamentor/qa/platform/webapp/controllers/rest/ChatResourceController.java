@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
+import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoFindInChatByWord;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
@@ -132,6 +133,34 @@ public class ChatResourceController {
             int currentPage) {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoBySingleChatId.class.getSimpleName());
         properties.getProps().put("singleChatId", singleChatId);
+        return new ResponseEntity<>(messagesPaginationService.getPageDto(properties), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Поиск сообщений по неточному совпадению.", description = "Получение пагинированного списка сообщений чата по его id и слову поиска.")
+    @GetMapping("/{id}/message/find")
+    public ResponseEntity<PageDTO<MessageDto>> getPagedMessagesFromChatFindByWord(
+            @PathVariable("id")
+            @Parameter(name = "Id чата.", required = true, description = "Id чата является обязательным параметром.")
+            long chatId,
+            @RequestParam(name = "items", defaultValue = "20")
+            @Parameter(name = "Количество сообщений на странице.",
+                    description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 20.")
+            int itemsOnPage,
+            @RequestParam(name = "currentPage")
+            @Parameter(name = "Текущая страница сообщений.",
+                    required = true,
+                    description = "Обязательный параметр. Служит для корректного постраничного отображения сообщений и обращения к ним.")
+            int currentPage,
+            @RequestParam(name = "word")
+            @Parameter(name = "Слово или словосочетание, по которому будет производиться поиск.",
+                    required = true,
+                    description = "Обязательный параметр. Служит для передачи искомого текста.")
+            String searchWord)
+
+    {
+        PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoFindInChatByWord.class.getSimpleName());
+        properties.getProps().put("chatId", chatId);
+        properties.getProps().put("searchWord", searchWord);
         return new ResponseEntity<>(messagesPaginationService.getPageDto(properties), HttpStatus.OK);
     }
 

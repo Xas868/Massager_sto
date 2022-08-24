@@ -5,7 +5,13 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
+import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
 import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.models.entity.chat.SingleChat;
+import com.javamentor.qa.platform.models.entity.user.Role;
+import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.MessageService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import org.junit.Assert;
@@ -36,9 +42,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTests {
     @Autowired
     private MessageService messageService;
-
-    @Autowired
-    private SingleChatService singleChatService;
 
     @Autowired
     private SingleChatService singleChatService;

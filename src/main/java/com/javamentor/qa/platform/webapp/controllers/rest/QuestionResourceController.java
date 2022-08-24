@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.dao.impl.pagination.*;
+import com.javamentor.qa.platform.dao.impl.pagination.questiondto.*;
 import com.javamentor.qa.platform.exception.ConstrainException;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
