@@ -251,6 +251,7 @@ public class QuestionResourceController {
         data.getProps().put("trackedTags", trackedTag);
         data.getProps().put("ignoredTags", ignoredTag);
         data.getProps().put("dateFilter", dateFilter.getDay());
+        data.getProps().put("userId", ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId());
 
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }

@@ -156,3 +156,8 @@ tag:
     persist_date: 2021-12-06 00:00:00
   - id: 101
     name: "TAG101"
+
+bookmarks:
+  - id : 101
+    question_id : 103
+    user_id : 100
