@@ -6,8 +6,14 @@ import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.models.entity.chat.SingleChat;
+import com.javamentor.qa.platform.models.entity.user.Role;
+import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.MessageService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
+import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,6 +31,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.apache.http.client.protocol.HttpClientContext.USER_TOKEN;
+import static org.hamcrest.Matchers.greaterThan;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,9 +44,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTests {
     @Autowired
     private MessageService messageService;
-
-    @Autowired
-    private SingleChatService singleChatService;
 
     @Autowired
     private SingleChatService singleChatService;
@@ -370,6 +375,34 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.totalResultCount").value(10))
                 .andExpect(jsonPath("$.items.length()").value(10))
                 .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(110, 109, 108, 107, 106, 105, 104, 103, 102, 101)));
+    }
+
+    @Test
+    @DataSet(cleanBefore = true,
+            value = "dataset/ChatResourceController/testGetPagedMessagesFromChatByKeyword/testGetPagedMessagesFromChatByKeyword.yml"
+    )
+    public void testGetPagedMessagesFromChatByKeyword() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("test102@mail.ru", "test102");
+        mockMvc.perform(get("/api/user/chat/101/message/find?currentPage=1&word=message")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(8))
+                .andExpect(jsonPath("$.items.length()").value(8))
+                .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(110, 109, 107, 105, 104, 103, 102, 101)));
+
+        mockMvc.perform(get("/api/user/chat/101/message/find?currentPage=2&word=message&items=3")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").value(2))
+                .andExpect(jsonPath("$.totalPageCount").value(3))
+                .andExpect(jsonPath("$.totalResultCount").value(8))
+                .andExpect(jsonPath("$.items.length()").value(3))
+                .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(105, 104, 103)));
     }
 
     @Test
