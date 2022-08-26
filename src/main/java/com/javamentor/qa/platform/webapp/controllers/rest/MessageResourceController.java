@@ -42,7 +42,6 @@ public class MessageResourceController {
             @Content(mediaType = "application/json")
     })
     @PostMapping("/star")
-    @Schema
     public ResponseEntity<?> addMessageToStarMessages(@Parameter(schema = @Schema(example = "{" +
             "\"id\":1" +
             "}")) @RequestBody Message messageToStar) {
@@ -60,4 +59,5 @@ public class MessageResourceController {
         messageStarService.persist(message);
         return new ResponseEntity<>("Message with id = " + messageToStar.getId() + " was successfully add to stars", HttpStatus.OK);
     }
+
 }
