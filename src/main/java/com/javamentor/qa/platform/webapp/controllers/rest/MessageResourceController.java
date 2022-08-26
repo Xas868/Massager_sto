@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.MessageService;
 import com.javamentor.qa.platform.service.abstracts.model.MessageStarService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.callbacks.Callback;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -41,7 +42,10 @@ public class MessageResourceController {
             @Content(mediaType = "application/json")
     })
     @PostMapping("/star")
-    public ResponseEntity<?> addMessageToStarMessages(@RequestBody Message messageToStar) {
+    @Schema
+    public ResponseEntity<?> addMessageToStarMessages(@Parameter(schema = @Schema(example = "{" +
+            "\"id\":1" +
+            "}")) @RequestBody Message messageToStar) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) auth.getPrincipal();
         Message messageFromDB;
