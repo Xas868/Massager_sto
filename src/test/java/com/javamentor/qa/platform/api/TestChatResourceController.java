@@ -404,18 +404,21 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items.length()").value(3))
                 .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(105, 104, 103)));
 
+        // Запрос без параметров: ожидаемый статус: 400
         mockMvc.perform(get("/api/user/chat/101/message/find?")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isBadRequest());
 
+        //Запрос без указания обязательного параметра currentPage: ожидаемый статус: 400
         mockMvc.perform(get("/api/user/chat/101/message/find?word=message")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isBadRequest());
 
+        //Запрос без указания обязательного параметра искомой строки word: ожидаемый статус: 400
         mockMvc.perform(get("/api/user/chat/101/message/find?currentPage=1")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
