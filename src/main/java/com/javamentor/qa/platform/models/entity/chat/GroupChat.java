@@ -25,6 +25,9 @@ public class GroupChat {
     @Id
     private Long id;
 
+    @Column
+    private String title;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
     @MapsId
     private Chat chat = new Chat(ChatType.GROUP);
@@ -58,12 +61,13 @@ public class GroupChat {
         if (o == null || getClass() != o.getClass()) return false;
         GroupChat groupChat = (GroupChat) o;
         return Objects.equals(id, groupChat.id) &&
+                Objects.equals(title, groupChat.title) &&
                 Objects.equals(chat, groupChat.chat) &&
                 Objects.equals(users, groupChat.users);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, chat, users);
+        return Objects.hash(id, title, chat, users);
     }
 }
