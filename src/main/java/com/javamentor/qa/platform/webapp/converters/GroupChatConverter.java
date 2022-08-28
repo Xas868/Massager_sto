@@ -37,7 +37,6 @@ public abstract class GroupChatConverter {
     Chat getChat(CreateGroupChatDto createGroupChatDto) {
         return Chat.builder()
                 .chatType(ChatType.GROUP)
-//                .title(createGroupChatDto.getChatName())
                 .build();
     }
 }
