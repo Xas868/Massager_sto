@@ -954,7 +954,8 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
             "dataset/QuestionResourceController/more_questions_has_tags.yml",
             "dataset/QuestionResourceController/answers.yml",
             "dataset/QuestionResourceController/votes_on_questions.yml",
-            "dataset/QuestionResourceController/question_viewed/qv_viewCount1.yml"
+            "dataset/QuestionResourceController/question_viewed/qv_viewCount1.yml",
+            "dataset/QuestionResourceController/bookmarks.yml"
     },
             strategy = SeedStrategy.CLEAN_INSERT,
             cleanAfter = true, cleanBefore = true
@@ -973,6 +974,8 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items.[0].id").value(2))
                 .andExpect(jsonPath("$.items.[1].id").value(3))
                 .andExpect(jsonPath("$.items[1].viewCount").value("0"))
+                .andExpect(jsonPath("$.items[0].isUserBookmark").value(false))
+                .andExpect(jsonPath("$.items[1].isUserBookmark").value(true))
                 .andExpect(jsonPath("$.totalResultCount").value(3))
                 .andExpect(jsonPath("$.items.size()").value(2))
                 .andExpect(jsonPath("$.totalPageCount").value(2));
@@ -1039,6 +1042,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
         String userToken = getToken("test15@mail.ru", "test15");
         mockMvc.perform(get("/api/user/question/noAnswer?page=1&items=2")
                         .header("Authorization", "Bearer " + userToken))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andDo(print())
@@ -1823,7 +1827,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T13:07:52"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T20:07:52"))
                 .andExpect(jsonPath("$.items.length()").value(8))
                 .andExpect(status().isOk());
 

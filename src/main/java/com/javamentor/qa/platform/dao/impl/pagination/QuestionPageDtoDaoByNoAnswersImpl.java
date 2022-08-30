@@ -33,8 +33,8 @@ public class QuestionPageDtoDaoByNoAnswersImpl implements PageDtoDao<QuestionVie
                         " q.lastUpdateDateTime," +
                         " (coalesce((select sum(r.count) from Reputation r where r.author.id = q.user.id),0)) as author_reputation," +
                         " (coalesce((select count(a.id) from Answer a where a.question.id = q.id),0)) as answerCounter, " +
-                        " (coalesce((select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id), 0)) as count_valuable," +
-                        " false as is_user_bookmark," +//" (select count(bm.id) > 0 from BookMarks bm where bm.question.id = q.id and bm.user.id = :userId) as is_user_bookmark, " +
+                        " (coalesce((select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = q.id), 0) ) as count_valuable," +
+                        " ((select count(bm.id) from BookMarks bm where bm.question.id = q.id and bm.user.id = :userId) > 0) as is_user_bookmark, " +
                         " (coalesce((select count(qv.id) from QuestionViewed qv where qv.question.id = q.id), 0)) as view_count" +
                         " from Question q" +
                         " left JOIN q.tags t " +
@@ -45,6 +45,7 @@ public class QuestionPageDtoDaoByNoAnswersImpl implements PageDtoDao<QuestionVie
                 .setParameter("trackedTags", properties.getProps().get("trackedTags"))
                 .setParameter("ignoredTags", properties.getProps().get("ignoredTags"))
                 .setParameter("dateFilter", properties.getProps().get("dateFilter"))
+                .setParameter("userId", properties.getProps().get("userId"))
                 .setFirstResult(offset)
                 .setMaxResults(itemsOnPage)
                 .unwrap(org.hibernate.query.Query.class)
