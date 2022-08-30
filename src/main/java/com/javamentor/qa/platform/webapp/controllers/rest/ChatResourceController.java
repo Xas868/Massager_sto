@@ -193,10 +193,6 @@ public class ChatResourceController {
             return new ResponseEntity<>("userAdded", HttpStatus.OK);
         }
 
-        if (!groupChat.get().getUsers().contains(user)) {
-            return new ResponseEntity<>("no user found in chat", HttpStatus.BAD_REQUEST);
-        }
-
 
         return new ResponseEntity<>("it's bad request", HttpStatus.BAD_REQUEST);
     }
