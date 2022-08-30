@@ -43,8 +43,8 @@ public class MessageResourceController {
             @Content(mediaType = "application/json")
     })
     @PostMapping("/star")
-    public ResponseEntity<?> addMessageToStarMessages(@RequestBody Long messageId, Authentication auth) {
-        User user = (User) auth.getPrincipal();
+    public ResponseEntity<?> addMessageToStarMessages(@RequestBody Long messageId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<Message> messageToStar = messageService.getById(messageId);
         if (messageToStar.isPresent()) {
             MessageStar message = new MessageStar();
@@ -53,6 +53,6 @@ public class MessageResourceController {
             messageStarService.persist(message);
             return new ResponseEntity<>("Message with id = " + messageId + " was successfully add to stars", HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Пришло некорректное ID(" + messageId + ") сообщения для сохранения", HttpStatus.BAD_REQUEST);
     }
 }
