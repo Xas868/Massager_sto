@@ -1,3 +1,7 @@
+const sortedByPopularityUrl = '/api/user/tag/popular';
+const sortedByNameUrl = '/api/user/tag/name';
+const sortedByDateUrl = '/api/user/tag/new';
+
 activateSideBar()
 
 function activateSideBar () {
@@ -8,9 +12,9 @@ let filter = document.getElementById('filterByTag').value;
 
 //создаем новый объект пагинации и передаем аргументы в конструктор
 let pagination;
-function createPagination() {
+function createPagination(url) {
     pagination = new Pagination(
-        '/api/user/tag/popular',
+        url,
         10,
         'pagination_objects',
         'navigation',
@@ -67,7 +71,7 @@ function createPagination() {
     );
 }
 
-createPagination();
+createPagination(sortedByPopularityUrl);
 init();
 function showPage(event, num) {
     pagination.showPage(event, num);
@@ -90,3 +94,22 @@ function filterTags() {
         await pagination.showPage(null, 1);
     }
 }
+
+let sortByPopularityButton = document.getElementById('reputation');
+sortByPopularityButton.addEventListener('click', () => {
+        createPagination(sortedByPopularityUrl);
+        init();
+    }
+);
+let sortByNameButton = document.getElementById('new_users'); // Дурацкий ID конечно у кнопки
+sortByNameButton.addEventListener('click', () => {
+        createPagination(sortedByNameUrl);
+        init();
+    }
+)
+let sortByDateButton = document.getElementById('voters'); // Дурацкий ID конечно у кнопки
+sortByDateButton.addEventListener('click', () => {
+        createPagination(sortedByDateUrl);
+        init();
+    }
+)
