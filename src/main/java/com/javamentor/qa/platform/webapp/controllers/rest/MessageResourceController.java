@@ -14,7 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
@@ -40,8 +43,7 @@ public class MessageResourceController {
             @Content(mediaType = "application/json")
     })
     @PostMapping("/star")
-    public ResponseEntity<?> addMessageToStarMessages(@RequestBody Long messageId) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    public ResponseEntity<?> addMessageToStarMessages(@RequestBody Long messageId, Authentication auth) {
         User user = (User) auth.getPrincipal();
         Optional<Message> messageToStar = messageService.getById(messageId);
         if (messageToStar.isPresent()) {
@@ -49,10 +51,8 @@ public class MessageResourceController {
             message.setUser(user);
             message.setMessage(messageToStar.get());
             messageStarService.persist(message);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Message with id = " + messageId + " was successfully add to stars", HttpStatus.OK);
         }
-        return new ResponseEntity<>("Message with id = " + messageId + " was successfully add to stars", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-
 }
