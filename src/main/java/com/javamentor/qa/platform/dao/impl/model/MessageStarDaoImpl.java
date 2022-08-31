@@ -17,8 +17,7 @@ public class MessageStarDaoImpl extends ReadWriteDaoImpl<MessageStar, Long> impl
     @Override
     public Optional<MessageStar> getMessageByUserAndMessage(Long userId, Long messageId) {
         return SingleResultUtil.getSingleResultOrNull(entityManager
-                .createQuery("SELECT m FROM MessageStar m JOIN FETCH m.user " +
-                        "JOIN FETCH m.message WHERE m.user.id =:userId AND m.message.id =:messageId", MessageStar.class)
+                .createQuery("SELECT m FROM MessageStar m WHERE m.user.id =:userId AND m.message.id =:messageId", MessageStar.class)
                 .setParameter("userId", userId)
                 .setParameter("messageId", messageId));
     }
