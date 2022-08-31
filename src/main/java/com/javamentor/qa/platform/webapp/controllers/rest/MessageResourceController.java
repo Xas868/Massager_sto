@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +26,6 @@ import java.util.Optional;
 public class MessageResourceController {
     private final MessageStarService messageStarService;
     private final MessageService messageService;
-
     @Autowired
     public MessageResourceController(MessageStarService messageStarService, MessageService messageService) {
         this.messageStarService = messageStarService;
@@ -46,7 +44,13 @@ public class MessageResourceController {
     public ResponseEntity<?> addMessageToStarMessages(@RequestBody Long messageId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<Message> messageToStar = messageService.getById(messageId);
+        Optional<MessageStar> messageStar = messageStarService.getMessageByUserAndMessage(user.getId(), messageId);
         if (messageToStar.isPresent()) {
+            if (messageStar.isPresent()) {
+                return new ResponseEntity<>("Сообщение с ID " + messageId +
+                        " уже есть в избранном у пользователя с ID " + user.getId(), HttpStatus.BAD_REQUEST);
+            }
+
             MessageStar message = new MessageStar();
             message.setUser(user);
             message.setMessage(messageToStar.get());

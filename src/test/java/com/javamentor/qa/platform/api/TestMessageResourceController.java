@@ -37,6 +37,12 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
                 .header("Authorization", "Bearer " + token)
                 .content("1"))
                 .andExpect(status().isOk());
+        // Попытка добавить то же сообщение в избранное тем же пользователем
+        mockMvc.perform(post(TEST_URL)
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .content("1"))
+                .andExpect(status().isBadRequest());
         // Попытка отправить что-то что не число
         mockMvc.perform(post(TEST_URL)
                 .contentType("application/json")
