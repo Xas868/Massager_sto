@@ -5,15 +5,14 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
+import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
 import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
-import com.javamentor.qa.platform.service.abstracts.model.MessageService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
-import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +20,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-import static org.hamcrest.Matchers.containsInRelativeOrder;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.containsInRelativeOrder;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.apache.http.client.protocol.HttpClientContext.USER_TOKEN;
-import static org.hamcrest.Matchers.greaterThan;
-
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,8 +35,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTests {
-    @Autowired
-    private MessageService messageService;
 
     @Autowired
     private SingleChatService singleChatService;
@@ -641,4 +633,5 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                         .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
                 .andExpect(status().isBadRequest());
     }
+
 }
