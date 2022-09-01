@@ -428,15 +428,31 @@ public class TestDataInitService {
         return groupChat.getUsers().contains(user);
     }
 
+    // Я сетаю юзеров в чат, то есть, учтено что запиннить можно только чат в котором состоишь
     private void createUserChatPinChat() {
-        UserChatPin userChatPin = new UserChatPin();
+        List<UserChatPin> userChatPinList = new ArrayList<>();
+
+        UserChatPin userChatPinOne = new UserChatPin();
+        UserChatPin userChatPinTwo = new UserChatPin();
+
         SingleChat singleChat = singleChatService.getById(11L).get();
         Chat chat = chatRoomService.getById(singleChat.getChat().getId()).get();
-        User user = getRandomUser();
-        singleChat.setUserOne(user);
+
+        User userOne = getRandomUser();
+        User userTwo = getRandomUser();
+
+        singleChat.setUserOne(userOne);
+        singleChat.setUseTwo(userTwo);
         singleChatService.update(singleChat);
-        userChatPin.setChat(chat);
-        userChatPin.setUser(user);
-        userChatPinService.persist(userChatPin);
+
+        userChatPinOne.setChat(chat);
+        userChatPinOne.setUser(userOne);
+
+        userChatPinTwo.setChat(chat);
+        userChatPinTwo.setUser(userTwo);
+
+        userChatPinList.add(userChatPinOne);
+        userChatPinList.add(userChatPinTwo);
+        userChatPinService.persistAll(userChatPinList);
     }
 }
