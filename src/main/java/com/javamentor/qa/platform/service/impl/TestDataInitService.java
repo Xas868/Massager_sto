@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.user.UserChatPin;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.service.abstracts.model.*;
@@ -38,6 +39,7 @@ public class TestDataInitService {
     private final SingleChatService singleChatService;
     private final QuestionViewedService questionViewedService;
     private final MessageStarService messageStarService;
+    private final UserChatPinService userChatPinService;
     private final long NUM_OF_USERS = 100L;
     private final long NUM_OF_TAGS = 50L;
     private final long NUM_OF_QUESTIONS = 100L;
@@ -71,6 +73,7 @@ public class TestDataInitService {
         createSingleChat();
         createQuestionViewed();
         createMessageStar();
+        createUserChatPinChat();
     }
 
     public void createMessage() {
@@ -423,5 +426,17 @@ public class TestDataInitService {
         }
         GroupChat groupChat = groupChatRoomService.getById(chat.getId()).get();
         return groupChat.getUsers().contains(user);
+    }
+
+    private void createUserChatPinChat() {
+        UserChatPin userChatPin = new UserChatPin();
+        SingleChat singleChat = singleChatService.getById(11L).get();
+        Chat chat = chatRoomService.getById(singleChat.getChat().getId()).get();
+        User user = getRandomUser();
+        singleChat.setUserOne(user);
+        singleChatService.update(singleChat);
+        userChatPin.setChat(chat);
+        userChatPin.setUser(user);
+        userChatPinService.persist(userChatPin);
     }
 }
