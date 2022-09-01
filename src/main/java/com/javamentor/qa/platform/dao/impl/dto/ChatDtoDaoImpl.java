@@ -59,7 +59,8 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
                         "       chat.id, " +
 
                         "       case when chat.chatType = :group " +
-                        "          then groupChat.title " +
+                        "           and lower(groupChat.title) like :chatName" +
+                        "               then groupChat.title " +
                         "       else case when user1.id = :userId " +
                         "          then case when lower(user2.nickname) like :chatName " +
                         "              then user2.nickname " +
