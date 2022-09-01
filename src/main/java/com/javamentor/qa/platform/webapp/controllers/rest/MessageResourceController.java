@@ -45,12 +45,11 @@ public class MessageResourceController {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<Message> messageToStar = messageService.getById(messageId);
         Optional<MessageStar> messageStar = messageStarService.getMessageByUserAndMessage(user.getId(), messageId);
+        if (messageStar.isPresent()) {
+            return new ResponseEntity<>("Сообщение с ID " + messageId +
+                    " уже есть в избранном у пользователя с ID " + user.getId(), HttpStatus.BAD_REQUEST);
+        }
         if (messageToStar.isPresent()) {
-            if (messageStar.isPresent()) {
-                return new ResponseEntity<>("Сообщение с ID " + messageId +
-                        " уже есть в избранном у пользователя с ID " + user.getId(), HttpStatus.BAD_REQUEST);
-            }
-
             MessageStar message = new MessageStar();
             message.setUser(user);
             message.setMessage(messageToStar.get());
