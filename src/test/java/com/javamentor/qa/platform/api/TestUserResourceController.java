@@ -272,13 +272,8 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
             value = {
                     "dataset/testUserResourceController/roleUser.yml",
                     "dataset/testUserResourceController/users20.yml",
-                    "dataset/testUserResourceController/repFirst3DownVoteAndLast3UpVote.yml"
+                    "dataset/testUserResourceController/voicesUser.yml"
             },
-//            tableOrdering = {
-//                    "role.yml",
-//                    "user_entity",
-//                    "reputation"
-//            },
 
             strategy = SeedStrategy.INSERT)
     public void shouldReturnUsersSortedByVote() throws Exception {
