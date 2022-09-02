@@ -5,7 +5,10 @@ import com.javamentor.qa.platform.models.entity.chat.*;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.IsEmptyUserIdsException;
-import org.mapstruct.*;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +37,6 @@ public abstract class GroupChatConverter {
     Chat getChat(CreateGroupChatDto createGroupChatDto) {
         return Chat.builder()
                 .chatType(ChatType.GROUP)
-                .title(createGroupChatDto.getChatName())
                 .build();
     }
 }

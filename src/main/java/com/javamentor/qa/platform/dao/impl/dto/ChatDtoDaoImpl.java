@@ -41,8 +41,8 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.GroupChatDto" +
                         "(" +
                         "gc.id, " +
+                        "gc.title,"+
                         "gc.chat.image, " +
-                        "gc.chat.title, " +
                         "gc.chat.persistDate" +
                         ") " +
                         "from GroupChat as gc where gc.id = :chatId " +
@@ -59,8 +59,8 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
                         "       chat.id, " +
 
                         "       case when chat.chatType = :group " +
-                        "           and lower(chat.title) like :chatName " +
-                        "                   then chat.title " +
+                        "           and lower(groupChat.title) like :chatName" +
+                        "               then groupChat.title " +
                         "       else case when user1.id = :userId " +
                         "          then case when lower(user2.nickname) like :chatName " +
                         "              then user2.nickname " +
