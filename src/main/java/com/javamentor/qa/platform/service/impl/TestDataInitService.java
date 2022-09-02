@@ -95,7 +95,6 @@ public class TestDataInitService {
         List<Chat> chats = new ArrayList<>();
         for (int i = 1; i <= NUM_OF_CHAT; i++) {
             Chat chat = Chat.builder()
-                    .title("Chat" + i)
                     .persistDate(LocalDateTime.now())
                     .build();
             chats.add(chat);
@@ -108,6 +107,7 @@ public class TestDataInitService {
         for (int i = 1; i <= NUM_OF_GROUPCHAT; i++) {
             GroupChat groupChat = GroupChat.builder()
                     .chat(Chat.builder().chatType(ChatType.GROUP).build())
+                    .title("GroupChat" + i)
                     .build();
             groupChats.add(groupChat);
         }

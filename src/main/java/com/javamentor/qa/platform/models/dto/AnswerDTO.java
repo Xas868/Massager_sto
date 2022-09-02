@@ -41,7 +41,6 @@ public class AnswerDTO {
         this.countValuable = countValuable;
         this.image = image;
         this.nickName = nickName;
-
     }
 
 
