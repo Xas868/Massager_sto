@@ -428,7 +428,6 @@ public class TestDataInitService {
         return groupChat.getUsers().contains(user);
     }
 
-    // Я сетаю юзеров в чат, то есть, учтено что запиннить можно только чат в котором состоишь
     private void createUserChatPinChat() {
         List<UserChatPin> userChatPinList = new ArrayList<>();
 
