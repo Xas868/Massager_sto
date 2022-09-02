@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -429,29 +430,19 @@ public class TestDataInitService {
     }
 
     private void createUserChatPinChat() {
-        List<UserChatPin> userChatPinList = new ArrayList<>();
+        GroupChat groupChat = new GroupChat();
+        Chat chat = new Chat();
+        Set<User> users = new HashSet<>(userService.getAll());
 
-        UserChatPin userChatPinOne = new UserChatPin();
-        UserChatPin userChatPinTwo = new UserChatPin();
-
-        SingleChat singleChat = singleChatService.getById(11L).get();
-        Chat chat = chatRoomService.getById(singleChat.getChat().getId()).get();
-
-        User userOne = getRandomUser();
-        User userTwo = getRandomUser();
-
-        singleChat.setUserOne(userOne);
-        singleChat.setUseTwo(userTwo);
-        singleChatService.update(singleChat);
-
-        userChatPinOne.setChat(chat);
-        userChatPinOne.setUser(userOne);
-
-        userChatPinTwo.setChat(chat);
-        userChatPinTwo.setUser(userTwo);
-
-        userChatPinList.add(userChatPinOne);
-        userChatPinList.add(userChatPinTwo);
-        userChatPinService.persistAll(userChatPinList);
+        chat.setChatType(ChatType.GROUP);
+        groupChat.setChat(chat);
+        groupChat.setUsers(users);
+        groupChatRoomService.persist(groupChat);
+        for (User user: users) {
+            UserChatPin userChatPin = new UserChatPin();
+            userChatPin.setChat(chat);
+            userChatPin.setUser(user);
+            userChatPinService.persist(userChatPin);
+        }
     }
 }
