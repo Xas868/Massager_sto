@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -34,8 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,9 +40,9 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -862,16 +859,16 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
     @Test
 //  Получаем все вопросы по id тега, с items и без
     @DataSet(value = {
-                    "dataset/testQuestionTagIdResource/questions.yml",
-                    "dataset/testQuestionTagIdResource/tag.yml",
-                    "dataset/testQuestionTagIdResource/questions_has_tag.yml",
-                    "dataset/testQuestionTagIdResource/reputations.yml",
-                    "dataset/testQuestionTagIdResource/answers.yml",
-                    "dataset/testQuestionTagIdResource/users.yml",
-                    "dataset/testQuestionTagIdResource/votes_on_questions.yml",
-                    "dataset/testQuestionTagIdResource/role.yml",
-                    "dataset/QuestionResourceController/question_viewed/qv_viewCount2.yml"
-            },
+            "dataset/testQuestionTagIdResource/questions.yml",
+            "dataset/testQuestionTagIdResource/tag.yml",
+            "dataset/testQuestionTagIdResource/questions_has_tag.yml",
+            "dataset/testQuestionTagIdResource/reputations.yml",
+            "dataset/testQuestionTagIdResource/answers.yml",
+            "dataset/testQuestionTagIdResource/users.yml",
+            "dataset/testQuestionTagIdResource/votes_on_questions.yml",
+            "dataset/testQuestionTagIdResource/role.yml",
+            "dataset/QuestionResourceController/question_viewed/qv_viewCount2.yml"
+    },
             strategy = SeedStrategy.CLEAN_INSERT,
             cleanAfter = true, cleanBefore = true)
     public void shouldReturnAllQuestionsByTagId() throws Exception {
@@ -1134,8 +1131,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.totalResultCount").value(1));
     }
 
-    @Autowired
-    private CacheManager cacheManager;
+
     @Autowired
     private QuestionViewedDao questionViewedDao;
     @Autowired
@@ -1269,14 +1265,14 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
     @Transactional
     @Test
     @DataSet(value = {
-                    "dataset/testQuestionResourceController/question_different_date.yml",
-                    "dataset/testQuestionResourceController/tag.yml",
-                    "dataset/testQuestionResourceController/answer.yml",
-                    "dataset/testQuestionResourceController/questions_has_tag1.yml",
-                    "dataset/QuestionResourceController/users.yml",
-                    "dataset/testQuestionResourceController/role.yml",
-                    "dataset/QuestionResourceController/votes_on_questions.yml"
-            },
+            "dataset/testQuestionResourceController/question_different_date.yml",
+            "dataset/testQuestionResourceController/tag.yml",
+            "dataset/testQuestionResourceController/answer.yml",
+            "dataset/testQuestionResourceController/questions_has_tag1.yml",
+            "dataset/QuestionResourceController/users.yml",
+            "dataset/testQuestionResourceController/role.yml",
+            "dataset/QuestionResourceController/votes_on_questions.yml"
+    },
             strategy = SeedStrategy.CLEAN_INSERT,
             cleanAfter = true, cleanBefore = true
     )
@@ -1716,6 +1712,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.viewCount").value(2))
                 .andExpect(jsonPath("$.answerDTOList").isEmpty());
     }
+
     @Test
     @DataSet(value = {
             "dataset/QuestionResourceController/questionsWithDateFilter.yml",
@@ -1754,7 +1751,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/user/question?page=1&dateFilter=WEEK")
-                .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -1859,6 +1856,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(status().isOk());
 
     }
+
     @Test
     @DataSet(value = {
             "dataset/QuestionResourceController/questionsWithDateFilter.yml",

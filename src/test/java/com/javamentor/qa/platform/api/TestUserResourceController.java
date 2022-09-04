@@ -10,10 +10,8 @@ import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.util.CalendarPeriod;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -23,14 +21,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.javamentor.qa.platform.models.util.CalendarPeriod.day;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static com.javamentor.qa.platform.models.util.CalendarPeriod.week;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpHeaders.DATE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -43,8 +39,6 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     private UserService userService;
     @Autowired
     private UserDtoService userDtoService;
-    @Autowired
-    private CacheManager cacheManager;
 
     @Test
     //Вывод Dto по id без тегов
