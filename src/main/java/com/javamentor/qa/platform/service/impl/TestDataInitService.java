@@ -236,7 +236,7 @@ public class TestDataInitService {
             Question question = Question.builder()
                     .title("Question " + i)
                     .description("What do you think about question " + i + "?")
-                    .persistDateTime(LocalDateTime.now().minusDays(i).withNano(0).withSecond(0))
+                    .persistDateTime(LocalDateTime.now().minusDays(i))
                     .lastUpdateDateTime(LocalDateTime.now().minusDays(i).plusHours(12))
                     .user(getRandomUser())
                     .tags(getRandomTagList())
