@@ -72,9 +72,9 @@ public class MessageResourceController {
          if (messageStar.isPresent()) {
              messageStarService.deleteById(messageId);
              return new ResponseEntity<>("Сообщение с id = " + messageId + " было успешно удалено из избранных", HttpStatus.OK);
-         } else {
-             return new ResponseEntity<>("Сообщение с id = " + messageId + " не существует в избранных пользователя " +
-                      user.getNickname(), HttpStatus.BAD_REQUEST);
          }
+
+         return new ResponseEntity<>("Сообщение с id = " + messageId + " не существует в избранных пользователя " +
+                 user.getNickname(), HttpStatus.BAD_REQUEST);
     }
 }
