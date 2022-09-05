@@ -1829,7 +1829,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(374).format(ISO_LOCAL_DATE)))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(375).withNano(0).withSecond(0)))
                 .andExpect(jsonPath("$.items.length()").value(8))
                 .andExpect(status().isOk());
 
@@ -1838,7 +1838,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(360).format(ISO_LOCAL_DATE)))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(360).withNano(0).withSecond(0)))
                 .andExpect(jsonPath("$.items.length()").value(3))
                 .andExpect(status().isOk());
 
@@ -1847,7 +1847,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(25).format(ISO_LOCAL_DATE)))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(25).withNano(0).withSecond(0)))
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(status().isOk());
 
@@ -1856,7 +1856,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(5).format(ISO_LOCAL_DATE)))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(5).withNano(0).withSecond(0)))
                 .andExpect(jsonPath("$.items.length()").value(1))
                 .andExpect(status().isOk());
 

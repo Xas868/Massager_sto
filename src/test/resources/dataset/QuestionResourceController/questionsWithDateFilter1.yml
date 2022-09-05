@@ -46,7 +46,7 @@ question:
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: "groovy: Calendar cal = Calendar.getInstance();
                             cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) - 370);                   
-                            return SimpleDateFormat(\"yyyy-MM-dd\").format(cal.getTime());"
+                            return cal.getTime();"
   - id: 102
     title: "q2"
     description: "It's Question 2"
@@ -55,7 +55,7 @@ question:
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: "groovy: Calendar cal = Calendar.getInstance();
                             cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) - 370);                   
-                            return SimpleDateFormat(\"yyyy-MM-dd\").format(cal.getTime());"
+                            return cal.getTime();"
   - id: 103
     title: "q3"
     description: "It's Question 3"
@@ -64,7 +64,7 @@ question:
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: "groovy: Calendar cal = Calendar.getInstance();
                             cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) - 370);                   
-                            return SimpleDateFormat(\"yyyy-MM-dd\").format(cal.getTime());"
+                            return cal.getTime();"
   - id: 104
     title: "q4"
     description: "It's Question 4"
@@ -73,7 +73,7 @@ question:
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: "groovy: Calendar cal = Calendar.getInstance();
                             cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) - 370);                   
-                            return SimpleDateFormat(\"yyyy-MM-dd\").format(cal.getTime());"
+                            return cal.getTime();"
   - id: 105
     title: "q5"
     description: "It's Question 5"
@@ -82,7 +82,7 @@ question:
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: "groovy: Calendar cal = Calendar.getInstance();
                             cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) - 370);                   
-                            return SimpleDateFormat(\"yyyy-MM-dd\").format(cal.getTime());"
+                            return cal.getTime();"
   - id: 106
     title: "q6"
     description: "It's Question 6"
@@ -91,7 +91,7 @@ question:
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: "groovy: Calendar cal = Calendar.getInstance();
                             cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) - 360);                   
-                            return SimpleDateFormat(\"yyyy-MM-dd\").format(cal.getTime());"
+                            return cal.getTime();"
   - id: 107
     title: "q7"
     description: "It's Question 7"
@@ -100,7 +100,7 @@ question:
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: "groovy: Calendar cal = Calendar.getInstance();
                             cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) - 25);                   
-                            return SimpleDateFormat(\"yyyy-MM-dd\").format(cal.getTime());"
+                            return cal.getTime();"
   - id: 108
     title: "q8"
     description: "It's Question 8"
@@ -109,7 +109,7 @@ question:
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: "groovy: Calendar cal = Calendar.getInstance();
                             cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) - 5);                   
-                            return SimpleDateFormat(\"yyyy-MM-dd\").format(cal.getTime());"
+                            return cal.getTime();"
 
 question_has_tag:
   - question_id: 101
