@@ -4,6 +4,15 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
+import com.javamentor.qa.platform.dao.abstracts.model.AnswerDao;
+import com.javamentor.qa.platform.dao.impl.model.AnswerDaoImpl;
+import com.javamentor.qa.platform.dao.impl.model.QuestionDaoImpl;
+import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.impl.model.QuestionServiceImpl;
 import com.javamentor.qa.platform.webapp.configs.JmApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +21,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,7 +38,19 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
     @Autowired
     private MockMvc mvc;
 
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
+
+    private final QuestionService questionService;
+
+    private final UserService userService;
+
     private static final String PASSWORD = "password";
+
+    public TestAnswerResourceController(@Autowired QuestionService questionService, @Autowired UserService userService) {
+        this.questionService = questionService;
+        this.userService = userService;
+    }
 
     @Test
     @DataSet(value = {
@@ -343,7 +368,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
 
     public void getAllAnswerDtoByQuestionId() throws Exception {
 
-        String token = "Bearer " + getToken("user100@mail.ru", "password");
+        String token = "Bearer " + getToken("user100@mail.ru", PASSWORD);
 
         //Тестируем корректный случай с 4 ответами
         mockMvc.perform(MockMvcRequestBuilders.get("/api/user/question/100/answer")
@@ -552,14 +577,18 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].answerId").value(100))
-                .andExpect(jsonPath("$[0].lastRedactionDate").value("2021-12-13T23:09:52.716"))
-                .andExpect(jsonPath("$[0].persistDate").value("2021-12-13T23:09:52.716"))
+                .andExpect(jsonPath("$[0].lastRedactionDate").value("2021-12-14T06:09:52.716"))
+                .andExpect(jsonPath("$[0].persistDate").value("2021-12-14T06:09:52.716"))
                 .andExpect(jsonPath("$[0].text").value("Hello Test from Comment on the answer"))
                 .andExpect(jsonPath("$[0].reputation").value(100))
                 .andExpect(jsonPath("$[0].userId").value(100));
 
     }
 
+
+    @Test
+    void name() {
+    }
 
     @Test
     @DataSet(value = {
@@ -573,6 +602,13 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
             cleanAfter = true, cleanBefore = true)
     // Получение всех ответов пользователя за неделю
     public void getLastAnswersForWeek() throws Exception {
+        Answer newAnswer = new Answer(questionService.getById(100L).get(), userService.getById(100L).get(), "");
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        entityManager.persist(newAnswer);
+        entityManager.getTransaction().commit();
+        LocalDateTime testPersistDate = newAnswer.getPersistDateTime();
+        Long testAnswerId = newAnswer.getId();
         mockMvc.perform(get("/api/user/question/100/answer/100/answers")
                         .contentType("application/json")
                         .header("Authorization",
@@ -581,9 +617,9 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andDo(print())
                 .andExpect(content()
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].answerId").value(100))
+                .andExpect(jsonPath("$[0].answerId").value(testAnswerId))
                 .andExpect(jsonPath("$[0].questionId").value(100))
-                .andExpect(jsonPath("$[0].persistDate").value("2022-07-20T02:41:35.721"))
+                .andExpect(jsonPath("$[0].persistDate").value(testPersistDate.toString()))
                 .andExpect(jsonPath("$[0].htmlBody").value(""));
     }
 }
