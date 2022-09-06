@@ -1,0 +1,50 @@
+chat:
+  - id: 100
+    chat_type: 1
+    persist_date: 2021-12-01 00:00:00.000000
+    image: "image"
+
+message:
+  - id: 100
+    last_redaction_date: 2021-12-01 00:00:00.000000
+    message: "test_message_100"
+    persist_date: 2021-12-01 00:00:00.000000
+    user_sender_id: 100
+    chat_id: 100
+  - id: 101
+    last_redaction_date: 2021-12-02 00:00:00.000000
+    message: "test_message_101"
+    persist_date: 2021-12-02 00:00:00.000000
+    user_sender_id: 101
+    chat_id: 100
+
+message_star:
+  - id: 100
+    user_id: 100
+    message_id: 100
+  - id: 101
+    user_id: 100
+    message_id: 101
+
+role:
+  - id: 100
+    name: "ROLE_ADMIN"
+  - id: 101
+    name: "ROLE_USER"
+user_entity:
+  - id: 100
+    password: "$2a$10$Dbl/hKOLzLUVMn/ahtgPcOA6IrZzLE2bVBW/sDumCSUi8KZTecLnC"
+    email: "user1@mail.ru"
+    is_deleted: false
+    is_enabled: true
+    last_redaction_date: 2021-12-28 11:00:00.00000
+    persist_date: 2021-12-28 10:00:00.00000
+    role_id: 100
+  - id: 101
+    password: "$2a$10$Dbl/hKOLzLUVMn/ahtgPcOA6IrZzLE2bVBW/sDumCSUi8KZTecLnC"
+    email: "user2@mail.ru"
+    is_deleted: false
+    is_enabled: true
+    last_redaction_date: 2021-12-28 11:00:00.00000
+    persist_date: 2021-12-28 10:00:00.00000
+    role_id: 101
