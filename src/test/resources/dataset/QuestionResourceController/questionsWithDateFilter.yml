@@ -45,7 +45,7 @@ question:
     user_id: 100
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: "groovy: Calendar cal = Calendar.getInstance();
-                            cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) - 370);                   
+                            cal.add(Calendar.DAY_OF_MONTH, -370);                   
                             return cal.getTime();"
   - id: 102
     title: "q2"
@@ -54,7 +54,7 @@ question:
     user_id: 100
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: "groovy: Calendar cal = Calendar.getInstance();
-                            cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) - 370);                   
+                            cal.add(Calendar.DAY_OF_MONTH, -370);                   
                             return cal.getTime();"
   - id: 103
     title: "q3"
@@ -63,7 +63,7 @@ question:
     user_id: 100
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: "groovy: Calendar cal = Calendar.getInstance();
-                            cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) - 370);                   
+                            cal.add(Calendar.DAY_OF_MONTH, -370);                   
                             return cal.getTime();"
   - id: 104
     title: "q4"
@@ -72,7 +72,7 @@ question:
     user_id: 100
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: "groovy: Calendar cal = Calendar.getInstance();
-                            cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) - 370);                   
+                            cal.add(Calendar.DAY_OF_MONTH, -370);                   
                             return cal.getTime();"
   - id: 105
     title: "q5"
@@ -81,7 +81,7 @@ question:
     user_id: 100
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: "groovy: Calendar cal = Calendar.getInstance();
-                            cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) - 370);                   
+                            cal.add(Calendar.DAY_OF_MONTH, -370);                   
                             return cal.getTime();"
   - id: 106
     title: "q6"
@@ -90,7 +90,7 @@ question:
     user_id: 100
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: "groovy: Calendar cal = Calendar.getInstance();
-                            cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) - 360);                   
+                            cal.add(Calendar.DAY_OF_MONTH, -360);                   
                             return cal.getTime();"
   - id: 107
     title: "q7"
@@ -99,7 +99,7 @@ question:
     user_id: 100
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: "groovy: Calendar cal = Calendar.getInstance();
-                            cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) - 25);                   
+                            cal.add(Calendar.DAY_OF_MONTH, -25);                   
                             return cal.getTime();"
   - id: 108
     title: "q8"
@@ -108,7 +108,7 @@ question:
     user_id: 100
     last_redaction_date: 2021-12-09 19:41:18.252588
     persist_date: "groovy: Calendar cal = Calendar.getInstance();
-                            cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH) - 5);                   
+                            cal.add(Calendar.DAY_OF_MONTH, -5);                   
                             return cal.getTime();"
 
 question_has_tag:
