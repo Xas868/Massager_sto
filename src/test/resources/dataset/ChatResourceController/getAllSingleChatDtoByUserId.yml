@@ -38,23 +38,18 @@ chat:
   - id: 1
     chat_type: 1
     persist_date: 2022-05-23 20:02:51.654
-    title: Test SingleChat1
   - id: 2
     chat_type: 1
     persist_date: 2022-05-23 20:02:51.654
-    title: Test SingleChat2
   - id: 3
     chat_type: 1
     persist_date: 2022-05-23 20:02:51.654
-    title: Test SingleChat3
   - id: 4
     chat_type: 1
     persist_date: 2022-05-23 20:02:51.654
-    title: Test SingleChat4
   - id: 5
     chat_type: 1
     persist_date: 2022-05-23 20:02:51.654
-    title: Test SingleChat5
 single_chat:
   - chat_id: 1
     use_two_id: 3

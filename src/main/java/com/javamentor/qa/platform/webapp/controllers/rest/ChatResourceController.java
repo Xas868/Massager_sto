@@ -2,16 +2,28 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
-import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoFindInChatByWord;
+import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
+import com.javamentor.qa.platform.models.dto.MessageDto;
+import com.javamentor.qa.platform.models.dto.SingleChatDto;
+import com.javamentor.qa.platform.models.dto.GroupChatDto;
+import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
+import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.entity.chat.SingleChat;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.*;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatRoomService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.impl.dto.DtoServiceImpl;
+import com.javamentor.qa.platform.service.impl.model.ChatRoomServiceImpl;
 import com.javamentor.qa.platform.webapp.converters.GroupChatConverter;
 import com.javamentor.qa.platform.webapp.converters.SingleChatConverter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -130,6 +142,32 @@ public class ChatResourceController {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoBySingleChatId.class.getSimpleName());
         properties.getProps().put("singleChatId", singleChatId);
         return new ResponseEntity<>(messageDtoService.getPageDto(properties), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Поиск сообщений по неточному совпадению.", description = "Получение пагинированного списка сообщений чата по его id и слову поиска.")
+    @GetMapping("/{id}/message/find")
+    public ResponseEntity<PageDTO<MessageDto>> getPagedMessagesFromChatFindByWord(
+            @PathVariable("id")
+            @Parameter(name = "Id чата.", required = true, description = "Id чата является обязательным параметром.")
+            long chatId,
+            @RequestParam(name = "items", defaultValue = "20")
+            @Parameter(name = "Количество сообщений на странице.",
+                    description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 20.")
+            int itemsOnPage,
+            @RequestParam(name = "currentPage")
+            @Parameter(name = "Текущая страница сообщений.",
+                    required = true,
+                    description = "Обязательный параметр. Служит для корректного постраничного отображения сообщений и обращения к ним.")
+            int currentPage,
+            @RequestParam(name = "word")
+            @Parameter(name = "Слово или словосочетание, по которому будет производиться поиск.",
+                    required = true,
+                    description = "Обязательный параметр. Служит для передачи искомого текста.")
+            String searchWord) {
+        PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoFindInChatByWord.class.getSimpleName());
+        properties.getProps().put("chatId", chatId);
+        properties.getProps().put("searchWord", searchWord);
+        return new ResponseEntity<>(messagesPaginationService.getPageDto(properties), HttpStatus.OK);
     }
 
     @Operation(summary = "Удаление пользователя из чата.", description = "Удаление пользователя из чата по его id.")

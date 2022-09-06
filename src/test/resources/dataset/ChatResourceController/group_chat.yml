@@ -1,2 +1,3 @@
 group_chat:
   - chat_id: 101
+    title: "test group_chat with id = 101"
