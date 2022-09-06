@@ -189,16 +189,16 @@ public class ChatResourceController {
         Optional<GroupChat> groupChat = groupChatRoomService.getGroupChatAndUsers(id);
         Optional<User> user = userService.getById(userId);
 
-        if (user.isPresent() && groupChat.isPresent()) {
+        if(!groupChat.get().getUsers().contains(user)){
+            return new ResponseEntity<>("user not found", HttpStatus.BAD_REQUEST);
+        }
+
+        if (user.isPresent()) {
             Set<User> userSet = groupChat.get().getUsers();
             userSet.add(user.get());
             groupChatRoomService.update(groupChat.get());
 
             return new ResponseEntity<>("userAdded", HttpStatus.OK);
-        }
-
-        if(!groupChat.get().getUsers().contains(user)){
-            return new ResponseEntity<>("user not found", HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity<>("it's bad request", HttpStatus.BAD_REQUEST);
