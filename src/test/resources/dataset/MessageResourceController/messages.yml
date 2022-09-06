@@ -2,7 +2,6 @@ chat:
   - id: 1
     chat_type: 1
     persist_date: 2021-12-01 00:00:00.000000
-    title: "title"
     image: "image"
 
 message:
