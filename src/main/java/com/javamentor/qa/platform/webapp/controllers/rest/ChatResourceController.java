@@ -73,7 +73,7 @@ public class ChatResourceController {
     })
     @PostMapping("/single")
     public ResponseEntity<?> createSingleChatAndFirstMessageDto(@Valid @RequestBody CreateSingleChatDto createSingleChatDto) throws Exception {
-        SingleChat singleChat = singleChatRoomService.createSingleChatAndFirstMessage(createSingleChatDto.getMessage(),singleChatConverter.createSingleChatDtoToSingleChat(createSingleChatDto));
+        SingleChat singleChat = singleChatRoomService.createSingleChatAndFirstMessage(createSingleChatDto.getMessage(), singleChatConverter.createSingleChatDtoToSingleChat(createSingleChatDto));
         SingleChatDto singleChatDto = SingleChatDto.builder()
                 .id(singleChat.getId())
                 .name(singleChat.getUseTwo().getNickname())
@@ -115,7 +115,7 @@ public class ChatResourceController {
 
     @Operation(summary = "Получение сообщений single чата.", description = "Получение пагинированного списка сообщений single чата по его id.")
     @GetMapping("/{singleChatId}/single/message")
-    public ResponseEntity<MessageDto> getPagedMessagesOfSingleChat(
+    public ResponseEntity<PageDTO<MessageDto>> getPagedMessagesOfSingleChat(
             @PathVariable("singleChatId")
             @Parameter(name = "Id single чата.", required = true, description = "Id single чата является обязательным параметром.")
             long singleChatId,
@@ -129,7 +129,7 @@ public class ChatResourceController {
             int currentPage) {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoBySingleChatId.class.getSimpleName());
         properties.getProps().put("singleChatId", singleChatId);
-        return new ResponseEntity<>(messageDtoService.getMessageDto(properties), HttpStatus.OK);
+        return new ResponseEntity<>(messageDtoService.getPageDto(properties), HttpStatus.OK);
     }
 
     @Operation(summary = "Удаление пользователя из чата.", description = "Удаление пользователя из чата по его id.")
@@ -178,10 +178,10 @@ public class ChatResourceController {
     public ResponseEntity<String> addUserInGroupChat(
             @PathVariable("id")
             @Parameter(name = "Id group чата.", required = true, description = "Id group чата является обязательным параметром.")
-                    Long id,
+            Long id,
             @RequestParam("userId")
             @Parameter(name = "id Пользователя", required = true, description = "Id пользователя является обязательным параметром.")
-                    Long userId) {
+            Long userId) {
         Optional<GroupChat> groupChat = groupChatRoomService.getGroupChatAndUsers(id);
         Optional<User> user = userService.getById(userId);
 
