@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.models.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +27,7 @@ public class QuestionViewDto {
     private int viewCount; //(пока не считай это поле, как оно будет считаться решим позже, пусть пока будет 0)
     private int countAnswer;// (можно подсчитать с помощью sql);
     private int countValuable; // (Это голоса за ответ QuestionVote);
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime persistDateTime;
     private LocalDateTime lastUpdateDateTime;
     private List<TagDto> listTagDto;
