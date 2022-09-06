@@ -14,4 +14,5 @@ public interface UserDtoService extends PageDtoService<UserDto> {
     List<UserDto> getTopUsersForDaysRankedByNumberOfQuestions(CalendarPeriod calendarPeriod);
     Long getCountAnswersPerWeekByUserId (Long userId);
 
+    List<Long> getUnregisteredUserIds(List<Long> userIds);
 }

@@ -18,7 +18,7 @@ public class MessageStarServiceImpl extends ReadWriteServiceImpl<MessageStar, Lo
     }
 
     @Override
-    public Optional<MessageStar> getMessageByUserAndMessage(Long userId, Long messageId) {
-        return messageStarDao.getMessageByUserAndMessage(userId, messageId);
+    public Optional<MessageStar> getMessageStarByUserAndMessage(Long userId, Long messageId) {
+        return messageStarDao.getMessageStarByUserAndMessage(userId, messageId);
     }
 }
