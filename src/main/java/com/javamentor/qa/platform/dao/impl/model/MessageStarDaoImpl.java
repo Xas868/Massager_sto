@@ -15,10 +15,11 @@ public class MessageStarDaoImpl extends ReadWriteDaoImpl<MessageStar, Long> impl
     private EntityManager entityManager;
 
     @Override
-    public Optional<MessageStar> getMessageByUserAndMessage(Long userId, Long messageId) {
+    public Optional<MessageStar> getMessageStarByUserAndMessage(Long userId, Long messageId) {
         return SingleResultUtil.getSingleResultOrNull(entityManager
                 .createQuery("SELECT m FROM MessageStar m WHERE m.user.id =:userId AND m.message.id =:messageId", MessageStar.class)
                 .setParameter("userId", userId)
                 .setParameter("messageId", messageId));
     }
+
 }
