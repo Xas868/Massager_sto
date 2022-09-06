@@ -432,11 +432,11 @@ public class TestDataInitService {
     private void createUserChatPinChats() {
         Set<UserChatPin> userChatPins = new HashSet<>();
         for (int i = 0; i < 5; i++) {
-            Chat chat = new Chat();
+            Chat chat = new Chat(ChatType.GROUP);
             GroupChat groupChat = new GroupChat();
             Set<User> users = new HashSet<>();
 
-            chat.setChatType(ChatType.GROUP);
+//            chat.setChatType(ChatType.GROUP);
             groupChat.setChat(chat);
             for (int a = 0; a < 50; a++) {
                 UserChatPin userChatPin = new UserChatPin();
@@ -448,6 +448,31 @@ public class TestDataInitService {
             }
             groupChat.setUsers(users);
             groupChatRoomService.persist(groupChat);
+        }
+        for (int i = 0; i < 2; i++) {
+            Chat chat = new Chat(ChatType.SINGLE);
+            SingleChat singleChat = new SingleChat();
+            UserChatPin userChatPinUserOne = new UserChatPin();
+            UserChatPin userChatPinUserTwo = new UserChatPin();
+
+            singleChat.setChat(chat);
+
+            User userOne = getRandomUser();
+            User userTwo = getRandomUser();
+
+            singleChat.setUserOne(getRandomUser());
+            singleChat.setUseTwo(getRandomUser());
+            singleChat.setUserOneIsDeleted(false);
+            singleChat.setUserTwoIsDeleted(false);
+            singleChatService.persist(singleChat);
+
+            userChatPinUserOne.setChat(chat);
+            userChatPinUserTwo.setChat(chat);
+            userChatPinUserOne.setUser(userOne);
+            userChatPinUserTwo.setUser(userTwo);
+
+            userChatPins.add(userChatPinUserOne);
+            userChatPins.add(userChatPinUserTwo);
         }
         userChatPinService.persistAll(userChatPins);
     }
