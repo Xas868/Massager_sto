@@ -10,6 +10,7 @@ import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.util.CalendarPeriod;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -39,6 +40,11 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     private UserService userService;
     @Autowired
     private UserDtoService userDtoService;
+
+    @AfterEach
+    public void clearCache() {
+        cacheManager.getCacheNames().stream().forEach(x -> cacheManager.getCache(x).clear());
+    }
 
     @Test
     //Вывод Dto по id без тегов

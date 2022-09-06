@@ -63,8 +63,8 @@ public abstract class AbstractClassForDRRiderMockMVCTests {
         return response.getToken();
     }
 
-    @BeforeEach
-    public void clearCache() {
-        cacheManager.getCacheNames().stream().forEach(x -> cacheManager.getCache(x).clear());
-    }
+//    @BeforeEach
+//    public void clearCache() {
+//        cacheManager.getCacheNames().stream().forEach(x -> cacheManager.getCache(x).clear());
+//    }
 }

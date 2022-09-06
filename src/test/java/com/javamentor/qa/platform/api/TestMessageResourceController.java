@@ -4,6 +4,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
@@ -16,7 +17,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 public class TestMessageResourceController extends AbstractClassForDRRiderMockMVCTests {
+
     private static final String TEST_URL = "/api/user/message/star";
+
+    @AfterEach
+    public void clearCache() {
+        cacheManager.getCacheNames().stream().forEach(x -> cacheManager.getCache(x).clear());
+    }
     @Test
     @DataSet(cleanBefore = true,
             value = {"dataset/MessageResourceController/users.yml",

@@ -48,6 +48,8 @@ public class TestAdminResourceController extends AbstractClassForDRRiderMockMVCT
         this.mockMvc.perform(get(publicUrl)
                         .header("Authorization", "Bearer " + token))
                 .andDo(print()).andExpect(status().isForbidden());
+        // Принудительная очестка кэш, для сробатывания метода shouldDeleteAnswerById().
+        cacheManager.getCacheNames().stream().forEach(x -> cacheManager.getCache(x).clear());
     }
 
     @Test
