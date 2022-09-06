@@ -69,12 +69,11 @@ public class MessageResourceController {
     public ResponseEntity<?> deleteMessageStarByMessageId(@RequestBody Long messageId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<MessageStar> messageStar = messageStarService.getMessageStarByUserAndMessage(user.getId(), messageId);
-         if (messageStar.isPresent()) {
-             messageStarService.deleteById(messageId);
-             return new ResponseEntity<>("Сообщение с id = " + messageId + " было успешно удалено из избранных", HttpStatus.OK);
-         }
-
-         return new ResponseEntity<>("Сообщение с id = " + messageId + " не существует в избранных пользователя " +
-                 user.getNickname(), HttpStatus.BAD_REQUEST);
+        if (messageStar.isPresent()) {
+            messageStarService.deleteById(messageId);
+            return new ResponseEntity<>("Сообщение с id = " + messageId + " было успешно удалено из избранных", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Сообщение с id = " + messageId + " не существует в избранных пользователя " +
+                user.getNickname(), HttpStatus.BAD_REQUEST);
     }
 }
