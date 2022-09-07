@@ -265,17 +265,13 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
 
     //Получение неудалённых пользователей с репутацией за голоса
     @Test
-    @DataSet(value = {
-            "dataset/testUserResourceController/roleUser.yml",
-            "dataset/testUserResourceController/users20.yml",
-            "dataset/testUserResourceController/repFirst3DownVoteAndLast3UpVote.yml"
-    },
-            tableOrdering = {
-                    "role.yml",
-                    "user_entity",
-                    "reputation"
+    @DataSet(cleanBefore = true,
+            value = {
+                    "dataset/testUserResourceController/roleUser.yml",
+                    "dataset/testUserResourceController/users20.yml",
+                    "dataset/testUserResourceController/voicesUser.yml"
             },
-            cleanBefore = true,
+
             strategy = SeedStrategy.INSERT)
     public void shouldReturnUsersSortedByVote() throws Exception {
         //Получение пользователей на первой странице (до 16 элементов) отсортированных по репутации

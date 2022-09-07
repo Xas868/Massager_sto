@@ -79,4 +79,9 @@ public class UserDtoServiceImpl extends DtoServiceImpl<UserDto> implements UserD
     public Long getCountAnswersPerWeekByUserId(Long userId) {
         return userDtoDao.getCountAnswersPerWeekByUserId(userId);
     }
+
+    @Override
+    public List<Long> getUnregisteredUserIds(List<Long> userIds) {
+        return userDtoDao.getUnregisteredUserIds(userIds);
+    }
 }
