@@ -53,7 +53,11 @@ public class ChatDtoServiceImpl extends DtoServiceImpl<MessageDto> implements Ch
                 // Сортируем сперва закрепленные чаты по времени последнего сообщения, затем также незакрепленные
                 .sorted((ChatDto chat1, ChatDto chat2) -> {
                     if (chat1.isChatPin()) {
-                        return -1;
+                        if (chat2.isChatPin()) {
+                            return chat2.getPersistDateTimeLastMessage().compareTo(chat1.getPersistDateTimeLastMessage());
+                        } else {
+                            return -1;
+                        }
                     } else if (chat2.isChatPin()) {
                         return 1;
                     } else {
