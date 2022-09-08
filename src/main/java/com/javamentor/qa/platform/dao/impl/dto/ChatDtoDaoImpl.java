@@ -101,7 +101,8 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
                         "                and message.persistDate = ( " +
                         "                       select max (message.persistDate) " +
                         "                             from Message as message " +
-                        "                            where chat.id = message.chat.id)))" +
+                        "                            where chat.id = message.chat.id)), " +
+                        "((select count(ucp.id) from UserChatPin ucp where ucp.chat.id = chat.id and ucp.user.id = :userId) > 0)) " +
                         "     from Chat as chat " +
                         "left join GroupChat as groupChat " +
                         "       on chat.id = groupChat.id " +

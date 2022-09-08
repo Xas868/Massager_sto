@@ -4,12 +4,7 @@ import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoFindInChatByWord;
-import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
-import com.javamentor.qa.platform.models.dto.MessageDto;
-import com.javamentor.qa.platform.models.dto.SingleChatDto;
-import com.javamentor.qa.platform.models.dto.GroupChatDto;
-import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
-import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 
@@ -69,9 +64,9 @@ public class ChatResourceController {
     }
 
     @GetMapping("/single")
-    public ResponseEntity<List<SingleChatDto>> getAllSingleChatDtoByUserId(Authentication authentication) {
+    public ResponseEntity<List<ChatDto>> getAllSingleChatDtoByUserId(Authentication authentication) {
         User currentUser = (User) authentication.getPrincipal();
-        return new ResponseEntity<>(chatDtoService.getAllSingleChatDtoByUserId(currentUser.getId()), HttpStatus.OK);
+        return new ResponseEntity<>(chatDtoService.getAllChatsByNameAndUserId("name", currentUser.getId()), HttpStatus.OK);
     }
 
     @Operation(summary = "Создание single чата с первым сообщением.", description = "Создание single чата и первого сообщения.")

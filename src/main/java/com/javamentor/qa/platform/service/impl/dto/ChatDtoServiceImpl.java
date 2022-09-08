@@ -10,6 +10,7 @@ import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,16 @@ public class ChatDtoServiceImpl extends DtoServiceImpl<MessageDto> implements Ch
         return chatDtoDao.getAllChatsByNameAndUserId(chatName, userId)
                 .stream()
                 .filter(n -> !n.getName().equals("<no-chat-found>"))
-                .sorted(Comparator.comparing(ChatDto::getPersistDateTimeLastMessage).reversed())
+                // Сортируем сперва закрепленные чаты по времени последнего сообщения, затем также незакрепленные
+                .sorted((ChatDto chat1, ChatDto chat2) -> {
+                    if (chat1.isChatPin()) {
+                        return 1;
+                    } else if (chat2.isChatPin()) {
+                        return -1;
+                    } else {
+                        return chat2.getPersistDateTimeLastMessage().compareTo(chat1.getPersistDateTimeLastMessage());
+                    }
+                })
                 .collect(Collectors.toList());
     }
 }
