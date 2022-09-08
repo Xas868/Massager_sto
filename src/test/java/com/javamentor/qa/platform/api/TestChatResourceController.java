@@ -516,7 +516,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     void testIsUserExistsInChat() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("test102@mail.ru", "test102");
 
-        mockMvc.perform(get("/api/user/chat/group/101/userId=102")
+        mockMvc.perform(post("/api/user/chat/group/101/join?userId=102")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
