@@ -64,9 +64,9 @@ public class ChatResourceController {
     }
 
     @GetMapping("/single")
-    public ResponseEntity<List<ChatDto>> getAllSingleChatDtoByUserId(Authentication authentication) {
+    public ResponseEntity<List<SingleChatDto>> getAllSingleChatDtoByUserId(Authentication authentication) {
         User currentUser = (User) authentication.getPrincipal();
-        return new ResponseEntity<>(chatDtoService.getAllChatsByNameAndUserId("groupchat5", currentUser.getId()), HttpStatus.OK);
+        return new ResponseEntity<>(chatDtoService.getAllSingleChatDtoByUserId(currentUser.getId()), HttpStatus.OK);
     }
 
     @Operation(summary = "Создание single чата с первым сообщением.", description = "Создание single чата и первого сообщения.")
