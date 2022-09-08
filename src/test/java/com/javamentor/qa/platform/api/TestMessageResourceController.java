@@ -12,7 +12,6 @@ import java.util.Objects;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -24,6 +23,7 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
     public void clearCache() {
         cacheManager.getCacheNames().stream().forEach(x -> cacheManager.getCache(x).clear());
     }
+
     @Test
     @DataSet(cleanBefore = true,
             value = {"dataset/MessageResourceController/users.yml",

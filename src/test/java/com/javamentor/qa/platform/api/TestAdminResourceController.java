@@ -4,6 +4,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.models.entity.user.User;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -23,6 +24,11 @@ public class TestAdminResourceController extends AbstractClassForDRRiderMockMVCT
     private final String testUsername = "user1@mail.ru";
     private final String testPassword = "user1";
     private final long id = 1;
+
+    @AfterEach
+    public void clearCache() {
+        cacheManager.getCacheNames().stream().forEach(x -> cacheManager.getCache(x).clear());
+    }
 
 
     @Test
@@ -48,8 +54,7 @@ public class TestAdminResourceController extends AbstractClassForDRRiderMockMVCT
         this.mockMvc.perform(get(publicUrl)
                         .header("Authorization", "Bearer " + token))
                 .andDo(print()).andExpect(status().isForbidden());
-        // Принудительная очестка кэш, для сробатывания метода shouldDeleteAnswerById().
-        cacheManager.getCacheNames().stream().forEach(x -> cacheManager.getCache(x).clear());
+
     }
 
     @Test
