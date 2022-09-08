@@ -87,21 +87,25 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
                         "               end " +
                         "       end, " +
                         // Now we need to return last message that was sent in the chat
-                        "       (select coalesce(message.message, '<no-messages-found>') " +
-                        "               from Message as message " +
-                        "              where message.chat.id = chat.id " +
-                        "                and message.persistDate = ( " +
+                        "       case when (select count(message.id) from Message as message where message.chat.id = chat.id) > 0 then" +
+                        "           (select coalesce(message.message, '<no-messages-found>') " +
+                        "                   from Message as message " +
+                        "                   where message.chat.id = chat.id " +
+                        "                   and message.persistDate = ( " +
                         "                       select max (message.persistDate) " +
                         "                             from Message as message " +
-                        "                            where chat.id = message.chat.id))," +
+                        "                            where chat.id = message.chat.id))" +
+                        "       else '<no-messages-found>' end," +
                         // Same with persist date of the message
-                        "       (select coalesce(message.persistDate, '0001-01-01 00:00:00') " +
+                        "       case when (select count(message.id) from Message as message where message.chat.id = chat.id) > 0 then " +
+                        "   (select coalesce(message.persistDate, '0001-01-01 00:00:00') " +
                         "               from Message as message " +
                         "              where message.chat.id = chat.id" +
                         "                and message.persistDate = ( " +
                         "                       select max (message.persistDate) " +
                         "                             from Message as message " +
-                        "                            where chat.id = message.chat.id)), " +
+                        "                            where chat.id = message.chat.id)) " +
+                        "       else coalesce(chat.persistDate, '0001-01-01 00:00:00')  end," +
                         "((select count(ucp.id) from UserChatPin ucp where ucp.chat.id = chat.id and ucp.user.id = :userId) > 0)) " +
                         "     from Chat as chat " +
                         "left join GroupChat as groupChat " +
@@ -113,7 +117,7 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
                         "left join User as user2 " +
                         "       on singleChat.useTwo.id = user2.id ",
                         ChatDto.class)
-                .setParameter("chatName", '%' + chatName + '%')
+                .setParameter("chatName", '%' + chatName.toLowerCase() + '%')
                 .setParameter("group", ChatType.GROUP)
                 .setParameter("userId", userId)
                 .getResultList();
