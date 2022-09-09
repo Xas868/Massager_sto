@@ -35,12 +35,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import java.time.ZoneId;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertNotNull;
@@ -626,14 +628,14 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk());
 
-        String sqlCount = "select CAST(count(tag.id) as int) from Tag tag where tag.name = 'TAG100'";
-        int rowCount = (int) entityManager.createQuery(sqlCount).getSingleResult();
-        Assertions.assertTrue(rowCount == 1);
+        String sqlCount = "select count(tag.id) from Tag tag where tag.name = 'TAG100'";
+        long rowCount = (long) entityManager.createQuery(sqlCount).getSingleResult();
+        Assertions.assertEquals(1, rowCount);
 
 
         String sql = "select tag.id from Tag tag where tag.name = 'TAG100'";
         Long tagId = (long) entityManager.createQuery(sql).getSingleResult();
-        Assertions.assertTrue(tagId == 100L);
+        Assertions.assertEquals(100L, tagId);
     }
 
     @Test
@@ -674,9 +676,9 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk());
 
-        String sqlCount = "select CAST(count(tag.id) as int) from Tag tag where tag.name = 'Test'";
-        int rowCount = (int) entityManager.createQuery(sqlCount).getSingleResult();
-        Assertions.assertTrue(rowCount == 1);
+        String sqlCount = "select count(tag.id) from Tag tag where tag.name = 'Test'";
+        long rowCount = (long) entityManager.createQuery(sqlCount).getSingleResult();
+        Assertions.assertEquals(1, rowCount);
 
     }
 
@@ -728,9 +730,9 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
         Integer id = JsonPath.read(questionDtoJsonString, "$.id");
 
 
-        String sql = "select CAST(count(question.id) as int) from Question question where question.id =: questionDtoId";
-        int rowCount = (int) entityManager.createQuery(sql).setParameter("questionDtoId", id.longValue()).getSingleResult();
-        Assertions.assertTrue(rowCount == 1);
+        String sql = "select count(question.id) from Question question where question.id =: questionDtoId";
+        long rowCount = (long) entityManager.createQuery(sql).setParameter("questionDtoId", id.longValue()).getSingleResult();
+        Assertions.assertEquals(1, rowCount);
     }
 
     @Test
@@ -850,8 +852,8 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 (int) JsonPath.read(questionDtoJsonString, "$.authorId"));
         Assertions.assertEquals(questionFromBase.getUser().getImageLink(),
                 (JsonPath.read(questionDtoJsonString, "$.authorImage")));
-        Assertions.assertEquals(questionFromBase.getPersistDateTime().toString().substring(0, 23),
-                (JsonPath.read(questionDtoJsonString, "$.persistDateTime").toString().substring(0, 23)));
+        Assertions.assertEquals(questionFromBase.getPersistDateTime().toString().substring(0, 16),
+                (JsonPath.read(questionDtoJsonString, "$.persistDateTime").toString().substring(0, 16)));
         Assertions.assertEquals(questionFromBase.getLastUpdateDateTime().toString().substring(0, 23),
                 (JsonPath.read(questionDtoJsonString, "$.lastUpdateDateTime").toString().substring(0, 23)));
         Assertions.assertEquals(0, (int) JsonPath.read(questionDtoJsonString, "$.viewCount"));
@@ -911,7 +913,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items[0].viewCount").value("2"))
                 .andExpect(jsonPath("$.items[0].countAnswer").value("1"))
                 .andExpect(jsonPath("$.items[0].countValuable").value("-1"))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2021-12-13T18:09:55"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2021-12-13T18:09"))
                 .andExpect(jsonPath("$.items[0].lastUpdateDateTime").
                         value("2021-12-13T18:09:52"))
                 .andExpect(jsonPath("$.items[0].listTagDto[0].name").value("TAG100"))
@@ -927,7 +929,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items[1].viewCount").value("1"))
                 .andExpect(jsonPath("$.items[1].countAnswer").value("1"))
                 .andExpect(jsonPath("$.items[1].countValuable").value("-1"))
-                .andExpect(jsonPath("$.items[1].persistDateTime").value("2021-12-13T18:09:54"))
+                .andExpect(jsonPath("$.items[1].persistDateTime").value("2021-12-13T18:09"))
                 .andExpect(jsonPath("$.items[1].lastUpdateDateTime").
                         value("2021-12-13T18:09:52"))
                 .andExpect(jsonPath("$.items[1].listTagDto[0].name").value("TAG100"))
@@ -1533,7 +1535,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .header("Authorization", token100));
         Long id = 101L;
         Long userId = 100L;
-        List<BookMarks> bookMarks = (List<BookMarks>) entityManager.createQuery("select count(*) from BookMarks bm " +
+        List<BookMarks> bookMarks = (List<BookMarks>) entityManager.createQuery("select bm from BookMarks bm " +
                         "where bm.question.id = :id and bm.user.id=:userId ")
                 .setParameter("id", id)
                 .setParameter("userId", userId)
@@ -1731,7 +1733,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T13:07:52"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(370).withNano(0).withSecond(0).toString()))
                 .andExpect(jsonPath("$.items.length()").value(8))
                 .andExpect(status().isOk());
 
@@ -1740,7 +1742,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2021-12-13T13:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(360).withNano(0).withSecond(0).toString()))
                 .andExpect(jsonPath("$.items.length()").value(3))
                 .andExpect(status().isOk());
 
@@ -1749,7 +1751,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-23T13:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(25).withNano(0).withSecond(0).toString()))
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(status().isOk());
 
@@ -1758,7 +1760,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-08-14T13:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(5).withNano(0).withSecond(0).toString()))
                 .andExpect(jsonPath("$.items.length()").value(1))
                 .andExpect(status().isOk());
 
@@ -1779,7 +1781,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T13:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(370).withNano(0).withSecond(0).toString()))
                 .andExpect(jsonPath("$.items.length()").value(8))
                 .andExpect(status().isOk());
 
@@ -1788,7 +1790,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2021-12-13T13:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(360).withNano(0).withSecond(0).toString()))
                 .andExpect(jsonPath("$.items.length()").value(3))
                 .andExpect(status().isOk());
 
@@ -1797,7 +1799,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-23T13:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(25).withNano(0).withSecond(0).toString()))
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(status().isOk());
 
@@ -1806,7 +1808,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-08-14T13:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(5).withNano(0).withSecond(0).toString()))
                 .andExpect(jsonPath("$.items.length()").value(1))
                 .andExpect(status().isOk());
 
@@ -1827,7 +1829,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2020-12-13T20:07:52"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(370).withNano(0).withSecond(0).toString()))
                 .andExpect(jsonPath("$.items.length()").value(8))
                 .andExpect(status().isOk());
 
@@ -1836,7 +1838,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2021-12-13T13:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(360).withNano(0).withSecond(0).toString()))
                 .andExpect(jsonPath("$.items.length()").value(3))
                 .andExpect(status().isOk());
 
@@ -1845,7 +1847,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-07-23T13:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(25).withNano(0).withSecond(0).toString()))
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(status().isOk());
 
@@ -1854,7 +1856,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-08-14T13:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(5).withNano(0).withSecond(0).toString()))
                 .andExpect(jsonPath("$.items.length()").value(1))
                 .andExpect(status().isOk());
 
@@ -1874,7 +1876,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[7].persistDateTime").value("2020-12-13T13:07:52"))
+                .andExpect(jsonPath("$.items[7].persistDateTime").value(LocalDateTime.now().minusDays(370).withNano(0).withSecond(0).toString()))
                 .andExpect(jsonPath("$.items.length()").value(8))
                 .andExpect(status().isOk());
 
@@ -1883,7 +1885,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[2].persistDateTime").value("2021-12-13T13:07:52.716"))
+                .andExpect(jsonPath("$.items[2].persistDateTime").value(LocalDateTime.now().minusDays(360).withNano(0).withSecond(0).toString()))
                 .andExpect(jsonPath("$.items.length()").value(3))
                 .andExpect(status().isOk());
 
@@ -1892,7 +1894,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[1].persistDateTime").value("2022-07-23T13:07:52.716"))
+                .andExpect(jsonPath("$.items[1].persistDateTime").value(LocalDateTime.now().minusDays(25).withNano(0).withSecond(0).toString()))
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(status().isOk());
 
@@ -1901,7 +1903,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect((content()).contentType("application/json"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-08-14T13:07:52.716"))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value(LocalDateTime.now().minusDays(5).withNano(0).withSecond(0).toString()))
                 .andExpect(jsonPath("$.items.length()").value(1))
                 .andExpect(status().isOk());
 

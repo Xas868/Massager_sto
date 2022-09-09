@@ -74,7 +74,7 @@ public class TestDataInitService {
         createSingleChat();
         createQuestionViewed();
         createMessageStar();
-        createUserChatPinChat();
+        createUserChatPinChats();
     }
 
     public void createMessage() {
@@ -429,20 +429,51 @@ public class TestDataInitService {
         return groupChat.getUsers().contains(user);
     }
 
-    private void createUserChatPinChat() {
-        GroupChat groupChat = new GroupChat();
-        Chat chat = new Chat();
-        Set<User> users = new HashSet<>(userService.getAll());
+    private void createUserChatPinChats() {
+        Set<UserChatPin> userChatPins = new HashSet<>();
+        for (int i = 0; i < 5; i++) {
+            Chat chat = new Chat(ChatType.GROUP);
+            GroupChat groupChat = new GroupChat();
+            Set<User> users = new HashSet<>();
 
-        chat.setChatType(ChatType.GROUP);
-        groupChat.setChat(chat);
-        groupChat.setUsers(users);
-        groupChatRoomService.persist(groupChat);
-        for (User user: users) {
-            UserChatPin userChatPin = new UserChatPin();
-            userChatPin.setChat(chat);
-            userChatPin.setUser(user);
-            userChatPinService.persist(userChatPin);
+//            chat.setChatType(ChatType.GROUP);
+            groupChat.setChat(chat);
+            for (int a = 0; a < 50; a++) {
+                UserChatPin userChatPin = new UserChatPin();
+                User user = getRandomUser();
+                users.add(user);
+                userChatPin.setUser(user);
+                userChatPin.setChat(chat);
+                userChatPins.add(userChatPin);
+            }
+            groupChat.setUsers(users);
+            groupChatRoomService.persist(groupChat);
         }
+        for (int i = 0; i < 2; i++) {
+            Chat chat = new Chat(ChatType.SINGLE);
+            SingleChat singleChat = new SingleChat();
+            UserChatPin userChatPinUserOne = new UserChatPin();
+            UserChatPin userChatPinUserTwo = new UserChatPin();
+
+            singleChat.setChat(chat);
+
+            User userOne = getRandomUser();
+            User userTwo = getRandomUser();
+
+            singleChat.setUserOne(getRandomUser());
+            singleChat.setUseTwo(getRandomUser());
+            singleChat.setUserOneIsDeleted(false);
+            singleChat.setUserTwoIsDeleted(false);
+            singleChatService.persist(singleChat);
+
+            userChatPinUserOne.setChat(chat);
+            userChatPinUserTwo.setChat(chat);
+            userChatPinUserOne.setUser(userOne);
+            userChatPinUserTwo.setUser(userTwo);
+
+            userChatPins.add(userChatPinUserOne);
+            userChatPins.add(userChatPinUserTwo);
+        }
+        userChatPinService.persistAll(userChatPins);
     }
 }
