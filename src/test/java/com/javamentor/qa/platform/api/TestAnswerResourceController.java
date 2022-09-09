@@ -581,11 +581,6 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
 
     }
 
-
-    @Test
-    void name() {
-    }
-
     @Test
     @DataSet(value = {
             "dataset/testAnswerResourceController/getLastAnswerForWeek/answers.yml",
