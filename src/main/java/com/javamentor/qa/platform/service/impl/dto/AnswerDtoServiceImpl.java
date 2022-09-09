@@ -72,7 +72,7 @@ public class AnswerDtoServiceImpl extends DtoServiceImpl<AnswerDTO> implements A
 
         return map.entrySet()
                 .stream()
-                .sorted(comparingByValueAndId())
+                .sorted(Map.Entry.comparingByValue())
                 .collect(Collectors
                         .toMap(Map.Entry::getKey,
                                 Map.Entry::getValue,
@@ -109,16 +109,6 @@ public class AnswerDtoServiceImpl extends DtoServiceImpl<AnswerDTO> implements A
     @Override
     public List<AnswerUserDto> getLastAnswersForWeek(Long userId) {
         return answerDtoDao.getLastAnswersForWeek(userId);
-    }
-
-    public static <K extends AnswerDTO, V extends Comparable<? super V>> Comparator<Map.Entry<K, V>> comparingByValueAndId() {
-        return (Comparator<Map.Entry<K, V>> & Serializable)
-                (c1, c2) -> {
-            if (c1.getValue() != c2.getValue()) {
-                        return c1.getValue().compareTo(c2.getValue());
-                    }
-            return c2.getKey().getId().compareTo(c1.getKey().getId());
-        };
     }
 }
 
