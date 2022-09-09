@@ -146,7 +146,7 @@ public class ChatResourceController {
             int currentPage) {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoBySingleChatId.class.getSimpleName());
         properties.getProps().put("singleChatId", singleChatId);
-        return new ResponseEntity<>(messagesPaginationService.getPageDto(properties), HttpStatus.OK);
+        return new ResponseEntity<>(messageDtoService.getPageDto(properties), HttpStatus.OK);
     }
 
     @Operation(summary = "Поиск сообщений по неточному совпадению.", description = "Получение пагинированного списка сообщений чата по его id и слову поиска.")
