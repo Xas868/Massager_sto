@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.user.UserChatPin;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.service.abstracts.model.*;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +40,7 @@ public class TestDataInitService {
     private final SingleChatService singleChatService;
     private final QuestionViewedService questionViewedService;
     private final MessageStarService messageStarService;
+    private final UserChatPinService userChatPinService;
     private final long NUM_OF_USERS = 100L;
     private final long NUM_OF_TAGS = 50L;
     private final long NUM_OF_QUESTIONS = 100L;
@@ -71,6 +74,7 @@ public class TestDataInitService {
         createSingleChat();
         createQuestionViewed();
         createMessageStar();
+        createUserChatPinChats();
     }
 
     public void createMessage() {
@@ -423,5 +427,53 @@ public class TestDataInitService {
         }
         GroupChat groupChat = groupChatRoomService.getById(chat.getId()).get();
         return groupChat.getUsers().contains(user);
+    }
+
+    private void createUserChatPinChats() {
+        Set<UserChatPin> userChatPins = new HashSet<>();
+        for (int i = 0; i < 5; i++) {
+            Chat chat = new Chat(ChatType.GROUP);
+            GroupChat groupChat = new GroupChat();
+            Set<User> users = new HashSet<>();
+
+//            chat.setChatType(ChatType.GROUP);
+            groupChat.setChat(chat);
+            for (int a = 0; a < 50; a++) {
+                UserChatPin userChatPin = new UserChatPin();
+                User user = getRandomUser();
+                users.add(user);
+                userChatPin.setUser(user);
+                userChatPin.setChat(chat);
+                userChatPins.add(userChatPin);
+            }
+            groupChat.setUsers(users);
+            groupChatRoomService.persist(groupChat);
+        }
+        for (int i = 0; i < 2; i++) {
+            Chat chat = new Chat(ChatType.SINGLE);
+            SingleChat singleChat = new SingleChat();
+            UserChatPin userChatPinUserOne = new UserChatPin();
+            UserChatPin userChatPinUserTwo = new UserChatPin();
+
+            singleChat.setChat(chat);
+
+            User userOne = getRandomUser();
+            User userTwo = getRandomUser();
+
+            singleChat.setUserOne(getRandomUser());
+            singleChat.setUseTwo(getRandomUser());
+            singleChat.setUserOneIsDeleted(false);
+            singleChat.setUserTwoIsDeleted(false);
+            singleChatService.persist(singleChat);
+
+            userChatPinUserOne.setChat(chat);
+            userChatPinUserTwo.setChat(chat);
+            userChatPinUserOne.setUser(userOne);
+            userChatPinUserTwo.setUser(userTwo);
+
+            userChatPins.add(userChatPinUserOne);
+            userChatPins.add(userChatPinUserTwo);
+        }
+        userChatPinService.persistAll(userChatPins);
     }
 }

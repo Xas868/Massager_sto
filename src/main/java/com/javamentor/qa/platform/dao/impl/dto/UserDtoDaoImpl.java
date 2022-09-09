@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class UserDtoDaoImpl implements UserDtoDao {
@@ -111,5 +112,16 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 .getResultList();
 
         return (long) resultList.size();
+    }
+
+    @Override
+    public List<Long> getUnregisteredUserIds(List<Long> userIds) {
+        List<Long> foundIds =  entityManager.createQuery("select id from User where id in(:ids)")
+                .setParameter("ids", userIds)
+                .getResultList();
+
+        List<Long> notFoundIds = userIds.stream().filter(aObject -> !foundIds.contains(aObject)).collect(Collectors.toList());
+
+        return notFoundIds;
     }
 }

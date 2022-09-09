@@ -14,4 +14,6 @@ public interface UserDtoDao {
     List<UserProfileQuestionDto> getAllUserProfileQuestionDtoById(Long id);
     List<UserDto> getTopUsersForDaysRankedByNumberOfQuestions(CalendarPeriod calendarPeriod);
     Long getCountAnswersPerWeekByUserId (Long userId);
+
+    List<Long> getUnregisteredUserIds(List<Long> userIds);
 }
