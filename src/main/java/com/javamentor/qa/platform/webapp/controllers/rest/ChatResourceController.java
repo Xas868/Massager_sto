@@ -3,12 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoFindInChatByWord;
-import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
-import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
-import com.javamentor.qa.platform.models.dto.GroupChatDto;
-import com.javamentor.qa.platform.models.dto.MessageDto;
-import com.javamentor.qa.platform.models.dto.PageDTO;
-import com.javamentor.qa.platform.models.dto.SingleChatDto;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.chat.SingleChat;
@@ -42,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -73,6 +69,34 @@ public class ChatResourceController {
         this.userDtoService = userDtoService;
         this.groupChatConverter = groupChatConverter;
         this.userService = userService;
+    }
+    @GetMapping
+    public ResponseEntity<List<ChatDto>> getAllChat(String name, String id, Authentication authentication){
+        System.out.println("Vxod v metod");
+        if(name == null){
+            if(id != null){
+                System.out.println(" name = null?  id != null");
+                Long userId = Long.parseLong(id);
+                return new ResponseEntity<>(chatDtoService.getAllChatByUserId(userId), HttpStatus.OK);
+            }
+            System.out.println(" name = null and id = null");
+            User currentUser = (User) authentication.getPrincipal();
+            System.out.println("UserID poluchil");
+            List<ChatDto> chatDtos = chatDtoService.getAllChatByUserId(currentUser.getId());
+            System.out.println("Gjkexbk ytj,[jlbvst lfyyst");
+
+
+            System.out.println(chatDtos);
+            return new ResponseEntity<>(chatDtos, HttpStatus.OK);
+
+        }
+        if(name != null){
+            Long userId = Long.parseLong(name);
+            List<ChatDto> list = chatDtoService.getAllChatsByChatNameOrUserId(name, userId);
+            System.out.println("udalosss vernut list");
+            return new ResponseEntity<>(list, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/single")
@@ -182,14 +206,19 @@ public class ChatResourceController {
             @Parameter(name = "Id чата.", required = true, description = "Id чата является обязательным параметром.")
             Long chatId,
             Authentication authentication) {
+
         ChatType chatType = chatRoomService.getById(chatId).get().getChatType();
+
         User currentUser = (User) authentication.getPrincipal();
 
         if (chatType.equals(ChatType.GROUP)) {
+
+
+            System.out.println("Группа");
             groupChatRoomService.deleteUserFromGroupChatById(chatId, currentUser.getId());
             return new ResponseEntity<>("GroupChat deleted", HttpStatus.OK);
         }
-
+        System.out.println("сингл");
         singleChatService.deleteUserFromSingleChatById(chatId, currentUser.getId());
         return new ResponseEntity<>("SingleChat deleted", HttpStatus.OK);
     }
@@ -239,4 +268,6 @@ public class ChatResourceController {
 
         return new ResponseEntity<>("it's bad request", HttpStatus.BAD_REQUEST);
     }
+
+
 }
