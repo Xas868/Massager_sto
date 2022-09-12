@@ -5,6 +5,8 @@ import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.webapp.configs.JmApplication;
+import org.hamcrest.CustomMatcher;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,10 +15,18 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.in;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @AutoConfigureMockMvc
 @SpringBootTest(classes = JmApplication.class)
@@ -343,7 +353,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
 
     public void getAllAnswerDtoByQuestionId() throws Exception {
 
-        String token = "Bearer " + getToken("user100@mail.ru", "password");
+        String token = "Bearer " + getToken("user100@mail.ru", PASSWORD);
 
         //Тестируем корректный случай с 4 ответами
         mockMvc.perform(MockMvcRequestBuilders.get("/api/user/question/100/answer")
@@ -360,9 +370,9 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andExpect(jsonPath("$.[0].isUserVote").value("true"))
                 .andExpect(jsonPath("$.[0].countValuable").value(2))
                 .andExpect(jsonPath("$.[0].nickName").value("user0"))
-                .andExpect(jsonPath("$.[1].id").value(101))
-                .andExpect(jsonPath("$.[2].id").value(102))
-                .andExpect(jsonPath("$.[3].id").value(103))
+                .andExpect(jsonPath("$.[1].id").value(in(Arrays.asList(101, 102, 103))))
+                .andExpect(jsonPath("$.[2].id").value(in(Arrays.asList(101, 102, 103))))
+                .andExpect(jsonPath("$.[3].id").value(in(Arrays.asList(101, 102, 103))))
                 .andExpect(jsonPath("$.size()").value(4));
 
         //Тестируем случай с 2 удалёнными ответами из 4
@@ -371,8 +381,8 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                         .contentType("application/json")
                 ).andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].id").value(104))
-                .andExpect(jsonPath("$.[1].id").value(107))
+                .andExpect(jsonPath("$.[0].id").value(in(Arrays.asList(104, 107))))
+                .andExpect(jsonPath("$.[1].id").value(in(Arrays.asList(104, 107))))
                 .andExpect(jsonPath("$.size()").value(2));
 
         //Тестируем случай с вопросом, у которого удалены все ответы
@@ -552,14 +562,13 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].answerId").value(100))
-                .andExpect(jsonPath("$[0].lastRedactionDate").value("2021-12-13T23:09:52.716"))
-                .andExpect(jsonPath("$[0].persistDate").value("2021-12-13T23:09:52.716"))
+                .andExpect(jsonPath("$[0].lastRedactionDate").value("2021-12-14T06:09:52.716"))
+                .andExpect(jsonPath("$[0].persistDate").value("2021-12-14T06:09:52.716"))
                 .andExpect(jsonPath("$[0].text").value("Hello Test from Comment on the answer"))
                 .andExpect(jsonPath("$[0].reputation").value(100))
                 .andExpect(jsonPath("$[0].userId").value(100));
 
     }
-
 
     @Test
     @DataSet(value = {
@@ -584,7 +593,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].answerId").value(100))
                 .andExpect(jsonPath("$[0].questionId").value(100))
-                .andExpect(jsonPath("$[0].persistDate").value("2022-07-20T02:41:35.721"))
+                .andExpect(jsonPath("$[0].persistDate", containsString(new SimpleDateFormat("yyyy-MM-dd'T'hh").format(new Date()))))
                 .andExpect(jsonPath("$[0].htmlBody").value(""));
     }
 }
