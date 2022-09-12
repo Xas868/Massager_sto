@@ -1,10 +1,8 @@
 package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.ChatDtoDao;
-import com.javamentor.qa.platform.models.dto.ChatDto;
-import com.javamentor.qa.platform.models.dto.SingleChatDto;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
-import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import org.springframework.stereotype.Repository;
 
@@ -114,6 +112,26 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
                 .setParameter("chatName", '%' + chatName.toLowerCase() + '%')
                 .setParameter("group", ChatType.GROUP)
                 .setParameter("userId", userId)
+                .getResultList();
+    }
+
+    @Override
+    public List<ChatDto> getAllChatsByUserId(Long userId) {
+        int itemsOnPage = properties.getItemsOnPage();
+        int firstResultOffset = (properties.getCurrentPage() - 1) * itemsOnPage;
+        long groupChatId = (long) properties.getProps().get("groupChatId");
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.MessageDto " +
+                        "(m.id, " +
+                        "m.message, " +
+                        "m.userSender.nickname, " +
+                        "m.userSender.id, " +
+                        "m.userSender.imageLink, " +
+                        "m.persistDate) from Message as m inner join GroupChat as gc on gc.chat.id = m.chat.id " +
+                        "where m.chat.chatType = 1 and gc.id = :groupChatId " +
+                        "order by m.persistDate desc", MessageDto.class)
+                .setParameter("groupChatId", groupChatId)
+                .setFirstResult(firstResultOffset)
+                .setMaxResults(itemsOnPage)
                 .getResultList();
     }
 }

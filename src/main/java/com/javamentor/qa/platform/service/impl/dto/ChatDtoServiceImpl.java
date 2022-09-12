@@ -2,10 +2,7 @@ package com.javamentor.qa.platform.service.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.ChatDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
-import com.javamentor.qa.platform.models.dto.ChatDto;
-import com.javamentor.qa.platform.models.dto.SingleChatDto;
-import com.javamentor.qa.platform.models.dto.GroupChatDto;
-import com.javamentor.qa.platform.models.dto.MessageDto;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import org.springframework.stereotype.Service;
@@ -50,6 +47,11 @@ public class ChatDtoServiceImpl extends DtoServiceImpl<MessageDto> implements Ch
                 .stream()
                 .sorted(this::isPinAndLastMessageDateComparator)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public PageDTO<ChatDto> getPagedAllChatsByUserId(PaginationData properties) {
+        return chatDtoDao.getAllChatsByuserId();
     }
 
     private int isPinAndLastMessageDateComparator(ChatDto chat1, ChatDto chat2) {

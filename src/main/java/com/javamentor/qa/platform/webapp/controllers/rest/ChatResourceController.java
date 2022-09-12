@@ -70,10 +70,27 @@ public class ChatResourceController {
         this.userService = userService;
     }
 
-    @GetMapping("/single")
-    public ResponseEntity<List<ChatDto>> getAllSingleChatDtoByUserId(Authentication authentication) {
+    @GetMapping("/")
+    public ResponseEntity<PageDTO<ChatDto>> getPagedAllUserChats (
+            Authentication authentication,
+            @RequestParam(name = "currentPage", defaultValue = "1")
+            @Parameter(name = "Номер текущей страницы.",
+                    description = "Необязательный параметр. Отвечает за пагинацию.")
+            int currentPage,
+            @RequestParam(name = "items", defaultValue = "10")
+            @Parameter(name = "Количество сообщений на странице.",
+                    description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
+            int items) {
         User currentUser = (User) authentication.getPrincipal();
-        return new ResponseEntity<>(chatDtoService.getAllChatsByNameAndUserId("groupchat5", currentUser.getId()), HttpStatus.OK);
+        PaginationData properties = new PaginationData(currentPage, items, MessagePageDtoFindInChatByWord.class.getSimpleName());
+        properties.getProps().put("userId", currentUser.getId());
+        return new ResponseEntity<>(chatDtoService.getPagedAllChatsByUserId(properties), HttpStatus.OK);
+    }
+
+    @GetMapping("/single")
+    public ResponseEntity<List<SingleChatDto>> getAllSingleChatDtoByUserId(Authentication authentication) {
+        User currentUser = (User) authentication.getPrincipal();
+        return new ResponseEntity<>(chatDtoService.getAllSingleChatDtoByUserId(currentUser.getId()), HttpStatus.OK);
     }
 
     @Operation(summary = "Создание single чата с первым сообщением.", description = "Создание single чата и первого сообщения.")
