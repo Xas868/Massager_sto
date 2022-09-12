@@ -58,9 +58,8 @@ public class ChatDtoServiceImpl extends DtoServiceImpl<MessageDto> implements Ch
                         }
                     } else if (chat2.isChatPin()) {
                         return 1;
-                    } else {
-                        return chat2.getPersistDateTimeLastMessage().compareTo(chat1.getPersistDateTimeLastMessage());
                     }
+                    return chat2.getPersistDateTimeLastMessage().compareTo(chat1.getPersistDateTimeLastMessage());
                 })
                 .collect(Collectors.toList());
     }
