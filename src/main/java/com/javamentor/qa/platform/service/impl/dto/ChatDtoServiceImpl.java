@@ -10,6 +10,7 @@ import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,20 +48,20 @@ public class ChatDtoServiceImpl extends DtoServiceImpl<MessageDto> implements Ch
     public List<ChatDto> getAllChatsByNameAndUserId(String chatName, Long userId) {
         return chatDtoDao.getAllChatsByNameAndUserId(chatName, userId)
                 .stream()
-                .filter(n -> !n.getName().equals("<no-chat-found>"))
-                // Сортируем сперва закрепленные чаты по времени последнего сообщения, затем также незакрепленные
-                .sorted((ChatDto chat1, ChatDto chat2) -> {
-                    if (chat1.isChatPin()) {
-                        if (chat2.isChatPin()) {
-                            return chat2.getPersistDateTimeLastMessage().compareTo(chat1.getPersistDateTimeLastMessage());
-                        } else {
-                            return -1;
-                        }
-                    } else if (chat2.isChatPin()) {
-                        return 1;
-                    }
-                    return chat2.getPersistDateTimeLastMessage().compareTo(chat1.getPersistDateTimeLastMessage());
-                })
+                .sorted(this::isPinAndLastMessageDateComparator)
                 .collect(Collectors.toList());
+    }
+
+    private int isPinAndLastMessageDateComparator(ChatDto chat1, ChatDto chat2) {
+        if (chat1.isChatPin()) {
+            if (chat2.isChatPin()) {
+                return chat2.getPersistDateTimeLastMessage().compareTo(chat1.getPersistDateTimeLastMessage());
+            } else {
+                return -1;
+            }
+        } else if (chat2.isChatPin()) {
+            return 1;
+        }
+        return chat2.getPersistDateTimeLastMessage().compareTo(chat1.getPersistDateTimeLastMessage());
     }
 }

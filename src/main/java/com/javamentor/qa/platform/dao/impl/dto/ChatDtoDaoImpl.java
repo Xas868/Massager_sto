@@ -57,23 +57,15 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
                 "SELECT NEW com.javamentor.qa.platform.models.dto.ChatDto( " +
                         // First we return chat id no matter what type this chat is
                         "       chat.id, " +
-
+                        // Now we return the group name OR user nickname depending on chat type
                         "       case when chat.chatType = :group " +
-                        "           and lower(groupChat.title) like :chatName" +
                         "               then groupChat.title " +
-                        "       else case when user1.id = :userId " +
-                        "          then case when lower(user2.nickname) like :chatName " +
-                        "              then user2.nickname " +
-                        "              else '<no-chat-found>' " +
-                        "              end " +
-                        "          else case when user2.id = :userId " +
-                        "              then case when lower(user1.nickname) like :chatName " +
-                        "                  then user1.nickname " +
-                        "                  else '<no-chat-found>' " +
-                        "                  end " +
-                        "              else '<no-chat-found>' " +
-                        "              end " +
-                        "          end " +
+                        "       else " +
+                        "           case when user1.id = :userId " +
+                        "               then user2.nickname " +
+                        "           else " +
+                        "               user1.nickname " +
+                        "           end " +
                         "       end, " +
                         // Then we want to return image link for chat, but if it's a single chat then we have to return profile picture of a person who our person is chatting with.
                         "       case when chat.chatType = :group " +
@@ -115,7 +107,9 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
                         "left join User as user1 " +
                         "       on singleChat.userOne.id = user1.id " +
                         "left join User as user2 " +
-                        "       on singleChat.useTwo.id = user2.id ",
+                        "       on singleChat.useTwo.id = user2.id " +
+                        // Now we are filtering out all the chats that we don't need
+                        "where lower(groupChat.title) like :chatName or lower(user1.nickname) = :chatName or lower(user2.nickname) = :chatName",
                         ChatDto.class)
                 .setParameter("chatName", '%' + chatName.toLowerCase() + '%')
                 .setParameter("group", ChatType.GROUP)
