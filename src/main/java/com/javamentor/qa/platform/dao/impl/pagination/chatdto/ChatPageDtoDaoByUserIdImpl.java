@@ -33,8 +33,8 @@ public class ChatPageDtoDaoByUserIdImpl implements PageDtoDao<ChatDto>{
         int itemsOnPage = properties.getItemsOnPage();
         int offset = (properties.getCurrentPage() - 1) * itemsOnPage;
         Long userId = (long) properties.getProps().get("userId");
-        return entityManager
-                .createQuery("SELECT new com.javamentor.qa.platform.models.dto.ChatDto(   " +
+        return entityManager.createQuery(
+                "SELECT new com.javamentor.qa.platform.models.dto.ChatDto(   " +
                         // Chat ID
                                 "       chat.id, " +
                                 // Now we return the group name OR user nickname depending on chat type

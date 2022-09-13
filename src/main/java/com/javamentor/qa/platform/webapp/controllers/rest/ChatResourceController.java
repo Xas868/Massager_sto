@@ -92,7 +92,9 @@ public class ChatResourceController {
         User currentUser = (User) authentication.getPrincipal();
         PaginationData properties = new PaginationData(currentPage, items, ChatPageDtoDaoByUserIdImpl.class.getSimpleName());
         properties.getProps().put("userId", currentUser.getId());
-        return new ResponseEntity<>(chatDtoService.getPageDto(properties), HttpStatus.OK);
+        PageDTO<ChatDto> response = chatDtoService.getPageDto(properties);
+        response.getItems().sort();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/single")

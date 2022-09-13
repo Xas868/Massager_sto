@@ -1,0 +1,116 @@
+role:
+  - id: 101
+    name: "ROLE_ADMIN"
+  - id: 102
+    name: "ROLE_USER"
+user_entity:
+  - id: 101
+    nickname: "user_1"
+    password: "$2a$10$Dbl/hKOLzLUVMn/ahtgPcOA6IrZzLE2bVBW/sDumCSUi8KZTecLnC"
+    email: "user1@mail.ru"
+    is_deleted: false
+    image_link: avatar1.png
+    is_enabled: true
+    last_redaction_date: 2022-05-23 20:02:51.654701
+    persist_date: 2022-05-23 20:02:51.654000
+    role_id: 101
+  - id: 102
+    nickname: "user_2"
+    password: "$2a$10$Dbl/hKOLzLUVMn/ahtgPcOA6IrZzLE2bVBW/sDumCSUi8KZTecLnC"
+    email: "user2@mail.ru"
+    is_deleted: false
+    image_link: avatar2.png
+    is_enabled: true
+    last_redaction_date: 2022-05-23 20:02:51.654701
+    persist_date: 2022-05-23 20:02:51.654000
+    role_id: 102
+  - id: 103
+    nickname: "user_3"
+    password: "$2a$10$Dbl/hKOLzLUVMn/ahtgPcOA6IrZzLE2bVBW/sDumCSUi8KZTecLnC"
+    email: "user2@mail.ru"
+    is_deleted: false
+    image_link: avatar3.png
+    is_enabled: true
+    last_redaction_date: 2022-05-23 20:02:51.654701
+    persist_date: 2022-05-23 20:02:51.654000
+    role_id: 102
+chat:
+  - id: 101
+    chat_type: 0
+    persist_date: 2022-05-23 20:02:51.654
+  - id: 102
+    chat_type: 0
+    persist_date: 2022-05-23 20:02:51.654
+  - id: 103
+    chat_type: 0
+    persist_date: 2022-05-23 20:02:51.654
+  - id: 104
+    chat_type: 1
+    persist_date: 2022-05-23 20:02:51.654
+  - id: 105
+    chat_type: 1
+    persist_date: 2022-05-23 20:02:51.654
+  - id: 106
+    chat_type: 1
+    persist_date: 2022-05-23 20:02:51.654
+single_chat:
+  - chat_id: 101
+    use_two_id: 103
+    user_one_id: 101
+  - chat_id: 102
+    use_two_id: 101
+    user_one_id: 102
+  - chat_id: 103
+    use_two_id: 103
+    user_one_id: 102
+group_chat:
+  - chat_id: 104
+    title: "test group_chat with id = 106"
+  - chat_id: 105
+    title: "test group_chat with id = 107"
+  - chat_id: 106
+    title: "test group_chat with id = 108"
+groupchat_has_users:
+  - chat_id: 105
+    user_id: 101
+  - chat_id: 105
+    user_id: 102
+  - chat_id: 105
+    user_id: 103
+message:
+  - id: 101
+    last_redaction_date: 2022-05-23 20:02:51.654
+    message: Test message №1
+    persist_date: 2022-06-23 20:02:51.654000
+    chat_id: 101
+    user_sender_id: 101
+  - id: 102
+    last_redaction_date: 2022-05-23 20:02:51.654
+    message: Test message №2
+    persist_date: 2022-05-2 20:02:51.654000
+    chat_id: 101
+    user_sender_id: 102
+  - id: 103
+    last_redaction_date: 2022-05-23 20:02:51.654
+    message: Test message №3
+    persist_date: 2022-04-7 20:02:51.654000
+    chat_id: 102
+    user_sender_id: 101
+  - id: 104
+    last_redaction_date: 2022-05-23 20:02:51.654
+    message: Test message №4
+    persist_date: 2022-05-23 20:02:51.654000
+    chat_id: 103
+    user_sender_id: 103
+  - id: 105
+    last_redaction_date: 2022-05-23 20:02:51.654
+    message: Test message №5
+    persist_date: 2022-05-23 20:02:51.654
+    chat_id: 104
+    user_sender_id: 103
+  - id: 106
+    last_redaction_date: 2022-05-23 20:02:51.654
+    message: Test message №6
+    persist_date: 2022-06-22 20:02:51.654
+    chat_id: 105
+    user_sender_id: 103
