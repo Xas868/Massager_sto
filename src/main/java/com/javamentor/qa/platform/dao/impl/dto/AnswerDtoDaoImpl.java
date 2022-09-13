@@ -24,20 +24,22 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
     @Override
     public Optional<AnswerDTO> getUndeletedAnswerDtoById(Long id) {
 
-        return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.AnswerDTO(" +
-                        "a.id," +
-                        " a.user.id," +
-                        " (select sum(r.count) from Reputation r where r.author.id = a.user.id), " +
-                        "a.question.id," +
-                        " a.htmlBody," +
-                        " a.persistDateTime," +
-                        " a.isHelpful," +
-                        "(select distinct(CASE WHEN  a.user.id = v.user.id THEN true END) from VoteAnswer v " +
-                        "where v.answer.id = a.id), " +
-                        " a.dateAcceptTime, " +
-                        "(select coalesce(sum(case when v.vote = 'UP_VOTE' then 1 else -1 end), 0) from VoteAnswer v where v.answer.id = a.id)," +
-                        "a.user.imageLink," +
-                        " a.user.nickname) from Answer as a " +
+        return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery(
+                "select new com.javamentor.qa.platform.models.dto.AnswerDTO(" +
+                        "a.id, " +
+                        "a.user.id, " +
+                        "(select coalesce(sum(r.count), 0) from Reputation r where r.author.id = a.user.id), " +
+                        "a.question.id, " +
+                        "a.htmlBody, " +
+                        "a.persistDateTime, " +
+                        "a.isHelpful, " +
+                        "(select distinct(CASE WHEN  a.user.id = v.user.id THEN true else false END) from VoteAnswer v " +
+                        "   where v.answer.id = a.id), " +
+                        "a.dateAcceptTime, " +
+                        "(select coalesce(sum(case when v.vote = 'UP_VOTE' then 1 else -1 end), 0) from VoteAnswer v where v.answer.id = a.id), " +
+                        "a.user.imageLink, " +
+                        "a.user.nickname) " +
+                        "from Answer as a " +
                                "where a.id = :id and a.isDeleted = false ", AnswerDTO.class)
                 .setParameter("id", id));
     }
@@ -46,7 +48,8 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
     @Override
     public List<AnswerDTO> getAllUndeletedAnswerDtoByQuestionId(Long questionId) {
 
-        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.AnswerDTO( a.id," +
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.AnswerDTO( " +
+                        "a.id," +
                         " a.user.id, " +
                         "(select sum(r.count) from Reputation r where r.author.id = a.user.id), " +
                         "a.question.id," +
