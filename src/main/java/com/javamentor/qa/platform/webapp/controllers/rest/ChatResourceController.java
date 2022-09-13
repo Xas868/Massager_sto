@@ -80,7 +80,7 @@ public class ChatResourceController {
             @Content(mediaType = "application/json")
     })
     @GetMapping("/")
-    public ResponseEntity<PageDTO<ChatDto>> getPagedAllUserChats (
+    public ResponseEntity<PageDTO<ChatDto>> getPagedUserChats (
             Authentication authentication,
             @RequestParam(name = "currentPage", defaultValue = "1")
             @Parameter(name = "Номер текущей страницы.",
@@ -89,14 +89,16 @@ public class ChatResourceController {
             @RequestParam(name = "items", defaultValue = "10")
             @Parameter(name = "Количество чатов на странице.",
                     description = "Необязательный параметр. Позволяет настроить количество чатов на одной странице. По-умолчанию равен 10.")
-            int items) {
+            int items,
+            @RequestParam(name = "name", required = false)
+            @Parameter(name = "Искомое название чата.",
+                    description = "Поиск чата по названию name. Ищет все групповые чаты с таким названием и/или чаты в которых собеседника так зовут.")
+            String name) {
         User currentUser = (User) authentication.getPrincipal();
         PaginationData properties = new PaginationData(currentPage, items, ChatPageDtoDaoByUserIdImpl.class.getSimpleName());
         properties.getProps().put("userId", currentUser.getId());
-        PageDTO<ChatDto> response = chatDtoService.getPageDto(properties);
-        response.getItems().sort(Comparators::isPinAndLastMessageDateComparator);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        properties.getProps().put("qName", name == null ? "" : name);
+        return new ResponseEntity<>(chatDtoService.getPageDto(properties), HttpStatus.OK);
     }
 
     @GetMapping("/single")

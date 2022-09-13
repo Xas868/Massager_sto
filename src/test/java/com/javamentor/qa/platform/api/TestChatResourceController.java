@@ -128,22 +128,24 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$[0].name").value("test102"));
     }
 
-    //Тесты для всех ChatDTO авторизированного пользователя
-    @Test
-    @DataSet(cleanBefore = true, value = {
-            "dataset/ChatResourceController/getAllChatDtoByUserId.yml"
-    }
-            , strategy = SeedStrategy.REFRESH)
-
-    public void shouldGetAllChatDtoByUserId() throws Exception {
-        //Проверка что API доступно
-        this.mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/user/chat/")
-                        .contentType("application/json")
-                        .header("Authorization", "Bearer " + getToken("user1@mail.ru", "user1")))
-                .andDo(print())
-                .andExpect(status().isOk());
-        System.out.println("");
+//    //Тесты для всех ChatDTO авторизированного пользователя
+//    @Test
+//    @DataSet(cleanBefore = true, value = {
+//            "dataset/ChatResourceController/getAllChatDtoByUserId.yml"
+//    }
+//            , strategy = SeedStrategy.REFRESH)
+//
+//    public void shouldGetAllChatDtoByUserId() throws Exception {
+//        //Проверка что API доступно
+//        this.mockMvc.perform(MockMvcRequestBuilders
+//                        .get("/api/user/chat/")
+//                        .contentType("application/json")
+//                        .header("Authorization", "Bearer " + getToken("user1@mail.ru", "user1"))
+//                        .param("name", "testTitle105"))
+//
+//                .andDo(print())
+//                .andExpect(status().isOk());
+//        System.out.println("");
 
 
 
@@ -179,7 +181,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 //                .andExpect(jsonPath("$.[2].image").value("avatar3.png"))
 //                .andExpect(jsonPath("$.[2].lastMessage").value("Test message №5"))
 //                .andExpect(jsonPath("$.[2].persistDateTimeLastMessage").value("2022-06-22T23:02:51.654"));
-    }
+//    }
 
 
     //Тесты для SingleChatDTO авторизированного пользователя

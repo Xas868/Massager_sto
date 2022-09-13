@@ -65,11 +65,11 @@ single_chat:
     user_one_id: 102
 group_chat:
   - chat_id: 104
-    title: "test group_chat with id = 106"
+    title: "test group_chat with id = 104"
   - chat_id: 105
-    title: "test group_chat with id = 107"
+    title: "testTitle105"
   - chat_id: 106
-    title: "test group_chat with id = 108"
+    title: "test group_chat with id = 106"
 groupchat_has_users:
   - chat_id: 105
     user_id: 101
