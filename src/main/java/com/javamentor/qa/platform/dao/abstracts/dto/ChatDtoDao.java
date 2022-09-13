@@ -13,9 +13,4 @@ public interface ChatDtoDao {
     List<SingleChatDto> getAllSingleChatDtoByUserId(Long userId);
 
     List<ChatDto> getAllChatsByNameAndUserId(String chatName, Long userId);
-
-    List<ChatDto> getAllChatsByUserId(Long userId);
-
-    List<ChatDto> getAllChatsByChatNameOrUserId(String nameChat, Long idUser);
-
 }

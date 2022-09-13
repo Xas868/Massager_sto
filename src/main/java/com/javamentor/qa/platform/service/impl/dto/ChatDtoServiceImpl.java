@@ -52,23 +52,4 @@ public class ChatDtoServiceImpl extends DtoServiceImpl<MessageDto> implements Ch
                 .sorted(Comparator.comparing(ChatDto::getPersistDateTimeLastMessage).reversed())
                 .collect(Collectors.toList());
     }
-
-    @Override
-    public List<ChatDto> getAllChatByUserId(Long id) {
-        return chatDtoDao.getAllChatsByUserId(id)
-                .stream()
-                .filter(n -> !n.getName().equals("<no-chat-found>"))
-                .sorted(Comparator.comparing(ChatDto::getPersistDateTimeLastMessage).reversed())
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<ChatDto> getAllChatsByChatNameOrUserId(String nameChat, Long idUser) {
-        return chatDtoDao.getAllChatsByChatNameOrUserId(nameChat,idUser)
-                .stream()
-                .filter(n -> !n.getName().equals("<no-chat-found>"))
-                .sorted(Comparator.comparing(ChatDto::getPersistDateTimeLastMessage).reversed())
-                .collect(Collectors.toList());
-    }
-
 }

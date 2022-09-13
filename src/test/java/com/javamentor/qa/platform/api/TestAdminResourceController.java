@@ -51,7 +51,7 @@ public class TestAdminResourceController extends AbstractClassForDRRiderMockMVCT
     }
 
     @Test
-    @DataSet(value = "dataset/AdminResourceController/deleteAnswerById.yml"
+    @DataSet( cleanBefore = true, value = "dataset/AdminResourceController/deleteAnswerById.yml"
             , strategy = SeedStrategy.REFRESH)
     public void shouldDeleteAnswerById() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
