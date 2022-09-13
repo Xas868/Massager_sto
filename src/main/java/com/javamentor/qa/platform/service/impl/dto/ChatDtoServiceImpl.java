@@ -5,22 +5,24 @@ import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class ChatDtoServiceImpl extends DtoServiceImpl<MessageDto> implements ChatDtoService {
+public class ChatDtoServiceImpl extends DtoServiceImpl<ChatDto> implements ChatDtoService {
 
     private final ChatDtoDao chatDtoDao;
+    private final MessageDtoService messageDtoService;
 
-    public ChatDtoServiceImpl(Map<String, PageDtoDao<MessageDto>> daoMap, ChatDtoDao chatDtoDao) {
+    public ChatDtoServiceImpl(Map<String, PageDtoDao<ChatDto>> daoMap, ChatDtoDao chatDtoDao, MessageDtoService messageDtoService) {
         super(daoMap);
         this.chatDtoDao = chatDtoDao;
+        this.messageDtoService = messageDtoService;
     }
 
     @Override
@@ -36,7 +38,7 @@ public class ChatDtoServiceImpl extends DtoServiceImpl<MessageDto> implements Ch
             return Optional.empty();
         } else {
             GroupChatDto groupChatDto = groupChatDtoOptional.get();
-            groupChatDto.setMessages(getPageDto(properties));
+            groupChatDto.setMessages(messageDtoService.getPageDto(properties));
             return Optional.of(groupChatDto);
         }
     }
@@ -49,10 +51,6 @@ public class ChatDtoServiceImpl extends DtoServiceImpl<MessageDto> implements Ch
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public PageDTO<ChatDto> getPagedAllChatsByUserId(PaginationData properties) {
-        return chatDtoDao.getAllChatsByuserId();
-    }
 
     private int isPinAndLastMessageDateComparator(ChatDto chat1, ChatDto chat2) {
         if (chat1.isChatPin()) {

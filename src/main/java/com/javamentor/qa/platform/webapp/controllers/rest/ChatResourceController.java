@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.dao.impl.pagination.chatdto.ChatPageDtoDaoByUserIdImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoFindInChatByWord;
@@ -82,9 +83,9 @@ public class ChatResourceController {
                     description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
             int items) {
         User currentUser = (User) authentication.getPrincipal();
-        PaginationData properties = new PaginationData(currentPage, items, MessagePageDtoFindInChatByWord.class.getSimpleName());
+        PaginationData properties = new PaginationData(currentPage, items, ChatPageDtoDaoByUserIdImpl.class.getSimpleName());
         properties.getProps().put("userId", currentUser.getId());
-        return new ResponseEntity<>(chatDtoService.getPagedAllChatsByUserId(properties), HttpStatus.OK);
+        return new ResponseEntity<>(chatDtoService.getPageDto(properties), HttpStatus.OK);
     }
 
     @GetMapping("/single")
