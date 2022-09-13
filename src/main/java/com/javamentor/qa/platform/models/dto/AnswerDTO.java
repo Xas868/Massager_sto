@@ -60,6 +60,22 @@ public class AnswerDTO {
         this.image = image;
         this.nickName = nickName;
     }
+    public AnswerDTO(Long id, Long userId, Long userReputation, Long questionId, String htmlBody,
+                     LocalDateTime persistDateTime, Boolean isHelpful, Boolean isUserVote,
+                     LocalDateTime dateAccept, Long countValuable, String image, String nickName) {
+        this.id = id;
+        this.userId = userId;
+        this.userReputation = userReputation;
+        this.questionId = questionId;
+        this.htmlBody = htmlBody;
+        this.persistDateTime = persistDateTime;
+        this.isHelpful = isHelpful;
+        this.isUserVote = isUserVote;
+        this.dateAccept = dateAccept;
+        this.countValuable = countValuable;
+        this.image = image;
+        this.nickName = nickName;
+    }
 
 
     //    private LocalDateTime updateDateTime;--------------

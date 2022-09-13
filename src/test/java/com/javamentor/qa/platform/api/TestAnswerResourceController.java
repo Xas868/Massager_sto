@@ -592,7 +592,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].answerId").value(100))
                 .andExpect(jsonPath("$[0].questionId").value(100))
-                .andExpect(jsonPath("$[0].persistDate", containsString(new SimpleDateFormat("yyyy-MM-dd'T'hh").format(new Date()))))
+                .andExpect(jsonPath("$[0].persistDate", containsString(new SimpleDateFormat("yyyy-MM-dd'T'HH").format(new Date()))))
                 .andExpect(jsonPath("$[0].htmlBody").value(""));
     }
 }

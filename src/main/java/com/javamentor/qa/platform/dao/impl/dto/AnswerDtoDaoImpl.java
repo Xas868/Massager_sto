@@ -32,7 +32,7 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                         " a.htmlBody," +
                         " a.persistDateTime," +
                         " a.isHelpful," +
-                        "(select distinct(CASE WHEN  a.user.id = v.user.id THEN true else false END) from VoteAnswer v " +
+                        "(select distinct(CASE WHEN  a.user.id = v.user.id THEN true END) from VoteAnswer v " +
                         "where v.answer.id = a.id), " +
                         " a.dateAcceptTime, " +
                         "(select coalesce(sum(case when v.vote = 'UP_VOTE' then 1 else -1 end), 0) from VoteAnswer v where v.answer.id = a.id)," +
@@ -46,24 +46,22 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
     @Override
     public List<AnswerDTO> getAllUndeletedAnswerDtoByQuestionId(Long questionId) {
 
-        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.AnswerDTO(" +
-                        "a.id, " +
-                        "a.user.id, " +
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.AnswerDTO( a.id," +
+                        " a.user.id, " +
                         "(select sum(r.count) from Reputation r where r.author.id = a.user.id), " +
-                        "a.question.id, " +
-                        "a.htmlBody, " +
-                        "a.persistDateTime, " +
-                        "a.isHelpful, " +
-//                        "(select distinct(CASE WHEN a.user.id = v.user.id THEN true else false END) " +
-//                        "   from VoteAnswer v "  +
-//                        "   where v.answer.id = a.id), " +
+                        "a.question.id," +
+                        " a.htmlBody," +
+                        " a.persistDateTime," +
+                        " a.isHelpful," +
+                        "(select distinct(CASE WHEN  a.user.id = v.user.id THEN true END) from VoteAnswer v "  +
+                        "where v.answer.id = a.id), " +
                         "a.dateAcceptTime, " +
                         "(select coalesce(sum(case when v.vote = 'UP_VOTE' then 1 else -1 end), 0) from VoteAnswer v " +
-                        "where v.answer.id = a.id), " +
-                        "a.user.imageLink, " +
-                        "a.user.nickname) " +
+                        "where v.answer.id = a.id) as countVotes," +
+                        " a.user.imageLink," +
+                        " a.user.nickname) " +
                         "from Answer as a "  +
-                        "where a.question.id = :id and a.isDeleted = false order by a.isHelpful desc", AnswerDTO.class)
+                        "where a.question.id = :id and a.isDeleted = false order by a.isHelpful desc,countVotes desc ", AnswerDTO.class)
                 .setParameter("id", questionId)
                 .getResultList();
     }
@@ -94,11 +92,11 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                         "SELECT NEW com.javamentor.qa.platform.models.dto.AnswerUserDto(" +
                                 "a.id," +
                                 "a.question.id," +
-                                "(select coalesce(sum(case when v.vote = 'UP_VOTE' then 1 else -1 end), 0) from VoteAnswer v where v.answer.id = a.id)," +
+                                "(select coalesce(sum(case when v.vote = 'UP_VOTE' then 1 else -1 end), 0) " +
+                                "from VoteAnswer v where v.answer.id = a.id) as countVotes," +
                                 "a.persistDateTime," +
-                                "a.htmlBody) " +
-//                                "sum(case when a.vote = 'UP_VOTE' then 1 else -1 end) as countVotes" +
-                                "FROM Answer AS a WHERE a.user.id=:id AND a.persistDateTime >= :date order by a. desc",
+                                "a.htmlBody)" +
+                                "FROM Answer AS a WHERE a.user.id=:id AND a.persistDateTime >= :date",
                         AnswerUserDto.class)
                 .setParameter("date", LocalDateTime.now().minusDays(7))
                 .setParameter("id",userId)
