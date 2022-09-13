@@ -18,7 +18,6 @@ import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import com.javamentor.qa.platform.service.util.Comparators;
 import com.javamentor.qa.platform.webapp.converters.GroupChatConverter;
 import com.javamentor.qa.platform.webapp.converters.SingleChatConverter;
 import io.swagger.v3.oas.annotations.Operation;

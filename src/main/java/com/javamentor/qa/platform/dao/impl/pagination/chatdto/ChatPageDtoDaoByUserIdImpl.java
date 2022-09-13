@@ -1,27 +1,19 @@
 package com.javamentor.qa.platform.dao.impl.pagination.chatdto;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.ChatDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
-import com.javamentor.qa.platform.models.dto.AnswerDTO;
 import com.javamentor.qa.platform.models.dto.ChatDto;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
-import com.javamentor.qa.platform.service.util.Comparators;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.*;
-import java.util.*;
+import javax.persistence.Query;
+import java.util.Objects;
 
-import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
-import com.javamentor.qa.platform.models.dto.AnswerDTO;
-import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
-import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Repository("ChatPageDtoDaoByUserIdImpl")
 public class ChatPageDtoDaoByUserIdImpl implements PageDtoDao<ChatDto>{
@@ -47,7 +39,7 @@ public class ChatPageDtoDaoByUserIdImpl implements PageDtoDao<ChatDto>{
                 "           else " +
                 "               user1.nickname " +
                 "           end " +
-                "       end as chatName, " +
+                "       end, " +
                 // Then we want to return image link for chat, but if it's a single chat then we have to return profile picture of a person who our person is chatting with.
                 "       case when chat.chatType = :group " +
                 "               then chat.image " +

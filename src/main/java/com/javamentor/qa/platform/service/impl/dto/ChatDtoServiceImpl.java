@@ -6,13 +6,11 @@ import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
-import com.javamentor.qa.platform.service.util.Comparators;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ChatDtoServiceImpl extends DtoServiceImpl<ChatDto> implements ChatDtoService {
@@ -46,9 +44,6 @@ public class ChatDtoServiceImpl extends DtoServiceImpl<ChatDto> implements ChatD
 
     @Override
     public List<ChatDto> getAllChatsByNameAndUserId(String chatName, Long userId) {
-        return chatDtoDao.getAllChatsByNameAndUserId(chatName, userId)
-                .stream()
-                .sorted(Comparators::isPinAndLastMessageDateComparator)
-                .collect(Collectors.toList());
+        return chatDtoDao.getAllChatsByNameAndUserId(chatName, userId);
     }
 }

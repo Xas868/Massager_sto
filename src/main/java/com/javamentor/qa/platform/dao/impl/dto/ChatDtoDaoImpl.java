@@ -95,8 +95,8 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
                                 "                       select max (message.persistDate) " +
                                 "                             from Message as message " +
                                 "                            where chat.id = message.chat.id)) " +
-                                "       else coalesce(chat.persistDate, '0001-01-01 00:00:00')  end," +
-                                "((select count(ucp.id) from UserChatPin ucp where ucp.chat.id = chat.id and ucp.user.id = :userId) > 0)) " +
+                                "       else coalesce(chat.persistDate, '0001-01-01 00:00:00') end as persistDate," +
+                                "((select count(ucp.id) from UserChatPin ucp where ucp.chat.id = chat.id and ucp.user.id = :userId) > 0) as isChatPin) " +
                                 "     from Chat as chat " +
                                 "left join GroupChat as groupChat " +
                                 "       on chat.id = groupChat.id " +
@@ -107,7 +107,8 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
                                 "left join User as user2 " +
                                 "       on singleChat.useTwo.id = user2.id " +
                                 // Now we are filtering out all the chats that we don't need
-                                "where lower(groupChat.title) like :chatName or lower(user1.nickname) = :chatName or lower(user2.nickname) = :chatName",
+                                "where lower(groupChat.title) like :chatName or lower(user1.nickname) = :chatName or lower(user2.nickname) = :chatName " +
+                                "order by isChatPin desc, persistDate desc",
                         ChatDto.class)
                 .setParameter("chatName", '%' + chatName.toLowerCase() + '%')
                 .setParameter("group", ChatType.GROUP)
