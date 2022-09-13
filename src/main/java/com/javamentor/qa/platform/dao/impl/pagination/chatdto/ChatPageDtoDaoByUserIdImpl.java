@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.dto.AnswerDTO;
 import com.javamentor.qa.platform.models.dto.ChatDto;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
+import com.javamentor.qa.platform.service.util.Comparators;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -21,6 +22,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository("ChatPageDtoDaoByUserIdImpl")
 public class ChatPageDtoDaoByUserIdImpl implements PageDtoDao<ChatDto>{
@@ -89,7 +91,8 @@ public class ChatPageDtoDaoByUserIdImpl implements PageDtoDao<ChatDto>{
                                 "left join User as user2 " +
                                 "       on singleChat.useTwo.id = user2.id " +
                                 // Now we are filtering out all the chats that we don't need
-                                "where :userId in elements(groupChat.users) or user1.id = :userId or user2.id = :userId",
+                        "where :userId in elements(groupChat.users) or user1.id = :userId or user2.id = :userId " +
+                        "order by isChatPin desc, persistDate desc",
                         ChatDto.class)
                 .setParameter("userId", userId)
                 .setParameter("group", ChatType.GROUP)

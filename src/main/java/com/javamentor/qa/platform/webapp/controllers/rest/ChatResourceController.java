@@ -18,6 +18,7 @@ import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.util.Comparators;
 import com.javamentor.qa.platform.webapp.converters.GroupChatConverter;
 import com.javamentor.qa.platform.webapp.converters.SingleChatConverter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -93,7 +94,8 @@ public class ChatResourceController {
         PaginationData properties = new PaginationData(currentPage, items, ChatPageDtoDaoByUserIdImpl.class.getSimpleName());
         properties.getProps().put("userId", currentUser.getId());
         PageDTO<ChatDto> response = chatDtoService.getPageDto(properties);
-        response.getItems().sort();
+        response.getItems().sort(Comparators::isPinAndLastMessageDateComparator);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

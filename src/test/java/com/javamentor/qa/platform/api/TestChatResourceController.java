@@ -145,6 +145,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(status().isOk());
         System.out.println("");
 
+
+
 //        // Проверка на количество всех сингл чатов
 //        String sqlAll = "select CAST(count(sc.id) as int) from SingleChat sc";
 //        int countAllSingleChat = (int) entityManager.createQuery(sqlAll).getSingleResult();

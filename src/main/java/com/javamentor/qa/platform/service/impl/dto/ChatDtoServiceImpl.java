@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
+import com.javamentor.qa.platform.service.util.Comparators;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,21 +48,7 @@ public class ChatDtoServiceImpl extends DtoServiceImpl<ChatDto> implements ChatD
     public List<ChatDto> getAllChatsByNameAndUserId(String chatName, Long userId) {
         return chatDtoDao.getAllChatsByNameAndUserId(chatName, userId)
                 .stream()
-                .sorted(this::isPinAndLastMessageDateComparator)
+                .sorted(Comparators::isPinAndLastMessageDateComparator)
                 .collect(Collectors.toList());
-    }
-
-
-    private int isPinAndLastMessageDateComparator(ChatDto chat1, ChatDto chat2) {
-        if (chat1.isChatPin()) {
-            if (chat2.isChatPin()) {
-                return chat2.getPersistDateTimeLastMessage().compareTo(chat1.getPersistDateTimeLastMessage());
-            } else {
-                return -1;
-            }
-        } else if (chat2.isChatPin()) {
-            return 1;
-        }
-        return chat2.getPersistDateTimeLastMessage().compareTo(chat1.getPersistDateTimeLastMessage());
     }
 }
