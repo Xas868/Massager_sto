@@ -19,13 +19,8 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
 
     private static final String TEST_URL = "/api/user/message/star";
 
-    @AfterEach
-    public void clearCache() {
-        cacheManager.getCacheNames().stream().forEach(x -> cacheManager.getCache(x).clear());
-    }
-
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {"dataset/MessageResourceController/users.yml",
                     "dataset/MessageResourceController/messages.yml"},
             strategy = SeedStrategy.REFRESH)
@@ -34,51 +29,51 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
         String token = getToken("user1@mail.ru", "user1");
         // Попытка отправить пустой пост запрос
         mockMvc.perform(post(TEST_URL)
-                .contentType("application/json")
-                .header("Authorization", "Bearer " + token))
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(status().isBadRequest());
         // Попытка отправить пост запрос с некорректным полем(сообщение с ID 1000 не существует)
         mockMvc.perform(post(TEST_URL)
-                .contentType("application/json")
-                .header("Authorization", "Bearer " + token)
-                .content("1000"))
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + token)
+                        .content("1000"))
                 .andExpect(status().isBadRequest());
         // Попытка отправить корректный пост запрос(сообщение с ID 1 существует)
         mockMvc.perform(post(TEST_URL)
-                .contentType("application/json")
-                .header("Authorization", "Bearer " + token)
-                .content("1"))
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + token)
+                        .content("1"))
                 .andExpect(status().isOk());
         // Попытка добавить то же сообщение в избранное тем же пользователем
         mockMvc.perform(post(TEST_URL)
-                .contentType("application/json")
-                .header("Authorization", "Bearer " + token)
-                .content("1"))
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + token)
+                        .content("1"))
                 .andExpect(status().isBadRequest());
         // Попытка отправить что-то что не число
         mockMvc.perform(post(TEST_URL)
-                .contentType("application/json")
-                .header("Authorization", "Bearer " + token)
-                .content("string"))
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + token)
+                        .content("string"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @DataSet(value = {"dataset/MessageResourceController/delete_message_star.yml"},
-            cleanBefore = true,
+            cleanBefore = true, cleanAfter = true,
             strategy = SeedStrategy.REFRESH)
-    public void testDeleteMessageStarByMessageId () throws Exception {
+    public void testDeleteMessageStarByMessageId() throws Exception {
         String token = getToken("user1@mail.ru", "user1");
         // Проверка того, что сообщение не найдено в избранных
         this.mockMvc.perform(delete(TEST_URL)
-                .contentType("application/json")
-                .header("Authorization", "Bearer " + token)
-                .content("wrongId"))
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + token)
+                        .content("wrongId"))
                 .andExpect(status().isBadRequest());
         // Попытка отправить пустой запрос
         this.mockMvc.perform(delete(TEST_URL)
-                .contentType("application/json")
-                .header("Authorization", "Bearer " + token))
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(status().isBadRequest());
         // Проверка того, что сообщение удалено из избранных
         this.mockMvc.perform(delete(TEST_URL)
@@ -86,7 +81,8 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
                         .header("Authorization", "Bearer " + token)
                         .content("101"))
                 .andExpect(status().isOk());
-        assertThat(Objects.equals( null,(entityManager.createQuery(
+
+        assertThat(Objects.equals(null, (entityManager.createQuery(
                         "SELECT ms from MessageStar ms WHERE ms.id =: id")
                 .setParameter("id", (long) 101)
                 .getResultList().stream().findFirst().orElse(null)))).isTrue();

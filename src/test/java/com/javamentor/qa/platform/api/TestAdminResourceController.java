@@ -25,14 +25,8 @@ public class TestAdminResourceController extends AbstractClassForDRRiderMockMVCT
     private final String testPassword = "user1";
     private final long id = 1;
 
-    @AfterEach
-    public void clearCache() {
-        cacheManager.getCacheNames().stream().forEach(x -> cacheManager.getCache(x).clear());
-    }
-
-
     @Test
-    @DataSet(cleanBefore = true, value = "dataset/AdminResourceController/users.yml", strategy = SeedStrategy.REFRESH)
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "dataset/AdminResourceController/users.yml", strategy = SeedStrategy.REFRESH)
     public void shouldBanUser() throws Exception {
         String token = getToken(testUsername, testPassword);
         // Проверка того, что api изначально доступен
@@ -58,13 +52,13 @@ public class TestAdminResourceController extends AbstractClassForDRRiderMockMVCT
     }
 
     @Test
-    @DataSet(value = "dataset/AdminResourceController/deleteAnswerById.yml"
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "dataset/AdminResourceController/deleteAnswerById.yml"
             , strategy = SeedStrategy.REFRESH)
     public void shouldDeleteAnswerById() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
                         .delete("/api/admin/answer/{id}/delete", "2")
                         .contentType("application/json")
-                        .header("Authorization", "Bearer " + getToken("user1@mail.ru", "user1")))
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user1")))
                 .andDo(print())
                 .andExpect(status().isOk());
         assertThat((boolean) entityManager.createQuery(
