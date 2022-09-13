@@ -71,6 +71,13 @@ public class ChatResourceController {
         this.userService = userService;
     }
 
+    @Operation(summary = "Получение пагинированного списка чатов.", description = "Получение пагинированного списка чатов.")
+    @ApiResponse(responseCode = "200", description = "Список чатов получен.", content = {
+            @Content(mediaType = "application/json")
+    })
+    @ApiResponse(responseCode = "400", description = "Список чатов не получен.", content = {
+            @Content(mediaType = "application/json")
+    })
     @GetMapping("/")
     public ResponseEntity<PageDTO<ChatDto>> getPagedAllUserChats (
             Authentication authentication,
@@ -79,8 +86,8 @@ public class ChatResourceController {
                     description = "Необязательный параметр. Отвечает за пагинацию.")
             int currentPage,
             @RequestParam(name = "items", defaultValue = "10")
-            @Parameter(name = "Количество сообщений на странице.",
-                    description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
+            @Parameter(name = "Количество чатов на странице.",
+                    description = "Необязательный параметр. Позволяет настроить количество чатов на одной странице. По-умолчанию равен 10.")
             int items) {
         User currentUser = (User) authentication.getPrincipal();
         PaginationData properties = new PaginationData(currentPage, items, ChatPageDtoDaoByUserIdImpl.class.getSimpleName());
