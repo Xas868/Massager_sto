@@ -68,9 +68,9 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items[1].name").value("test102"))
                 .andExpect(jsonPath("$.items[2].name").value("group chat with id = 101"))
                 // test if all chats sorted according to the date of last persistent message in them
-                .andExpect(jsonPath("$.items[0].persistDateTimeLastMessage").value("2021-12-12T10:00:00"))
-                .andExpect(jsonPath("$.items[1].persistDateTimeLastMessage").value("2021-12-06T10:00:00"))
-                .andExpect(jsonPath("$.items[2].persistDateTimeLastMessage").value("2021-12-03T10:00:00"));
+                .andExpect(jsonPath("$.items[0].persistDateTimeLastMessage").value("2021-12-12T03:00:00"))
+                .andExpect(jsonPath("$.items[1].persistDateTimeLastMessage").value("2021-12-06T03:00:00"))
+                .andExpect(jsonPath("$.items[2].persistDateTimeLastMessage").value("2021-12-03T03:00:00"));
     }
 
 
