@@ -1,8 +1,10 @@
 package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.ChatDtoDao;
-import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.dto.ChatDto;
+import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
+import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import org.springframework.stereotype.Repository;
 

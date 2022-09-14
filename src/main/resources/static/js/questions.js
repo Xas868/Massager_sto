@@ -388,7 +388,7 @@ function createPagination() {
                                     '</div>' +
                                 '</div>' +
                                 '<div class="col-10">' +
-                                    '<a class="mb-1" href="#">' + questionTitle + '</a>' +
+                                    '<a class="mb-1" href="/questions/' + questionId + '">' + questionTitle + '</a>' +
                                     '<p class="mb-1">' + questionDescription + '</p>' +
                                     '<div class="row">' +
                                         '<div class="col-7">' +

@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -139,15 +140,15 @@ public class ChatResourceController {
     public ResponseEntity<GroupChatDto> getGroupChatDtoById(
             @PathVariable("groupChatId")
             @Parameter(name = "Id группового чата.", required = true, description = "Id группового чата является обязательным параметром.")
-            long groupChatId,
+                    long groupChatId,
             @RequestParam(name = "itemsOnPage", defaultValue = "10")
             @Parameter(name = "Количество сообщений на странице.",
                     description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
-            int itemsOnPage,
+                    int itemsOnPage,
             @RequestParam(name = "currentPage", defaultValue = "1")
             @Parameter(name = "Текущая страница сообщений.",
                     description = "Необязательный параметр. Служит для корректного постраничного отображения сообщений и обращения к ним. По-умолчанию равен 1")
-            int currentPage) {
+                    int currentPage) {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoByGroupChatId.class.getSimpleName());
         properties.getProps().put("groupChatId", groupChatId);
         if (chatDtoService.getGroupChatDtoById(groupChatId, properties).isPresent()) {
@@ -164,15 +165,15 @@ public class ChatResourceController {
     public ResponseEntity<PageDTO<MessageDto>> getPagedMessagesOfSingleChat(
             @PathVariable("singleChatId")
             @Parameter(name = "Id single чата.", required = true, description = "Id single чата является обязательным параметром.")
-            long singleChatId,
+                    long singleChatId,
             @RequestParam(name = "itemsOnPage", defaultValue = "10")
             @Parameter(name = "Количество сообщений на странице.",
                     description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
-            int itemsOnPage,
+                    int itemsOnPage,
             @RequestParam(name = "currentPage", defaultValue = "1")
             @Parameter(name = "Текущая страница сообщений.",
                     description = "Необязательный параметр. Служит для корректного постраничного отображения сообщений и обращения к ним. По-умолчанию равен 1")
-            int currentPage) {
+                    int currentPage) {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoBySingleChatId.class.getSimpleName());
         properties.getProps().put("singleChatId", singleChatId);
         return new ResponseEntity<>(messageDtoService.getPageDto(properties), HttpStatus.OK);
@@ -183,21 +184,21 @@ public class ChatResourceController {
     public ResponseEntity<PageDTO<MessageDto>> getPagedMessagesFromChatFindByWord(
             @PathVariable("id")
             @Parameter(name = "Id чата.", required = true, description = "Id чата является обязательным параметром.")
-            long chatId,
+                    long chatId,
             @RequestParam(name = "items", defaultValue = "20")
             @Parameter(name = "Количество сообщений на странице.",
                     description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 20.")
-            int itemsOnPage,
+                    int itemsOnPage,
             @RequestParam(name = "currentPage")
             @Parameter(name = "Текущая страница сообщений.",
                     required = true,
                     description = "Обязательный параметр. Служит для корректного постраничного отображения сообщений и обращения к ним.")
-            int currentPage,
+                    int currentPage,
             @RequestParam(name = "word")
             @Parameter(name = "Слово или словосочетание, по которому будет производиться поиск.",
                     required = true,
                     description = "Обязательный параметр. Служит для передачи искомого текста.")
-            String searchWord) {
+                    String searchWord) {
         PaginationData properties = new PaginationData(currentPage, itemsOnPage, MessagePageDtoFindInChatByWord.class.getSimpleName());
         properties.getProps().put("chatId", chatId);
         properties.getProps().put("searchWord", searchWord);
@@ -209,16 +210,18 @@ public class ChatResourceController {
     public ResponseEntity<String> deleteUserFromChatById(
             @PathVariable("id")
             @Parameter(name = "Id чата.", required = true, description = "Id чата является обязательным параметром.")
-            Long chatId,
+                    Long chatId,
             Authentication authentication) {
+
         ChatType chatType = chatRoomService.getById(chatId).get().getChatType();
+
         User currentUser = (User) authentication.getPrincipal();
 
         if (chatType.equals(ChatType.GROUP)) {
+
             groupChatRoomService.deleteUserFromGroupChatById(chatId, currentUser.getId());
             return new ResponseEntity<>("GroupChat deleted", HttpStatus.OK);
         }
-
         singleChatService.deleteUserFromSingleChatById(chatId, currentUser.getId());
         return new ResponseEntity<>("SingleChat deleted", HttpStatus.OK);
     }
@@ -250,10 +253,10 @@ public class ChatResourceController {
     public ResponseEntity<String> addUserInGroupChat(
             @PathVariable("id")
             @Parameter(name = "Id group чата.", required = true, description = "Id group чата является обязательным параметром.")
-            Long id,
+                    Long id,
             @RequestParam("userId")
             @Parameter(name = "id Пользователя", required = true, description = "Id пользователя является обязательным параметром.")
-            Long userId) {
+                    Long userId) {
         Optional<GroupChat> groupChat = groupChatRoomService.getGroupChatAndUsers(id);
         Optional<User> user = userService.getById(userId);
 
@@ -268,4 +271,6 @@ public class ChatResourceController {
 
         return new ResponseEntity<>("it's bad request", HttpStatus.BAD_REQUEST);
     }
+
+
 }
