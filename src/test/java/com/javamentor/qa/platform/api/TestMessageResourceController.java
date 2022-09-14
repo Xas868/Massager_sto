@@ -38,7 +38,7 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
                         .header("Authorization", "Bearer " + token)
                         .content("1000"))
                 .andExpect(status().isBadRequest());
-        // Попытка отправить корректный пост запрос(сообщение с ID 1 существует)
+        // Попытка отправить корректный пост запрос(сообщение с ID 100 существует)
         mockMvc.perform(post(TEST_URL)
                         .contentType("application/json")
                         .header("Authorization", "Bearer " + token)

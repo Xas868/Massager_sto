@@ -60,11 +60,7 @@ public class AnswerDTO {
         this.image = image;
         this.nickName = nickName;
     }
-    // Добавил конструктор, без него даже после обновления от 06,09,2022 не проходят в тесте TestQuestionResourceController методы:
-    // getCorrectQuestionDtoByIdTest(), getSortedAnswersOnQuestionIdWhereIsHelpfulAnswerHasLessVotes(),
-    // getNullSortedAnswersOnQuestionIdWhereAnswersIsNull(),
-    // getSortedAnswersOnQuestionIdWhereFieldIsHelpfulIsMissing(),  testAddQuestionInBookmarks(),
-    // Вопрос как отробатывают тесты у других без данного конструктора. возможно сть какаято аннотация на БилдераКонструктора?
+
     public AnswerDTO(Long id, Long userId, Long userReputation, Long questionId, String htmlBody,
                      LocalDateTime persistDateTime, Boolean isHelpful, Boolean isUserVote,
                      LocalDateTime dateAccept, Long countValuable, String image, String nickName) {
@@ -82,9 +78,5 @@ public class AnswerDTO {
         this.isUserVote = isUserVote;
     }
 
-
-    //    private LocalDateTime updateDateTime;--------------
-//    private Boolean isDeleted;
-//    private Boolean isDeletedByModerator;
 
 }
