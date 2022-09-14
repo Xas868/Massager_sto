@@ -12,7 +12,6 @@ import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -40,8 +39,6 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     private UserService userService;
     @Autowired
     private UserDtoService userDtoService;
-    @Autowired
-    private CacheManager cacheManager;
 
     @Test
     //Вывод Dto по id без тегов
