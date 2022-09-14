@@ -48,7 +48,6 @@ public class TestAdminResourceController extends AbstractClassForDRRiderMockMVCT
         this.mockMvc.perform(get(publicUrl)
                         .header("Authorization", "Bearer " + token))
                 .andDo(print()).andExpect(status().isForbidden());
-
     }
 
     @Test
