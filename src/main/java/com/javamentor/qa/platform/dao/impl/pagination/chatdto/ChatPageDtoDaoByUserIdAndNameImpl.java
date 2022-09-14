@@ -6,17 +6,13 @@ import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.Query;
-import java.util.Objects;
-
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Map;
 
-@Repository("ChatPageDtoDaoByUserIdImpl")
-public class ChatPageDtoDaoByUserIdImpl implements PageDtoDao<ChatDto>{
+@Repository("ChatPageDtoDaoByUserIdAndNameImpl")
+public class ChatPageDtoDaoByUserIdAndNameImpl implements PageDtoDao<ChatDto>{
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -37,7 +33,7 @@ public class ChatPageDtoDaoByUserIdImpl implements PageDtoDao<ChatDto>{
                         "           else " +
                         "               user1.nickname " +
                         "           end " +
-                        "       end as chatName, " +
+                        "       end, " +
                         // Then we want to return image link for chat, but if it's a single chat then we have to return profile picture of a person who our person is chatting with.
                         "       case when chat.chatType = :group " +
                         "               then chat.image " +
@@ -81,9 +77,21 @@ public class ChatPageDtoDaoByUserIdImpl implements PageDtoDao<ChatDto>{
                         "       on singleChat.useTwo.id = user2.id " +
                         // Now we are filtering out all the chats that we don't need
                         "where (:userId in elements(groupChat.users) or user1.id = :userId or user2.id = :userId) " +
+                        "and (case " +
+                        "       when chat.chatType = :group " +
+                        "       then groupChat.title " +
+                        "       else " +
+                        "           case when user1.id = :userId " +
+                        "                then " +
+                        "                   user2.nickname " +
+                        "                else " +
+                        "                   user1.nickname " +
+                        "                end " +
+                        "       end) = :qName " +
                         "order by isChatPin desc, persistDate desc", ChatDto.class)
                 .setParameter("userId", properties.getUserId())
                 .setParameter("group", ChatType.GROUP)
+                .setParameter("qName", properties.getFilter())
                 .setFirstResult(offset)
                 .setMaxResults(itemsOnPage)
                 .getResultList();

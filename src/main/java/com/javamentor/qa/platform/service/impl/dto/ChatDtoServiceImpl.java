@@ -41,9 +41,4 @@ public class ChatDtoServiceImpl extends DtoServiceImpl<ChatDto> implements ChatD
             return Optional.of(groupChatDto);
         }
     }
-
-    @Override
-    public List<ChatDto> getAllChatsByNameAndUserId(String chatName, Long userId) {
-        return chatDtoDao.getAllChatsByNameAndUserId(chatName, userId);
-    }
 }

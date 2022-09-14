@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.dao.impl.pagination.chatdto.ChatPageDtoDaoByUserIdAndNameImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.chatdto.ChatPageDtoDaoByUserIdImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
@@ -94,9 +95,12 @@ public class ChatResourceController {
                     description = "Поиск чата по названию name. Ищет все групповые чаты с таким названием и/или чаты в которых собеседника так зовут.")
             String name) {
         User currentUser = (User) authentication.getPrincipal();
-        PaginationData properties = new PaginationData(currentPage, items, ChatPageDtoDaoByUserIdImpl.class.getSimpleName());
-        properties.getProps().put("userId", currentUser.getId());
-        properties.getProps().put("qName", name == null ? "" : name);
+        PaginationData properties;
+        if (name == null) {
+            properties = new PaginationData(currentPage, items, ChatPageDtoDaoByUserIdImpl.class.getSimpleName(), currentUser.getId());
+        } else {
+            properties = new PaginationData(currentPage, items, ChatPageDtoDaoByUserIdAndNameImpl.class.getSimpleName(), currentUser.getId(), name);
+        }
         return new ResponseEntity<>(chatDtoService.getPageDto(properties), HttpStatus.OK);
     }
 

@@ -118,6 +118,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(MockMvcResultHandlers.print())
                 // status check
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items.size()").value(1))
                 .andExpect(jsonPath("$.items[0].name").value("test102"));
     }
 
