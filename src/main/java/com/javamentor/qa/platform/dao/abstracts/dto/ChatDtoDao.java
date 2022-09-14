@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface ChatDtoDao {
     Optional<GroupChatDto> getGroupChatDto(long chatId);
+
     List<SingleChatDto> getAllSingleChatDtoByUserId(Long userId);
+
     List<ChatDto> getAllChatsByNameAndUserId(String chatName, Long userId);
 }

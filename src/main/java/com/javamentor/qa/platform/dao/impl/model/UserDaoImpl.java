@@ -50,16 +50,16 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
                 .executeUpdate();
     }
 
-    @Override
-    public List<Long> getUnregisteredUserIds(List<Long> ids) {
-        List<Long> foundIds =  entityManager.createQuery("select id from User where id in(:ids)")
-                .setParameter("ids", ids)
-                .getResultList();
-
-        List<Long> notFoundIds = ids.stream().filter(aObject -> !foundIds.contains(aObject)).collect(Collectors.toList());
-
-        return notFoundIds;
-    }
+//    @Override
+//    public List<Long> getUnregisteredUserIds(List<Long> ids) {
+//        List<Long> foundIds =  entityManager.createQuery("select id from User where id in(:ids)")
+//                .setParameter("ids", ids)
+//                .getResultList();
+//
+//        List<Long> notFoundIds = ids.stream().filter(aObject -> !foundIds.contains(aObject)).collect(Collectors.toList());
+//
+//        return notFoundIds;
+//    }
 
     @Override
     public void deleteById(Long id) {

@@ -18,13 +18,14 @@ public class VoteAnswerDaoImpl extends ReadWriteDaoImpl<VoteAnswer, Long> implem
     @Transactional
     @Override
     public long getVoteCount(long answerId) {
-        return entityManager.createQuery(
-                "select sum(case when vote = :upVote then 1 else -1 end) as diff from VoteAnswer where answer.id = :answerId",
-                Long.class
-        )
+        Long result = entityManager.createQuery(
+                        "select sum(case when vote = :upVote then 1 else -1 end) as diff from VoteAnswer where answer.id = :answerId",
+                        Long.class
+                )
                 .setParameter("upVote", VoteType.UP_VOTE)
                 .setParameter("answerId", answerId)
                 .getSingleResult();
+        return result == null ? 0L : result;
     }
 
     @Override

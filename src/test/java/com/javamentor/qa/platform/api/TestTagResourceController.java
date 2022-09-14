@@ -6,7 +6,6 @@ import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 
@@ -14,13 +13,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.isA;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class TestTagResourceController extends AbstractClassForDRRiderMockMVCTests {
 
@@ -28,16 +23,16 @@ public class TestTagResourceController extends AbstractClassForDRRiderMockMVCTes
     //У пользователя с id = 102 есть игнорируемые теги
     @DataSet(cleanBefore = true,
             value = {
-            "dataset/testTagResourceController/roles.yml",
-            "dataset/testTagResourceController/users.yml",
-            "dataset/testTagResourceController/tag_ignore.yml",
-            "dataset/testTagResourceController/tag2.yml"
+                    "dataset/testTagResourceController/roles.yml",
+                    "dataset/testTagResourceController/users.yml",
+                    "dataset/testTagResourceController/tag_ignore.yml",
+                    "dataset/testTagResourceController/tag2.yml"
             },
-            strategy = SeedStrategy.REFRESH )
+            strategy = SeedStrategy.REFRESH)
     public void shouldReturnListIrnoredTag() throws Exception {
         this.mockMvc.perform(get("/api/user/tag/ignored")
-                .contentType("application/json")
-                .header("Authorization", "Bearer " + getToken("user102@mail.ru","test15")))
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "test15")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -61,16 +56,16 @@ public class TestTagResourceController extends AbstractClassForDRRiderMockMVCTes
     @Test
     @DataSet(cleanBefore = true,
             value = {
-            "dataset/testTagResourceController/roles.yml",
-            "dataset/testTagResourceController/users.yml",
-            "dataset/testTagResourceController/emptyTrackedTag.yml",
-            "dataset/testTagResourceController/emptyTag.yml"
-    },
+                    "dataset/testTagResourceController/roles.yml",
+                    "dataset/testTagResourceController/users.yml",
+                    "dataset/testTagResourceController/emptyTrackedTag.yml",
+                    "dataset/testTagResourceController/emptyTag.yml"
+            },
             strategy = SeedStrategy.CLEAN_INSERT,
             cleanAfter = true)
     public void ifEmptyTrackedTag() throws Exception {
         mockMvc.perform(get("/api/user/tag/tracked")
-                .header("Authorization", "Bearer " + getTokens("user100@mail.ru")))
+                        .header("Authorization", "Bearer " + getTokens("user100@mail.ru")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("[]"));
@@ -79,16 +74,16 @@ public class TestTagResourceController extends AbstractClassForDRRiderMockMVCTes
     @Test
     @DataSet(cleanBefore = true,
             value = {
-            "dataset/testTagResourceController/roles.yml",
-            "dataset/testTagResourceController/users.yml",
-            "dataset/testTagResourceController/trackedTag2.yml",
-            "dataset/testTagResourceController/tag2.yml",
-    },
+                    "dataset/testTagResourceController/roles.yml",
+                    "dataset/testTagResourceController/users.yml",
+                    "dataset/testTagResourceController/trackedTag2.yml",
+                    "dataset/testTagResourceController/tag2.yml",
+            },
             strategy = SeedStrategy.CLEAN_INSERT,
             cleanAfter = true)
     public void ifHasTwoTags() throws Exception {
         mockMvc.perform(get("/api/user/tag/tracked")
-                .header("Authorization", "Bearer " + getTokens("user100@mail.ru")))
+                        .header("Authorization", "Bearer " + getTokens("user100@mail.ru")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(102))
@@ -308,7 +303,7 @@ public class TestTagResourceController extends AbstractClassForDRRiderMockMVCTes
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.totalResultCount").value("4"))
-                .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(101, 106, 103,102)));
+                .andExpect(jsonPath("$.items[*].id").value(containsInRelativeOrder(101, 106, 103, 102)));
         //Проверка фильтрации тэгов по параметру filter=sprg(ничего не должен найти)
         this.mockMvc.perform(get("/api/user/tag/new?page=1&filter=sprg")
                         .contentType("application/json")
@@ -339,11 +334,11 @@ public class TestTagResourceController extends AbstractClassForDRRiderMockMVCTes
             },
             strategy = SeedStrategy.REFRESH)
     public void shouldReturnAllTagSortByName() throws Exception {
-        String token="Bearer "+ getToken("user102@mail.ru","test15");
+        String token = "Bearer " + getToken("user102@mail.ru", "test15");
         // указаны параметры page и items
         this.mockMvc.perform(get("/api/user/tag/name?page=1&items=5")
-                .contentType("application/json")
-                .header("Authorization", token))
+                        .contentType("application/json")
+                        .header("Authorization", token))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -358,7 +353,7 @@ public class TestTagResourceController extends AbstractClassForDRRiderMockMVCTes
 
         // нет обязательного параметра - page
         mockMvc.perform(get("/api/user/tag/name?items=3")
-                .header("Authorization", token))
+                        .header("Authorization", token))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$").doesNotExist());
@@ -396,10 +391,10 @@ public class TestTagResourceController extends AbstractClassForDRRiderMockMVCTes
     @DataSet(value = "dataset/testTagResourceController/TagsByPopular.yml",
             strategy = SeedStrategy.CLEAN_INSERT, cleanBefore = true, cleanAfter = true)
     public void shouldReturnAllTagsSortByPopularQuest() throws Exception {
-        String token="Bearer "+getToken("user102@mail.ru","test15");
+        String token = "Bearer " + getToken("user102@mail.ru", "test15");
         mockMvc.perform(get("/api/user/tag/popular?page=1&items=4")
-                .contentType("application/json")
-                .header("Authorization", "Bearer " + getToken("user102@mail.ru","test15")))
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "test15")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -442,51 +437,51 @@ public class TestTagResourceController extends AbstractClassForDRRiderMockMVCTes
 
     //Удаление IgnoredTag и TrackedTag
     @Test
-    @DataSet(value= {
+    @DataSet(value = {
             "dataset/testTagResourceController/tag_ignore.yml",
             "dataset/testTagResourceController/trackedTag2.yml",
             "dataset/testTagResourceController/users.yml",
             "dataset/testTagResourceController/roles.yml",
             "dataset/testTagResourceController/tag2.yml"
-    },strategy = SeedStrategy.CLEAN_INSERT, cleanBefore = true, cleanAfter = true)
-    public void shouldDeleteIgnoredTagAndTrackedTag() throws Exception{
+    }, strategy = SeedStrategy.CLEAN_INSERT, cleanBefore = true, cleanAfter = true)
+    public void shouldDeleteIgnoredTagAndTrackedTag() throws Exception {
         mockMvc.perform(delete("/api/user/tag/ignored/delete?tag=102")
-                .contentType("application/json")
-                .header("Authorization", "Bearer " + getToken("user102@mail.ru","test15")))
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "test15")))
                 .andDo(print())
                 .andExpect(status().isOk());
 
         assertThat((long) entityManager.createQuery(
-                "SELECT COUNT(e) FROM IgnoredTag" +
-                        " e WHERE e.id =: id and e.user.id =: userId")
-                    .setParameter("id",(long) 101)
-                    .setParameter("userId",(long) 102)
-                    .getSingleResult() > 0)
+                        "SELECT COUNT(e) FROM IgnoredTag" +
+                                " e WHERE e.id =: id and e.user.id =: userId")
+                .setParameter("id", (long) 101)
+                .setParameter("userId", (long) 102)
+                .getSingleResult() > 0)
                 .isEqualTo(false);
 
         mockMvc.perform(delete("/api/user/tag/ignored/delete?tag=102")
                         .contentType("application/json")
-                        .header("Authorization", "Bearer " + getToken("user102@mail.ru","test15")))
-                        .andDo(print())
-                        .andExpect(status().isBadRequest());
+                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "test15")))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
 
         mockMvc.perform(delete("/api/user/tag/tracked/delete?tag=102")
-                .contentType("application/json")
-                .header("Authorization", "Bearer " + getTokens("user100@mail.ru")))
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getTokens("user100@mail.ru")))
                 .andDo(print())
                 .andExpect(status().isOk());
 
         assertThat((long) entityManager.createQuery(
-                "SELECT COUNT(e) FROM TrackedTag" +
-                        " e WHERE e.id =: id and e.user.id =: userId")
-                    .setParameter("id",(long) 100)
-                    .setParameter("userId",(long) 100)
-                    .getSingleResult() > 0)
+                        "SELECT COUNT(e) FROM TrackedTag" +
+                                " e WHERE e.id =: id and e.user.id =: userId")
+                .setParameter("id", (long) 100)
+                .setParameter("userId", (long) 100)
+                .getSingleResult() > 0)
                 .isEqualTo(false);
 
         mockMvc.perform(delete("/api/user/tag/tracked/delete?tag=102")
-                .contentType("application/json")
-                .header("Authorization", "Bearer " + getTokens("user100@mail.ru")))
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getTokens("user100@mail.ru")))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
@@ -546,16 +541,16 @@ public class TestTagResourceController extends AbstractClassForDRRiderMockMVCTes
 
         // Пробуем добавить IgnoredTag, когда он уже есть в TrackedTag и наоборот. Добавить не должен.
         mockMvc.perform(post("/api/user/tag/ignored/add?tag=103")
-                .header("Authorization", "Bearer " +
-                        getToken("user102@mail.ru", "test15")))
+                        .header("Authorization", "Bearer " +
+                                getToken("user102@mail.ru", "test15")))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
         assertThat((long) entityManager.createQuery("SELECT COUNT(e) FROM IgnoredTag e")
                 .getSingleResult() == 1).isEqualTo(true);
 
         mockMvc.perform(post("/api/user/tag/tracked/add?tag=102")
-                .header("Authorization", "Bearer " +
-                        getToken("user102@mail.ru", "test15")))
+                        .header("Authorization", "Bearer " +
+                                getToken("user102@mail.ru", "test15")))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
         assertThat((long) entityManager.createQuery("SELECT COUNT(e) FROM TrackedTag e")
