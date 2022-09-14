@@ -461,8 +461,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
                     "dataset/ChatResourceController/group_chat.yml",
-                    "dataset/ChatResourceController/chat.yml",
-                    "dataset/ChatResourceController/groupchat_has_users.yml"}
+                    "dataset/ChatResourceController/chat.yml"}
 
     )
     void testAddingUserToGroupChatWithCorrectData() throws Exception {
@@ -510,8 +509,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
                     "dataset/ChatResourceController/group_chat.yml",
-                    "dataset/ChatResourceController/chat.yml",
-                    "dataset/ChatResourceController/groupchat_has_users.yml"}
+                    "dataset/ChatResourceController/chat.yml"}
     )
     void testIsUserExistsInChat() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("test102@mail.ru", "test102");
