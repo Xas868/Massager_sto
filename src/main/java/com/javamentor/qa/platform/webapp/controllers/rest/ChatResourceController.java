@@ -5,7 +5,13 @@ import com.javamentor.qa.platform.dao.impl.pagination.chatdto.ChatPageDtoDaoByUs
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoFindInChatByWord;
-import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.dto.ChatDto;
+import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
+import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
+import com.javamentor.qa.platform.models.dto.GroupChatDto;
+import com.javamentor.qa.platform.models.dto.MessageDto;
+import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.chat.SingleChat;
