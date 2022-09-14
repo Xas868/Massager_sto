@@ -58,7 +58,6 @@ public class ChatResourceController {
     private final SingleChatService singleChatService;
     private final UserDtoService userDtoService;
     private final GroupChatConverter groupChatConverter;
-    private final UserService userService;
 
     private ChatResourceController(MessageDtoService messageDtoService, ChatDtoService chatDtoService, SingleChatRoomService singleChatRoomService, SingleChatConverter singleChatConverter, ChatRoomService chatRoomService, GroupChatRoomService groupChatRoomService, SingleChatService singleChatService, UserDtoService userDtoService, GroupChatConverter groupChatConverter, UserService userService) {
         this.messageDtoService = messageDtoService;
@@ -70,7 +69,6 @@ public class ChatResourceController {
         this.singleChatService = singleChatService;
         this.userDtoService = userDtoService;
         this.groupChatConverter = groupChatConverter;
-        this.userService = userService;
     }
 
     @Operation(summary = "Получение пагинированного списка чатов.", description = "Получение пагинированного списка чатов.")
@@ -251,6 +249,7 @@ public class ChatResourceController {
     @Operation(summary = "Добавление пользователя в group чат.", description = "Добавление пользователя в group чат по его id")
     @PostMapping("/group/{id}/join")
     public ResponseEntity<String> addUserInGroupChat(
+            Authentication authentication,
             @PathVariable("id")
             @Parameter(name = "Id group чата.", required = true, description = "Id group чата является обязательным параметром.")
                     Long id,
@@ -258,11 +257,10 @@ public class ChatResourceController {
             @Parameter(name = "id Пользователя", required = true, description = "Id пользователя является обязательным параметром.")
                     Long userId) {
         Optional<GroupChat> groupChat = groupChatRoomService.getGroupChatAndUsers(id);
-        Optional<User> user = userService.getById(userId);
 
-        if (user.isPresent() && groupChat.isPresent()) {
+        if (groupChat.isPresent()) {
             Set<User> userSet = groupChat.get().getUsers();
-            userSet.add(user.get());
+            userSet.add((User) authentication.getPrincipal());
             groupChatRoomService.update(groupChat.get());
 
             return new ResponseEntity<>("userAdded", HttpStatus.OK);
