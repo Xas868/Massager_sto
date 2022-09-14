@@ -38,7 +38,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     @Autowired
     private GroupChatRoomService groupChatRoomService;
 
-    @Autowired SingleChatService singleChatService;
+    @Autowired
+    SingleChatService singleChatService;
 
     @Test
     @DataSet(cleanBefore = true,
@@ -390,7 +391,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items[4].message").value(containsString("message")))
                 .andExpect(jsonPath("$.items[5].message").value(containsString("message")))
                 .andExpect(jsonPath("$.items[6].message").value(containsString("message")))
-                .andExpect(jsonPath("$.items[7].message").value(containsString("message")));;
+                .andExpect(jsonPath("$.items[7].message").value(containsString("message")));
+        ;
 
         mockMvc.perform(get("/api/user/chat/101/message/find?currentPage=2&word=message&items=3")
                         .header(AUTHORIZATION, USER_TOKEN)
@@ -530,6 +532,30 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
     @Test
     @DataSet(cleanBefore = true,
+            value = {
+                    "dataset/ChatResourceController/roles.yml",
+                    "dataset/ChatResourceController/users.yml",
+                    "dataset/ChatResourceController/group_chat.yml",
+                    "dataset/ChatResourceController/chat.yml"}
+    )
+    void testUserExistsInGroupChat() throws Exception {
+        String USER_TOKEN = "Bearer " + getToken("test102@mail.ru", "test102");
+
+        mockMvc.perform(get("/api/user/chat/group/101")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+        GroupChat groupChat = entityManager.createQuery
+                        ("select groupChat from GroupChat groupChat join fetch groupChat.chat join fetch groupChat.users where groupChat.id=:id", GroupChat.class)
+                .setParameter("id", 101l)
+                .getSingleResult();
+        User user = entityManager.createQuery("select user from User user WHERE user.id = 101", User.class).getSingleResult();
+        assertThat(groupChat.getUsers().contains(user)).isTrue();
+    }
+
+    @Test
+    @DataSet(cleanBefore = true,
             value = "dataset/ChatResourceController/deleteChat.yml")
     public void testDeleteUserFromSingleChat() throws Exception {
         String USER_TOKEN_101 = "Bearer " + getToken("test101@mail.ru", "test101");
@@ -538,12 +564,12 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         SingleChat singleChat = new SingleChat();
         singleChat.setUserOneIsDeleted(false);
         singleChat.setUserTwoIsDeleted(false);
-        singleChat.setUserOne(User.builder().id(101L).email("test101@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
-        singleChat.setUseTwo(User.builder().id(103L).email("test103@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
+        singleChat.setUserOne(User.builder().id(101L).email("test101@mail.ru").role(new Role(999L, "ROLE_USER")).password("test101").build());
+        singleChat.setUseTwo(User.builder().id(103L).email("test103@mail.ru").role(new Role(999L, "ROLE_USER")).password("test101").build());
         singleChatService.persist(singleChat);
         this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/user/chat/" + singleChat.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION,USER_TOKEN_103, USER_TOKEN_101))
+                        .header(AUTHORIZATION, USER_TOKEN_103, USER_TOKEN_101))
                 .andExpect(status().isOk());
 
         //Проверка, что boolean поменялся, у удалённого пользователя в чате.
@@ -553,14 +579,14 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         SingleChat secondSingleChat = new SingleChat();
         secondSingleChat.setUserOneIsDeleted(true);
         secondSingleChat.setUserTwoIsDeleted(false);
-        secondSingleChat.setUserOne(User.builder().id(101L).email("test101@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
-        secondSingleChat.setUseTwo(User.builder().id(103L).email("test103@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
+        secondSingleChat.setUserOne(User.builder().id(101L).email("test101@mail.ru").role(new Role(999L, "ROLE_USER")).password("test101").build());
+        secondSingleChat.setUseTwo(User.builder().id(103L).email("test103@mail.ru").role(new Role(999L, "ROLE_USER")).password("test101").build());
         singleChatService.persist(secondSingleChat);
 
         //Проверка, на отсутствие чата у юзера
         this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/user/chat/" + singleChat.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION,USER_TOKEN_103, USER_TOKEN_101))
+                        .header(AUTHORIZATION, USER_TOKEN_103, USER_TOKEN_101))
                 .andExpect(status().isBadRequest());
     }
 
@@ -573,9 +599,9 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test101");
 
         Set<User> users = new HashSet<>();
-        users.add(User.builder().id(101L).email("test101@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
-        users.add(User.builder().id(102L).email("test102@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
-        users.add(User.builder().id(103L).email("test103@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
+        users.add(User.builder().id(101L).email("test101@mail.ru").role(new Role(999L, "ROLE_USER")).password("test101").build());
+        users.add(User.builder().id(102L).email("test102@mail.ru").role(new Role(999L, "ROLE_USER")).password("test101").build());
+        users.add(User.builder().id(103L).email("test103@mail.ru").role(new Role(999L, "ROLE_USER")).password("test101").build());
 
         GroupChat groupChat = new GroupChat();
         groupChat.setUsers(users);
@@ -583,13 +609,13 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
         this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/user/chat/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION,USER_TOKEN_103, USER_TOKEN_101, USER_TOKEN_102))
+                        .header(AUTHORIZATION, USER_TOKEN_103, USER_TOKEN_101, USER_TOKEN_102))
                 .andExpect(status().isOk());
     }
 
     @Test
     @DataSet(cleanBefore = true,
-    value = "dataset/ChatResourceController/createGroupChat.yml"
+            value = "dataset/ChatResourceController/createGroupChat.yml"
     )
     public void testCreateGroupChat() throws Exception {
         String USER_TOKEN_101 = "Bearer " + getToken("test101@mail.ru", "test101");
@@ -608,7 +634,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         this.mockMvc.perform(post("/api/user/chat/group")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(createGroupChatDto))
-                        .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
+                        .header(AUTHORIZATION, USER_TOKEN_101, USER_TOKEN_102, USER_TOKEN_103))
                 .andExpect(status().isCreated());
 
 
@@ -621,14 +647,14 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         this.mockMvc.perform(post("/api/user/chat/group")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(createGroupChatDto2))
-                        .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
+                        .header(AUTHORIZATION, USER_TOKEN_101, USER_TOKEN_102, USER_TOKEN_103))
                 .andExpect(status().isBadRequest());
 
         //Передаю null
         this.mockMvc.perform(post("/api/user/chat/group")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(null))
-                        .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
+                        .header(AUTHORIZATION, USER_TOKEN_101, USER_TOKEN_102, USER_TOKEN_103))
                 .andExpect(status().isBadRequest());
 
         //Передаю для создания чата список с одним не существующим пользователем
@@ -643,7 +669,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         this.mockMvc.perform(post("/api/user/chat/group")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(createGroupChatDto3))
-                        .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
+                        .header(AUTHORIZATION, USER_TOKEN_101, USER_TOKEN_102, USER_TOKEN_103))
                 .andExpect(status().isBadRequest());
 
         //Передаю для создания чата список со всеми не существующим пользователем
@@ -658,7 +684,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         this.mockMvc.perform(post("/api/user/chat/group")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(createGroupChatDto4))
-                        .header(AUTHORIZATION, USER_TOKEN_101,USER_TOKEN_102,USER_TOKEN_103))
+                        .header(AUTHORIZATION, USER_TOKEN_101, USER_TOKEN_102, USER_TOKEN_103))
                 .andExpect(status().isBadRequest());
     }
 
