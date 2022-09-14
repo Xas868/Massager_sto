@@ -10,9 +10,11 @@ import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatDtoServiceImpl extends DtoServiceImpl<ChatDto> implements ChatDtoService {
@@ -42,5 +44,10 @@ public class ChatDtoServiceImpl extends DtoServiceImpl<ChatDto> implements ChatD
             groupChatDto.setMessages(messageDtoService.getPageDto(properties));
             return Optional.of(groupChatDto);
         }
+    }
+
+    @Override
+    public List<ChatDto> getAllChatsByNameAndUserId(String chatName, Long userId) {
+        return chatDtoDao.getAllChatsByNameAndUserId(chatName, userId);
     }
 }
