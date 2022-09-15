@@ -7,7 +7,7 @@ user_entity:
   - id: 1
     nickname: "user_1"
     password: "$2a$10$Dbl/hKOLzLUVMn/ahtgPcOA6IrZzLE2bVBW/sDumCSUi8KZTecLnC"
-    email: "user1@mail.ru"
+    email: "user100@mail.ru"
     is_deleted: false
     is_enabled: true
     last_redaction_date: 2022-05-23 20:02:51.654701

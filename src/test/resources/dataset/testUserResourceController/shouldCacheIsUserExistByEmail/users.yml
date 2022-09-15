@@ -16,7 +16,7 @@ user_entity:
     about: "I'm Test user #102"
     city: "Moscow"
     full_name: "test 102"
-    password: "$2a$10$oQy7ySB/..XDUBISsQjDzuA2/xz8p5Bc39YWDFN672PVIf9Um1Obi"
+    password: "$2a$12$z8SocTjcRA8F/VA07ZxNYe4Jp7wE5Nukv.GwtKA7sxZecnZqpW4Ni"
     email: "test102@mail.ru"
     is_deleted: false
     nickname: "test102"

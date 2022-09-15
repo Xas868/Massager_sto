@@ -2,7 +2,7 @@ role:
   - id: 1
     name: "ROLE_ADMIN"
 user_entity:
-  - id: 1
+  - id: 100
     password: "$2a$10$Dbl/hKOLzLUVMn/ahtgPcOA6IrZzLE2bVBW/sDumCSUi8KZTecLnC"
     email: "user1@mail.ru"
     is_deleted: false

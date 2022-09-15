@@ -41,7 +41,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     @Autowired SingleChatService singleChatService;
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/ChatSearch/roles.yml",
                     "dataset/ChatResourceController/ChatSearch/users.yml",
@@ -75,7 +75,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/ChatSearch/roles.yml",
                     "dataset/ChatResourceController/ChatSearch/users.yml",
@@ -97,7 +97,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/ChatSearch/roles.yml",
                     "dataset/ChatResourceController/ChatSearch/users.yml",
@@ -124,7 +124,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
     //Тесты для SingleChatDTO авторизированного пользователя
     @Test
-    @DataSet(cleanBefore = true, value = "dataset/ChatResourceController/getAllSingleChatDtoByUserId.yml"
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "dataset/ChatResourceController/getAllSingleChatDtoByUserId.yml"
             , strategy = SeedStrategy.REFRESH)
 
     public void shouldGetAllSingleChatDtoByUserId() throws Exception {
@@ -171,7 +171,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -194,7 +194,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -217,7 +217,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -244,7 +244,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -271,7 +271,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -298,7 +298,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -325,7 +325,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -344,7 +344,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = "dataset/ChatResourceController/testGetPagedMessagesOfSingleChat/testSingleChatWithTenMessages.yml"
     )
     public void testGetPagedMessagesOfSingleChatWithTenMessages() throws Exception {
@@ -361,7 +361,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = "dataset/ChatResourceController/testGetPagedMessagesFromChatByKeyword/testGetPagedMessagesFromChatByKeyword.yml"
     )
     public void testGetPagedMessagesFromChatByKeyword() throws Exception {
@@ -421,7 +421,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = "dataset/ChatResourceController/testGetPagedMessagesOfSingleChat/testGetPagedMessagesOfSingleChatWithThreeChatsAndThreeUsers.yml"
     )
     public void testGetPagedMessagesOfSingleChatWithThreeChatsAndThreeUsers() throws Exception {
@@ -475,7 +475,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -502,7 +502,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -521,11 +521,11 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = "dataset/ChatResourceController/deleteChat.yml")
     public void testDeleteUserFromSingleChat() throws Exception {
         String USER_TOKEN_101 = "Bearer " + getToken("test101@mail.ru", "test101");
-        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test101");
+        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test103");
 
         SingleChat singleChat = new SingleChat();
         singleChat.setUserOneIsDeleted(false);
@@ -557,12 +557,12 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = "dataset/ChatResourceController/deleteChat.yml")
     public void testDeleteUserFromGroupChat() throws Exception {
         String USER_TOKEN_101 = "Bearer " + getToken("test101@mail.ru", "test101");
-        String USER_TOKEN_102 = "Bearer " + getToken("test102@mail.ru", "test101");
-        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test101");
+        String USER_TOKEN_102 = "Bearer " + getToken("test102@mail.ru", "test102");
+        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test103");
 
         Set<User> users = new HashSet<>();
         users.add(User.builder().id(101L).email("test101@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
@@ -580,13 +580,13 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
     value = "dataset/ChatResourceController/createGroupChat.yml"
     )
     public void testCreateGroupChat() throws Exception {
         String USER_TOKEN_101 = "Bearer " + getToken("test101@mail.ru", "test101");
-        String USER_TOKEN_102 = "Bearer " + getToken("test102@mail.ru", "test101");
-        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test101");
+        String USER_TOKEN_102 = "Bearer " + getToken("test102@mail.ru", "test102");
+        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test103");
 
         List<Long> userIds = new ArrayList<>();
         userIds.add(101L);
