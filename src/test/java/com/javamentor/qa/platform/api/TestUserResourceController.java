@@ -12,7 +12,6 @@ import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -26,11 +25,18 @@ import static com.javamentor.qa.platform.models.util.CalendarPeriod.week;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTests {
 
@@ -40,12 +46,11 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     private UserService userService;
     @Autowired
     private UserDtoService userDtoService;
-    @Autowired
-    private CacheManager cacheManager;
+
 
     @Test
     //Вывод Dto по id без тегов
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/testUserResourceController/roles.yml",
                     "dataset/testUserResourceController/users.yml",
@@ -57,7 +62,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     public void getApiUserDtoId() throws Exception {
         this.mockMvc.perform(get("/api/user/102")
                         .contentType("application/json")
-                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "test15")))
+                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user102")))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -75,7 +80,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     Вычисление количества ответов аутентифицированного юзера.
     У юзера user100 5 ответ, 3 из которых сделаны менее, чем неделю назад.
      */
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/answers.yml",
                     "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/users.yml",
@@ -98,7 +103,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     Вычисление количества ответов аутентифицированного юзера.
     У юзера user101 3 ответa, 1 из которых сделаны менее, чем неделю назад.
      */
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/answers.yml",
                     "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/users.yml",
@@ -121,7 +126,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     Вычисление количества ответов аутентифицированного юзера.
     У юзера user102 3 ответa, среди которых нет сделанных ранее, чем неделю назад.
      */
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/answers.yml",
                     "dataset/testUserResourceController/getCountAnswersPerWeekByUserId/users.yml",
@@ -145,7 +150,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     //           2 ответа под вопросом с тегом 103 и 4 вопроса с тегом 103 - итого, популярность: 6
     //           2 ответа под вопросом с тегом 104 и 4 вопроса с тегом 104 - итого, популярность: 6
     // Тег 106 - 1-е место, тег 103, тег 104 - 2-е и 3-е соответственно (популярность одинакова => сортировка по id)
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/testUserResourceController/getApiUserDtoIdWithTop3Tags/roles.yml",
                     "dataset/testUserResourceController/getApiUserDtoIdWithTop3Tags/users5.yml",
@@ -157,7 +162,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     public void getApiUserDtoIdWithTop3Tags() throws Exception {
         this.mockMvc.perform(get("/api/user/100")
                         .contentType("application/json")
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "test15")))
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100")))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -172,7 +177,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
 
     //Проверяем на не существующий id
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/testUserResourceController/roles.yml",
                     "dataset/testUserResourceController/users.yml",
@@ -184,14 +189,14 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     public void getNotUserDtoId() throws Exception {
         this.mockMvc.perform(get("/api/user/105")
                         .contentType("application/json")
-                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "test15")))
+                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user102")))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
     //Получаем новых пользователей
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/userresourcecontroller/roles.yml",
                     "dataset/userresourcecontroller/users.yml",
@@ -268,7 +273,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
 
     //Получение неудалённых пользователей с репутацией за голоса
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/testUserResourceController/roleUser.yml",
                     "dataset/testUserResourceController/users20.yml",
@@ -281,7 +286,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
         //Пользователь с id 119 получает несколько голосов
         //Пользователи без репутации за голоса не сортируются
         mockMvc.perform(get("/api/user/vote?page=1&items=16")
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password"))
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -307,7 +312,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
 
         //Получение пользователей на второй странице (до 16 элементов) отсортированных по репутации
         mockMvc.perform(get("/api/user/vote?page=2&items=16")
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password"))
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -321,7 +326,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
 
         //Проверка на то, что без items на странице будет только 10 элементов
         mockMvc.perform(get("/api/user/vote?page=1")
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password"))
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -331,14 +336,14 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
 
         //Проверка на некорректный запрос
         mockMvc.perform(get("/api/user/vote?page==")
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password"))
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest());
 
         //Получаем пользователей со строкой "11" в имени или почте
         mockMvc.perform(get("/api/user/vote?page=1&filter=11")
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password"))
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -359,7 +364,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
         //Получаем пользователей со строкой "011" в имени или почте
         //Таких в БД нет, поэтому результат должен быть пустым
         mockMvc.perform(get("/api/user/vote?page=1&filter=011")
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password"))
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -370,7 +375,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
 
     //Проверяем изменение пароля
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/userresourcecontroller/roles.yml",
                     "dataset/userresourcecontroller/users_with_deleted_user.yml",
@@ -382,7 +387,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
         //Ставим новый пароль
         this.mockMvc.perform(patch("/api/user/change/password?password=test534")
                         .contentType("application/json")
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password")))
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100")))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -396,7 +401,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
 
     //Получаем неудалённых пользователей, отсортированных по репутации
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/userresourcecontroller/roles.yml",
                     "dataset/userresourcecontroller/users_with_deleted_user.yml",
@@ -407,7 +412,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
         //Получаем неудалённых пользователей
         //Пользователь под id 102 получает репутацию дважды
         mockMvc.perform(get("/api/user/reputation?page=1&items=3")
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password"))
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -419,7 +424,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
 
         //Получаем неудалённых пользователей со строкой "02" в имени или почте
         mockMvc.perform(get("/api/user/reputation?page=1&filter=02")
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password"))
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -432,7 +437,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
         //Получаем неудалённых пользователей со строкой "03" в имени или почте
         //Таких в БД нет, поэтому результат должен быть пустым
         mockMvc.perform(get("/api/user/reputation?page=1&filter=03")
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "password"))
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -450,7 +455,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
             strategy = SeedStrategy.CLEAN_INSERT)
     public void shouldCacheIsUserExistByEmail() throws Exception {
 
-        String token101 = "Bearer " + getToken("test102@mail.ru", "user1");
+        String token101 = "Bearer " + getToken("test102@mail.ru", "user100");
 
         //Проверяю кэширование существующего
         assertNull(cacheManager.getCache("userExistByEmail").get("test102@mail.ru"));
@@ -499,7 +504,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
         assertNull(cacheManager.getCache("userWithRoleByEmail").get("test102@mail.ru"));
 
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-        authenticationRequest.setPassword("user1");
+        authenticationRequest.setPassword("user100");
         authenticationRequest.setUsername("test102@mail.ru");
 
         mockMvc.perform(post("/api/auth/token")
@@ -580,7 +585,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.[*].countView").value(containsInRelativeOrder(4, 1, 0)));
 
         //закладки user с id 102 вопросы 101, 102, 103
-        String USER_TOKEN_USERID_102 = "Bearer " + getToken("test102@mail.ru", "test15");
+        String USER_TOKEN_USERID_102 = "Bearer " + getToken("test102@mail.ru", "user100");
         mockMvc.perform(get("/api/user/profile/bookmarks")
                         .header(AUTHORIZATION, USER_TOKEN_USERID_102)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -660,7 +665,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
             },
             strategy = SeedStrategy.CLEAN_INSERT)
     public void testOnlySortGetTop10UsersRankedByNumberOfQuestions() throws Exception {
-        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
+        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "user100");
         mockMvc.perform(get("/api/user/top")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -686,7 +691,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
             },
             strategy = SeedStrategy.CLEAN_INSERT)
     public void testGetTop10UsersForWeekRankedByNumberOfQuestions() throws Exception {
-        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
+        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "user100");
         mockMvc.perform(get("/api/user/top")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -709,7 +714,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
             },
             strategy = SeedStrategy.CLEAN_INSERT)
     public void testGetTop10UsersForWeekDeletedAnswersRankedByNumberOfQuestions() throws Exception {
-        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
+        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "user100");
         mockMvc.perform(get("/api/user/top")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -730,7 +735,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                     "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/reputations.yml"
             })
     public void testGetTop10UsersForYearRankedByNumberOfQuestions() throws Exception {
-        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
+        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "user100");
         mockMvc.perform(get("/api/user/top")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -752,7 +757,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                     "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/reputations.yml"
             })
     public void testGetTop10UsersForMonthRankedByNumberOfQuestions() throws Exception {
-        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
+        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "user100");
         mockMvc.perform(get("/api/user/top")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -773,7 +778,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                     "dataset/testUserResourceController/testGetTop10UsersForWeekRankedByNumberOfQuestions/reputations.yml"
             })
     public void testGetDateTimeForUsers() throws Exception {
-        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "test15");
+        String USER_TOKEN = "Bearer " + getToken("user100@mail.ru", "user100");
         var result = mockMvc.perform(get("/api/user/top")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)

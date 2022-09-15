@@ -41,7 +41,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     @Autowired SingleChatService singleChatService;
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/ChatSearch/roles.yml",
                     "dataset/ChatResourceController/ChatSearch/users.yml",
@@ -79,7 +79,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/ChatSearch/roles.yml",
                     "dataset/ChatResourceController/ChatSearch/users.yml",
@@ -91,20 +91,22 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
             })
     public void testGetChatsByNameEmptyList() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("test101@mail.ru", "test101");
+        System.out.println("НАчало метода");
         mockMvc.perform(get("/api/user/chat")
                         .header(AUTHORIZATION, USER_TOKEN)
-                        //Sending 105 as param so we expect to get only chats that contain '105' in the title or have user with this name if it's a single chat
+                        //Sending 105 as param so we expect to get only chats that contain '105' in the title or have
+                        // user with this name if it's a single chat
                         .param("name", "105")
                         .contentType(MediaType.APPLICATION_JSON))
 
-                .andDo(MockMvcResultHandlers.print())
+//                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("group chat with id = 105"))
                 .andExpect(jsonPath("$[1].name").value("test105"));
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/ChatSearch/roles.yml",
                     "dataset/ChatResourceController/ChatSearch/users.yml",
@@ -119,7 +121,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         mockMvc.perform(get("/api/user/chat")
                         .header(AUTHORIZATION, USER_TOKEN)
                         // There is no chat with this name so we expect to not get any results
-                        .param("name", "102")
+                        .param("id", "102")
                         .contentType(MediaType.APPLICATION_JSON))
 
                 .andDo(MockMvcResultHandlers.print())
@@ -130,7 +132,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
     //Тесты для SingleChatDTO авторизированного пользователя
     @Test
-    @DataSet(cleanBefore = true, value = "dataset/ChatResourceController/getAllSingleChatDtoByUserId.yml"
+    @DataSet(cleanBefore = true, cleanAfter = true, value = "dataset/ChatResourceController/getAllSingleChatDtoByUserId.yml"
             , strategy = SeedStrategy.REFRESH)
 
     public void shouldGetAllSingleChatDtoByUserId() throws Exception {
@@ -177,7 +179,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -200,7 +202,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -223,7 +225,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -250,7 +252,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -277,7 +279,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -304,7 +306,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -331,7 +333,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
@@ -350,7 +352,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = "dataset/ChatResourceController/testGetPagedMessagesOfSingleChat/testSingleChatWithTenMessages.yml"
     )
     public void testGetPagedMessagesOfSingleChatWithTenMessages() throws Exception {
@@ -367,7 +369,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = "dataset/ChatResourceController/testGetPagedMessagesFromChatByKeyword/testGetPagedMessagesFromChatByKeyword.yml"
     )
     public void testGetPagedMessagesFromChatByKeyword() throws Exception {
@@ -427,7 +429,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = "dataset/ChatResourceController/testGetPagedMessagesOfSingleChat/testGetPagedMessagesOfSingleChatWithThreeChatsAndThreeUsers.yml"
     )
     public void testGetPagedMessagesOfSingleChatWithThreeChatsAndThreeUsers() throws Exception {
@@ -481,13 +483,12 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
                     "dataset/ChatResourceController/group_chat.yml",
-                    "dataset/ChatResourceController/chat.yml",
-                    "dataset/ChatResourceController/groupchat_has_users.yml"}
+                    "dataset/ChatResourceController/chat.yml"}
 
     )
     void testAddingUserToGroupChatWithCorrectData() throws Exception {
@@ -509,13 +510,12 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = {
                     "dataset/ChatResourceController/roles.yml",
                     "dataset/ChatResourceController/users.yml",
                     "dataset/ChatResourceController/group_chat.yml",
-                    "dataset/ChatResourceController/chat.yml",
-                    "dataset/ChatResourceController/groupchat_has_users.yml"}
+                    "dataset/ChatResourceController/chat.yml"}
     )
     void testAddingUserToGroupChatWithIncorrectUserId() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("test102@mail.ru", "test102");
@@ -529,11 +529,11 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = "dataset/ChatResourceController/deleteChat.yml")
     public void testDeleteUserFromSingleChat() throws Exception {
         String USER_TOKEN_101 = "Bearer " + getToken("test101@mail.ru", "test101");
-        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test101");
+        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test103");
 
         SingleChat singleChat = new SingleChat();
         singleChat.setUserOneIsDeleted(false);
@@ -541,14 +541,13 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         singleChat.setUserOne(User.builder().id(101L).email("test101@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
         singleChat.setUseTwo(User.builder().id(103L).email("test103@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
         singleChatService.persist(singleChat);
-
-        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/user/chat/1")
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/user/chat/" + singleChat.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION,USER_TOKEN_103, USER_TOKEN_101))
                 .andExpect(status().isOk());
 
         //Проверка, что boolean поменялся, у удалённого пользователя в чате.
-        SingleChat updatedChat = singleChatService.getById(1l).get();
+        SingleChat updatedChat = singleChatService.getById(singleChat.getId()).get();
         Assertions.assertTrue(updatedChat.getUserTwoIsDeleted());
 
         SingleChat secondSingleChat = new SingleChat();
@@ -559,19 +558,19 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         singleChatService.persist(secondSingleChat);
 
         //Проверка, на отсутствие чата у юзера
-        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/user/chat/1")
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/user/chat/" + singleChat.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION,USER_TOKEN_103, USER_TOKEN_101))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
             value = "dataset/ChatResourceController/deleteChat.yml")
     public void testDeleteUserFromGroupChat() throws Exception {
         String USER_TOKEN_101 = "Bearer " + getToken("test101@mail.ru", "test101");
-        String USER_TOKEN_102 = "Bearer " + getToken("test102@mail.ru", "test101");
-        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test101");
+        String USER_TOKEN_102 = "Bearer " + getToken("test102@mail.ru", "test102");
+        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test103");
 
         Set<User> users = new HashSet<>();
         users.add(User.builder().id(101L).email("test101@mail.ru").role(new Role(999L,"ROLE_USER")).password("test101").build());
@@ -589,13 +588,13 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
     @Test
-    @DataSet(cleanBefore = true,
+    @DataSet(cleanBefore = true, cleanAfter = true,
     value = "dataset/ChatResourceController/createGroupChat.yml"
     )
     public void testCreateGroupChat() throws Exception {
         String USER_TOKEN_101 = "Bearer " + getToken("test101@mail.ru", "test101");
-        String USER_TOKEN_102 = "Bearer " + getToken("test102@mail.ru", "test101");
-        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test101");
+        String USER_TOKEN_102 = "Bearer " + getToken("test102@mail.ru", "test102");
+        String USER_TOKEN_103 = "Bearer " + getToken("test103@mail.ru", "test103");
 
         List<Long> userIds = new ArrayList<>();
         userIds.add(101L);

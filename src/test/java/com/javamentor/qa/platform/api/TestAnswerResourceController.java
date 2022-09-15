@@ -309,7 +309,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
     public void shouldAddAnswerAndReturnAnswerDto() throws Exception {
 
         String token100 = "Bearer " + getToken("user100@mail.ru", "password");
-        String token101 = "Bearer " + getToken("user101@mail.ru", "user101");
+        String token101 = "Bearer " + getToken("user101@mail.ru", "password");
 
         //добавляю новый ответ user 100 по вопросу 101
         mockMvc.perform(MockMvcRequestBuilders.post("/api/user/question/101/answer/add")
@@ -488,7 +488,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
     public void testAddCommentAnswer() throws Exception {
 
         String token100 = "Bearer " + getToken("user100@mail.ru", "password");
-        String token101 = "Bearer " + getToken("user101@mail.ru", "user101");
+        String token101 = "Bearer " + getToken("user101@mail.ru", "password");
 
         //добавляю новый комментарий user 100 по вопросу 101
         mockMvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/101/comment")

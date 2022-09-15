@@ -6,13 +6,12 @@ import com.github.database.rider.junit5.api.DBRider;
 import com.javamentor.qa.platform.models.dto.AuthenticationRequest;
 import com.javamentor.qa.platform.models.dto.AuthenticationResponse;
 import com.javamentor.qa.platform.webapp.configs.JmApplication;
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -22,15 +21,16 @@ import javax.persistence.PersistenceContext;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@DirtiesContext
 @AutoConfigureMockMvc
 @DBRider
 @TestPropertySource("classpath:application-test.properties")
 @SpringBootTest(classes = JmApplication.class)
-@DBUnit(cacheConnection = false, leakHunter = true,caseSensitiveTableNames = true,allowEmptyFields = true )
+@DBUnit(cacheConnection = false, leakHunter = true, caseSensitiveTableNames = true, allowEmptyFields = true)
 public abstract class AbstractClassForDRRiderMockMVCTests {
- // Класс конфигурации для теста
+    // Класс конфигурации для теста
 
- private final String url = "/api/auth/token";
+    private final String url = "/api/auth/token";
 
     @Autowired
     public CacheManager cacheManager;
@@ -62,8 +62,4 @@ public abstract class AbstractClassForDRRiderMockMVCTests {
         return response.getToken();
     }
 
-    @BeforeEach
-    public void clearCache(){
-        cacheManager.getCacheNames().stream().forEach(x -> cacheManager.getCache(x).clear());
-    }
 }
