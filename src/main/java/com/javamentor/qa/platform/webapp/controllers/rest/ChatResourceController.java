@@ -86,7 +86,7 @@ public class ChatResourceController {
     @ApiResponse(responseCode = "400", description = "Список чатов не получен.", content = {
             @Content(mediaType = "application/json")
     })
-    @GetMapping("/")
+    @GetMapping()
     public ResponseEntity<PageDTO<ChatDto>> getPagedUserChats (
             Authentication authentication,
             @RequestParam(name = "currentPage", defaultValue = "1")
