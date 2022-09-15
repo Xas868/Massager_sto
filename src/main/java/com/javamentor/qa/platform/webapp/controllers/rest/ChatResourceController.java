@@ -102,12 +102,9 @@ public class ChatResourceController {
                     description = "Поиск чата по названию name. Ищет все групповые чаты с таким названием и/или чаты в которых собеседника так зовут.")
             String name) {
         PaginationData properties;
-        if (name == null) {
-            properties = new PaginationData(currentPage, items, ChatPageDtoDaoByUserIdImpl.class.getSimpleName());
-        } else {
-            properties = new PaginationData(currentPage, items, ChatPageDtoDaoByUserIdAndNameImpl.class.getSimpleName(), name);
-        }
+        properties = new PaginationData(currentPage, items, name == null ? ChatPageDtoDaoByUserIdImpl.class.getSimpleName() : ChatPageDtoDaoByUserIdAndNameImpl.class.getSimpleName());
         properties.getProps().put("userId", ((User) authentication.getPrincipal()).getId());
+        properties.getProps().put("qName", name);
         return new ResponseEntity<>(chatDtoService.getPageDto(properties), HttpStatus.OK);
     }
 
