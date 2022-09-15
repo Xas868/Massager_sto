@@ -20,7 +20,7 @@ user_entity:
     about: "I'm Test user #102"
     city: "Moscow"
     full_name: "test_102"
-    password: "$2a$12$nxNhCjpphuKnzex/4c3cQ.9QDIeFvZIlWQIMZ/oyP6gKufWY3Wh.S"
+    password: "$2a$12$Hi25g9H0gh.x/Bnz/jnn/OjGZBI0wYNbW2oT/W3xiU7qNdgPwSBC6"
     email: "test102@mail.ru"
     is_deleted: false
     nickname: "test102"
@@ -35,7 +35,7 @@ user_entity:
     about: "I'm Test user #103"
     city: "Moscow"
     full_name: "test_103"
-    password: "$2a$12$nxNhCjpphuKnzex/4c3cQ.9QDIeFvZIlWQIMZ/oyP6gKufWY3Wh.S"
+    password: "$2a$12$jQfTt441cQqMlDur1Qpm9OOOwLpjzinvHrTpc4jvZOHB3sBlZqJSu"
     email: "test103@mail.ru"
     is_deleted: false
     nickname: "test103"

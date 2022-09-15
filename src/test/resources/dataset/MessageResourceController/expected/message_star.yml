@@ -1,4 +1,4 @@
 message_star:
   - id: 1
-    user_id: 1
+    user_id: 100
     message_id: 1
