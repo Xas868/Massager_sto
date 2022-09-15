@@ -89,7 +89,7 @@ public class ChatPageDtoDaoByUserIdAndNameImpl implements PageDtoDao<ChatDto>{
                         "                end " +
                         "       end) = :qName " +
                         "order by isChatPin desc, persistDate desc", ChatDto.class)
-                .setParameter("userId", properties.getUserId())
+                .setParameter("userId", properties.getProps().get("userId"))
                 .setParameter("group", ChatType.GROUP)
                 .setParameter("qName", properties.getFilter())
                 .setFirstResult(offset)

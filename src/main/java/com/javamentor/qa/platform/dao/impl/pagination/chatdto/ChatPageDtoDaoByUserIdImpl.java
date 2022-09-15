@@ -82,7 +82,7 @@ public class ChatPageDtoDaoByUserIdImpl implements PageDtoDao<ChatDto>{
                         // Now we are filtering out all the chats that we don't need
                         "where (:userId in elements(groupChat.users) or user1.id = :userId or user2.id = :userId) " +
                         "order by isChatPin desc, persistDate desc", ChatDto.class)
-                .setParameter("userId", properties.getUserId())
+                .setParameter("userId", properties.getProps().get("userId"))
                 .setParameter("group", ChatType.GROUP)
                 .setFirstResult(offset)
                 .setMaxResults(itemsOnPage)

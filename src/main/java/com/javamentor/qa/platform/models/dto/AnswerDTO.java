@@ -76,10 +76,4 @@ public class AnswerDTO {
         this.image = image;
         this.nickName = nickName;
     }
-
-
-    //    private LocalDateTime updateDateTime;--------------
-//    private Boolean isDeleted;
-//    private Boolean isDeletedByModerator;
-
 }

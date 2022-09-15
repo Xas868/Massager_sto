@@ -18,7 +18,6 @@ public class PaginationData {
     private Map<String, Object> props = new HashMap<>();
     private String daoName;
     private String filter;
-    private Long userId;
 
 
 
@@ -34,23 +33,6 @@ public class PaginationData {
         this.itemsOnPage = itemsOnPage;
         this.daoName = daoName;
         this.props = new HashMap<>();
-        this.filter = filter;
-    }
-
-    public PaginationData(int currentPage, int itemsOnPage, String daoName, Long userId) {
-        this.currentPage = currentPage;
-        this.itemsOnPage = itemsOnPage;
-        this.daoName = daoName;
-        this.props = new HashMap<>();
-        this.userId = userId;
-    }
-
-    public PaginationData(int currentPage, int itemsOnPage, String daoName, Long userId, String filter) {
-        this.currentPage = currentPage;
-        this.itemsOnPage = itemsOnPage;
-        this.daoName = daoName;
-        this.props = new HashMap<>();
-        this.userId = userId;
         this.filter = filter;
     }
 }
