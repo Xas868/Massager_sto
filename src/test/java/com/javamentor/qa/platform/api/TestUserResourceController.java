@@ -193,26 +193,6 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
-
-    //Проверяем на права доступа к странице пользователя, ошибка 403 (accessDenied)ю
-    @Test
-    @DataSet(cleanBefore = true, cleanAfter = true,
-            value = {
-                    "dataset/testUserResourceController/getNotApiUserDtoIdByAdmin/roles.yml",
-                    "dataset/testUserResourceController/getNotApiUserDtoIdByAdmin/users.yml",
-                    "dataset/testUserResourceController/reputation.yml",
-                    "dataset/testUserResourceController/answers.yml",
-                    "dataset/testUserResourceController/questions.yml"
-            },
-            strategy = SeedStrategy.REFRESH)
-    public void getNotApiUserDtoIdByAdmin() throws Exception {
-        this.mockMvc.perform(get("/api/user/102")
-                        .contentType("application/json")
-                        .header("Authorization", "Bearer " + getToken("user105@mail.ru", "user102")))
-                .andDo(print())
-                .andExpect(status().is4xxClientError());
-    }
-
     //Получаем новых пользователей
     @Test
     @DataSet(cleanBefore = true, cleanAfter = true,
