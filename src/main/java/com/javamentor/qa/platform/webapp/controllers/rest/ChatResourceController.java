@@ -14,7 +14,6 @@ import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.ChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
-import com.javamentor.qa.platform.service.abstracts.model.SingleChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.converters.GroupChatConverter;
@@ -37,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,19 +47,17 @@ import java.util.Set;
 public class ChatResourceController {
     private final MessageDtoService messageDtoService;
     private final ChatDtoService chatDtoService;
-    private final SingleChatRoomService singleChatRoomService;
+    private final SingleChatService singleChatService;
     private final SingleChatConverter singleChatConverter;
     private final ChatRoomService chatRoomService;
     private final GroupChatRoomService groupChatRoomService;
-    private final SingleChatService singleChatService;
     private final UserDtoService userDtoService;
     private final GroupChatConverter groupChatConverter;
     private final UserService userService;
 
-    private ChatResourceController(MessageDtoService messageDtoService, ChatDtoService chatDtoService, SingleChatRoomService singleChatRoomService, SingleChatConverter singleChatConverter, ChatRoomService chatRoomService, GroupChatRoomService groupChatRoomService, SingleChatService singleChatService, UserDtoService userDtoService, GroupChatConverter groupChatConverter, UserService userService) {
+    private ChatResourceController(MessageDtoService messageDtoService, ChatDtoService chatDtoService, SingleChatConverter singleChatConverter, ChatRoomService chatRoomService, GroupChatRoomService groupChatRoomService, SingleChatService singleChatService, UserDtoService userDtoService, GroupChatConverter groupChatConverter, UserService userService) {
         this.messageDtoService = messageDtoService;
         this.chatDtoService = chatDtoService;
-        this.singleChatRoomService = singleChatRoomService;
         this.singleChatConverter = singleChatConverter;
         this.chatRoomService = chatRoomService;
         this.groupChatRoomService = groupChatRoomService;
@@ -86,7 +82,7 @@ public class ChatResourceController {
     })
     @PostMapping("/single")
     public ResponseEntity<?> createSingleChatAndFirstMessageDto(@Valid @RequestBody CreateSingleChatDto createSingleChatDto) throws Exception {
-        SingleChat singleChat = singleChatRoomService.createSingleChatAndFirstMessage(createSingleChatDto.getMessage(), singleChatConverter.createSingleChatDtoToSingleChat(createSingleChatDto));
+        SingleChat singleChat = singleChatService.createSingleChatAndFirstMessage(createSingleChatDto.getMessage(), singleChatConverter.createSingleChatDtoToSingleChat(createSingleChatDto));
         SingleChatDto singleChatDto = SingleChatDto.builder()
                 .id(singleChat.getId())
                 .name(singleChat.getUseTwo().getNickname())

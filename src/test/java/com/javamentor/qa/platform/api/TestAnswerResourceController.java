@@ -60,15 +60,15 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
             "dataset/testAnswerResourceController/expected/reputation10.yml",
             "dataset/testAnswerResourceController/expected/voteAnswerUp.yml",
     },
-            ignoreCols = {"id", "persist_date"})
+    ignoreCols = {"id","persist_date"})
     public void shouldBeVoteUp() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .post("/api/user/question/100/answer/100/upVote")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header("Authorization",
-                                "Bearer " + getToken("user101@mail.ru", PASSWORD))
-                )
+                .post("/api/user/question/100/answer/100/upVote")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization",
+                        "Bearer " + getToken("user101@mail.ru", PASSWORD))
+        )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"));
@@ -95,12 +95,12 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
             strategy = SeedStrategy.INSERT)
     public void shouldBeNotFound() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .post("/api/user/question/100/answer/999/upVote")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header("Authorization",
-                                "Bearer " + getToken("user101@mail.ru", PASSWORD))
-                )
+                .post("/api/user/question/100/answer/999/upVote")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization",
+                        "Bearer " + getToken("user101@mail.ru", PASSWORD))
+        )
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
@@ -128,25 +128,25 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
             "dataset/testAnswerResourceController/expected/reputation1010.yml",
             "dataset/testAnswerResourceController/expected/voteAnswerUpUp.yml",
     },
-            ignoreCols = {"id", "persist_date"})
+            ignoreCols = {"id","persist_date"})
     public void shouldBeVoteUp2DifferentUsers() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .post("/api/user/question/100/answer/100/upVote")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header("Authorization",
-                                "Bearer " + getToken("user101@mail.ru", PASSWORD))
-                )
+                .post("/api/user/question/100/answer/100/upVote")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization",
+                        "Bearer " + getToken("user101@mail.ru", PASSWORD))
+        )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"));
         mvc.perform(MockMvcRequestBuilders
-                        .post("/api/user/question/100/answer/100/upVote")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header("Authorization",
-                                "Bearer " + getToken("user102@mail.ru", PASSWORD))
-                )
+                .post("/api/user/question/100/answer/100/upVote")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization",
+                        "Bearer " + getToken("user102@mail.ru", PASSWORD))
+        )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("2"));
@@ -175,25 +175,25 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
             "dataset/testAnswerResourceController/expected/reputation10.yml",
             "dataset/testAnswerResourceController/expected/voteAnswerUp.yml",
     },
-            ignoreCols = {"id", "persist_date"})
+            ignoreCols = {"id","persist_date"})
     public void shouldBeVoteUp2SameUser() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .post("/api/user/question/100/answer/100/upVote")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header("Authorization",
-                                "Bearer " + getToken("user101@mail.ru", PASSWORD))
-                )
+                .post("/api/user/question/100/answer/100/upVote")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization",
+                        "Bearer " + getToken("user101@mail.ru", PASSWORD))
+        )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"));
         mvc.perform(MockMvcRequestBuilders
-                        .post("/api/user/question/100/answer/100/upVote")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header("Authorization",
-                                "Bearer " + getToken("user101@mail.ru", PASSWORD))
-                )
+                .post("/api/user/question/100/answer/100/upVote")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization",
+                        "Bearer " + getToken("user101@mail.ru", PASSWORD))
+        )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"));
@@ -222,26 +222,26 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
             value = {
                     "dataset/testAnswerResourceController/expected/reputation10.yml",
                     "dataset/testAnswerResourceController/expected/voteAnswerUp.yml",
-            },
-            ignoreCols = {"id", "persist_date"})
+    },
+            ignoreCols = {"id","persist_date"})
     public void shouldBeVoteUpAndVoteDownSameUser() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .post("/api/user/question/100/answer/100/upVote")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header("Authorization",
-                                "Bearer " + getToken("user101@mail.ru", PASSWORD))
-                )
+                .post("/api/user/question/100/answer/100/upVote")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization",
+                        "Bearer " + getToken("user101@mail.ru", PASSWORD))
+        )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"));
         mvc.perform(MockMvcRequestBuilders
-                        .post("/api/user/question/100/answer/100/downVote")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header("Authorization",
-                                "Bearer " + getToken("user101@mail.ru", PASSWORD))
-                )
+                .post("/api/user/question/100/answer/100/downVote")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization",
+                        "Bearer " + getToken("user101@mail.ru", PASSWORD))
+        )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"));
@@ -270,25 +270,25 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
             "dataset/testAnswerResourceController/expected/reputation10-5.yml",
             "dataset/testAnswerResourceController/expected/voteAnswerUpDown.yml",
     },
-            ignoreCols = {"id", "persist_date"})
+            ignoreCols = {"id","persist_date"})
     public void shouldBeVoteUpAndVoteDownDifferentUsers() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .post("/api/user/question/100/answer/100/upVote")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header("Authorization",
-                                "Bearer " + getToken("user101@mail.ru", PASSWORD))
-                )
+                .post("/api/user/question/100/answer/100/upVote")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization",
+                        "Bearer " + getToken("user101@mail.ru", PASSWORD))
+        )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"));
         mvc.perform(MockMvcRequestBuilders
-                        .post("/api/user/question/100/answer/100/downVote")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header("Authorization",
-                                "Bearer " + getToken("user102@mail.ru", PASSWORD))
-                )
+                .post("/api/user/question/100/answer/100/downVote")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization",
+                        "Bearer " + getToken("user102@mail.ru", PASSWORD))
+        )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("0"));
@@ -309,7 +309,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
     public void shouldAddAnswerAndReturnAnswerDto() throws Exception {
 
         String token100 = "Bearer " + getToken("user100@mail.ru", "password");
-        String token101 = "Bearer " + getToken("user101@mail.ru", "user101");
+        String token101 = "Bearer " + getToken("user101@mail.ru", "password");
 
         //добавляю новый ответ user 100 по вопросу 101
         mockMvc.perform(MockMvcRequestBuilders.post("/api/user/question/101/answer/add")
@@ -488,7 +488,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
     public void testAddCommentAnswer() throws Exception {
 
         String token100 = "Bearer " + getToken("user100@mail.ru", "password");
-        String token101 = "Bearer " + getToken("user101@mail.ru", "user101");
+        String token101 = "Bearer " + getToken("user101@mail.ru", "password");
 
         //добавляю новый комментарий user 100 по вопросу 101
         mockMvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/answer/101/comment")
@@ -586,9 +586,8 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                         .contentType("application/json")
                         .header("Authorization",
                                 "Bearer " + getToken("user100@mail.ru", "password")))
-//                .andDo(print())
                 .andExpect(status().isOk())
-
+                .andDo(print())
                 .andExpect(content()
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].answerId").value(100))
