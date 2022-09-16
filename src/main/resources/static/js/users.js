@@ -1,38 +1,44 @@
+const paginationByReputation = '/api/user/reputation';
+const paginationByVotes = '/api/user/votes';
+const paginationByNewcomers = '/api/user/new';
+
+
 activateSideBar()
 
 
 function activateSideBar() {
     document.querySelector("#sidebar_users").classList.add("active")
 }
-
+let pagination;
 //создаем новый объект пагинации и передаем аргументы в конструктор
-let pagination = new Pagination(
-    'http://localhost:8091/api/user/reputation',    //url
-    16,                                                     //количество объектов
-    'users_grid',                                    //id div куда будут вставляться объекты
-    'users_navigation',                                //id div куду будет вставляться нумерация
-    function (arrayObjects) {                             //функция, которая задаёт - как будут вставляться объекты
+function createPagination(url){
+    pagination = new Pagination(
+        url,                                                          //url
+        16,                                                     //количество объектов
+        'users_grid',                                    //id div куда будут вставляться объекты
+        'users_navigation',                                //id div куду будет вставляться нумерация
+        function (arrayObjects) {                             //функция, которая задаёт - как будут вставляться объекты
 
-        let mainDiv = document.createElement('div');
+            let mainDiv = document.createElement('div');
 
-        if (arrayObjects != null && arrayObjects.length > 0) {
+            if (arrayObjects != null && arrayObjects.length > 0) {
 
-            let numCardsInDeck = 0;
-            let cardDeckDiv = undefined;
+                let numCardsInDeck = 0;
+                let cardDeckDiv = undefined;
 
-            for (let num = 0; num < arrayObjects.length; num++) {
+                for (let num = 0; num < arrayObjects.length; num++) {
 
-                if (numCardsInDeck === 0) {
-                    numCardsInDeck = 4;
-                    cardDeckDiv = document.createElement('div');
-                    cardDeckDiv.className = "card-deck";
-                    mainDiv.appendChild(cardDeckDiv);
-                }
+                    if (numCardsInDeck === 0) {
+                        numCardsInDeck = 4;
+                        cardDeckDiv = document.createElement('div');
+                        cardDeckDiv.className = "card-deck";
+                        mainDiv.appendChild(cardDeckDiv);
+                    }
 
-                let cardDiv = document.createElement('div');
-                cardDiv.className = "card border-0";
-                cardDiv.innerHTML =
-                    `
+                    let cardDiv = document.createElement('div');
+                    cardDiv.className = "card border-0";
+                    cardDiv.innerHTML =
+                        `
             <div class="user-card">
                 <div><img src=${arrayObjects[num].imageLink} class="avatar card-img-top" alt="..."></div>
                 <div class="card-body">
@@ -43,21 +49,23 @@ let pagination = new Pagination(
                 </div>
             </div>
         `;
-                let output = '';
-                arrayObjects[num].listTagDto.forEach(tag => {
-                    output += '<a href="#">' + tag.name + '</a>, ';
-                });
-                if (output !== '') {
-                    output = output.slice(0, -2);
+                    let output = '';
+                    arrayObjects[num].listTagDto.forEach(tag => {
+                        output += '<a href="#">' + tag.name + '</a>, ';
+                    });
+                    if (output !== '') {
+                        output = output.slice(0, -2);
+                    }
+                    cardDiv.children[0].children[1].children[3].innerHTML = output;
+                    cardDeckDiv.appendChild(cardDiv);
+                    numCardsInDeck--;
                 }
-                cardDiv.children[0].children[1].children[3].innerHTML = output;
-                cardDeckDiv.appendChild(cardDiv);
-                numCardsInDeck--;
             }
-        }
-        return mainDiv;
-    });
+            return mainDiv;
+        });
+}
 
+createPagination(url);
 init();
 
 function showPage(event, num) {
@@ -67,6 +75,25 @@ function showPage(event, num) {
 async function init() {
     await pagination.showPage(null, 1);
 }
+
+let sortByReputationButton = document.getElementById('reputation');
+sortByReputationButton.addEventListener('click', () => {
+        createPagination(paginationByReputation);
+        init();
+    }
+);
+let sortByNameButton = document.getElementById('new_users'); // Дурацкий ID конечно у кнопки
+sortByNameButton.addEventListener('click', () => {
+        createPagination(paginationByNewcomers);
+        init();
+    }
+)
+let sortByVotesButton = document.getElementById('voters'); // Дурацкий ID конечно у кнопки
+sortByVotesButton.addEventListener('click', () => {
+        createPagination(paginationByVotes);
+        init();
+    }
+)
 
 document.getElementById("filterByUser").oninput = async function() {
     pagination.filter=document.getElementById("filterByUser").value;
