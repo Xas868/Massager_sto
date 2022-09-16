@@ -115,7 +115,9 @@ function makeTrackedCard(){
             .then(response => {
                 if (selectedValue === undefined) {
                     errorMessageTrackedTag.innerHTML = '<p>метка с таким именем не существует</p>'
-                    setTimeout(() => errorMessageTrackedTag.innerHTML = '', 2000)
+                    iptAddTrackedTag.addEventListener('click', () => {
+                        errorMessageTrackedTag.innerHTML = ''
+                    })
                     errorMessageTrackedTag.data = response
                 }
             });
@@ -173,7 +175,9 @@ function makeIgnoredCard(){
             .then(response => {
                 if (selectedValue === undefined) {
                     errorMessageIgnoredTag.innerHTML = '<p>метка с таким именем не существует</p>'
-                    setTimeout(() => errorMessageIgnoredTag.innerHTML = '', 2000)
+                    iptAddIgnoredTag.addEventListener('click', () => {
+                        errorMessageIgnoredTag.innerHTML = ''
+                    })
                     errorMessageIgnoredTag.data = response
                 }
             });
