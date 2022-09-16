@@ -193,7 +193,6 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
-
     //Получаем новых пользователей
     @Test
     @DataSet(cleanBefore = true, cleanAfter = true,
