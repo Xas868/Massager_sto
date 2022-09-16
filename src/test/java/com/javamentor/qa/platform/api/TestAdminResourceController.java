@@ -23,15 +23,16 @@ public class TestAdminResourceController extends AbstractClassForDRRiderMockMVCT
     private final String publicUrl = "/api/user/question/count";
     private final String testUsername = "user1@mail.ru";
     private final String testPassword = "user1";
-    private final long id = 1;
+    private final long id = 2;
 
     @Test
     @DataSet(cleanBefore = true, cleanAfter = true, value = "dataset/AdminResourceController/users.yml", strategy = SeedStrategy.REFRESH)
     public void shouldBanUser() throws Exception {
         String token = getToken(testUsername, testPassword);
+        String token2 = getToken("user2@mail.ru", "user1");
         // Проверка того, что api изначально доступен
         this.mockMvc.perform(get(publicUrl)
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", "Bearer " + token2))
                 .andDo(print()).andExpect(status().isOk());
 
         // Блокировка юзера
@@ -46,7 +47,7 @@ public class TestAdminResourceController extends AbstractClassForDRRiderMockMVCT
 
         // Проверка того, что заблокированный юзер не может использовать api
         this.mockMvc.perform(get(publicUrl)
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", "Bearer " + token2))
                 .andDo(print()).andExpect(status().isForbidden());
     }
 

@@ -165,17 +165,14 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.[0].name").value("user_3")) // nickname not auth
                 .andExpect(jsonPath("$.[0].image").value("avatar3.png")) // image not auth
                 .andExpect(jsonPath("$.[0].lastMessage").value("Test message №1")) // last message
-                .andExpect(jsonPath("$.[0].persistDateTimeLastMessage").value("2022-06-23T23:02:51.654")) // date message
                 .andExpect(jsonPath("$.[1].id").value(2))
                 .andExpect(jsonPath("$.[1].name").value("user_2"))
                 .andExpect(jsonPath("$.[1].image").value("avatar2.png"))
                 .andExpect(jsonPath("$.[1].lastMessage").value("Test message №3"))
-                .andExpect(jsonPath("$.[1].persistDateTimeLastMessage").value("2022-04-07T23:02:51.654"))
                 .andExpect(jsonPath("$.[2].id").value(5))
                 .andExpect(jsonPath("$.[2].name").value("user_3"))
                 .andExpect(jsonPath("$.[2].image").value("avatar3.png"))
-                .andExpect(jsonPath("$.[2].lastMessage").value("Test message №5"))
-                .andExpect(jsonPath("$.[2].persistDateTimeLastMessage").value("2022-06-22T23:02:51.654"));
+                .andExpect(jsonPath("$.[2].lastMessage").value("Test message №5"));
     }
 
     @Test

@@ -1,6 +1,6 @@
 role:
   - id: 1
-    name: "ROLE_ADMIN"
+    name: "ROLE_USER"
 user_entity:
   - id: 100
     password: "$2a$10$Dbl/hKOLzLUVMn/ahtgPcOA6IrZzLE2bVBW/sDumCSUi8KZTecLnC"
