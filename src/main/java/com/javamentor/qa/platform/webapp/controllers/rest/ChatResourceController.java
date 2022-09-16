@@ -45,7 +45,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -101,8 +100,7 @@ public class ChatResourceController {
             @Parameter(name = "Искомое название чата.",
                     description = "Поиск чата по названию name. Ищет все групповые чаты с таким названием и/или чаты в которых собеседника так зовут.")
             String name) {
-        PaginationData properties;
-        properties = new PaginationData(currentPage, items, name == null ? ChatPageDtoDaoByUserIdImpl.class.getSimpleName() : ChatPageDtoDaoByUserIdAndNameImpl.class.getSimpleName());
+        PaginationData properties = new PaginationData(currentPage, items, name == null ? ChatPageDtoDaoByUserIdImpl.class.getSimpleName() : ChatPageDtoDaoByUserIdAndNameImpl.class.getSimpleName());
         properties.getProps().put("userId", ((User) authentication.getPrincipal()).getId());
         properties.getProps().put("qName", name);
         return new ResponseEntity<>(chatDtoService.getPageDto(properties), HttpStatus.OK);
@@ -265,15 +263,14 @@ public class ChatResourceController {
         Optional<User> user = userService.getById(userId);
 
         if (user.isPresent() && groupChat.isPresent()) {
-            if (groupChat.isPresent()) {
-                Set<User> userSet = groupChat.get().getUsers();
-                userSet.add(user.get());
-                userSet.add((User) authentication.getPrincipal());
-                groupChatRoomService.update(groupChat.get());
+            Set<User> userSet = groupChat.get().getUsers();
+            userSet.add(user.get());
+            groupChatRoomService.update(groupChat.get());
 
-                return new ResponseEntity<>("userAdded", HttpStatus.OK);
-            }
+            return new ResponseEntity<>("userAdded", HttpStatus.OK);
         }
+
+
         return new ResponseEntity<>("it's bad request", HttpStatus.BAD_REQUEST);
     }
 }
