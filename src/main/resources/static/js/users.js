@@ -1,6 +1,6 @@
-const paginationByReputation = '/api/user/reputation';
-const paginationByVotes = '/api/user/votes';
-const paginationByNewcomers = '/api/user/new';
+const paginationByReputation = 'http://localhost:8091/api/user/reputation';
+const paginationByVotes = 'http://localhost:8091/api/user/vote';
+const paginationByNewcomers = 'http://localhost:8091/api/user/new';
 
 
 activateSideBar()
@@ -76,26 +76,26 @@ async function init() {
     await pagination.showPage(null, 1);
 }
 
+document.getElementById("filterByUser").oninput = async function() {
+    pagination.filter=document.getElementById("filterByUser").value;
+    await init();
+};
+
 let sortByReputationButton = document.getElementById('reputation');
 sortByReputationButton.addEventListener('click', () => {
         createPagination(paginationByReputation);
         init();
     }
 );
-let sortByNameButton = document.getElementById('new_users'); // Дурацкий ID конечно у кнопки
+let sortByNameButton = document.getElementById('new_users');
 sortByNameButton.addEventListener('click', () => {
         createPagination(paginationByNewcomers);
         init();
     }
 )
-let sortByVotesButton = document.getElementById('voters'); // Дурацкий ID конечно у кнопки
+let sortByVotesButton = document.getElementById('voters');
 sortByVotesButton.addEventListener('click', () => {
         createPagination(paginationByVotes);
         init();
     }
 )
-
-document.getElementById("filterByUser").oninput = async function() {
-    pagination.filter=document.getElementById("filterByUser").value;
-    await init();
-};
