@@ -19,4 +19,5 @@ public class ChatDto {
     private String image;
     private String lastMessage;
     private LocalDateTime persistDateTimeLastMessage;
+    private boolean isChatPin;
 }
