@@ -54,28 +54,20 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
             })
     public void testGetChatsByName() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("test101@mail.ru", "test101");
-        mockMvc.perform(get("/api/user/chat")
+        mockMvc.perform(get("/api/user/chat/")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
-
                 .andDo(MockMvcResultHandlers.print())
                 // status check
                 .andExpect(status().isOk())
-                // Expected to get three chats: 101, 102, 104 and 105 since user101 is not in chat 103
-                .andExpect(jsonPath("$[0].id").value(105))
-                .andExpect(jsonPath("$[1].id").value(104))
-                .andExpect(jsonPath("$[2].id").value(102))
-                .andExpect(jsonPath("$[3].id").value(101))
+                // Expected to get three chats: 101, 102 and 104 since user101 is not in chat 103 or chat 105
+                .andExpect(jsonPath("$.items[0].id").value(104))
+                .andExpect(jsonPath("$.items[1].id").value(102))
+                .andExpect(jsonPath("$.items[2].id").value(101))
                 // since $[1] and $[2] chats are single chats their name should be the name of opposing person who our user chatting with
-                .andExpect(jsonPath("$[0].name").value("group chat with id = 105"))
-                .andExpect(jsonPath("$[1].name").value("test105"))
-                .andExpect(jsonPath("$[2].name").value("test102"))
-                .andExpect(jsonPath("$[3].name").value("group chat with id = 101"))
-                // test if all chats sorted according to the date of last persistent message in them
-                .andExpect(jsonPath("$[0].persistDateTimeLastMessage").value("2021-12-15T05:00:00"))
-                .andExpect(jsonPath("$[1].persistDateTimeLastMessage").value("2021-12-12T05:00:00"))
-                .andExpect(jsonPath("$[2].persistDateTimeLastMessage").value("2021-12-06T05:00:00"))
-                .andExpect(jsonPath("$[3].persistDateTimeLastMessage").value("2021-12-03T05:00:00"));
+                .andExpect(jsonPath("$.items[0].name").value("test105"))
+                .andExpect(jsonPath("$.items[1].name").value("test102"))
+                .andExpect(jsonPath("$.items[2].name").value("group chat with id = 101"));
     }
 
 
@@ -92,18 +84,13 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
             })
     public void testGetChatsByNameEmptyList() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("test101@mail.ru", "test101");
-        System.out.println("НАчало метода");
-        mockMvc.perform(get("/api/user/chat")
+        mockMvc.perform(get("/api/user/chat/")
                         .header(AUTHORIZATION, USER_TOKEN)
-                        //Sending 105 as param so we expect to get only chats that contain '105' in the title or have
-                        // user with this name if it's a single chat
-                        .param("name", "105")
-                        .contentType(MediaType.APPLICATION_JSON))
-
-//                .andDo(MockMvcResultHandlers.print())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("name", "non-existent-chat-name"))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("group chat with id = 105"))
-                .andExpect(jsonPath("$[1].name").value("test105"));
+                .andExpect(jsonPath("$.items.size()").value(0));
     }
 
     @Test
@@ -119,16 +106,17 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
             })
     public void testGetChatsByOnlyOneResult() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("test101@mail.ru", "test101");
-        mockMvc.perform(get("/api/user/chat")
+        mockMvc.perform(get("/api/user/chat/")
                         .header(AUTHORIZATION, USER_TOKEN)
                         // There is no chat with this name so we expect to not get any results
-                        .param("id", "102")
+                        .param("name", "test102")
                         .contentType(MediaType.APPLICATION_JSON))
 
                 .andDo(MockMvcResultHandlers.print())
                 // status check
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("test102"));
+                .andExpect(jsonPath("$.items.size()").value(1))
+                .andExpect(jsonPath("$.items[0].name").value("test102"));
     }
 
     //Тесты для SingleChatDTO авторизированного пользователя

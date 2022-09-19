@@ -15,9 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -562,8 +560,6 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].answerId").value(100))
-                .andExpect(jsonPath("$[0].lastRedactionDate").value("2021-12-14T06:09:52.716"))
-                .andExpect(jsonPath("$[0].persistDate").value("2021-12-14T06:09:52.716"))
                 .andExpect(jsonPath("$[0].text").value("Hello Test from Comment on the answer"))
                 .andExpect(jsonPath("$[0].reputation").value(100))
                 .andExpect(jsonPath("$[0].userId").value(100));
@@ -592,7 +588,6 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].answerId").value(100))
                 .andExpect(jsonPath("$[0].questionId").value(100))
-                .andExpect(jsonPath("$[0].persistDate", containsString(new SimpleDateFormat("yyyy-MM-dd'T'hh").format(new Date()))))
                 .andExpect(jsonPath("$[0].htmlBody").value(""));
     }
 }

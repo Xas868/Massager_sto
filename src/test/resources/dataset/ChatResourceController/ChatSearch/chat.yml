@@ -5,17 +5,17 @@ chat:
     persist_date: 2021-12-09 19:41:18.252588
 
   - id: 102
-    chat_type: 2
+    chat_type: 0
     image: "image for single chat id 102"
     persist_date: 2021-12-09 19:42:18.252588
 
   - id: 103
-    chat_type: 2
+    chat_type: 0
     image: "image for single chat id 103"
     persist_date: 2021-12-09 19:43:18.252588
 
   - id: 104
-    chat_type: 2
+    chat_type: 0
     image: "image for single chat id 104"
     persist_date: 2021-12-09 19:44:18.252588
 

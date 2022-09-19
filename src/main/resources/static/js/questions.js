@@ -63,6 +63,8 @@ async function getRelatedTags(numItems){
 
 getRelatedTags(3);
 
+let errorMessageTrackedTag;
+let errorMessageIgnoredTag;
 let selectedValue;
 let divTrackedList;
 let divIgnoredList;
@@ -80,6 +82,7 @@ function makeTrackedCard(){
     btnMakeTrackedCard.parentElement.innerHTML =
         '<div class="mb-1" id="trackedList"></div>' +
         '<div>' +
+            '<p id="error_message"></p>' +
             '<span class="d-inline-block">' +
                 '<input class="form-control" list="listTrackedTag" type="text" id="ipt_add_tag_tracked">' +
                 '<datalist id="listTrackedTag"></datalist>' +
@@ -88,7 +91,7 @@ function makeTrackedCard(){
         '       <a class="btn btn-info mb-1" id="btn_add_tracked_tag" href="#">+</a>' +
             '</span>' +
         '</div>';
-
+    errorMessageTrackedTag = document.querySelector("#error_message");
     listTrackedTag = document.querySelector("#listTrackedTag");
     iptAddTrackedTag = document.querySelector("#ipt_add_tag_tracked");
     iptAddTrackedTag.addEventListener('input', () => {
@@ -108,7 +111,16 @@ function makeTrackedCard(){
             .then(() => createPagination())
             .then(() => generateFilter())
             .then(res => questionPagination.filter = res)
-            .then(() => init());
+            .then(() => init())
+            .then(response => {
+                if (selectedValue === undefined) {
+                    errorMessageTrackedTag.innerHTML = '<p>метка с таким именем не существует</p>'
+                    iptAddTrackedTag.addEventListener('click', () => {
+                        errorMessageTrackedTag.innerHTML = ''
+                    })
+                    errorMessageTrackedTag.data = response
+                }
+            });
     })
 }
 
@@ -129,6 +141,7 @@ function makeIgnoredCard(){
     btnMakeIgnoredCard.parentElement.innerHTML =
         '<div class="mb-1" id="ignoredList"> </div>' +
         '<div>' +
+            '<p id="error_message2"></p>' +
             '<div class="d-inline-block">' +
                 '<input class="form-control" list="listIgnoredTag" type="text" id="ipt_add_tag_ignored">' +
                 '<datalist id="listIgnoredTag"></datalist>' +
@@ -138,6 +151,7 @@ function makeIgnoredCard(){
             '</div>' +
         '</div>';
 
+    errorMessageIgnoredTag = document.querySelector("#error_message2");
     listIgnoredTag = document.querySelector("#listIgnoredTag");
     iptAddIgnoredTag = document.querySelector("#ipt_add_tag_ignored");
     iptAddIgnoredTag.addEventListener('input', () => {
@@ -157,7 +171,16 @@ function makeIgnoredCard(){
             .then(() => createPagination())
             .then(() => generateFilter())
             .then(res => questionPagination.filter = res)
-            .then(() => init());
+            .then(() => init())
+            .then(response => {
+                if (selectedValue === undefined) {
+                    errorMessageIgnoredTag.innerHTML = '<p>метка с таким именем не существует</p>'
+                    iptAddIgnoredTag.addEventListener('click', () => {
+                        errorMessageIgnoredTag.innerHTML = ''
+                    })
+                    errorMessageIgnoredTag.data = response
+                }
+            });
     })
 }
 

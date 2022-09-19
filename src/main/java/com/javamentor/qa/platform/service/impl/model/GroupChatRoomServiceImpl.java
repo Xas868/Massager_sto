@@ -14,11 +14,10 @@ import java.util.Optional;
 @Service
 public class GroupChatRoomServiceImpl extends ReadWriteServiceImpl<GroupChat,Long> implements GroupChatRoomService {
 
-    @Autowired
-    private GroupChatRoomDao groupChatRoomDao;
+    private final GroupChatRoomDao groupChatRoomDao;
 
-    public GroupChatRoomServiceImpl(ReadWriteDao<GroupChat, Long> readWriteDao, GroupChatRoomDao groupChatRoomDao) {
-        super(readWriteDao);
+    public GroupChatRoomServiceImpl(GroupChatRoomDao groupChatRoomDao) {
+        super(groupChatRoomDao);
         this.groupChatRoomDao = groupChatRoomDao;
     }
 
