@@ -490,7 +490,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
         GroupChat groupChat = entityManager.createQuery
                         ("select groupChat from GroupChat groupChat join fetch groupChat.chat join fetch groupChat.users where groupChat.id=:id", GroupChat.class)
-                .setParameter("id", 101l)
+                .setParameter("id", 101L)
                 .getSingleResult();
         User user = entityManager.createQuery("select user from User user WHERE user.id = 101", User.class).getSingleResult();
         assertThat(groupChat.getUsers().contains(user)).isTrue();
@@ -526,17 +526,17 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     void testUserExistsInGroupChat() throws Exception {
         String USER_TOKEN = "Bearer " + getToken("test102@mail.ru", "test102");
 
-        mockMvc.perform(get("/api/user/chat/group/101")
+        mockMvc.perform(post("/api/user/chat/group/101/join")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest());
         GroupChat groupChat = entityManager.createQuery
                         ("select groupChat from GroupChat groupChat join fetch groupChat.chat join fetch groupChat.users where groupChat.id=:id", GroupChat.class)
-                .setParameter("id", 101l)
+                .setParameter("id", 101L)
                 .getSingleResult();
-        User user = entityManager.createQuery("select user from User user WHERE user.id = 101", User.class).getSingleResult();
-        assertThat(groupChat.getUsers().contains(user)).isTrue();
+        User user = entityManager.createQuery("select user from User user WHERE user.id = 102", User.class).getSingleResult();
+        assertThat(groupChat.getUsers().contains(user)).isFalse();
     }
 
     @Test
@@ -609,8 +609,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
         List<Long> userIds = new ArrayList<>();
         userIds.add(101L);
-        userIds.add(102l);
-        userIds.add(103l);
+        userIds.add(102L);
+        userIds.add(103L);
         CreateGroupChatDto createGroupChatDto = new CreateGroupChatDto();
         createGroupChatDto.setChatName("new Chat");
         createGroupChatDto.setUserIds(userIds);

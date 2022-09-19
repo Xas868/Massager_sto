@@ -259,9 +259,9 @@ public class ChatResourceController {
         Optional<GroupChat> groupChat = groupChatRoomService.getGroupChatAndUsers(id);
         Optional<User> user = userService.getById(userId);
 
-        if (groupChatRoomService.getGroupChatAndUsers(id).isPresent() && userService.getById(userId).isEmpty()) {
+        if (groupChatRoomService.getGroupChatAndUsers(id).isPresent() && userDtoService.findUserDtoById(userId).isEmpty()) {
 
-            return new ResponseEntity<>("it's bad request", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("no such user found", HttpStatus.BAD_REQUEST);
         }
 
         if (user.isPresent() && groupChat.isPresent()) {
