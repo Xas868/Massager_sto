@@ -12,9 +12,9 @@ import java.util.Optional;
 @Service
 public class MessageStarServiceImpl extends ReadWriteServiceImpl<MessageStar, Long> implements MessageStarService {
     private final MessageStarDao messageStarDao;
-    public MessageStarServiceImpl(@Qualifier("messageStarDaoImpl") ReadWriteDao<MessageStar, Long> messageStarDao, MessageStarDao messageStarDao1) {
+    public MessageStarServiceImpl(MessageStarDao messageStarDao) {
         super(messageStarDao);
-        this.messageStarDao = messageStarDao1;
+        this.messageStarDao = messageStarDao;
     }
 
     @Override
