@@ -65,7 +65,7 @@ function createPagination(url){
         });
 }
 
-createPagination(url);
+createPagination(paginationByReputation);
 init();
 
 function showPage(event, num) {
