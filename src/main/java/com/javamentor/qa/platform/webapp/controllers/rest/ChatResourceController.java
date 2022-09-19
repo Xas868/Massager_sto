@@ -1,9 +1,17 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.dao.impl.pagination.chatdto.ChatPageDtoDaoByUserIdAndNameImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.chatdto.ChatPageDtoDaoByUserIdImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoByGroupChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoBySingleChatId;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoFindInChatByWord;
-import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.dto.ChatDto;
+import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
+import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
+import com.javamentor.qa.platform.models.dto.GroupChatDto;
+import com.javamentor.qa.platform.models.dto.MessageDto;
+import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.chat.SingleChat;
@@ -14,7 +22,6 @@ import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.ChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
-import com.javamentor.qa.platform.service.abstracts.model.SingleChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.converters.GroupChatConverter;
@@ -37,7 +44,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,19 +55,17 @@ import java.util.Set;
 public class ChatResourceController {
     private final MessageDtoService messageDtoService;
     private final ChatDtoService chatDtoService;
-    private final SingleChatRoomService singleChatRoomService;
+    private final SingleChatService singleChatService;
     private final SingleChatConverter singleChatConverter;
     private final ChatRoomService chatRoomService;
     private final GroupChatRoomService groupChatRoomService;
-    private final SingleChatService singleChatService;
     private final UserDtoService userDtoService;
     private final GroupChatConverter groupChatConverter;
     private final UserService userService;
 
-    private ChatResourceController(MessageDtoService messageDtoService, ChatDtoService chatDtoService, SingleChatRoomService singleChatRoomService, SingleChatConverter singleChatConverter, ChatRoomService chatRoomService, GroupChatRoomService groupChatRoomService, SingleChatService singleChatService, UserDtoService userDtoService, GroupChatConverter groupChatConverter, UserService userService) {
+    private ChatResourceController(MessageDtoService messageDtoService, ChatDtoService chatDtoService, SingleChatConverter singleChatConverter, ChatRoomService chatRoomService, GroupChatRoomService groupChatRoomService, SingleChatService singleChatService, UserDtoService userDtoService, GroupChatConverter groupChatConverter, UserService userService) {
         this.messageDtoService = messageDtoService;
         this.chatDtoService = chatDtoService;
-        this.singleChatRoomService = singleChatRoomService;
         this.singleChatConverter = singleChatConverter;
         this.chatRoomService = chatRoomService;
         this.groupChatRoomService = groupChatRoomService;
@@ -69,6 +73,34 @@ public class ChatResourceController {
         this.userDtoService = userDtoService;
         this.groupChatConverter = groupChatConverter;
         this.userService = userService;
+    }
+
+    @Operation(summary = "Получение пагинированного списка чатов.", description = "Получение пагинированного списка чатов.")
+    @ApiResponse(responseCode = "200", description = "Список чатов получен.", content = {
+            @Content(mediaType = "application/json")
+    })
+    @ApiResponse(responseCode = "400", description = "Список чатов не получен.", content = {
+            @Content(mediaType = "application/json")
+    })
+    @GetMapping()
+    public ResponseEntity<PageDTO<ChatDto>> getPagedUserChats (
+            Authentication authentication,
+            @RequestParam(name = "currentPage", defaultValue = "1")
+            @Parameter(name = "Номер текущей страницы.",
+                    description = "Необязательный параметр. Отвечает за пагинацию.")
+            int currentPage,
+            @RequestParam(name = "items", defaultValue = "10")
+            @Parameter(name = "Количество чатов на странице.",
+                    description = "Необязательный параметр. Позволяет настроить количество чатов на одной странице. По-умолчанию равен 10.")
+            int items,
+            @RequestParam(name = "name", required = false)
+            @Parameter(name = "Искомое название чата.",
+                    description = "Поиск чата по названию name. Ищет все групповые чаты с таким названием и/или чаты в которых собеседника так зовут.")
+            String name) {
+        PaginationData properties = new PaginationData(currentPage, items, name == null ? ChatPageDtoDaoByUserIdImpl.class.getSimpleName() : ChatPageDtoDaoByUserIdAndNameImpl.class.getSimpleName());
+        properties.getProps().put("userId", ((User) authentication.getPrincipal()).getId());
+        properties.getProps().put("qName", name);
+        return new ResponseEntity<>(chatDtoService.getPageDto(properties), HttpStatus.OK);
     }
 
     @GetMapping("/single")
@@ -86,7 +118,7 @@ public class ChatResourceController {
     })
     @PostMapping("/single")
     public ResponseEntity<?> createSingleChatAndFirstMessageDto(@Valid @RequestBody CreateSingleChatDto createSingleChatDto) throws Exception {
-        SingleChat singleChat = singleChatRoomService.createSingleChatAndFirstMessage(createSingleChatDto.getMessage(), singleChatConverter.createSingleChatDtoToSingleChat(createSingleChatDto));
+        SingleChat singleChat = singleChatService.createSingleChatAndFirstMessage(createSingleChatDto.getMessage(), singleChatConverter.createSingleChatDtoToSingleChat(createSingleChatDto));
         SingleChatDto singleChatDto = SingleChatDto.builder()
                 .id(singleChat.getId())
                 .name(singleChat.getUseTwo().getNickname())
@@ -217,12 +249,13 @@ public class ChatResourceController {
     @Operation(summary = "Добавление пользователя в group чат.", description = "Добавление пользователя в group чат по его id")
     @PostMapping("/group/{id}/join")
     public ResponseEntity<String> addUserInGroupChat(
+            Authentication authentication,
             @PathVariable("id")
             @Parameter(name = "Id group чата.", required = true, description = "Id group чата является обязательным параметром.")
-                    Long id,
+            Long id,
             @RequestParam("userId")
             @Parameter(name = "id Пользователя", required = true, description = "Id пользователя является обязательным параметром.")
-                    Long userId) {
+            Long userId) {
         Optional<GroupChat> groupChat = groupChatRoomService.getGroupChatAndUsers(id);
         Optional<User> user = userService.getById(userId);
 
@@ -237,6 +270,4 @@ public class ChatResourceController {
 
         return new ResponseEntity<>("it's bad request", HttpStatus.BAD_REQUEST);
     }
-
-
 }

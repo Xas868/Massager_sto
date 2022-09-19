@@ -1,6 +1,5 @@
 package com.javamentor.qa.platform.dao.abstracts.dto;
 
-import com.javamentor.qa.platform.models.dto.ChatDto;
 import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
 
@@ -11,6 +10,4 @@ public interface ChatDtoDao {
     Optional<GroupChatDto> getGroupChatDto(long chatId);
 
     List<SingleChatDto> getAllSingleChatDtoByUserId(Long userId);
-
-    List<ChatDto> getAllChatsByNameAndUserId(String chatName, Long userId);
 }

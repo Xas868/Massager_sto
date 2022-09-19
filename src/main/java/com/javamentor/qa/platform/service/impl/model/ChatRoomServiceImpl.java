@@ -9,12 +9,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ChatRoomServiceImpl extends ReadWriteServiceImpl<Chat, Long> implements ChatRoomService {
-    @Autowired
-    private ChatRoomDao chatRoomDao;
 
-    public ChatRoomServiceImpl(ReadWriteDao<Chat, Long> readWriteDao, ChatRoomDao chatRoomDao) {
-        super(readWriteDao);
-        this.chatRoomDao = chatRoomDao;
+    public ChatRoomServiceImpl(ChatRoomDao chatRoomDao) {
+        super(chatRoomDao);
     }
 }
 
