@@ -37,6 +37,9 @@ public class Chat {
     @Column(columnDefinition = "int2")
     private ChatType chatType;
 
+    @Column(name = "is_global", nullable = false, columnDefinition = "boolean default false")
+    private boolean isGlobal;
+
 
     public Chat(ChatType chatType) {
         this.chatType = chatType;

@@ -4,14 +4,15 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Objects;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -88,4 +89,27 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
                 .getResultList().stream().findFirst().orElse(null)))).isTrue();
 
     }
+    @Test
+    @DataSet(cleanBefore = true, cleanAfter = true,
+            value = {"dataset/MessageResourceController/testGetAllMessageInGlobalChat/users.yml",
+                    "dataset/MessageResourceController/testGetAllMessageInGlobalChat/messages.yml"
+            },
+            strategy = SeedStrategy.REFRESH)
+    public void testGetMessageInGlobalChat() throws Exception {
+
+        String token = getToken("user1@mail.ru", "user1");
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/message/global")
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + token)
+
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items[0].id").value(2)) // id message
+                .andExpect(jsonPath("$.items[0].message").value("test_message_102"))
+                .andExpect(jsonPath("$.items[1].id").value(4))
+                .andExpect(jsonPath("$.items[1].message").value("test_message_104"));
+    }
+
 }
