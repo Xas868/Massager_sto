@@ -83,7 +83,7 @@ public class ChatResourceController {
             @Content(mediaType = "application/json")
     })
     @GetMapping()
-    public ResponseEntity<PageDTO<ChatDto>> getPagedUserChats (
+    public ResponseEntity<PageDTO<ChatDto>> getPagedUserChats(
             Authentication authentication,
             @RequestParam(name = "currentPage", defaultValue = "1")
             @Parameter(name = "Номер текущей страницы.",
@@ -259,12 +259,10 @@ public class ChatResourceController {
         Optional<GroupChat> groupChat = groupChatRoomService.getGroupChatAndUsers(id);
         Optional<User> user = userService.getById(userId);
 
-        if (groupChatRoomService.getGroupChatAndUsers(id).isPresent() && userDtoService.findUserDtoById(userId).isEmpty()) {
-
-            return new ResponseEntity<>("no such user found", HttpStatus.BAD_REQUEST);
-        }
-
         if (user.isPresent() && groupChat.isPresent()) {
+            if (groupChat.get().getUsers().contains(user.get())) {
+                return new ResponseEntity<>("userPresent", HttpStatus.BAD_REQUEST);
+            }
             Set<User> userSet = groupChat.get().getUsers();
             userSet.add(user.get());
             groupChatRoomService.update(groupChat.get());
