@@ -1,5 +1,0 @@
-group_chat:
-  - chat_id: 101
-    title: "group chat with id = 101"
-  - chat_id: 105
-    title: "group chat with id = 105"
