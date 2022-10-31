@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -27,6 +28,11 @@ public class TestCommentResourceController extends AbstractClassForDRRiderMockMV
                         .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user1")))
                 .andDo(print())
                 .andExpect(status().isOk());
+        assertThat(entityManager.createQuery("from Comment c where c.id = :id")
+                .setParameter("id", (long) 1)
+                .getResultList()
+                .isEmpty())
+                .isEqualTo(false);
     }
 
     // Пользователь передает неверный questionId
