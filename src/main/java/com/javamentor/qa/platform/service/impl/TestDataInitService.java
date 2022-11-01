@@ -109,6 +109,7 @@ public class TestDataInitService {
             GroupChat groupChat = GroupChat.builder()
                     .chat(Chat.builder().chatType(ChatType.GROUP).build())
                     .title("GroupChat" + i)
+                    .image("image"+i)
                     .build();
             groupChats.add(groupChat);
         }
