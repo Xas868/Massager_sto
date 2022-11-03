@@ -145,6 +145,12 @@ public class ChatResourceController {
         return new ResponseEntity<>("SingleChat deleted", HttpStatus.OK);
     }
 
+    @GetMapping("/group")
+    public ResponseEntity<List<GroupChatDto>> getAllGroupChatDtoByUserId(Authentication authentication) {
+        User currentUser = (User) authentication.getPrincipal();
+        return new ResponseEntity<>(chatDtoService.getAllGroupChatDtoByUserId(currentUser.getId()), HttpStatus.OK);
+    }
+
     @Operation(summary = "Создание group чата.", description = "Создание group чата")
     @ApiResponse(responseCode = "200",
             description = "Групповой чат создан",
