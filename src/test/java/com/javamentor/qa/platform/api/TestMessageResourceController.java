@@ -16,8 +16,8 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
 
     //идеальный вариант, есть глобальный чат, получаем все сообщения, сверяем порядок создания
     @Test
-    @Sql("script.testMessageResourceController/shouldGetAllMessagesInGlobalChat/Before.sql")
-    @Sql(scripts = "script.testMessageResourceController/shouldGetAllMessagesInGlobalChat/After.sql",
+    @Sql("script/testMessageResourceController/shouldGetAllMessagesInGlobalChat/Before.sql")
+    @Sql(scripts = "script/testMessageResourceController/shouldGetAllMessagesInGlobalChat/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetAllMessageInGlobalChat() throws Exception {
 
@@ -45,10 +45,38 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
                 .andExpect(jsonPath("$.items[2].persistDateTime").value("2022-10-03T00:00:00"));
     }
 
+    //вариант c параметрами (такая же таблица как в 1 тесте, но ограничиваем выборку 2мя объектами
+    @Test
+    @Sql("script/testMessageResourceController/shouldGetAllMessageInGlobalChatWithVariables/Before.sql")
+    @Sql(scripts = "script/testMessageResourceController/shouldGetAllMessageInGlobalChatWithVariables/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void shouldGetAllMessageInGlobalChatWithVariables() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/message/global?currentPage=1&items=2")
+                        .contentType("application/json")
+                        .header("Authorization",
+                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items.size()").value(2))
+                .andExpect(jsonPath("$.items[0].id").value(104))
+                .andExpect(jsonPath("$.items[0].message").value("message_104"))
+                .andExpect(jsonPath("$.items[0].nickName").value("user100@mail.ru"))
+                .andExpect(jsonPath("$.items[0].userId").value(100))
+                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-10-05T00:00:00"))
+                .andExpect(jsonPath("$.items[1].id").value(103))
+                .andExpect(jsonPath("$.items[1].message").value("message_103"))
+                .andExpect(jsonPath("$.items[1].nickName").value("user101@mail.ru"))
+                .andExpect(jsonPath("$.items[1].userId").value(101))
+                .andExpect(jsonPath("$.items[1].persistDateTime").value("2022-10-04T00:00:00"));
+    }
+
+
     //вариант, когда глобального чата нет
     @Test
-    @Sql("script.testMessageResourceController/shouldGetZeroMessageInGlobalChat/Before.sql")
-    @Sql(scripts = "script.testMessageResourceController/shouldGetZeroMessageInGlobalChat/After.sql",
+    @Sql("script/testMessageResourceController/shouldGetZeroMessageInGlobalChat/Before.sql")
+    @Sql(scripts = "script/testMessageResourceController/shouldGetZeroMessageInGlobalChat/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetZeroMessageInGlobalChat() throws Exception {
 
@@ -64,8 +92,8 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
 
     //вариант, когда вход выполнен под ролью админа (403 ошибка)
     @Test
-    @Sql("script.testMessageResourceController/shouldHaventAccess/Before.sql")
-    @Sql(scripts = "script.testMessageResourceController/shouldHaventAccess/After.sql",
+    @Sql("script/testMessageResourceController/shouldHaventAccess/Before.sql")
+    @Sql(scripts = "script/testMessageResourceController/shouldHaventAccess/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldHaventAccess() throws Exception {
 

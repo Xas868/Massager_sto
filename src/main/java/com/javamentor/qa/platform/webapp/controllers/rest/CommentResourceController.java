@@ -58,4 +58,6 @@ public class CommentResourceController {
         commentQuestionService.persist(commentQuestion);
         return new ResponseEntity<>("Comment successfully added", HttpStatus.OK);
     }
+
+
 }
