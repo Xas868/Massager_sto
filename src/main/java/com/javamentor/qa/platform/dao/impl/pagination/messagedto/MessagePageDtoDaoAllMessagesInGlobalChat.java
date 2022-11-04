@@ -23,7 +23,7 @@ public class MessagePageDtoDaoAllMessagesInGlobalChat implements PageDtoDao<Mess
         return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.MessageDto " +
                         "(m.id, " +
                         "m.message, " +
-                        "m.userSender.nickname, " +
+                        "m.userSender.fullName, " +
                         "m.userSender.id, " +
                         "m.userSender.imageLink, " +
                         "m.persistDate) from Message as m inner join Chat as c on c.id = m.chat.id " +
