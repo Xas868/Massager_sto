@@ -27,7 +27,8 @@ public class AnswerCommentPageDtoDaoByIdImpl implements PageDtoDao<AnswerComment
                         "(SELECT sum(r.count) FROM Reputation r where r.answer.id = :answerId)) " +
                         "FROM Comment as c " +
                         "JOIN CommentAnswer as ca on c.id = ca.comment.id " +
-                        "where ca.answer.id = :answerId and c.commentType = 1", AnswerCommentDto.class)
+                        "where ca.answer.id = :answerId and c.commentType = 1 " +
+                        "order by c.persistDateTime", AnswerCommentDto.class)
                 .setParameter("answerId", properties.getProps().get("answerId"))
                 .setFirstResult(offset)
                 .setMaxResults(itemsOnPage)
