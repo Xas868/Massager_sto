@@ -20,22 +20,16 @@ public abstract class DtoServiceImpl<T> {
         if (!daoMap.containsKey(properties.getDaoName())) {
             throw new NoSuchDaoException("There is no dao with name: " + properties.getDaoName());
         }
-        if (!daoMap.containsKey(properties.getCurrentPage())) {
-            throw new PageException("There is no current page ");
-        }
-        if (!daoMap.containsKey(properties.getItemsOnPage())) {
-            throw new PageException("There is no items on page");
-        }
         if (properties.getCurrentPage() < 0) {
+            throw new PageException("The number can`t be less than 0");
+        }
+        if (properties.getItemsOnPage() < 0) {
             throw new PageException("The number can`t be less than 0");
         }
         PageDtoDao<T> currentDao = daoMap.get(properties.getDaoName());
         PageDTO<T> pageDTO = new PageDTO<>();
         pageDTO.setCurrentPageNumber(properties.getCurrentPage());
         pageDTO.setItems(currentDao.getPaginationItems(properties));
-        if (pageDTO.getItems().size() < 0) {
-            throw new PageException("The number can`t be less than 0");
-        }
         pageDTO.setItemsOnPage(pageDTO.getItems().size());
         pageDTO.setTotalResultCount(currentDao.getTotalResultCount(properties.getProps()));
         pageDTO.setTotalPageCount((int) Math.ceil((double) pageDTO.getTotalResultCount() / properties.getItemsOnPage()));
