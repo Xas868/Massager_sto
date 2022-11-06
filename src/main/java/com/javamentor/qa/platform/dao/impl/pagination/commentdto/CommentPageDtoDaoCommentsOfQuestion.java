@@ -30,7 +30,7 @@ public class CommentPageDtoDaoCommentsOfQuestion implements PageDtoDao<QuestionC
                         "c.comment.user.id, " +
                         "c.comment.user.imageLink, " +
                         "(coalesce((select sum(r.count) from Reputation r where r.question.id=c.question.id), 0))) " +
-                        "from CommentQuestion as c where c.question.id = :questionId and c.comment.commentType=1" +
+                        "from CommentQuestion as c where c.question.id = :questionId and c.comment.commentType=1 " +
                         "order by c.comment.persistDateTime desc", QuestionCommentDto.class)
                 .setParameter("questionId", properties.getProps().get("questionId"))
                 .setFirstResult(firstResultOffset)
