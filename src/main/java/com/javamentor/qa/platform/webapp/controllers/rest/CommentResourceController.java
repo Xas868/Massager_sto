@@ -1,8 +1,11 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.dao.impl.pagination.commentdto.CommentPageDtoDaoCommentsOfQuestion;
+import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,11 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -28,11 +27,13 @@ public class CommentResourceController {
 
     private final QuestionService questionService;
     private final CommentQuestionService commentQuestionService;
+    private final CommentDtoService commentDtoService;
 
     @Autowired
-    public CommentResourceController(QuestionService questionService, CommentQuestionService commentQuestionService) {
+    public CommentResourceController(QuestionService questionService, CommentQuestionService commentQuestionService, CommentDtoService commentDtoService) {
         this.questionService = questionService;
         this.commentQuestionService = commentQuestionService;
+        this.commentDtoService = commentDtoService;
     }
 
     @Operation(
@@ -58,4 +59,27 @@ public class CommentResourceController {
         commentQuestionService.persist(commentQuestion);
         return new ResponseEntity<>("Comment successfully added", HttpStatus.OK);
     }
+
+    @Operation(
+            summary = "Получение пагинированного списка комментариев к вопросу по id",
+            description = "Получение пагинированного списка комментариев к вопросу по id"
+    )
+    @ApiResponse(responseCode = "200", description = "Комментарии получены", content = {
+            @Content(mediaType = "application/json")
+    })
+    @ApiResponse(responseCode = "400", description = "Комментарии не получены", content = {
+            @Content(mediaType = "application/json")
+    })
+    @GetMapping("/question/{questionId}")
+    public ResponseEntity<?> getCommentsOfQuestion(@PathVariable Long questionId, @RequestParam(defaultValue = "1") int currentPage,
+                                                   @RequestParam(defaultValue = "10") int items) {
+        PaginationData data = new PaginationData(
+                currentPage,
+                items,
+                CommentPageDtoDaoCommentsOfQuestion.class.getSimpleName());
+        data.getProps().put("questionId", questionId);
+        return new ResponseEntity<>(commentDtoService.getPageDto(data), HttpStatus.OK);
+    }
+
 }
+
