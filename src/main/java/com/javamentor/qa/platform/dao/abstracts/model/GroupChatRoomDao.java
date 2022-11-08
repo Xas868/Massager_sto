@@ -10,5 +10,4 @@ public interface GroupChatRoomDao extends ReadWriteDao<GroupChat, Long> {
     void deleteUserFromGroupChatById(Long id, Long userId);
 
     Optional<GroupChat> getGroupChatAndUsers(long id);
-    void updateImageGroupChat(long id, String image);
 }

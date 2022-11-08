@@ -33,10 +33,4 @@ public class GroupChatRoomDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> impl
 
     }
 
-    @Override
-    public void updateImageGroupChat(long id, String image) {
-        GroupChat temp = entityManager.find(GroupChat.class, id);
-        temp.setImage(image);
-        entityManager.merge(temp);
-    }
 }
