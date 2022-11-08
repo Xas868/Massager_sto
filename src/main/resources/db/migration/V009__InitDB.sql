@@ -1,9 +1,3 @@
-alter table group_chat
-    add column image varchar(255);
-
-alter table chat
-drop column image;
-
 alter table if exists group_chat
     add column author_id int8;
 
