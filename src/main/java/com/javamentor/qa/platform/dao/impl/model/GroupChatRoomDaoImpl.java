@@ -32,4 +32,5 @@ public class GroupChatRoomDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> impl
                 .setParameter("id", id));
 
     }
+
 }
