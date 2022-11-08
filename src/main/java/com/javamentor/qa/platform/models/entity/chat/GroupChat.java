@@ -31,6 +31,10 @@ public class GroupChat {
     @Column
     private String image;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "author_id")
+    private User userAuthor;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
     @MapsId
     private Chat chat = new Chat(ChatType.GROUP);
