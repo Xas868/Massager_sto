@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
 import com.javamentor.qa.platform.exception.NoSuchDaoException;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
+import com.javamentor.qa.platform.exception.PageException;
 
 import java.util.Map;
 
@@ -18,6 +19,12 @@ public abstract class DtoServiceImpl<T> {
     public PageDTO<T> getPageDto(PaginationData properties) {
         if (!daoMap.containsKey(properties.getDaoName())) {
             throw new NoSuchDaoException("There is no dao with name: " + properties.getDaoName());
+        }
+        if (properties.getCurrentPage() < 0) {
+            throw new PageException("The number can`t be less than 0");
+        }
+        if (properties.getItemsOnPage() < 0) {
+            throw new PageException("The number can`t be less than 0");
         }
         PageDtoDao<T> currentDao = daoMap.get(properties.getDaoName());
         PageDTO<T> pageDTO = new PageDTO<>();
