@@ -40,7 +40,7 @@ public class ChatPageDtoDaoByUserIdImpl implements PageDtoDao<ChatDto>{
                         "       end as chatName, " +
                         // Then we want to return image link for chat, but if it's a single chat then we have to return profile picture of a person who our person is chatting with.
                         "       case when chat.chatType = :group " +
-                        "               then chat.image " +
+                        "               then groupChat.image " +
                         "       else case when user1.id = :userId " +
                         "               then user2.imageLink " +
                         "               else case when user2.id = :userId " +

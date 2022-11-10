@@ -42,7 +42,7 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
                         "(" +
                         "gc.id, " +
                         "gc.title," +
-                        "gc.chat.image, " +
+                        "gc.image, " +
                         "gc.chat.persistDate" +
                         ") " +
                         "from GroupChat as gc where gc.id = :chatId " +

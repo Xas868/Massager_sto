@@ -28,6 +28,13 @@ public class GroupChat {
     @Column
     private String title;
 
+    @Column
+    private String image;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "author_id")
+    private User userAuthor;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
     @MapsId
     private Chat chat = new Chat(ChatType.GROUP);
@@ -62,12 +69,13 @@ public class GroupChat {
         GroupChat groupChat = (GroupChat) o;
         return Objects.equals(id, groupChat.id) &&
                 Objects.equals(title, groupChat.title) &&
+                Objects.equals(image, groupChat.image) &&
                 Objects.equals(chat, groupChat.chat) &&
                 Objects.equals(users, groupChat.users);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, chat, users);
+        return Objects.hash(id, title, image, chat, users);
     }
 }
