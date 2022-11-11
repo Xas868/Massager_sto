@@ -32,8 +32,8 @@ INSERT INTO answer (id, date_accept_time, html_body, is_deleted, is_deleted_by_m
  *  Table: comment
  */
 INSERT INTO comment (id, comment_type, last_redaction_date, persist_date, text, user_id) VALUES
-    (100, 1, DATE(NOW()), DATE(NOW()), 'Comment 100', 100),
-    (101, 1, DATE(NOW()), DATE(NOW()), 'Comment 101', 101);
+    (100, 0, DATE(NOW()), DATE(NOW()), 'Comment 100', 100),
+    (101, 0, DATE(NOW()), DATE(NOW()), 'Comment 101', 101);
 
 /*
  *  Table: comment_answer

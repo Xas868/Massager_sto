@@ -32,11 +32,11 @@ INSERT INTO answer (id, date_accept_time, html_body, is_deleted, is_deleted_by_m
  *  Table: comment
  */
 INSERT INTO comment (id, comment_type, last_redaction_date, persist_date, text, user_id) VALUES
-    (100, 1, DATE(NOW()), '2022-11-02 16:34:00.000000', 'Comment 100', 100),
-    (101, 1, DATE(NOW()), '2022-06-02 16:34:00.000000', 'Comment 101', 101),
-    (102, 1, DATE(NOW()), '2022-11-06 17:34:00.000000', 'Comment 102', 100),
-    (103, 1, DATE(NOW()), '2022-09-02 16:34:00.000000', 'Comment 103', 101),
-    (104, 1, DATE(NOW()), '2022-11-06 16:34:00.000000', 'Comment 104', 100);
+    (100, 0, DATE(NOW()), '2022-11-02 16:34:00.000000', 'Comment 100', 100),
+    (101, 0, DATE(NOW()), '2022-06-02 16:34:00.000000', 'Comment 101', 101),
+    (102, 0, DATE(NOW()), '2022-11-06 17:34:00.000000', 'Comment 102', 100),
+    (103, 0, DATE(NOW()), '2022-09-02 16:34:00.000000', 'Comment 103', 101),
+    (104, 0, DATE(NOW()), '2022-11-06 16:34:00.000000', 'Comment 104', 100);
 
 /*
  *  Table: comment_answer

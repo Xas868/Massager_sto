@@ -76,24 +76,23 @@ public class TestCommentResourceController extends AbstractClassForDRRiderMockMV
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalResultCount", Is.is(2)))
+                .andExpect(jsonPath("$.items.length()", Is.is(2)))
 
                 .andExpect(jsonPath("$.items[0].id", Is.is(100)))
-                .andExpect(jsonPath("$.items[0].answerId", Is.is(100)))
                 .andExpect(jsonPath("$.items[0].lastRedactionDate", isA(String.class)))
                 .andExpect(jsonPath("$.items[0].persistDate", isA(String.class)))
                 .andExpect(jsonPath("$.items[0].text", Is.is("Comment 100")))
                 .andExpect(jsonPath("$.items[0].userId", Is.is(100)))
                 .andExpect(jsonPath("$.items[0].imageLink", Is.is("/images/noUserAvatar.png")))
-                .andExpect(jsonPath("$.items[0].reputation", Is.is(2700)))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(1800)))
 
                 .andExpect(jsonPath("$.items[1].id", Is.is(101)))
-                .andExpect(jsonPath("$.items[1].answerId", Is.is(100)))
                 .andExpect(jsonPath("$.items[1].lastRedactionDate", isA(String.class)))
                 .andExpect(jsonPath("$.items[1].persistDate", isA(String.class)))
                 .andExpect(jsonPath("$.items[1].text", Is.is("Comment 101")))
                 .andExpect(jsonPath("$.items[1].userId", Is.is(101)))
                 .andExpect(jsonPath("$.items[1].imageLink", Is.is("/images/noUserAvatar.png")))
-                .andExpect(jsonPath("$.items[1].reputation", Is.is(2700)));
+                .andExpect(jsonPath("$.items[1].reputation", Is.is(900)));
     }
 
     // Пользователь авторизован как admin
@@ -205,31 +204,28 @@ public class TestCommentResourceController extends AbstractClassForDRRiderMockMV
                 .andExpect(jsonPath("$.totalPageCount", Is.is(4)))
 
                 .andExpect(jsonPath("$.items[0].id", Is.is(103)))
-                .andExpect(jsonPath("$.items[0].answerId", Is.is(100)))
                 .andExpect(jsonPath("$.items[0].lastRedactionDate", isA(String.class)))
                 .andExpect(jsonPath("$.items[0].persistDate", isA(String.class)))
                 .andExpect(jsonPath("$.items[0].text", Is.is("Comment 103")))
                 .andExpect(jsonPath("$.items[0].userId", Is.is(101)))
                 .andExpect(jsonPath("$.items[0].imageLink", Is.is("/images/noUserAvatar.png")))
-                .andExpect(jsonPath("$.items[0].reputation", Is.is(2700)))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(900)))
 
                 .andExpect(jsonPath("$.items[1].id", Is.is(104)))
-                .andExpect(jsonPath("$.items[1].answerId", Is.is(100)))
                 .andExpect(jsonPath("$.items[1].lastRedactionDate", isA(String.class)))
                 .andExpect(jsonPath("$.items[1].persistDate", isA(String.class)))
                 .andExpect(jsonPath("$.items[1].text", Is.is("Comment 104")))
                 .andExpect(jsonPath("$.items[1].userId", Is.is(100)))
                 .andExpect(jsonPath("$.items[1].imageLink", Is.is("/images/noUserAvatar.png")))
-                .andExpect(jsonPath("$.items[1].reputation", Is.is(2700)))
+                .andExpect(jsonPath("$.items[1].reputation", Is.is(1800)))
 
                 .andExpect(jsonPath("$.items[2].id", Is.is(105)))
-                .andExpect(jsonPath("$.items[2].answerId", Is.is(100)))
                 .andExpect(jsonPath("$.items[2].lastRedactionDate", isA(String.class)))
                 .andExpect(jsonPath("$.items[2].persistDate", isA(String.class)))
                 .andExpect(jsonPath("$.items[2].text", Is.is("Comment 105")))
                 .andExpect(jsonPath("$.items[2].userId", Is.is(101)))
                 .andExpect(jsonPath("$.items[2].imageLink", Is.is("/images/noUserAvatar.png")))
-                .andExpect(jsonPath("$.items[2].reputation", Is.is(2700)));
+                .andExpect(jsonPath("$.items[2].reputation", Is.is(900)));
     }
 
     // Проверка пагинации - не верные данные (id ответа не переданы, currentPage положительный, items положительный)

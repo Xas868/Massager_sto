@@ -32,16 +32,16 @@ INSERT INTO answer (id, date_accept_time, html_body, is_deleted, is_deleted_by_m
  *  Table: comment
  */
 INSERT INTO comment (id, comment_type, last_redaction_date, persist_date, text, user_id) VALUES
-    (100, 1, DATE(NOW()), DATE(NOW()), 'Comment 100', 100),
-    (101, 1, DATE(NOW()), DATE(NOW()), 'Comment 101', 101),
-    (102, 1, DATE(NOW()), DATE(NOW()), 'Comment 102', 100),
-    (103, 1, DATE(NOW()), DATE(NOW()), 'Comment 103', 101),
-    (104, 1, DATE(NOW()), DATE(NOW()), 'Comment 104', 100),
-    (105, 1, DATE(NOW()), DATE(NOW()), 'Comment 105', 101),
-    (106, 1, DATE(NOW()), DATE(NOW()), 'Comment 106', 100),
-    (107, 1, DATE(NOW()), DATE(NOW()), 'Comment 107', 101),
-    (108, 1, DATE(NOW()), DATE(NOW()), 'Comment 108', 100),
-    (109, 1, DATE(NOW()), DATE(NOW()), 'Comment 109', 101);
+    (100, 0, DATE(NOW()), DATE(NOW()), 'Comment 100', 100),
+    (101, 0, DATE(NOW()), DATE(NOW()), 'Comment 101', 101),
+    (102, 0, DATE(NOW()), DATE(NOW()), 'Comment 102', 100),
+    (103, 0, DATE(NOW()), DATE(NOW()), 'Comment 103', 101),
+    (104, 0, DATE(NOW()), DATE(NOW()), 'Comment 104', 100),
+    (105, 0, DATE(NOW()), DATE(NOW()), 'Comment 105', 101),
+    (106, 0, DATE(NOW()), DATE(NOW()), 'Comment 106', 100),
+    (107, 0, DATE(NOW()), DATE(NOW()), 'Comment 107', 101),
+    (108, 0, DATE(NOW()), DATE(NOW()), 'Comment 108', 100),
+    (109, 0, DATE(NOW()), DATE(NOW()), 'Comment 109', 101);
 
 /*
  *  Table: comment_answer
