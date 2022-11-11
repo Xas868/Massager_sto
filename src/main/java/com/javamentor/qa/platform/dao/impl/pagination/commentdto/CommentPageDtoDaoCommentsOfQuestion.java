@@ -2,7 +2,7 @@ package com.javamentor.qa.platform.dao.impl.pagination.commentdto;
 
 
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
-import com.javamentor.qa.platform.models.dto.question.CommentDto;
+import com.javamentor.qa.platform.models.dto.CommentDto;
 import com.javamentor.qa.platform.models.entity.CommentType;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import org.springframework.stereotype.Repository;
@@ -22,16 +22,14 @@ public class CommentPageDtoDaoCommentsOfQuestion implements PageDtoDao<CommentDt
     public List<CommentDto> getPaginationItems(PaginationData properties) {
         int itemsOnPage = properties.getItemsOnPage();
         int firstResultOffset = (properties.getCurrentPage() - 1) * itemsOnPage;
-        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.question.CommentDto(" +
-                        "c.comment.id, " +
-                        "c.comment.lastUpdateDateTime, " +
-                        "c.comment.persistDateTime, " +
-                        "c.comment.text, " +
-                        "c.comment.user.id, " +
-                        "c.comment.user.imageLink, " +
-                        "(coalesce((select sum(r.count) from Reputation r where r.author.id=c.comment.user.id), 0))) " +
-                        "from CommentQuestion as c where c.question.id = :questionId and c.comment.commentType=:commentType " +
-                        "order by c.comment.persistDateTime desc", CommentDto.class)
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.CommentDto(" +
+                        "c.id, c.lastUpdateDateTime, c.persistDateTime, c.text, c.user.id, " +
+                        "(SELECT u.imageLink FROM User u where u.id = c.user.id), " +
+                        "(coalesce((select sum (r.count) FROM Reputation r where r.author = c.user), 0))) " +
+                        "FROM Comment as c " +
+                        "JOIN CommentQuestion as cq on c.id = cq.comment.id " +
+                        "where cq.question.id = :questionId and c.commentType=:commentType " +
+                        "order by c.persistDateTime desc", CommentDto.class)
                 .setParameter("questionId", properties.getProps().get("questionId"))
                 .setParameter("commentType", CommentType.QUESTION)
                 .setFirstResult(firstResultOffset)
@@ -41,9 +39,10 @@ public class CommentPageDtoDaoCommentsOfQuestion implements PageDtoDao<CommentDt
 
     @Override
     public Long getTotalResultCount(Map<String, Object> properties) {
-        return (long) (entityManager.createQuery("select count (c.id) " +
-                        "from CommentQuestion as c " +
-                        "where c.question.id = :questionId and c.comment.commentType=:commentType")
+        return (Long) (entityManager.createQuery("select count (c.id) " +
+                        "from Comment c " +
+                        "JOIN CommentQuestion as cq on c.id = cq.comment.id " +
+                        "where cq.question.id = :questionId and c.commentType=:commentType")
                 .setParameter("questionId", properties.get("questionId"))
                 .setParameter("commentType", CommentType.QUESTION)
                 .getSingleResult());
