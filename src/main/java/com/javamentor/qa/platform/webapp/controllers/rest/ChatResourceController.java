@@ -21,6 +21,7 @@ import com.javamentor.qa.platform.service.abstracts.model.ChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.impl.model.GroupChatRoomServiceImpl;
 import com.javamentor.qa.platform.webapp.converters.GroupChatConverter;
 import com.javamentor.qa.platform.webapp.converters.SingleChatConverter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -153,7 +154,9 @@ public class ChatResourceController {
             description = "Групповой чат не создан",
             content = @Content(mediaType = "application/json"))
     @PostMapping("/group")
-    public ResponseEntity<String> createGroupChatDto(@RequestBody CreateGroupChatDto createGroupChatDto) {
+    public ResponseEntity<String> createGroupChatDto(@RequestBody CreateGroupChatDto createGroupChatDto,
+                                                     Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
         List<Long> userIds = new ArrayList<>(createGroupChatDto.getUserIds());
 
         if (!userIds.isEmpty()) {
@@ -161,7 +164,9 @@ public class ChatResourceController {
             if (!notExistUsers.isEmpty()) {
                 return new ResponseEntity<>("Users: " + notExistUsers + "are not registered", HttpStatus.BAD_REQUEST);
             }
-            groupChatRoomService.persist(groupChatConverter.createGroupChatDTOToGroupChat(createGroupChatDto));
+            GroupChat groupChat = groupChatConverter.createGroupChatDTOToGroupChat(createGroupChatDto);
+            groupChat.setUserAuthor(user);
+            groupChatRoomService.persist(groupChat);
             return new ResponseEntity<>("GroupChat created", HttpStatus.CREATED);
         }
         return new ResponseEntity<>("List of user's ids is empty", HttpStatus.BAD_REQUEST);

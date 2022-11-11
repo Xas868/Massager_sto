@@ -25,9 +25,6 @@ public class Chat {
     @GeneratedValue(generator = "Chat_seq")
     private Long id;
 
-    @Column
-    private String image;
-
     @Column(name = "persist_date", updatable = false)
     @Type(type = "org.hibernate.type.LocalDateTimeType")
     @CreationTimestamp
