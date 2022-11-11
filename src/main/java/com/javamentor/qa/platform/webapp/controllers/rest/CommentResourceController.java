@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.impl.pagination.commentdto.AnswerCommentPageDtoDaoByIdImpl;
 import com.javamentor.qa.platform.models.dto.AnswerCommentDto;
+import com.javamentor.qa.platform.models.dto.CommentDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
@@ -87,9 +88,9 @@ public class CommentResourceController {
                     )
             }
     )
-    public ResponseEntity<PageDTO<AnswerCommentDto>> getAnswerCommentById(@PathVariable("answerId") Long answerId,
-                                                                          @RequestParam(defaultValue = "1") Integer currentPage,
-                                                                          @RequestParam(required = false, defaultValue = "10") Integer items) {
+    public ResponseEntity<PageDTO<CommentDto>> getAnswerCommentById(@PathVariable("answerId") Long answerId,
+                                                                    @RequestParam(defaultValue = "1") Integer currentPage,
+                                                                    @RequestParam(required = false, defaultValue = "10") Integer items) {
         PaginationData data = new PaginationData(currentPage, items, AnswerCommentPageDtoDaoByIdImpl.class.getSimpleName());
         data.getProps().put("answerId", answerId);
         return new ResponseEntity<>(commentDtoService.getPageDto(data), HttpStatus.OK);

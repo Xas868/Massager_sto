@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.service.abstracts.dto;
 
-import com.javamentor.qa.platform.models.dto.AnswerCommentDto;
+import com.javamentor.qa.platform.models.dto.CommentDto;
 
-public interface CommentDtoService extends PageDtoService<AnswerCommentDto> {
+public interface CommentDtoService extends PageDtoService<CommentDto> {
 }
