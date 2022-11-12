@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoDaoAllMessagesInGlobalChat;
+import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoDaoFindMessagesInGlobalChat;
 import com.javamentor.qa.platform.models.dto.MessageDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.entity.chat.Message;
@@ -18,13 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Optional;
 
 @Tag(name = "MessageResourceController", description = "Позволяет работать с избранными сообщениями")
@@ -43,7 +39,7 @@ public class MessageResourceController {
     }
 
     @Operation(summary = "Получение списка всех сообщений в глобальном чате.",
-            description = "Получение пагиннированного списка сообщений в глобальном чате.")
+            description = "Получение пагинированного списка сообщений в глобальном чате.")
     @ApiResponse(responseCode = "200", description = "Сообщения выведены в глобальный чат", content = {
             @Content(mediaType = "application/json")
     })
@@ -57,6 +53,26 @@ public class MessageResourceController {
                 currentPage,
                 items,
                 MessagePageDtoDaoAllMessagesInGlobalChat.class.getSimpleName());
+        return new ResponseEntity<>(messageDtoService.getPageDto(data), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Получение пагинированного списка сообщений с неточным поиском в глобальном чате.",
+            description = "Получение пагинированного списка сообщений с неточным поиском в глобальном чате.")
+    @ApiResponse(responseCode = "200", description = "Найденные сообщения выведены в глобальный чат", content = {
+            @Content(mediaType = "application/json")
+    })
+    @ApiResponse(responseCode = "400", description = "Найденные Сообщения не выведены в глобальный чат", content = {
+            @Content(mediaType = "application/json")
+    })
+    @GetMapping("/global/find")
+    public ResponseEntity<PageDTO<MessageDto>> findMessagesInGlobalChat(@RequestParam(defaultValue = "") String text,
+                                                                        @RequestParam(defaultValue = "1") int currentPage,
+                                                                        @RequestParam(defaultValue = "10") int items) {
+        PaginationData data = new PaginationData(
+                currentPage,
+                items,
+                MessagePageDtoDaoFindMessagesInGlobalChat.class.getSimpleName());
+        data.getProps().put("text", text);
         return new ResponseEntity<>(messageDtoService.getPageDto(data), HttpStatus.OK);
     }
 
