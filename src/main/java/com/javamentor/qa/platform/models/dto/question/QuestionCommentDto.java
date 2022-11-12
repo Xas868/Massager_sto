@@ -20,4 +20,15 @@ public class QuestionCommentDto {
     private Long userId;
     private String imageLink;
     private Long reputation;
+
+    public QuestionCommentDto(Long id, Long questionId, LocalDateTime lastRedactionDate, LocalDateTime persistDate, String text, Long userId, String imageLink, Integer reputation) {
+        this.id = id;
+        this.questionId = questionId;
+        this.lastRedactionDate = lastRedactionDate;
+        this.persistDate = persistDate;
+        this.text = text;
+        this.userId = userId;
+        this.imageLink = imageLink;
+        this.reputation = Long.valueOf(reputation);
+    }
 }

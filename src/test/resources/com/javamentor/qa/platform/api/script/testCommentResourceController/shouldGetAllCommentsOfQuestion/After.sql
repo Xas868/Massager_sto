@@ -1,0 +1,11 @@
+TRUNCATE role CASCADE;
+
+TRUNCATE user_entity CASCADE ;
+
+TRUNCATE comment_question CASCADE ;
+
+TRUNCATE comment CASCADE;
+
+TRUNCATE question CASCADE;
+
+TRUNCATE reputation CASCADE;

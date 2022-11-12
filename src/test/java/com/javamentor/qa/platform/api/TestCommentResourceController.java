@@ -5,14 +5,15 @@ import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.isA;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestCommentResourceController extends AbstractClassForDRRiderMockMVCTests {
 
@@ -321,4 +322,113 @@ public class TestCommentResourceController extends AbstractClassForDRRiderMockMV
                 .andExpect(jsonPath("$.items[3].persistDate", Is.is("2022-11-06T16:34:00")))
                 .andExpect(jsonPath("$.items[4].persistDate", Is.is("2022-11-06T17:34:00")));
     }
+
+    //идеальный вариант, корректный id question, без параметров
+    @Test
+    @Sql("script/testCommentResourceController/shouldGetAllCommentsOfQuestion/Before.sql")
+    @Sql(scripts = "script/testCommentResourceController/shouldGetAllCommentsOfQuestion/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void shouldGetAllCommentsOfQuestion() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/comment/question/{questionId}", 100)
+                        .contentType("application/json")
+                        .header("Authorization",
+                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items.size()").value(3))
+                .andExpect(jsonPath("$.items[0].id").value(104))
+                .andExpect(jsonPath("$.items[0].persistDate").value("2022-10-05T00:00:00"))
+                .andExpect(jsonPath("$.items[0].text").value("Comment 104"))
+                .andExpect(jsonPath("$.items[0].userId").value(100))
+                .andExpect(jsonPath("$.items[0].reputation").value(15300))
+                .andExpect(jsonPath("$.items[1].id").value(100))
+                .andExpect(jsonPath("$.items[1].persistDate").value("2022-10-03T00:00:00"))
+                .andExpect(jsonPath("$.items[1].text").value("Comment 100"))
+                .andExpect(jsonPath("$.items[1].userId").value(100))
+                .andExpect(jsonPath("$.items[1].reputation").value(15300))
+                .andExpect(jsonPath("$.items[2].id").value(102))
+                .andExpect(jsonPath("$.items[2].persistDate").value("2022-10-01T00:00:00"))
+                .andExpect(jsonPath("$.items[2].text").value("Comment 102"))
+                .andExpect(jsonPath("$.items[2].userId").value(100))
+                .andExpect(jsonPath("$.items[2].reputation").value(15300));
+    }
+
+    //вариант, когда в таблице репутации нет упоминания о нужном вопросе
+    @Test
+    @Sql("script/testCommentResourceController/shouldGetAllCommentsOfQuestionWithoutReputation/Before.sql")
+    @Sql(scripts = "script/testCommentResourceController/shouldGetAllCommentsOfQuestionWithoutReputation/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void shouldGetAllCommentsOfQuestionWithoutReputation() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/comment/question/{questionId}", 100)
+                        .contentType("application/json")
+                        .header("Authorization",
+                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items.size()").value(3))
+                .andExpect(jsonPath("$.items[0].id").value(104))
+                .andExpect(jsonPath("$.items[0].persistDate").value("2022-10-05T00:00:00"))
+                .andExpect(jsonPath("$.items[0].text").value("Comment 104"))
+                .andExpect(jsonPath("$.items[0].userId").value(100))
+                .andExpect(jsonPath("$.items[0].reputation").value(0))
+                .andExpect(jsonPath("$.items[1].id").value(100))
+                .andExpect(jsonPath("$.items[1].persistDate").value("2022-10-03T00:00:00"))
+                .andExpect(jsonPath("$.items[1].text").value("Comment 100"))
+                .andExpect(jsonPath("$.items[1].userId").value(100))
+                .andExpect(jsonPath("$.items[1].reputation").value(0))
+                .andExpect(jsonPath("$.items[2].id").value(102))
+                .andExpect(jsonPath("$.items[2].persistDate").value("2022-10-01T00:00:00"))
+                .andExpect(jsonPath("$.items[2].text").value("Comment 102"))
+                .andExpect(jsonPath("$.items[2].userId").value(100))
+                .andExpect(jsonPath("$.items[2].reputation").value(0));
+    }
+
+    //корректный id question, items=2 (выводится 2 объекта вместо 3х)
+    @Test
+    @Sql("script/testCommentResourceController/shouldGetAllCommentsOfQuestionWithVariables/Before.sql")
+    @Sql(scripts = "script/testCommentResourceController/shouldGetAllCommentsOfQuestionWithVariables/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void shouldGetAllCommentsOfQuestionWithVariables() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/comment/question/{questionId}?currentPage=1&items=2", 100)
+                        .contentType("application/json")
+                        .header("Authorization",
+                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items.size()").value(2))
+                .andExpect(jsonPath("$.items[0].id").value(104))
+                .andExpect(jsonPath("$.items[0].persistDate").value("2022-10-05T00:00:00"))
+                .andExpect(jsonPath("$.items[0].text").value("Comment 104"))
+                .andExpect(jsonPath("$.items[0].userId").value(100))
+                .andExpect(jsonPath("$.items[0].reputation").value(15300))
+                .andExpect(jsonPath("$.items[1].id").value(100))
+                .andExpect(jsonPath("$.items[1].persistDate").value("2022-10-03T00:00:00"))
+                .andExpect(jsonPath("$.items[1].text").value("Comment 100"))
+                .andExpect(jsonPath("$.items[1].userId").value(100))
+                .andExpect(jsonPath("$.items[1].reputation").value(15300));
+    }
+
+    //некорректный id question, ничего не находится
+    @Test
+    @Sql("script/testCommentResourceController/shouldGetZeroCommentsFromWrongQuestionId/Before.sql")
+    @Sql(scripts = "script/testCommentResourceController/shouldGetZeroCommentsFromWrongQuestionId/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void shouldGetZeroCommentsFromWrongQuestionId() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/comment/question/{questionId}", 105)
+                        .contentType("application/json")
+                        .header("Authorization",
+                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items").isEmpty());
+    }
+
 }
