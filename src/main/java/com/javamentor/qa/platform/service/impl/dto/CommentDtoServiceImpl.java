@@ -13,4 +13,6 @@ public class CommentDtoServiceImpl extends DtoServiceImpl<CommentDto> implements
     public CommentDtoServiceImpl(Map<String, PageDtoDao<CommentDto>> stringPageDtoDaoMap) {
         super(stringPageDtoDaoMap);
     }
+
 }
+
