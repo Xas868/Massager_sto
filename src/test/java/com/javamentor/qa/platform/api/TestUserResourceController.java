@@ -132,4 +132,392 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$", Is.is("Пользователь не найден!")));
     }
+
+    // Проверка передачи всех верных данных
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldFindAllData_whenExists/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldFindAllData_whenExists/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void paginationById_shouldFindAllData_whenExists() throws Exception {
+
+        mockMvc.perform(get("/api/user/new")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(10)))
+                .andExpect(jsonPath("$.items.length()", Is.is(10)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].email", Is.is("user101@mail.ru")))
+                .andExpect(jsonPath("$.items[0].fullName", Is.is("User 101")))
+                .andExpect(jsonPath("$.items[0].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(1000)))
+
+                .andExpect(jsonPath("$.items[0].listTagDto.length()", Is.is(3)))
+
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("vfOxMU1")))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].description", Is.is("Description of tag 1")))
+
+                .andExpect(jsonPath("$.items[0].listTagDto[1].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].name", Is.is("iThKcj2")))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].description", Is.is("Description of tag 2")))
+
+                .andExpect(jsonPath("$.items[0].listTagDto[2].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].name", Is.is("LTGDJP3")))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].description", Is.is("Description of tag 3")))
+
+                .andExpect(jsonPath("$.items[9].id", Is.is(110)))
+                .andExpect(jsonPath("$.items[9].email", Is.is("user110@mail.ru")))
+                .andExpect(jsonPath("$.items[9].fullName", Is.is("User 110")))
+                .andExpect(jsonPath("$.items[9].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[9].city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.items[9].reputation", Is.is(100)))
+
+                .andExpect(jsonPath("$.items[9].listTagDto.length()", Is.is(3)))
+
+                .andExpect(jsonPath("$.items[9].listTagDto[0].id", Is.is(110)))
+                .andExpect(jsonPath("$.items[9].listTagDto[0].name", Is.is("vfOxMU10")))
+                .andExpect(jsonPath("$.items[9].listTagDto[0].description", Is.is("Description of tag 10")))
+
+                .andExpect(jsonPath("$.items[9].listTagDto[1].id", Is.is(111)))
+                .andExpect(jsonPath("$.items[9].listTagDto[1].name", Is.is("iThKcj11")))
+                .andExpect(jsonPath("$.items[9].listTagDto[1].description", Is.is("Description of tag 11")))
+
+                .andExpect(jsonPath("$.items[9].listTagDto[2].id", Is.is(112)))
+                .andExpect(jsonPath("$.items[9].listTagDto[2].name", Is.is("LTGDJP12")))
+                .andExpect(jsonPath("$.items[9].listTagDto[2].description", Is.is("Description of tag 12")));
+    }
+
+    // Проверка пагинации - верные данные (currentPage положительный, items положительный)
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldFindAllDataPaginationData_whenExists/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldFindAllDataPaginationData_whenExists/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void paginationById_shouldFindAllDataPaginationData_whenExists() throws Exception {
+
+        mockMvc.perform(get("/api/user/new")
+                        .param("page", "2")
+                        .param("items", "3")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(10)))
+                .andExpect(jsonPath("$.items.length()", Is.is(3)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(3)))
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(2)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(4)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].email", Is.is("user104@mail.ru")))
+                .andExpect(jsonPath("$.items[0].fullName", Is.is("User 104")))
+                .andExpect(jsonPath("$.items[0].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(700)))
+
+                .andExpect(jsonPath("$.items[0].listTagDto.length()", Is.is(3)))
+
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(107)))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("vfOxMU7")))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].description", Is.is("Description of tag 7")))
+
+                .andExpect(jsonPath("$.items[0].listTagDto[1].id", Is.is(108)))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].name", Is.is("iThKcj8")))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].description", Is.is("Description of tag 8")))
+
+                .andExpect(jsonPath("$.items[0].listTagDto[2].id", Is.is(109)))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].name", Is.is("LTGDJP9")))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].description", Is.is("Description of tag 9")))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[1].email", Is.is("user105@mail.ru")))
+                .andExpect(jsonPath("$.items[1].fullName", Is.is("User 105")))
+                .andExpect(jsonPath("$.items[1].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[1].city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.items[1].reputation", Is.is(600)))
+
+                .andExpect(jsonPath("$.items[1].listTagDto.length()", Is.is(3)))
+
+                .andExpect(jsonPath("$.items[1].listTagDto[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].name", Is.is("vfOxMU1")))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].description", Is.is("Description of tag 1")))
+
+                .andExpect(jsonPath("$.items[1].listTagDto[1].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[1].listTagDto[1].name", Is.is("iThKcj2")))
+                .andExpect(jsonPath("$.items[1].listTagDto[1].description", Is.is("Description of tag 2")))
+
+                .andExpect(jsonPath("$.items[1].listTagDto[2].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[1].listTagDto[2].name", Is.is("LTGDJP3")))
+                .andExpect(jsonPath("$.items[1].listTagDto[2].description", Is.is("Description of tag 3")))
+
+                .andExpect(jsonPath("$.items[2].id", Is.is(106)))
+                .andExpect(jsonPath("$.items[2].email", Is.is("user106@mail.ru")))
+                .andExpect(jsonPath("$.items[2].fullName", Is.is("User 106")))
+                .andExpect(jsonPath("$.items[2].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[2].city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.items[2].reputation", Is.is(500)))
+
+                .andExpect(jsonPath("$.items[2].listTagDto.length()", Is.is(3)))
+
+                .andExpect(jsonPath("$.items[2].listTagDto[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[2].listTagDto[0].name", Is.is("vfOxMU1")))
+                .andExpect(jsonPath("$.items[2].listTagDto[0].description", Is.is("Description of tag 1")))
+
+                .andExpect(jsonPath("$.items[2].listTagDto[1].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[2].listTagDto[1].name", Is.is("iThKcj2")))
+                .andExpect(jsonPath("$.items[2].listTagDto[1].description", Is.is("Description of tag 2")))
+
+                .andExpect(jsonPath("$.items[2].listTagDto[2].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[2].listTagDto[2].name", Is.is("LTGDJP3")))
+                .andExpect(jsonPath("$.items[2].listTagDto[2].description", Is.is("Description of tag 3")));
+    }
+
+    // Проверка сортировки по дате создания юзера.
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldPaginationOrderByPersistDate_whenExists/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldPaginationOrderByPersistDate_whenExists/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void paginationById_shouldPaginationOrderByPersistDate_whenExists() throws Exception {
+
+        mockMvc.perform(get("/api/user/new")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(10)))
+                .andExpect(jsonPath("$.items.length()", Is.is(10)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(109)))
+                .andExpect(jsonPath("$.items[1].id", Is.is(110)))
+                .andExpect(jsonPath("$.items[2].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[3].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[4].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[5].id", Is.is(108)))
+                .andExpect(jsonPath("$.items[6].id", Is.is(106)))
+                .andExpect(jsonPath("$.items[7].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[8].id", Is.is(107)))
+                .andExpect(jsonPath("$.items[9].id", Is.is(101)));
+    }
+
+    // Проверка filter nickname.
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldFilterNickname_whenExists/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldFilterNickname_whenExists/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void paginationById_shouldFilterNickname_whenExists() throws Exception {
+
+        mockMvc.perform(get("/api/user/new")
+                        .param("filter", "user_108")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(1)))
+                .andExpect(jsonPath("$.items.length()", Is.is(1)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(108)))
+                .andExpect(jsonPath("$.items[0].email", Is.is("user108@mail.ru")))
+                .andExpect(jsonPath("$.items[0].fullName", Is.is("User 108")))
+                .andExpect(jsonPath("$.items[0].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(300)))
+
+                .andExpect(jsonPath("$.items[0].listTagDto.length()", Is.is(3)))
+
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("vfOxMU4")))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].description", Is.is("Description of tag 4")))
+
+                .andExpect(jsonPath("$.items[0].listTagDto[1].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].name", Is.is("iThKcj5")))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].description", Is.is("Description of tag 5")))
+
+                .andExpect(jsonPath("$.items[0].listTagDto[2].id", Is.is(106)))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].name", Is.is("LTGDJP6")))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].description", Is.is("Description of tag 6")));
+    }
+    // Проверка filter email.
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldFilterEmail_whenExists/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldFilterEmail_whenExists/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void paginationById_shouldFilterEmail_whenExists() throws Exception {
+
+        mockMvc.perform(get("/api/user/new")
+                        .param("filter", "user110@mail.ru")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(1)))
+                .andExpect(jsonPath("$.items.length()", Is.is(1)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(110)))
+                .andExpect(jsonPath("$.items[0].email", Is.is("user110@mail.ru")))
+                .andExpect(jsonPath("$.items[0].fullName", Is.is("User 110")))
+                .andExpect(jsonPath("$.items[0].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(100)))
+
+                .andExpect(jsonPath("$.items[0].listTagDto.length()", Is.is(3)))
+
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(110)))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("vfOxMU10")))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].description", Is.is("Description of tag 10")))
+
+                .andExpect(jsonPath("$.items[0].listTagDto[1].id", Is.is(111)))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].name", Is.is("iThKcj11")))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].description", Is.is("Description of tag 11")))
+
+                .andExpect(jsonPath("$.items[0].listTagDto[2].id", Is.is(112)))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].name", Is.is("LTGDJP12")))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].description", Is.is("Description of tag 12")));
+    }
+
+    // Проверка filter fullName.
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldFilterFullName_whenExists/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldFilterFullName_whenExists/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void paginationById_shouldFilterFullName_whenExists() throws Exception {
+
+        mockMvc.perform(get("/api/user/new")
+                        .param("filter", "User 103")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(1)))
+                .andExpect(jsonPath("$.items.length()", Is.is(1)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[0].email", Is.is("user103@mail.ru")))
+                .andExpect(jsonPath("$.items[0].fullName", Is.is("User 103")))
+                .andExpect(jsonPath("$.items[0].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(800)))
+
+                .andExpect(jsonPath("$.items[0].listTagDto.length()", Is.is(3)))
+
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("vfOxMU1")))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].description", Is.is("Description of tag 1")))
+
+                .andExpect(jsonPath("$.items[0].listTagDto[1].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].name", Is.is("iThKcj2")))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].description", Is.is("Description of tag 2")))
+
+                .andExpect(jsonPath("$.items[0].listTagDto[2].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].name", Is.is("LTGDJP3")))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].description", Is.is("Description of tag 3")));
+    }
+
+    // Проверка сортировки по дате создания с filter (nickname) несколько значений.
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldPaginationFilterNickname_whenExists/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldPaginationFilterNickname_whenExists/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void paginationById_shouldPaginationFilterNickname_whenExists() throws Exception {
+
+        mockMvc.perform(get("/api/user/new")
+                        .param("filter", "admin_")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(4)))
+                .andExpect(jsonPath("$.items.length()", Is.is(4)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[1].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[2].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[3].id", Is.is(103)));
+    }
+
+    // Проверка сортировки по дате создания с filter (email) несколько значений.
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldPaginationFilterEmail_whenExists/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldPaginationFilterEmail_whenExists/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void paginationById_shouldPaginationFilterEmail_whenExists() throws Exception {
+
+        mockMvc.perform(get("/api/user/new")
+                        .param("filter", "adminmail")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(4)))
+                .andExpect(jsonPath("$.items.length()", Is.is(4)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[1].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[2].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[3].id", Is.is(103)));
+    }
+
+    // Проверка сортировки по дате создания с filter (fullName) несколько значений.
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldPaginationFilterFullName_whenExists/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldPaginationFilterFullName_whenExists/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void paginationById_shouldPaginationFilterFullName_whenExists() throws Exception {
+
+        mockMvc.perform(get("/api/user/new")
+                        .param("filter", "Admin ")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(4)))
+                .andExpect(jsonPath("$.items.length()", Is.is(4)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[1].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[2].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[3].id", Is.is(103)));
+    }
+
+    // Пользователь передает не существующее значение в filter.
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldPaginationEmpty_whenFilterEmpty/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldPaginationEmpty_whenFilterEmpty/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void paginationById_shouldPaginationEmpty_whenFilterEmpty() throws Exception {
+
+        mockMvc.perform(get("/api/user/new")
+                        .param("filter", "Иван Иванов")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andExpect(jsonPath("$.totalResultCount", Is.is(0)))
+                .andExpect(jsonPath("$.items.length()", Is.is(0)));
+
+
+    }
 }
