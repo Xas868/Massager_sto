@@ -27,9 +27,10 @@ public class GroupChatRoomDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> impl
 
     @Override
     public void deleteAllChat(Long id) {
-        String SQL = "DELETE FROM groupchat_has_users WHERE groupchat_has_users.chat_id = :id";
-                entityManager.createNativeQuery(SQL)
-                        .setParameter("id", id)
+        GroupChat gc = getGroupChatAndUsers(id).get();
+        gc.setUsers(null);
+        entityManager.createQuery("DELETE FROM GroupChat WHERE chat.id = :id")
+                .setParameter("id", id)
                 .executeUpdate();
     }
 

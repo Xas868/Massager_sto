@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.GroupChatRoomDao;
-import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
@@ -19,35 +18,31 @@ public class GroupChatRoomServiceImpl extends ReadWriteServiceImpl<GroupChat,Lon
 
     private final GroupChatRoomDao groupChatRoomDao;
 
-    private final UserDao userDao;
-
-    public GroupChatRoomServiceImpl(GroupChatRoomDao groupChatRoomDao, UserDao userDao) {
+    public GroupChatRoomServiceImpl(GroupChatRoomDao groupChatRoomDao) {
         super(groupChatRoomDao);
         this.groupChatRoomDao = groupChatRoomDao;
-        this.userDao = userDao;
     }
 
     @Override
     @Transactional
     public void deleteUserFromGroupChatById(Long chatId, Long userId) {
         User userAuthen = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        GroupChat groupChat = groupChatRoomDao.getById(chatId).get();
-        User userAuthor = groupChat.getUserAuthor();
-        if (!userAuthen.getId().equals(userAuthor.getId()) && !userAuthen.getId().equals(userId)) {
+
+        if (groupChatRoomDao.getById(chatId).get().getChat().isGlobal()) {
+            throw new DeleteGlobalChatException("Вы пытаетесь удалить глобальный чат");
+        }
+        if (!userAuthen.getId().equals(groupChatRoomDao.getById(chatId).get().getUserAuthor().getId()) && !userAuthen.getId().equals(userId)) {
             throw new AuthUserNotAuthorCreateGroupChatException("Удалять пользователей может только автор чата");
         }
-        if (userId.equals(userAuthor.getId())) {
-            groupChatRoomDao.deleteAllChat(chatId);
-        }
-
-        Set<User> users = groupChat.getUsers();
+        Set<User> users = groupChatRoomDao.getById(chatId).get().getUsers();
+        Long idUserAuthor = groupChatRoomDao.getById(chatId).get().getUserAuthor().getId();
         for (User user : users) {
-            if (user.getId().equals(userDao.getById(userId).get().getId()) && !userAuthen.getId().equals(userAuthor.getId())) {
+            if (user.getId().equals(userId) && !userAuthen.getId().equals(idUserAuthor)) {
                 groupChatRoomDao.deleteUserFromGroupChatById(chatId, userId);
             }
         }
-        if (groupChatRoomDao.getById(chatId).get().getChat().isGlobal()) {
-            throw new DeleteGlobalChatException("Вы пытаетесь удалить глобальный чат");
+        if (userId.equals(groupChatRoomDao.getById(chatId).get().getUserAuthor().getId())) {
+            groupChatRoomDao.deleteAllChat(chatId);
         }
     }
 
