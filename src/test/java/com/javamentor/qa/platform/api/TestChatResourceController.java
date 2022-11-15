@@ -164,7 +164,59 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items").isEmpty());
     }
 
+    //вариант: получаем групповые чаты, есть 4 чата из них в 3 есть авторизированный пользователей и из этих 3, два group чата и 1 single чат, items = 10, currentPage = 1
+    @Test
+    @Sql("script/testChatResourceController/shouldGetGroupChatsWhenAuthorizedUserInTwoGroupChatsAndOneSingleChat/Before.sql")
+    @Sql(scripts = "script/testChatResourceController/shouldGetGroupChatsWhenAuthorizedUserInTwoGroupChatsAndOneSingleChat/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void shouldGetGroupChatsWhenAuthorizedUserInTwoGroupChatsAndOneSingleChat() throws Exception {
 
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/chat")
+                        .contentType("application/json")
+                        .header("Authorization",
+                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items.size()").value(2))
+                .andExpect(jsonPath("$.items[0].id").value(100))
+                .andExpect(jsonPath("$.items[0].name").value("group_chat_100"))
+                .andExpect(jsonPath("$.items[0].image").value("/images/noUserAvatar.png"))
+                .andExpect(jsonPath("$.items[0].lastMessage").value("message_from_chat_100_and_user_100"))
+                .andExpect(jsonPath("$.items[0].persistDateTimeLastMessage").value("2022-10-03T00:00:00"))
+                .andExpect(jsonPath("$.items[1].id").value(102))
+                .andExpect(jsonPath("$.items[1].name").value("group_chat_102"))
+                .andExpect(jsonPath("$.items[1].image").value("/images/noUserAvatar.png"))
+                .andExpect(jsonPath("$.items[1].lastMessage").value("message_from_chat_102_and_user_102"))
+                .andExpect(jsonPath("$.items[1].persistDateTimeLastMessage").value("2022-10-01T00:00:00"));
+    }
+
+    //вариант: получаем single чаты, есть 4 чата из них в 3 есть авторизированный пользователей и из этих 3, два сингл чата и 1 групп чат, items = 10, currentPage = 1
+    @Test
+    @Sql("script/testChatResourceController/shouldGetSingleChatsWhenAuthorizedUserInTwoSingleChatsAndOneGroupChat/Before.sql")
+    @Sql(scripts = "script/testChatResourceController/shouldGetSingleChatsWhenAuthorizedUserInTwoSingleChatsAndOneGroupChat/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void shouldGetSingleChatsWhenAuthorizedUserInTwoSingleChatsAndOneGroupChat() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/chat/single")
+                        .contentType("application/json")
+                        .header("Authorization",
+                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(2))
+                .andExpect(jsonPath("$.[0].id").value(101))
+                .andExpect(jsonPath("$.[0].name").value("user101@mail.ru"))
+                .andExpect(jsonPath("$.[0].image").value("/images/noUserAvatar.png"))
+                .andExpect(jsonPath("$.[0].lastMessage").value("message_from_chat_101_and_user_101"))
+                .andExpect(jsonPath("$.[0].persistDateTimeLastMessage").value("2022-10-02T00:00:00"))
+                .andExpect(jsonPath("$.[1].id").value(103))
+                .andExpect(jsonPath("$.[1].name").value("user102@mail.ru"))
+                .andExpect(jsonPath("$.[1].image").value("/images/noUserAvatar.png"))
+                .andExpect(jsonPath("$.[1].lastMessage").value("message_from_chat_103_and_user_102"))
+                .andExpect(jsonPath("$.[1].persistDateTimeLastMessage").value("2022-10-04T00:00:00"));
+    }
 
 
 }

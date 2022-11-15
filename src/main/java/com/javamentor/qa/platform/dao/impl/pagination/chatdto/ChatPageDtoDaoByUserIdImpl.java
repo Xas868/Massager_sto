@@ -80,7 +80,7 @@ public class ChatPageDtoDaoByUserIdImpl implements PageDtoDao<ChatDto>{
                         "left join User as user2 " +
                         "       on singleChat.useTwo.id = user2.id " +
                         // Now we are filtering out all the chats that we don't need
-                        "where (:userId in elements(groupChat.users) or user1.id = :userId or user2.id = :userId) " +
+                        "where  chat.chatType=:group and (:userId in elements(groupChat.users) or user1.id = :userId or user2.id = :userId) " +
                         "order by isChatPin desc, persistDate desc", ChatDto.class)
                 .setParameter("userId", properties.getProps().get("userId"))
                 .setParameter("group", ChatType.GROUP)
