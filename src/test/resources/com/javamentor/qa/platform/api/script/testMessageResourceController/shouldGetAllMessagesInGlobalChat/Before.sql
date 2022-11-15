@@ -11,11 +11,11 @@ INSERT INTO user_entity (id, about, city, email, full_name, image_link, is_delet
 VALUES (101, 'I am test user', 'Moscow', 'user101@mail.ru', 'user101@mail.ru', '/images/noUserAvatar.png', false, true, now(),
         null, null, null, 'user101@mail.ru', '$2a$10$Z/TD5vCVG7amB2u34YrU8.Czni/8rtcIOBCVqP/wwrqwrnFT/qnh.', now(), 100);
 
-INSERT INTO chat (id, chat_type, persist_date, image, is_global)
-VALUES (100, 100, now(),'no image', true);
+INSERT INTO chat (id, chat_type, persist_date, is_global)
+VALUES (100, 100, now(), true);
 
-INSERT INTO chat (id, chat_type, persist_date, image, is_global)
-VALUES (101, 101,now(),'no image', false);
+INSERT INTO chat (id, chat_type, persist_date, is_global)
+VALUES (101, 101,now(), false);
 
 INSERT INTO message (id, message, persist_date, last_redaction_date, chat_id, user_sender_id)
 VALUES (100, 'message_100', '2022-10-03T00:00:00', now(), 100, 100);

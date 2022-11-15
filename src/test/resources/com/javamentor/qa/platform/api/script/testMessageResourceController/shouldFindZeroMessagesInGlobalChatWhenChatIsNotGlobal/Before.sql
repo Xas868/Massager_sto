@@ -18,16 +18,22 @@ INSERT INTO chat (id, chat_type, persist_date, is_global)
 VALUES (101, 101,now(), false);
 
 INSERT INTO message (id, message, persist_date, last_redaction_date, chat_id, user_sender_id)
-VALUES (100, 'message_100', '2022-10-03T00:00:00', now(), 100, 100);
+VALUES (100, 'message_100', '2022-10-03T00:00:00', '2022-10-03T00:00:00', 101, 100);
 
 INSERT INTO message (id, message, persist_date, last_redaction_date, chat_id, user_sender_id)
-VALUES (101, 'message_101', '2022-10-02T00:00:00', now(), 101, 101);
+VALUES (101, 'mesage_101', '2022-10-02T00:00:00', '2022-10-02T00:00:00', 101, 101);
 
 INSERT INTO message (id, message, persist_date, last_redaction_date, chat_id, user_sender_id)
-VALUES (102, 'message_102', '2022-10-01T00:00:00', now(), 101, 100);
+VALUES (102, 'message_102', '2022-10-01T00:00:00', '2022-10-01T00:00:00', 101, 100);
 
 INSERT INTO message (id, message, persist_date, last_redaction_date, chat_id, user_sender_id)
-VALUES (103, 'message_103', '2022-10-04T00:00:00', now(), 100, 101);
+VALUES (103, 'message_103', '2022-10-04T00:00:00', '2022-10-04T00:00:00', 101, 101);
 
 INSERT INTO message (id, message, persist_date, last_redaction_date, chat_id, user_sender_id)
-VALUES (104, 'message_104', '2022-10-05T00:00:00', now(), 100, 100);
+VALUES (104, 'mssage_104', '2022-10-05T00:00:00', '2022-10-05T00:00:00', 101, 100);
+
+INSERT INTO message (id, message, persist_date, last_redaction_date, chat_id, user_sender_id)
+VALUES (105, 'message_105', '2022-10-06T00:00:00', '2022-10-06T00:00:00', 101, 101);
+
+INSERT INTO message (id, message, persist_date, last_redaction_date, chat_id, user_sender_id)
+VALUES (106, 'messsage_106', '2022-10-07T00:00:00', '2022-10-07T00:00:00', 101, 100);
