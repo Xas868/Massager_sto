@@ -597,15 +597,34 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items.length()", Is.is(10)))
 
                 .andExpect(jsonPath("$.items[0].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(9000)))
+
                 .andExpect(jsonPath("$.items[1].id", Is.is(107)))
+                .andExpect(jsonPath("$.items[1].reputation", Is.is(6600)))
+
                 .andExpect(jsonPath("$.items[2].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[2].reputation", Is.is(4900)))
+
                 .andExpect(jsonPath("$.items[3].id", Is.is(110)))
+                .andExpect(jsonPath("$.items[3].reputation", Is.is(3300)))
+
                 .andExpect(jsonPath("$.items[4].id", Is.is(106)))
+                .andExpect(jsonPath("$.items[4].reputation", Is.is(1000)))
+
                 .andExpect(jsonPath("$.items[5].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[5].reputation", Is.is(1000)))
+
                 .andExpect(jsonPath("$.items[6].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[6].reputation", Is.is(800)))
+
                 .andExpect(jsonPath("$.items[7].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[7].reputation", Is.is(700)))
+
                 .andExpect(jsonPath("$.items[8].id", Is.is(109)))
-                .andExpect(jsonPath("$.items[9].id", Is.is(108)));
+                .andExpect(jsonPath("$.items[8].reputation", Is.is(400)))
+
+                .andExpect(jsonPath("$.items[9].id", Is.is(108)))
+                .andExpect(jsonPath("$.items[9].reputation", Is.is(200)));
     }
 
     // Проверка filter nickname.
@@ -747,9 +766,32 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items.length()", Is.is(4)))
 
                 .andExpect(jsonPath("$.items[0].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[0].email", Is.is("adminmail103@mail.ru")))
+                .andExpect(jsonPath("$.items[0].fullName", Is.is("Admin 103")))
+                .andExpect(jsonPath("$.items[0].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(1800)))
+
                 .andExpect(jsonPath("$.items[1].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[1].email", Is.is("adminmail105@mail.ru")))
+                .andExpect(jsonPath("$.items[1].fullName", Is.is("Admin 105")))
+                .andExpect(jsonPath("$.items[1].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[1].city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.items[1].reputation", Is.is(1600)))
+
                 .andExpect(jsonPath("$.items[2].id", Is.is(102)))
-                .andExpect(jsonPath("$.items[3].id", Is.is(104)));
+                .andExpect(jsonPath("$.items[2].email", Is.is("adminmail102@mail.ru")))
+                .andExpect(jsonPath("$.items[2].fullName", Is.is("Admin 102")))
+                .andExpect(jsonPath("$.items[2].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[2].city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.items[2].reputation", Is.is(900)))
+
+                .andExpect(jsonPath("$.items[3].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[3].email", Is.is("adminmail104@mail.ru")))
+                .andExpect(jsonPath("$.items[3].fullName", Is.is("Admin 104")))
+                .andExpect(jsonPath("$.items[3].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[3].city", Is.is("Moscow")))
+                .andExpect(jsonPath("$.items[3].reputation", Is.is(700)));
     }
 
     // Проверка сортировки по репутации с filter (email) несколько значений.
@@ -771,9 +813,20 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items.length()", Is.is(4)))
 
                 .andExpect(jsonPath("$.items[0].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[0].email", Is.is("adminmail103@mail.ru")))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(1800)))
+
                 .andExpect(jsonPath("$.items[1].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[1].email", Is.is("adminmail105@mail.ru")))
+                .andExpect(jsonPath("$.items[1].reputation", Is.is(1600)))
+
                 .andExpect(jsonPath("$.items[2].id", Is.is(102)))
-                .andExpect(jsonPath("$.items[3].id", Is.is(104)));
+                .andExpect(jsonPath("$.items[2].email", Is.is("adminmail102@mail.ru")))
+                .andExpect(jsonPath("$.items[2].reputation", Is.is(900)))
+
+                .andExpect(jsonPath("$.items[3].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[3].email", Is.is("adminmail104@mail.ru")))
+                .andExpect(jsonPath("$.items[3].reputation", Is.is(700)));
     }
 
     // Проверка сортировки по репутации с filter (fullName) несколько значений.
@@ -795,9 +848,20 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items.length()", Is.is(4)))
 
                 .andExpect(jsonPath("$.items[0].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[0].fullName", Is.is("Admin 103")))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(1800)))
+
                 .andExpect(jsonPath("$.items[1].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[1].fullName", Is.is("Admin 105")))
+                .andExpect(jsonPath("$.items[1].reputation", Is.is(1600)))
+
                 .andExpect(jsonPath("$.items[2].id", Is.is(102)))
-                .andExpect(jsonPath("$.items[3].id", Is.is(104)));
+                .andExpect(jsonPath("$.items[2].fullName", Is.is("Admin 102")))
+                .andExpect(jsonPath("$.items[2].reputation", Is.is(900)))
+
+                .andExpect(jsonPath("$.items[3].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[3].fullName", Is.is("Admin 104")))
+                .andExpect(jsonPath("$.items[3].reputation", Is.is(700)));
     }
 
     // Пользователь передает не существующее значение в filter.
