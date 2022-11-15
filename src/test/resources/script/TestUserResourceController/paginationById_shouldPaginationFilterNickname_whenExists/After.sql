@@ -1,3 +1,5 @@
 TRUNCATE role CASCADE;
 
-TRUNCATE question_has_tag CASCADE;
+TRUNCATE tag CASCADE;
+
+TRUNCATE question CASCADE;
