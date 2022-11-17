@@ -9,7 +9,9 @@ public interface GroupChatRoomDao extends ReadWriteDao<GroupChat, Long> {
 
     void deleteUserFromGroupChatById(Long id, Long userId);
 
-    void deleteAllChat(Long chatId);
+    void deleteAllUsersFromChat(Long chatId);
+
+    Long UserAuthor(Long userId);
 
     Optional<GroupChat> getGroupChatAndUsers(long id);
 }

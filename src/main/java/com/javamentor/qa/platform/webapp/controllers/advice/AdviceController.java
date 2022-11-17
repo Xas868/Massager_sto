@@ -2,8 +2,12 @@ package com.javamentor.qa.platform.webapp.controllers.advice;
 
 import com.javamentor.qa.platform.exception.ConstrainException;
 import com.javamentor.qa.platform.exception.NoSuchDaoException;
-import com.javamentor.qa.platform.webapp.controllers.exceptions.*;
 import com.javamentor.qa.platform.exception.PageException;
+import com.javamentor.qa.platform.webapp.controllers.exceptions.AddBookmarkException;
+import com.javamentor.qa.platform.webapp.controllers.exceptions.AuthUserNotAuthorCreateGroupChatException;
+import com.javamentor.qa.platform.webapp.controllers.exceptions.DeleteGlobalChatException;
+import com.javamentor.qa.platform.webapp.controllers.exceptions.IsEmptyUserIdsException;
+import com.javamentor.qa.platform.webapp.controllers.exceptions.UserRemovedFromTheSingleChat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.annotation.ControllerAdvice;

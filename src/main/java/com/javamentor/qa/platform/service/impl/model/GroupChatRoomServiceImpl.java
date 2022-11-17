@@ -26,26 +26,28 @@ public class GroupChatRoomServiceImpl extends ReadWriteServiceImpl<GroupChat,Lon
     @Override
     @Transactional
     public void deleteUserFromGroupChatById(Long chatId, Long userId) {
+        Long userAuthorId = groupChatRoomDao.UserAuthor(userId);
         User userAuthen = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (groupChatRoomDao.getById(chatId).get().getChat().isGlobal()) {
             throw new DeleteGlobalChatException("Вы пытаетесь удалить глобальный чат");
         }
-        if (!userAuthen.getId().equals(groupChatRoomDao.getById(chatId).get().getUserAuthor().getId()) && !userAuthen.getId().equals(userId)) {
+        if (userAuthorId.equals(userId) && !userAuthen.getId().equals(userId)) {
             throw new AuthUserNotAuthorCreateGroupChatException("Удалять пользователей может только автор чата");
         }
-        Set<User> users = groupChatRoomDao.getById(chatId).get().getUsers();
-        Long idUserAuthor = groupChatRoomDao.getById(chatId).get().getUserAuthor().getId();
+        Set<User> users = groupChatRoomDao.getGroupChatAndUsers(chatId).get().getUsers();
         for (User user : users) {
-            if (user.getId().equals(userId) && !userAuthen.getId().equals(idUserAuthor)) {
+            if (user.getId().equals(userId) && !userAuthen.getId().equals(userAuthorId)) {
                 groupChatRoomDao.deleteUserFromGroupChatById(chatId, userId);
             }
         }
-        if (userId.equals(groupChatRoomDao.getById(chatId).get().getUserAuthor().getId())) {
-            groupChatRoomDao.deleteAllChat(chatId);
+        if (userAuthorId.equals(userId)) {
+            GroupChat gc = getGroupChatAndUsers(chatId).get();
+            gc.setUsers(null);
+            update(gc);
+            groupChatRoomDao.deleteAllUsersFromChat(chatId);
         }
     }
-
 
     @Override
     public Optional<GroupChat> getGroupChatAndUsers(long id) {

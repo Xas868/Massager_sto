@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.dao.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.GroupChatRoomDao;
-
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import org.springframework.stereotype.Service;
@@ -26,12 +25,17 @@ public class GroupChatRoomDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> impl
     }
 
     @Override
-    public void deleteAllChat(Long id) {
-        GroupChat gc = getGroupChatAndUsers(id).get();
-        gc.setUsers(null);
+    public void deleteAllUsersFromChat(Long chatId) {
         entityManager.createQuery("DELETE FROM GroupChat WHERE chat.id = :id")
-                .setParameter("id", id)
+                .setParameter("id", chatId)
                 .executeUpdate();
+    }
+
+    @Override
+    public Long UserAuthor(Long userId) {
+       return entityManager.createQuery("SELECT gc.userAuthor.id FROM GroupChat gc WHERE gc.userAuthor.id = :id")
+               .setParameter("id", userId)
+               .getResultStream().count();
     }
 
     @Override
