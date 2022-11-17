@@ -76,7 +76,7 @@ public class ChatPageDtoDaoByUserIdAndNameImpl implements PageDtoDao<ChatDto>{
                         "left join User as user2 " +
                         "       on singleChat.useTwo.id = user2.id " +
                         // Now we are filtering out all the chats that we don't need
-                        "where (:userId in elements(groupChat.users) or user1.id = :userId or user2.id = :userId) " +
+                        "where chat.chatType=:group and (:userId in elements(groupChat.users) or user1.id = :userId or user2.id = :userId) " +
                         "and (case " +
                         "       when chat.chatType = :group " +
                         "       then groupChat.title " +
