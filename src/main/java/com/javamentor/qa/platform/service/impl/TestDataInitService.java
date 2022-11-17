@@ -56,7 +56,9 @@ public class TestDataInitService {
 
     private final long NUM_OF_FAVORITE_MESSAGES = 3L;
 
-    private final long NUM_OF_MODERATORS = 10L;
+    private final long NUM_OF_MODERATORS_GROUPCHAT = 5L;
+
+    private final long NUM_OF_USERS_GROUPCHAT = 30L;
 
     public void init() {
         createRoles();
@@ -76,7 +78,7 @@ public class TestDataInitService {
         createQuestionViewed();
         createMessageStar();
         createUserChatPinChats();
-        createModeratorsChatPinChats();
+        createGroupChatModeratorsAndUsers();
     }
 
     public void createMessage() {
@@ -481,9 +483,8 @@ public class TestDataInitService {
         userChatPinService.persistAll(userChatPins);
     }
 
-    private void createModeratorsChatPinChats() {
+    private void createGroupChatModeratorsAndUsers() {
         List<GroupChat> groupChats = new ArrayList<>();
-        Set<UserChatPin> userChatPins = new HashSet<>();
 
         for (int i = 1; i <= NUM_OF_GROUPCHAT; i++) {
             GroupChat groupChat = GroupChat.builder()
@@ -494,24 +495,26 @@ public class TestDataInitService {
                     .build();
             groupChats.add(groupChat);
 
-            Set<User> moderators = new HashSet<>();
-            Set<User> users = new HashSet<>();
-            for (int j = 1; j <= NUM_OF_MODERATORS; j++) {
+            Set<User> chatModerators = new HashSet<>();
+            for (int j = 1; j <= NUM_OF_MODERATORS_GROUPCHAT; j++) {
                 User user = getRandomUser();
                 if ( !groupChat.getUserAuthor().equals(user) ) {
-                    UserChatPin userChatPin = new UserChatPin();
-                    moderators.add(user);
-                    users.add(user);
-                    userChatPin.setUser(user);
-                    userChatPin.setChat(groupChat.getChat());
-                    userChatPins.add(userChatPin);
+                    chatModerators.add(user);
                 }
             }
-            groupChat.setUsers(users);
-            groupChat.setModerators(moderators);
+            groupChat.setUsers(chatModerators);
+            groupChat.setModerators(chatModerators);
+
+            Set<User> chatUsers = new HashSet<>();
+            for (int j = 1; j <= NUM_OF_USERS_GROUPCHAT; j++) {
+                User user = getRandomUser();
+                if ( !groupChat.getUsers().contains(user) ) {
+                    chatUsers.add(getRandomUser());
+                }
+            }
+            groupChat.setUsers(chatUsers);
         }
 
         groupChatRoomService.persistAll(groupChats);
-        userChatPinService.persistAll(userChatPins);
     }
 }
