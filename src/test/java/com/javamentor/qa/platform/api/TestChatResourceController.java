@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTests {
 
-    //вариант, есть 3 чата, 2 из них одиночные, в обоих участвует user100@mail.ru
+    //РІР°СЂРёР°РЅС‚, РµСЃС‚СЊ 3 С‡Р°С‚Р°, 2 РёР· РЅРёС… РѕРґРёРЅРѕС‡РЅС‹Рµ, РІ РѕР±РѕРёС… СѓС‡Р°СЃС‚РІСѓРµС‚ user100@mail.ru
     @Test
     @Sql("script/testChatResourceController/shouldGetAllSingleChats/Before.sql")
     @Sql(scripts = "script/testChatResourceController/shouldGetAllSingleChats/After.sql",
@@ -44,7 +44,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.[1].persistDateTimeLastMessage").value("2022-10-01T00:00:00"));
     }
 
-    //вариант, есть 3 чата, все из них групповые
+    //РІР°СЂРёР°РЅС‚, РµСЃС‚СЊ 3 С‡Р°С‚Р°, РІСЃРµ РёР· РЅРёС… РіСЂСѓРїРїРѕРІС‹Рµ
     @Test
     @Sql("script/testChatResourceController/shouldGetZeroSingleChatsBecauseAllChatsAreGroup/Before.sql")
     @Sql(scripts = "script/testChatResourceController/shouldGetZeroSingleChatsBecauseAllChatsAreGroup/After.sql",
@@ -61,7 +61,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.*").isEmpty());
     }
 
-    //вариант, когда авторизован админ
+    //РІР°СЂРёР°РЅС‚, РєРѕРіРґР° Р°РІС‚РѕСЂРёР·РѕРІР°РЅ Р°РґРјРёРЅ
     @Test
     @Sql("script/testChatResourceController/shouldGet403StatusWhenUserIsAdmin/Before.sql")
     @Sql(scripts = "script/testChatResourceController/shouldGet403StatusWhenUserIsAdmin/After.sql",
@@ -77,7 +77,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(status().isForbidden());
     }
 
-    //вариант, есть 3 чата, 2 из них одиночные, в обоих участвует и авторизован user100@mail.ru с ролью User, остальные Admin
+    //РІР°СЂРёР°РЅС‚, РµСЃС‚СЊ 3 С‡Р°С‚Р°, 2 РёР· РЅРёС… РѕРґРёРЅРѕС‡РЅС‹Рµ, РІ РѕР±РѕРёС… СѓС‡Р°СЃС‚РІСѓРµС‚ Рё Р°РІС‚РѕСЂРёР·РѕРІР°РЅ user100@mail.ru СЃ СЂРѕР»СЊСЋ User, РѕСЃС‚Р°Р»СЊРЅС‹Рµ Admin
     @Test
     @Sql("script/testChatResourceController/shouldGetAllSingleChatsWithAdmins/Before.sql")
     @Sql(scripts = "script/testChatResourceController/shouldGetAllSingleChatsWithAdmins/After.sql",
@@ -104,7 +104,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.[1].persistDateTimeLastMessage").value("2022-10-01T00:00:00"));
     }
 
-    //вариант, есть 3 чата, 2 из них групповые и в них участвует авторизованный пользователь, items = 10, currentPage = 1
+    //РІР°СЂРёР°РЅС‚, РµСЃС‚СЊ 3 С‡Р°С‚Р°, 2 РёР· РЅРёС… РіСЂСѓРїРїРѕРІС‹Рµ Рё РІ РЅРёС… СѓС‡Р°СЃС‚РІСѓРµС‚ Р°РІС‚РѕСЂРёР·РѕРІР°РЅРЅС‹Р№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ, items = 10, currentPage = 1
     @Test
     @Sql("script/testChatResourceController/shouldGetAllGroupChats/Before.sql")
     @Sql(scripts = "script/testChatResourceController/shouldGetAllGroupChats/After.sql",
@@ -131,7 +131,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items[1].persistDateTimeLastMessage").value("2022-10-01T00:00:00"));
     }
 
-    //вариант, есть 3 чата, 2 из них групповые и в них участвует авторизованный пользователь, items = 1, currentPage = 1
+    //РІР°СЂРёР°РЅС‚, РµСЃС‚СЊ 3 С‡Р°С‚Р°, 2 РёР· РЅРёС… РіСЂСѓРїРїРѕРІС‹Рµ Рё РІ РЅРёС… СѓС‡Р°СЃС‚РІСѓРµС‚ Р°РІС‚РѕСЂРёР·РѕРІР°РЅРЅС‹Р№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ, items = 1, currentPage = 1
     @Test
     @Sql("script/testChatResourceController/shouldGetGroupChatWithVariables/Before.sql")
     @Sql(scripts = "script/testChatResourceController/shouldGetGroupChatWithVariables/After.sql",
@@ -153,7 +153,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items[0].persistDateTimeLastMessage").value("2022-10-03T00:00:00"));
     }
 
-    //вариант, есть 3 чата, 2 из них групповые и в них НЕ участвует авторизованный пользователь, items = 10, currentPage = 1
+    //РІР°СЂРёР°РЅС‚, РµСЃС‚СЊ 3 С‡Р°С‚Р°, 2 РёР· РЅРёС… РіСЂСѓРїРїРѕРІС‹Рµ Рё РІ РЅРёС… РќР• СѓС‡Р°СЃС‚РІСѓРµС‚ Р°РІС‚РѕСЂРёР·РѕРІР°РЅРЅС‹Р№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ, items = 10, currentPage = 1
     @Test
     @Sql("script/testChatResourceController/shouldZeroGroupChatWhenThatChatsAreWithoutThisUser/Before.sql")
     @Sql(scripts = "script/testChatResourceController/shouldZeroGroupChatWhenThatChatsAreWithoutThisUser/After.sql",
@@ -170,7 +170,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items").isEmpty());
     }
 
-    //вариант: получаем групповые чаты, есть 4 чата из них в 3 есть авторизированный пользователей и из этих 3, два group чата и 1 single чат, items = 10, currentPage = 1
+    //РІР°СЂРёР°РЅС‚: РїРѕР»СѓС‡Р°РµРј РіСЂСѓРїРїРѕРІС‹Рµ С‡Р°С‚С‹, РµСЃС‚СЊ 4 С‡Р°С‚Р° РёР· РЅРёС… РІ 3 РµСЃС‚СЊ Р°РІС‚РѕСЂРёР·РёСЂРѕРІР°РЅРЅС‹Р№ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ Рё РёР· СЌС‚РёС… 3, РґРІР° group С‡Р°С‚Р° Рё 1 single С‡Р°С‚, items = 10, currentPage = 1
     @Test
     @Sql("script/testChatResourceController/shouldGetGroupChatsWhenAuthorizedUserInTwoGroupChatsAndOneSingleChat/Before.sql")
     @Sql(scripts = "script/testChatResourceController/shouldGetGroupChatsWhenAuthorizedUserInTwoGroupChatsAndOneSingleChat/After.sql",
@@ -197,7 +197,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items[1].persistDateTimeLastMessage").value("2022-10-01T00:00:00"));
     }
 
-    //вариант: получаем single чаты, есть 4 чата из них в 3 есть авторизированный пользователей и из этих 3, два сингл чата и 1 групп чат, items = 10, currentPage = 1
+    //РІР°СЂРёР°РЅС‚: РїРѕР»СѓС‡Р°РµРј single С‡Р°С‚С‹, РµСЃС‚СЊ 4 С‡Р°С‚Р° РёР· РЅРёС… РІ 3 РµСЃС‚СЊ Р°РІС‚РѕСЂРёР·РёСЂРѕРІР°РЅРЅС‹Р№ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ Рё РёР· СЌС‚РёС… 3, РґРІР° СЃРёРЅРіР» С‡Р°С‚Р° Рё 1 РіСЂСѓРїРї С‡Р°С‚, items = 10, currentPage = 1
     @Test
     @Sql("script/testChatResourceController/shouldGetSingleChatsWhenAuthorizedUserInTwoSingleChatsAndOneGroupChat/Before.sql")
     @Sql(scripts = "script/testChatResourceController/shouldGetSingleChatsWhenAuthorizedUserInTwoSingleChatsAndOneGroupChat/After.sql",
@@ -226,7 +226,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
 
 
-    // Пользователь добавлен в групповой чат (Чат - существует, Добавляет - автор чата, Пользователь - не состоит в чате, Параметр userId - передается)
+    // РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РґРѕР±Р°РІР»РµРЅ РІ РіСЂСѓРїРїРѕРІРѕР№ С‡Р°С‚ (Р§Р°С‚ - СЃСѓС‰РµСЃС‚РІСѓРµС‚, Р”РѕР±Р°РІР»СЏРµС‚ - Р°РІС‚РѕСЂ С‡Р°С‚Р°, РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ - РЅРµ СЃРѕСЃС‚РѕРёС‚ РІ С‡Р°С‚Рµ, РџР°СЂР°РјРµС‚СЂ userId - РїРµСЂРµРґР°РµС‚СЃСЏ)
     @Test
     @Sql(scripts = "/script/TestChatResourceController/addUserInGroupChat_shouldAddUserInChat_whenExists/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -244,7 +244,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$", Is.is("userAdded")));
     }
 
-    // Пользователь не добавлен в групповой чат (Чат - существует, Добавляет - автор чата, Пользователь - не состоит в чате, Параметр userId - не передается)
+    // РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ РґРѕР±Р°РІР»РµРЅ РІ РіСЂСѓРїРїРѕРІРѕР№ С‡Р°С‚ (Р§Р°С‚ - СЃСѓС‰РµСЃС‚РІСѓРµС‚, Р”РѕР±Р°РІР»СЏРµС‚ - Р°РІС‚РѕСЂ С‡Р°С‚Р°, РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ - РЅРµ СЃРѕСЃС‚РѕРёС‚ РІ С‡Р°С‚Рµ, РџР°СЂР°РјРµС‚СЂ userId - РЅРµ РїРµСЂРµРґР°РµС‚СЃСЏ)
     @Test
     @Sql(scripts = "/script/TestChatResourceController/addUserInGroupChat_shouldBadRequest_whenParameterNotPass/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -260,7 +260,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(status().isBadRequest());
     }
 
-    // Пользователь не добавлен в групповой чат (Чат - существует, Добавляет - автор чата, Пользователь - состоит в чате, Параметр userId - передается)
+    // РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ РґРѕР±Р°РІР»РµРЅ РІ РіСЂСѓРїРїРѕРІРѕР№ С‡Р°С‚ (Р§Р°С‚ - СЃСѓС‰РµСЃС‚РІСѓРµС‚, Р”РѕР±Р°РІР»СЏРµС‚ - Р°РІС‚РѕСЂ С‡Р°С‚Р°, РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ - СЃРѕСЃС‚РѕРёС‚ РІ С‡Р°С‚Рµ, РџР°СЂР°РјРµС‚СЂ userId - РїРµСЂРµРґР°РµС‚СЃСЏ)
     @Test
     @Sql(scripts = "/script/TestChatResourceController/addUserInGroupChat_shouldBadRequest_whenUserPresent/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -278,7 +278,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$", Is.is("userPresent")));
     }
 
-    // Пользователь не добавлен в групповой чат (Чат - существует, Добавляет - не автор чата, Пользователь - не состоит в чате, Параметр userId - передается)
+    // РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ РґРѕР±Р°РІР»РµРЅ РІ РіСЂСѓРїРїРѕРІРѕР№ С‡Р°С‚ (Р§Р°С‚ - СЃСѓС‰РµСЃС‚РІСѓРµС‚, Р”РѕР±Р°РІР»СЏРµС‚ - РЅРµ Р°РІС‚РѕСЂ С‡Р°С‚Р°, РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ - РЅРµ СЃРѕСЃС‚РѕРёС‚ РІ С‡Р°С‚Рµ, РџР°СЂР°РјРµС‚СЂ userId - РїРµСЂРµРґР°РµС‚СЃСЏ)
     @Test
     @Sql(scripts = "/script/TestChatResourceController/addUserInGroupChat_shouldBadRequest_whenChatAuthorNotAdd/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -296,7 +296,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$", Is.is("This user with id 102 can't invite other users")));
     }
 
-    // Пользователь не добавлен в групповой чат (Чат - существует, Добавляет - не автор чата, Пользователь - состоит в чате, Параметр userId - передается)
+    // РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ РґРѕР±Р°РІР»РµРЅ РІ РіСЂСѓРїРїРѕРІРѕР№ С‡Р°С‚ (Р§Р°С‚ - СЃСѓС‰РµСЃС‚РІСѓРµС‚, Р”РѕР±Р°РІР»СЏРµС‚ - РЅРµ Р°РІС‚РѕСЂ С‡Р°С‚Р°, РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ - СЃРѕСЃС‚РѕРёС‚ РІ С‡Р°С‚Рµ, РџР°СЂР°РјРµС‚СЂ userId - РїРµСЂРµРґР°РµС‚СЃСЏ)
     @Test
     @Sql(scripts = "/script/TestChatResourceController/addUserInGroupChat_shouldBadRequest_whenChatAuthorNotAddAndUserPresent/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -314,7 +314,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$", Is.is("This user with id 102 can't invite other users")));
     }
 
-    // Пользователь не добавлен в групповой чат (Чат - не существует, Добавляет - автор чата, Пользователь - не состоит в чате, Параметр userId - передается)
+    // РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ РґРѕР±Р°РІР»РµРЅ РІ РіСЂСѓРїРїРѕРІРѕР№ С‡Р°С‚ (Р§Р°С‚ - РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚, Р”РѕР±Р°РІР»СЏРµС‚ - Р°РІС‚РѕСЂ С‡Р°С‚Р°, РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ - РЅРµ СЃРѕСЃС‚РѕРёС‚ РІ С‡Р°С‚Рµ, РџР°СЂР°РјРµС‚СЂ userId - РїРµСЂРµРґР°РµС‚СЃСЏ)
     @Test
     @Sql(scripts = "/script/TestChatResourceController/addUserInGroupChat_shouldBadRequest_whenChatNotExists/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -332,7 +332,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$", Is.is("it's bad request")));
     }
 
-    // Пользователь не добавлен в групповой чат (Чат - существует, Добавляет - автор чата, Пользователь - не существует, Параметр userId - передается)
+    // РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ РґРѕР±Р°РІР»РµРЅ РІ РіСЂСѓРїРїРѕРІРѕР№ С‡Р°С‚ (Р§Р°С‚ - СЃСѓС‰РµСЃС‚РІСѓРµС‚, Р”РѕР±Р°РІР»СЏРµС‚ - Р°РІС‚РѕСЂ С‡Р°С‚Р°, РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ - РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚, РџР°СЂР°РјРµС‚СЂ userId - РїРµСЂРµРґР°РµС‚СЃСЏ)
     @Test
     @Sql(scripts = "/script/TestChatResourceController/addUserInGroupChat_shouldBadRequest_whenUserNotExists/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -350,7 +350,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$", Is.is("it's bad request")));
     }
 
-    // Пользователь добавлен в групповой чат (Чат - существует, Добавляет - пользователь с ролью Админ(состоит в чате и является Автором чата), Пользователь - не состоит в чате, Параметр userId - передается)
+    // РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РґРѕР±Р°РІР»РµРЅ РІ РіСЂСѓРїРїРѕРІРѕР№ С‡Р°С‚ (Р§Р°С‚ - СЃСѓС‰РµСЃС‚РІСѓРµС‚, Р”РѕР±Р°РІР»СЏРµС‚ - РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ СЃ СЂРѕР»СЊСЋ РђРґРјРёРЅ(СЃРѕСЃС‚РѕРёС‚ РІ С‡Р°С‚Рµ Рё СЏРІР»СЏРµС‚СЃСЏ РђРІС‚РѕСЂРѕРј С‡Р°С‚Р°), РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ - РЅРµ СЃРѕСЃС‚РѕРёС‚ РІ С‡Р°С‚Рµ, РџР°СЂР°РјРµС‚СЂ userId - РїРµСЂРµРґР°РµС‚СЃСЏ)
     @Test
     @Sql(scripts = "/script/TestChatResourceController/addUserInGroupChat_shouldForbidden_whenChatAuthorAdmin/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -367,7 +367,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(status().isForbidden());
     }
 
-    // Пользователь добавлен в групповой чат (Чат - существует, Добавляет - пользователь с ролью Админ(не является Автором чата), Пользователь - не состоит в чате, Параметр userId - передается)
+    // РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РґРѕР±Р°РІР»РµРЅ РІ РіСЂСѓРїРїРѕРІРѕР№ С‡Р°С‚ (Р§Р°С‚ - СЃСѓС‰РµСЃС‚РІСѓРµС‚, Р”РѕР±Р°РІР»СЏРµС‚ - РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ СЃ СЂРѕР»СЊСЋ РђРґРјРёРЅ(РЅРµ СЏРІР»СЏРµС‚СЃСЏ РђРІС‚РѕСЂРѕРј С‡Р°С‚Р°), РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ - РЅРµ СЃРѕСЃС‚РѕРёС‚ РІ С‡Р°С‚Рµ, РџР°СЂР°РјРµС‚СЂ userId - РїРµСЂРµРґР°РµС‚СЃСЏ)
     @Test
     @Sql(scripts = "/script/TestChatResourceController/addUserInGroupChat_shouldForbidden_whenAdmin/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
