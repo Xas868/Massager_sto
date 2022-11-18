@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class GroupChatRoomServiceImpl extends ReadWriteServiceImpl<GroupChat,Long> implements GroupChatRoomService {
@@ -26,26 +25,28 @@ public class GroupChatRoomServiceImpl extends ReadWriteServiceImpl<GroupChat,Lon
     @Override
     @Transactional
     public void deleteUserFromGroupChatById(Long chatId, Long userId) {
-        Long userAuthorId = groupChatRoomDao.UserAuthor(userId);
+        boolean isUserAuthor = groupChatRoomDao.UserAuthor(userId);
         User userAuthen = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (groupChatRoomDao.getById(chatId).get().getChat().isGlobal()) {
+        if (groupChatRoomDao.getGroupChatAndUsers(chatId).get().getChat().isGlobal()) {
             throw new DeleteGlobalChatException("Вы пытаетесь удалить глобальный чат");
         }
-        if (userAuthorId.equals(userId) && !userAuthen.getId().equals(userId)) {
-            throw new AuthUserNotAuthorCreateGroupChatException("Удалять пользователей может только автор чата");
-        }
-        Set<User> users = groupChatRoomDao.getGroupChatAndUsers(chatId).get().getUsers();
-        for (User user : users) {
-            if (user.getId().equals(userId) && !userAuthen.getId().equals(userAuthorId)) {
+        if (isUserAuthor) { // если автор чата
+            if (userAuthen.getId().equals(userId)) {
+                //авторизированный юзер передает себя то удаляет все полностью
+                GroupChat gc = getGroupChatAndUsers(chatId).get();
+                gc.setUsers(null);
+                update(gc);
+                groupChatRoomDao.deleteAllUsersFromChat(chatId);
+            } else { // иначе если автор и авториз  передает не себя то удаляет только его
                 groupChatRoomDao.deleteUserFromGroupChatById(chatId, userId);
             }
-        }
-        if (userAuthorId.equals(userId)) {
-            GroupChat gc = getGroupChatAndUsers(chatId).get();
-            gc.setUsers(null);
-            update(gc);
-            groupChatRoomDao.deleteAllUsersFromChat(chatId);
+        } else { // иначе не автор
+            if (userAuthen.getId().equals(userId)) { //пытается удалить себя то удаляет из чата только себя
+                groupChatRoomDao.deleteUserFromGroupChatById(chatId, userId);
+            } else {// пытается удалить другого то исключение
+                throw new AuthUserNotAuthorCreateGroupChatException("Удалять пользователей может только автор чата");
+            }
         }
     }
 

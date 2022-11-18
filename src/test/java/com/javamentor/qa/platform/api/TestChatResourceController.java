@@ -232,7 +232,6 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(content().string("GroupChat deleted"))
                 .andExpect(status().isOk());
-
     }
 
     //Пользователь пытается удалить глобальный чат
@@ -246,5 +245,18 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(content().string("Вы пытаетесь удалить глобальный чат"))
                 .andExpect(status().isBadRequest());
+    }
+
+    //Если чат удаляет не автор, то чат удаляется только у юзера
+    @Test
+    @Sql("/script/TestChatResourceController/shouldNotAuthorDeleteFromChatOnlyOneUser/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldNotAuthorDeleteFromChatOnlyOneUser/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void shouldNotAuthorDeleteFromChatOnlyOneUser() throws Exception {
+        mockMvc.perform(delete("/api/user/chat/{id}", 101)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user1")))
+                .andDo(print())
+                .andExpect(content().string("GroupChat deleted"))
+                .andExpect(status().isOk());
     }
 }

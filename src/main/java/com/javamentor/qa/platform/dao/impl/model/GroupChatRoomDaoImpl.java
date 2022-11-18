@@ -32,10 +32,9 @@ public class GroupChatRoomDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> impl
     }
 
     @Override
-    public Long UserAuthor(Long userId) {
-       return entityManager.createQuery("SELECT gc.userAuthor.id FROM GroupChat gc WHERE gc.userAuthor.id = :id")
-               .setParameter("id", userId)
-               .getResultStream().count();
+    public boolean UserAuthor(Long userId) {
+       return entityManager.createQuery("select case when (count(gc) > 0)  then true else false end from GroupChat gc where gc.userAuthor.id = :id", Boolean.class)
+               .setParameter("id", userId).getSingleResult();
     }
 
     @Override
