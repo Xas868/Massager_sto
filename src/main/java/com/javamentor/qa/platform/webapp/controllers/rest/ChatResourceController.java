@@ -5,8 +5,6 @@ import com.javamentor.qa.platform.dao.impl.pagination.chatdto.ChatPageDtoDaoByUs
 import com.javamentor.qa.platform.models.dto.ChatDto;
 import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
 import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
-import com.javamentor.qa.platform.models.dto.GroupChatDto;
-import com.javamentor.qa.platform.models.dto.MessageDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
@@ -21,7 +19,6 @@ import com.javamentor.qa.platform.service.abstracts.model.ChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import com.javamentor.qa.platform.service.impl.model.GroupChatRoomServiceImpl;
 import com.javamentor.qa.platform.webapp.converters.GroupChatConverter;
 import com.javamentor.qa.platform.webapp.converters.SingleChatConverter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -184,18 +181,22 @@ public class ChatResourceController {
             Long userId) {
         Optional<GroupChat> groupChat = groupChatRoomService.getGroupChatAndUsers(id);
         Optional<User> user = userService.getById(userId);
+        User userAuth = (User) authentication.getPrincipal();
 
         if (user.isPresent() && groupChat.isPresent()) {
+            if ( !userAuth.getId().equals(groupChat.get().getUserAuthor().getId()) ) {
+                return new ResponseEntity<>("This user with id " + userAuth.getId() + " can't invite other users", HttpStatus.BAD_REQUEST);
+            }
+
             if (groupChat.get().getUsers().contains(user.get())) {
                 return new ResponseEntity<>("userPresent", HttpStatus.BAD_REQUEST);
             }
+
             Set<User> userSet = groupChat.get().getUsers();
             userSet.add(user.get());
             groupChatRoomService.update(groupChat.get());
-
             return new ResponseEntity<>("userAdded", HttpStatus.OK);
         }
-
 
         return new ResponseEntity<>("it's bad request", HttpStatus.BAD_REQUEST);
     }
