@@ -25,29 +25,26 @@ public class GroupChatRoomServiceImpl extends ReadWriteServiceImpl<GroupChat,Lon
     @Override
     @Transactional
     public void deleteUserFromGroupChatById(Long chatId, Long userId) {
-        boolean isUserAuthor = groupChatRoomDao.UserAuthor(userId);
+        boolean isUserAuthor = groupChatRoomDao.isUserAuthor(chatId, userId);
         User userAuthen = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (groupChatRoomDao.getGroupChatAndUsers(chatId).get().getChat().isGlobal()) {
+        GroupChat gc = getGroupChatAndUsers(chatId).get();
+        if (gc.getChat().isGlobal()) {
             throw new DeleteGlobalChatException("Вы пытаетесь удалить глобальный чат");
         }
         if (isUserAuthor) { // если автор чата
-            if (userAuthen.getId().equals(userId)) {
-                //авторизированный юзер передает себя то удаляет все полностью
-                GroupChat gc = getGroupChatAndUsers(chatId).get();
+            if (userAuthen.getId().equals(userId)) { //авторизированный юзер передает себя то удаляет все полностью
                 gc.setUsers(null);
                 update(gc);
-                groupChatRoomDao.deleteAllUsersFromChat(chatId);
-            } else { // иначе если автор и авториз  передает не себя то удаляет только его
-                groupChatRoomDao.deleteUserFromGroupChatById(chatId, userId);
+                groupChatRoomDao.deleteChat(chatId);
             }
-        } else { // иначе не автор
-            if (userAuthen.getId().equals(userId)) { //пытается удалить себя то удаляет из чата только себя
-                groupChatRoomDao.deleteUserFromGroupChatById(chatId, userId);
-            } else {// пытается удалить другого то исключение
-                throw new AuthUserNotAuthorCreateGroupChatException("Удалять пользователей может только автор чата");
-            }
-        }
+        }// иначе не автор
+        if (!userAuthen.getId().equals(userId)) { // пытается удалить другого то исключение
+            throw new AuthUserNotAuthorCreateGroupChatException("Удалять пользователей может только автор чата");
+        } //пытается удалить себя то удаляет из чата только себя
+        groupChatRoomDao.deleteUserFromGroupChatById(chatId, userId);
+
+
+
     }
 
     @Override

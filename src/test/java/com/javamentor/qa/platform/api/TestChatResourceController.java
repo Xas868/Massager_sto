@@ -229,9 +229,9 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
     //Если чат удаляет автор, то чат удаляется с пользователями
     @Test
-    @Sql("/script/TestChatResourceController/shouldAuthorDeleteFromChatAllUsers/Before.sql")
-    @Sql(scripts = "/script/TestChatResourceController/shouldAuthorDeleteFromChatAllUsers/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void shouldAuthorDeleteFromChatAllUsers() throws Exception {
+    @Sql("/script/TestChatResourceController/shouldAuthorDeleteChat/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldAuthorDeleteChat/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void shouldAuthorDeleteChat() throws Exception {
         mockMvc.perform(delete("/api/user/chat/{id}", 101)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user1")))

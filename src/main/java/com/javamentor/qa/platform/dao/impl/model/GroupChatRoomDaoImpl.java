@@ -25,16 +25,18 @@ public class GroupChatRoomDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> impl
     }
 
     @Override
-    public void deleteAllUsersFromChat(Long chatId) {
+    public void deleteChat(Long chatId) {
         entityManager.createQuery("DELETE FROM GroupChat WHERE chat.id = :id")
                 .setParameter("id", chatId)
                 .executeUpdate();
     }
 
     @Override
-    public boolean UserAuthor(Long userId) {
-       return entityManager.createQuery("select case when (count(gc) > 0)  then true else false end from GroupChat gc where gc.userAuthor.id = :id", Boolean.class)
-               .setParameter("id", userId).getSingleResult();
+    public boolean isUserAuthor(Long id, Long userId) {
+       return entityManager.createQuery("select case when (count(gc) > 0)  then true else false end from GroupChat gc where gc.id = :idChat and gc.userAuthor.id = :id", Boolean.class)
+               .setParameter("id", userId)
+               .setParameter("idChat", id)
+               .getSingleResult();
     }
 
     @Override
