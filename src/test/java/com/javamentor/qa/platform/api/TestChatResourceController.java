@@ -227,20 +227,6 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.[1].persistDateTimeLastMessage").value("2022-10-04T00:00:00"));
     }
 
-    //Если чат удаляет автор, то чат удаляется с пользователями
-    @Test
-    @Sql("/script/TestChatResourceController/shouldAuthorDeleteChat/Before.sql")
-    @Sql(scripts = "/script/TestChatResourceController/shouldAuthorDeleteChat/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void shouldAuthorDeleteChat() throws Exception {
-        mockMvc.perform(delete("/api/user/chat/{id}", 101)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user1")))
-                .andDo(print())
-                .andExpect(content().string("GroupChat deleted"))
-                .andExpect(status().isOk());
-    }
-
-
     // Пользователь добавлен в групповой чат (Чат - существует, Добавляет - автор чата, Пользователь - не состоит в чате, Параметр userId - передается)
     @Test
     @Sql(scripts = "/script/TestChatResourceController/addUserInGroupChat_shouldAddUserInChat_whenExists/Before.sql",
@@ -409,6 +395,19 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(content().string("Вы пытаетесь удалить глобальный чат"))
                 .andExpect(status().isBadRequest());
+    }
+
+    //Если чат удаляет автор, то чат удаляется с пользователями
+    @Test
+    @Sql("/script/TestChatResourceController/shouldAuthorDeleteChat/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldAuthorDeleteChat/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void shouldAuthorDeleteChat() throws Exception {
+        mockMvc.perform(delete("/api/user/chat/{id}", 101)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user1")))
+                .andDo(print())
+                .andExpect(content().string("GroupChat deleted"))
+                .andExpect(status().isOk());
     }
 
     //Если чат удаляет не автор, то чат удаляется только у юзера

@@ -35,7 +35,7 @@ public class GroupChatRoomServiceImpl extends ReadWriteServiceImpl<GroupChat,Lon
             if (userAuthen.getId().equals(userId)) { //авторизированный юзер передает себя то удаляет все полностью
                 gc.setUsers(null);
                 update(gc);
-                groupChatRoomDao.deleteChat(chatId);
+                groupChatRoomDao.deleteById(chatId);
             }
         }// иначе не автор
         if (!userAuthen.getId().equals(userId)) { // пытается удалить другого то исключение
