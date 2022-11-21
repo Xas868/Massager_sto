@@ -72,7 +72,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                         .get("/api/user/chat/single")
                         .contentType("application/json")
                         .header("Authorization",
-                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                                "Bearer " + getToken("user122@mail.ru", "102")))
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }
