@@ -290,11 +290,11 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         mockMvc.perform(post("/api/user/chat/group/{id}/join", 101)
                         .param("userId", "103")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user102"))
+                        .header("Authorization", "Bearer " + getToken("user112@mail.ru", "user102"))
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$", Is.is("This user with id 102 can't invite other users")));
+                .andExpect(jsonPath("$", Is.is("This user with id 112 can't invite other users")));
     }
 
     // Пользователь не добавлен в групповой чат (Чат - существует, Добавляет - не автор чата, Пользователь - состоит в чате, Параметр userId - передается)
@@ -308,11 +308,11 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         mockMvc.perform(post("/api/user/chat/group/{id}/join", 101)
                         .param("userId", "103")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user102"))
+                        .header("Authorization", "Bearer " + getToken("user112@mail.ru", "user102"))
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$", Is.is("This user with id 102 can't invite other users")));
+                .andExpect(jsonPath("$", Is.is("This user with id 112 can't invite other users")));
     }
 
     // Пользователь не добавлен в групповой чат (Чат - не существует, Добавляет - автор чата, Пользователь - не состоит в чате, Параметр userId - передается)

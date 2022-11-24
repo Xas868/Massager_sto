@@ -12,8 +12,8 @@ INSERT INTO user_entity (id, about, city, email, full_name, image_link, is_delet
     (101, 'I am test user', 'Moskow', 'user101@mail.ru', 'User 101', '/images/noUserAvatar.png', false, true, DATE(NOW()),
     null, null, null, 'user_101', '$2a$10$hl61sc4Ic/znptF.bwbkv.sNvGX9rr7J32DYbAUkcvn.qDOaUE1Aa', DATE(NOW()), 101),
 
-    (102, 'I am test user', 'Moskow', 'user102@mail.ru', 'User 102', '/images/noUserAvatar.png', false, true, DATE(NOW()),
-    null, null, null, 'user_102', '$2a$10$i3ToS4GhmbS1P/SZ8lxSn.K4uSbPRFCG4pgPVi2hxt.hiIGu5MJLu', DATE(NOW()), 101),
+    (112, 'I am test user', 'Moskow', 'user112@mail.ru', 'User 112', '/images/noUserAvatar.png', false, true, DATE(NOW()),
+    null, null, null, 'user_112', '$2a$10$i3ToS4GhmbS1P/SZ8lxSn.K4uSbPRFCG4pgPVi2hxt.hiIGu5MJLu', DATE(NOW()), 101),
 
     (103, 'I am test user', 'Moskow', 'user103@mail.ru', 'User 103', '/images/noUserAvatar.png', false, true, DATE(NOW()),
      null, null, null, 'user_103', '$2a$10$gTQLHxdPUSuWyd7XcOtpN.XeQ8sCSFluKyRLeFxCSMvRZixJRtBqS', DATE(NOW()), 101);
@@ -35,4 +35,4 @@ INSERT INTO group_chat (chat_id, title, author_id, image) VALUES
  */
 INSERT INTO groupchat_has_users (chat_id, user_id) VALUES
     (101, 101),
-    (101, 102);
+    (101, 112);
