@@ -101,7 +101,7 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
                         .get("/api/user/message/global")
                         .contentType("application/json")
                         .header("Authorization",
-                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                                "Bearer " + getToken("user120@mail.ru", "user100")))
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }

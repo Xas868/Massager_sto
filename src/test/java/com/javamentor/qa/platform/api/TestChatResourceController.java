@@ -8,10 +8,13 @@ import org.springframework.test.context.jdbc.Sql;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -72,7 +75,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                         .get("/api/user/chat/single")
                         .contentType("application/json")
                         .header("Authorization",
-                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                                "Bearer " + getToken("user122@mail.ru", "102")))
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }
@@ -223,8 +226,6 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.[1].lastMessage").value("message_from_chat_103_and_user_102"))
                 .andExpect(jsonPath("$.[1].persistDateTimeLastMessage").value("2022-10-04T00:00:00"));
     }
-
-
 
     // Пользователь добавлен в групповой чат (Чат - существует, Добавляет - автор чата, Пользователь - не состоит в чате, Параметр userId - передается)
     @Test
@@ -382,5 +383,43 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 )
                 .andDo(print())
                 .andExpect(status().isForbidden());
+    }
+    //Пользователь пытается удалить глобальный чат
+    @Test
+    @Sql("/script/TestChatResourceController/shouldNODeleteGlobalChat/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldNODeleteGlobalChat/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void shouldNODeleteGlobalChat() throws Exception {
+        mockMvc.perform(delete("/api/user/chat/{id}", 101)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user1")))
+                .andDo(print())
+                .andExpect(content().string("Вы пытаетесь удалить глобальный чат"))
+                .andExpect(status().isBadRequest());
+    }
+
+    //Если чат удаляет автор, то чат удаляется с пользователями
+    @Test
+    @Sql("/script/TestChatResourceController/shouldAuthorDeleteChat/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldAuthorDeleteChat/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void shouldAuthorDeleteChat() throws Exception {
+        mockMvc.perform(delete("/api/user/chat/{id}", 101)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user1")))
+                .andDo(print())
+                .andExpect(content().string("GroupChat deleted"))
+                .andExpect(status().isOk());
+    }
+
+    //Если чат удаляет не автор, то чат удаляется только у юзера
+    @Test
+    @Sql("/script/TestChatResourceController/shouldNotAuthorDeleteFromChatOnlyOneUser/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldNotAuthorDeleteFromChatOnlyOneUser/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void shouldNotAuthorDeleteFromChatOnlyOneUser() throws Exception {
+        mockMvc.perform(delete("/api/user/chat/{id}", 101)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user1")))
+                .andDo(print())
+                .andExpect(content().string("GroupChat deleted"))
+                .andExpect(status().isOk());
     }
 }
