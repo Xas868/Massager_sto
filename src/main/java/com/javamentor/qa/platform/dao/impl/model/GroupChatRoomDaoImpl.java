@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.dao.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.GroupChatRoomDao;
-
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import org.springframework.stereotype.Service;
@@ -23,6 +22,14 @@ public class GroupChatRoomDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> impl
                 .setParameter("id", id)
                 .setParameter("userId", userId)
                 .executeUpdate();
+    }
+
+    @Override
+    public boolean isUserAuthor(Long id, Long userId) {
+       return entityManager.createQuery("select case when (count(gc) > 0)  then true else false end from GroupChat gc where gc.id = :idChat and gc.userAuthor.id = :id", Boolean.class)
+               .setParameter("id", userId)
+               .setParameter("idChat", id)
+               .getSingleResult();
     }
 
     @Override

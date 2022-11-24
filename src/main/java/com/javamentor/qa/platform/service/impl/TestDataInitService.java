@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,6 +56,10 @@ public class TestDataInitService {
 
     private final long NUM_OF_FAVORITE_MESSAGES = 3L;
 
+    private final long NUM_OF_MODERATORS_GROUPCHAT = 5L;
+
+    private final long NUM_OF_USERS_GROUPCHAT = 30L;
+
     public void init() {
         createRoles();
         createUsers();
@@ -75,6 +78,7 @@ public class TestDataInitService {
         createQuestionViewed();
         createMessageStar();
         createUserChatPinChats();
+        createGroupChatModeratorsAndUsers();
     }
 
     public void createMessage() {
@@ -477,5 +481,40 @@ public class TestDataInitService {
             userChatPins.add(userChatPinUserTwo);
         }
         userChatPinService.persistAll(userChatPins);
+    }
+
+    private void createGroupChatModeratorsAndUsers() {
+        List<GroupChat> groupChats = new ArrayList<>();
+
+        for (int i = 1; i <= NUM_OF_GROUPCHAT; i++) {
+            GroupChat groupChat = GroupChat.builder()
+                    .chat(Chat.builder().chatType(ChatType.GROUP).build())
+                    .title("GroupChat " + i + " with moderators")
+                    .image("image " + i + " with moderators")
+                    .userAuthor(getRandomUser())
+                    .build();
+            groupChats.add(groupChat);
+
+            Set<User> chatModerators = new HashSet<>();
+            for (int j = 1; j <= NUM_OF_MODERATORS_GROUPCHAT; j++) {
+                User user = getRandomUser();
+                if ( !groupChat.getUserAuthor().equals(user) ) {
+                    chatModerators.add(user);
+                }
+            }
+            groupChat.setUsers(chatModerators);
+            groupChat.setModerators(chatModerators);
+
+            Set<User> chatUsers = new HashSet<>();
+            for (int j = 1; j <= NUM_OF_USERS_GROUPCHAT; j++) {
+                User user = getRandomUser();
+                if ( !groupChat.getUsers().contains(user) ) {
+                    chatUsers.add(getRandomUser());
+                }
+            }
+            groupChat.setUsers(chatUsers);
+        }
+
+        groupChatRoomService.persistAll(groupChats);
     }
 }
