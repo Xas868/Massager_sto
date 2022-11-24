@@ -3,12 +3,14 @@ package com.javamentor.qa.platform.dao.impl.pagination.messagedto;
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
 import com.javamentor.qa.platform.models.dto.MessageDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Map;
 
+@Repository("MessagePageDtoFindInChatByWord")
 public class MessagePageDtoFindInChatByWord implements PageDtoDao<MessageDto> {
 
     @PersistenceContext
@@ -37,12 +39,12 @@ public class MessagePageDtoFindInChatByWord implements PageDtoDao<MessageDto> {
 
     @Override
     public Long getTotalResultCount(Map<String, Object> properties) {
-        long chatId = (long) properties.get("chatId");
-        String searchWord = (String) properties.get("searchWord");
+        long chatId = (long) properties.get("id");
+        String word = (String) properties.get("word");
         return (long) entityManager.createQuery("select count (message.id) " +
                         "from Message as message inner join Chat as chat on message.chat.id = chat.id " +
-                        "where chat.id = :chatId and message.message like :searchWord")
+                        "where chat.id = :chatId and message.message like :word")
                 .setParameter("chatId", chatId)
-                .setParameter("searchWord", "%" + searchWord + "%").getSingleResult();
+                .setParameter("word", "%" + word + "%").getSingleResult();
     }
 }

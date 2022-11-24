@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoF
 import com.javamentor.qa.platform.models.dto.ChatDto;
 import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
 import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
+import com.javamentor.qa.platform.models.dto.MessageDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
@@ -216,7 +217,7 @@ public class ChatResourceController {
     public ResponseEntity<PageDTO<MessageDto>> getPageMessageFromChatFindByWord(
             @PathVariable("id")
             @Parameter(name = "Id чата", required = true,
-            description = "Id чата является обязательным параметром")
+                    description = "Id чата является обязательным параметром")
             long id,
             @RequestParam(name = "items", defaultValue = "20")
             @Parameter(name = "Количество сообщений на странице.",
@@ -228,11 +229,11 @@ public class ChatResourceController {
             long currentPage,
             @RequestParam(name = "word")
             @Parameter(name = "Искомое слово.", required = true,
-            description = "Поиск сообщений по word. Ищет все совпадения в сообщениях с word.")
+                    description = "Поиск сообщений по word. Ищет все совпадения в сообщениях с word.")
             String word) {
-            PaginationData data = new PaginationData((int) currentPage, (int) items, MessagePageDtoFindInChatByWord.class.getSimpleName());
-            data.getProps().put("id", id);
-            data.getProps().put("word", word);
-            return new ResponseEntity<>(messageDtoService.getPageDto(data), HttpStatus.OK);
+        PaginationData data = new PaginationData((int) currentPage, (int) items, MessagePageDtoFindInChatByWord.class.getSimpleName());
+        data.getProps().put("id", id);
+        data.getProps().put("word", word);
+        return new ResponseEntity<>(messageDtoService.getPageDto(data), HttpStatus.OK);
     }
 }
