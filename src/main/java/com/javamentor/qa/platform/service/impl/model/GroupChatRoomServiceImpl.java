@@ -1,9 +1,10 @@
 package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.GroupChatRoomDao;
-import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.exception.GroupChatException;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.AuthUserNotAuthorCreateGroupChatException;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.DeleteGlobalChatException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -51,5 +52,22 @@ public class GroupChatRoomServiceImpl extends ReadWriteServiceImpl<GroupChat,Lon
     public Optional<GroupChat> getGroupChatAndUsers(long id) {
         return groupChatRoomDao.getGroupChatAndUsers(id);
     }
+
+    @Transactional
+    public void updateImageGroupChat(long id, String image) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<GroupChat> groupChatOptional = groupChatRoomDao.getById(id);
+        if (!groupChatOptional.isPresent()) {
+            throw new GroupChatException("The group chat doesn`t exist. Sorry boy");
+        }
+        GroupChat groupChat = groupChatOptional.get();
+        if (groupChat.getUserAuthor().getId() != user.getId()){
+            throw new GroupChatException("You aren`t author of group chat. Author can update image only. Sorry boy");
+        }
+        groupChat.setImage(image);
+        groupChatRoomDao.update(groupChat);
+    }
+
+
 }
 

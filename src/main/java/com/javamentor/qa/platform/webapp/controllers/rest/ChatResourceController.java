@@ -31,14 +31,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -235,5 +228,17 @@ public class ChatResourceController {
         data.getProps().put("id", id);
         data.getProps().put("word", word);
         return new ResponseEntity<>(messageDtoService.getPageDto(data), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Обновление картинки в group чат.", description = "Обновление картинки в group чат по его id")
+    @PutMapping("/{id}/group/image")
+    public ResponseEntity<String> addImageInGroupChat(
+            Authentication authentication,
+            @PathVariable(name = "id")
+            @Parameter(name = "id чата", required = true, description = "Id является обязательным параметром.")
+            Long id,
+            @Valid @RequestBody String image){
+        groupChatRoomService.updateImageGroupChat(id, image);
+        return new ResponseEntity<>("image update", HttpStatus.OK);
     }
 }

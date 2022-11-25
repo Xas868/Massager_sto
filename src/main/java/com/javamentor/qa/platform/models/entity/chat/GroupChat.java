@@ -35,7 +35,7 @@ public class GroupChat {
     @JoinColumn(name = "author_id")
     private User userAuthor;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, optional = false)
     @MapsId
     private Chat chat = new Chat(ChatType.GROUP);
 
