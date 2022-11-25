@@ -195,6 +195,78 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items.size()").value(0));
     }
+@Test
+@Sql("script/testMessageResourceController/shouldAddMessageToStar/Before.sql")
+@Sql(scripts = "script/testMessageResourceController/shouldAddMessageToStar/After.sql",
+        executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+ public void shouldAddMessageToStar() throws Exception {
+    this.mockMvc.perform(MockMvcRequestBuilders
+                    .post("/api/user/message/star")
+                    .content("103")
+                    .contentType("application/json")
+                    .header("Authorization",
+                            "Bearer " + getToken("user100@mail.ru", "user100")))
+            .andDo(print())
+            .andExpect(status().isOk());
+ }
 
+    @Test
+    @Sql("script/testMessageResourceController/shouldNotAddMessageToStar_MessageDoesntExist/Before.sql")
+    @Sql(scripts = "script/testMessageResourceController/shouldNotAddMessageToStar_MessageDoesntExist/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void shouldNotAddMessageToStar_MessageDoesntExist() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .post("/api/user/message/star")
+                        .content("107")
+                        .contentType("application/json")
+                        .header("Authorization",
+                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
 
+    @Test
+    @Sql("script/testMessageResourceController/shouldNotAddMessageToStar_MessageInStarAlready/Before.sql")
+    @Sql(scripts = "script/testMessageResourceController/shouldNotAddMessageToStar_MessageInStarAlready/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void shouldNotAddMessageToStar_MessageInStarAlready() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .post("/api/user/message/star")
+                        .content("100")
+                        .contentType("application/json")
+                        .header("Authorization",
+                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Sql("script/testMessageResourceController/shouldDeleteMessageFromStar/Before.sql")
+    @Sql(scripts = "script/testMessageResourceController/shouldDeleteMessageFromStar/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void shouldDeleteMessageFromStar() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/api/user/message/star")
+                        .content("100")
+                        .contentType("application/json")
+                        .header("Authorization",
+                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Sql("script/testMessageResourceController/shouldNotDeleteMessageFromStar_NoTheMessageInStar/Before.sql")
+    @Sql(scripts = "script/testMessageResourceController/shouldNotDeleteMessageFromStar_NoTheMessageInStar/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void shouldNotDeleteMessageFromStar_NoTheMessageInStar() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/api/user/message/star")
+                        .content("103")
+                        .contentType("application/json")
+                        .header("Authorization",
+                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
 }
