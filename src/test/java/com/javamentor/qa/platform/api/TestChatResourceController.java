@@ -5,14 +5,10 @@ import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -421,5 +417,69 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(content().string("GroupChat deleted"))
                 .andExpect(status().isOk());
+    }
+
+    // Количество сообщений (items), Номер текущей страницы (currentPage), Слово или часть слова (word).
+    // 3 сообщения на одной странице и без необязательного параметра items
+    @Test
+    @Sql("script/testChatResourceController/shouldGetPageMessageByWord/Before.sql")
+    @Sql(scripts = "script/testChatResourceController/shouldGetPageMessageByWord/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void shouldGetPageMessageByWord() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/chat/{id}/message/find", 101)
+                        .param("currentPage", "1")
+                        .param("word", "mes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user1")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(3))
+                .andExpect(jsonPath("$.items[0].id").value(101))
+                .andExpect(jsonPath("$.items[1].id").value(102))
+                .andExpect(jsonPath("$.items[2].id").value(103));
+    }
+
+    // 2 сообщения на одной странице и 1 сообщение на другой странице, текущая страница вторая
+    @Test
+    @Sql("script/testChatResourceController/shouldGetTwoPageOneMessageByWord/Before.sql")
+    @Sql(scripts = "script/testChatResourceController/shouldGetTwoPageOneMessageByWord/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void shouldGetTwoPageOneMessageByWord() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/chat/{id}/message/find", 101)
+                        .param("items", "2")
+                        .param("currentPage", "2")
+                        .param("word", "message")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user1")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").value(2))
+                .andExpect(jsonPath("$.totalPageCount").value(2))
+                .andExpect(jsonPath("$.totalResultCount").value(3))
+                .andExpect(jsonPath("$.items[0].id").value(103));
+    }
+
+    // ошибка 400 не указан обязательный параметр
+    @Test
+    @Sql("script/testChatResourceController/shouldError400NotParamert/Before.sql")
+    @Sql(scripts = "script/testChatResourceController/shouldError400NotParamert/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void shouldError400NotParamert() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/chat/{id}/message/find", 101)
+                        .param("word", "message")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user1")))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/chat/{id}/message/find", 101)
+                        .param("currentPage", "1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user1")))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 }
