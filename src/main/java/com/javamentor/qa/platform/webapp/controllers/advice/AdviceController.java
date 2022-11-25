@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers.advice;
 
 import com.javamentor.qa.platform.exception.ConstrainException;
 import com.javamentor.qa.platform.exception.NoSuchDaoException;
+import com.javamentor.qa.platform.exception.GroupChatException;
 import com.javamentor.qa.platform.exception.PageException;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.AddBookmarkException;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.AuthUserNotAuthorCreateGroupChatException;
@@ -63,6 +64,10 @@ public class AdviceController {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
+    @ExceptionHandler(GroupChatException.class)
+    public ResponseEntity<String> handleGroupChatException(GroupChatException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
     @ExceptionHandler(AuthUserNotAuthorCreateGroupChatException.class)
     public ResponseEntity<String> handleAuthUserNotAuthorCreateGroupChatException(AuthUserNotAuthorCreateGroupChatException e) {
         return ResponseEntity.badRequest().body(e.getMessage());

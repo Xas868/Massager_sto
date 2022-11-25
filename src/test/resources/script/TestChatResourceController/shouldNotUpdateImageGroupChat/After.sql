@@ -1,7 +1,5 @@
 TRUNCATE role CASCADE;
 
-TRUNCATE message CASCADE;
-
-TRUNCATE chat CASCADE;
+TRUNCATE group_chat CASCADE;
 
 TRUNCATE user_entity CASCADE;

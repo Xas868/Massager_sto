@@ -5,3 +5,5 @@ TRUNCATE message CASCADE;
 TRUNCATE chat CASCADE;
 
 TRUNCATE user_entity CASCADE;
+
+TRUNCATE message_star CASCADE;

@@ -2,9 +2,11 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.impl.pagination.chatdto.ChatPageDtoDaoByUserIdAndNameImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.chatdto.ChatPageDtoDaoByUserIdImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoFindInChatByWord;
 import com.javamentor.qa.platform.models.dto.ChatDto;
 import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
 import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
+import com.javamentor.qa.platform.models.dto.MessageDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
@@ -29,14 +31,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -199,5 +194,51 @@ public class ChatResourceController {
         }
 
         return new ResponseEntity<>("it's bad request", HttpStatus.BAD_REQUEST);
+    }
+
+    @Operation(
+            summary = "Получение пагинированного списка поиска в сообщениях в чате по неточному совпадению",
+            description = "Получение пагинированного списка поиска в сообщениях в чате по неточному совпадению"
+    )
+    @ApiResponse(responseCode = "200", description = "Сообщения найдены", content = {
+            @Content(mediaType = "application/json")
+    })
+    @ApiResponse(responseCode = "400", description = "Сообщения не найдены", content = {
+            @Content(mediaType = "application/json")
+    })
+    @GetMapping("{id}/message/find")
+    public ResponseEntity<PageDTO<MessageDto>> getPageMessageFromChatFindByWord(
+            @PathVariable("id")
+            @Parameter(name = "Id чата", required = true,
+                    description = "Id чата является обязательным параметром")
+            long id,
+            @RequestParam(name = "items", defaultValue = "20")
+            @Parameter(name = "Количество сообщений на странице.",
+                    description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 20.")
+            long items,
+            @RequestParam(name = "currentPage")
+            @Parameter(name = "Номер текущей страницы.", required = true,
+                    description = "Отвечает за пагинацию.")
+            long currentPage,
+            @RequestParam(name = "word")
+            @Parameter(name = "Искомое слово.", required = true,
+                    description = "Поиск сообщений по word. Ищет все совпадения в сообщениях с word.")
+            String word) {
+        PaginationData data = new PaginationData((int) currentPage, (int) items, MessagePageDtoFindInChatByWord.class.getSimpleName());
+        data.getProps().put("id", id);
+        data.getProps().put("word", word);
+        return new ResponseEntity<>(messageDtoService.getPageDto(data), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Обновление картинки в group чат.", description = "Обновление картинки в group чат по его id")
+    @PutMapping("/{id}/group/image")
+    public ResponseEntity<String> addImageInGroupChat(
+            Authentication authentication,
+            @PathVariable(name = "id")
+            @Parameter(name = "id чата", required = true, description = "Id является обязательным параметром.")
+            Long id,
+            @Valid @RequestBody String image){
+        groupChatRoomService.updateImageGroupChat(id, image);
+        return new ResponseEntity<>("image update", HttpStatus.OK);
     }
 }
