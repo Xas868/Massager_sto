@@ -5,6 +5,7 @@ import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -1203,4 +1204,36 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(status().isOk());
 
     }
+    //Получение всех вопросов авторизированного пользователя
+    //идеальный вариант, есть глобальный чат, получаем все сообщения, включающие текст "essa", сверяем порядок создания
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/getAllUserProfileQuestionDtoById/Before.sql")
+    @Sql(scripts = "/script/TestUserResourceController/getAllUserProfileQuestionDtoById/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void getAllUserProfileQuestionDtoById() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/profile/questions")
+                        .contentType("application/json")
+                        .header("Authorization",
+                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                .andDo(print())
+                .andExpect(status().isOk());
+//                .andExpect(jsonPath("$.items[0].id").value(105))
+//                .andExpect(jsonPath("$.items[0].message").value("message_105"))
+//                .andExpect(jsonPath("$.items[0].nickName").value("user101@mail.ru"))
+//                .andExpect(jsonPath("$.items[0].userId").value(101))
+//                .andExpect(jsonPath("$.items[0].persistDateTime").value("2022-10-06T00:00:00"))
+//                .andExpect(jsonPath("$.items[1].id").value(103))
+//                .andExpect(jsonPath("$.items[1].message").value("message_103"))
+//                .andExpect(jsonPath("$.items[1].nickName").value("user101@mail.ru"))
+//                .andExpect(jsonPath("$.items[1].userId").value(101))
+//                .andExpect(jsonPath("$.items[1].persistDateTime").value("2022-10-04T00:00:00"))
+//                .andExpect(jsonPath("$.items[2].id").value(100))
+//                .andExpect(jsonPath("$.items[2].message").value("message_100"))
+//                .andExpect(jsonPath("$.items[2].nickName").value("user100@mail.ru"))
+//                .andExpect(jsonPath("$.items[2].userId").value(100))
+//                .andExpect(jsonPath("$.items[2].persistDateTime").value("2022-10-03T00:00:00"));
+    }
+
 }
