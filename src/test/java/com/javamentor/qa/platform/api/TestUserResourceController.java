@@ -1222,4 +1222,40 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
 
     }
 
+    //Получение всех удаленных вопросов в виде UserProfileQuestionDto
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/getAllUserProfileQuestionDtoByUserIdIsDelete/Before.sql")
+    @Sql(scripts = "/script/TestUserResourceController/getAllUserProfileQuestionDtoByUserIdIsDelete/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void getAllUserProfileQuestionDtoByUserIdIsDelete() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/profile/delete/questions")
+                        .contentType("application/json")
+                        .header("Authorization",
+                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+    }
+
+
+    //Получение всех закладок в профиле пользователя в виде BookMarksDto
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/getAllBookMarksInUserProfile/Before.sql")
+    @Sql(scripts = "/script/TestUserResourceController/getAllBookMarksInUserProfile/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void getAllBookMarksInUserProfile() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/profile/bookmarks")
+                        .contentType("application/json")
+                        .header("Authorization",
+                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+    }
+
+
 }
