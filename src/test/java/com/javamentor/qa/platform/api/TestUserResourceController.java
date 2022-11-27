@@ -1216,7 +1216,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                         .get("/api/user/profile/questions")
                         .contentType("application/json")
                         .header("Authorization",
-                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                                "Bearer " + getToken("user101@mail.ru", "user101")))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -1233,7 +1233,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                         .get("/api/user/profile/delete/questions")
                         .contentType("application/json")
                         .header("Authorization",
-                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                                "Bearer " + getToken("user101@mail.ru", "user101")))
                 .andDo(print())
                 .andExpect(status().isOk());
 
