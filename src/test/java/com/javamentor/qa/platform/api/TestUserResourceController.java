@@ -1189,8 +1189,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
 
-//Смена пароля
-
+    //Смена пароля
     @Test
     @Sql(scripts = "/script/TestUserResourceController/changePassword/Before.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestUserResourceController/changePassword/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
