@@ -1204,7 +1204,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
 
     }
     //Получение всех вопросов авторизированного пользователя
-    //идеальный вариант, есть глобальный чат, получаем все сообщения, включающие текст "essa", сверяем порядок создания
+
     @Test
     @Sql(scripts = "/script/TestUserResourceController/getAllUserProfileQuestionDtoById/Before.sql")
     @Sql(scripts = "/script/TestUserResourceController/getAllUserProfileQuestionDtoById/After.sql",
