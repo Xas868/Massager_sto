@@ -1,5 +1,0 @@
-TRUNCATE role CASCADE;
-
-TRUNCATE tag CASCADE;
-
-TRUNCATE user_entity CASCADE ;
