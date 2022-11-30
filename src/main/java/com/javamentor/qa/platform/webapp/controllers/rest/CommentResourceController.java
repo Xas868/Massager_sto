@@ -65,7 +65,7 @@ public class CommentResourceController {
     })
     @PostMapping("/question/{questionId}")
     public ResponseEntity<?> addCommentQuestion(@PathVariable Long questionId, @RequestBody String textComment,
-                                                Authentication auth){
+                                                Authentication auth) {
         User user = (User) auth.getPrincipal();
         Optional<Question> question = questionService.getById(questionId);
         if (question.isEmpty()) {
@@ -97,6 +97,7 @@ public class CommentResourceController {
         data.getProps().put("questionId", questionId);
         return new ResponseEntity<>(commentDtoService.getPageDto(data), HttpStatus.OK);
     }
+
     @GetMapping("/answer/{answerId}")
     @Operation(
             summary = "Получение списка комментариев по id ответа",
@@ -116,11 +117,12 @@ public class CommentResourceController {
     )
     public ResponseEntity<PageDTO<CommentDto>> getAnswerCommentById(@PathVariable("answerId") Long answerId,
                                                                     @RequestParam(defaultValue = "1") Integer currentPage,
-                                                                      @RequestParam(required = false, defaultValue = "10") Integer items) {
+                                                                    @RequestParam(required = false, defaultValue = "10") Integer items) {
         PaginationData data = new PaginationData(currentPage, items, AnswerCommentPageDtoDaoByIdImpl.class.getSimpleName());
         data.getProps().put("answerId", answerId);
         return new ResponseEntity<>(commentDtoService.getPageDto(data), HttpStatus.OK);
     }
+
     @Operation(
             summary = "Добавление комментария к ответу",
             description = "Добавление комментария к ответу"
@@ -145,9 +147,6 @@ public class CommentResourceController {
         commentAnswerService.persist(commentAnswer);
         return new ResponseEntity<>("Comment successfully added", HttpStatus.OK);
     }
-
-
-
 
 
 
