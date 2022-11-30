@@ -116,7 +116,7 @@ public class CommentResourceController {
     )
     public ResponseEntity<PageDTO<CommentDto>> getAnswerCommentById(@PathVariable("answerId") Long answerId,
                                                                     @RequestParam(defaultValue = "1") Integer currentPage,
-                                                                    @RequestParam(required = false, defaultValue = "10") Integer items) {
+                                                                     @RequestParam(required = false, defaultValue = "10") Integer items) {
         PaginationData data = new PaginationData(currentPage, items, AnswerCommentPageDtoDaoByIdImpl.class.getSimpleName());
         data.getProps().put("answerId", answerId);
         return new ResponseEntity<>(commentDtoService.getPageDto(data), HttpStatus.OK);
