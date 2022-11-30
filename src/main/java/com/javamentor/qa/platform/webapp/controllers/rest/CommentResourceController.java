@@ -1,5 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.dao.abstracts.model.ReadOnlyDao;
+import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
 import com.javamentor.qa.platform.dao.impl.pagination.commentdto.AnswerCommentPageDtoDaoByIdImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.commentdto.CommentPageDtoDaoCommentsOfQuestion;
 import com.javamentor.qa.platform.models.dto.AnswerCommentDto;
@@ -8,6 +10,8 @@ import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
@@ -28,6 +32,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 import java.util.Optional;
 
 @Tag(name = "CommentResourceController", description = "Позволяет работать с комментариями")
@@ -38,6 +44,7 @@ public class CommentResourceController {
     private final QuestionService questionService;
     private final CommentQuestionService commentQuestionService;
     private final CommentDtoService commentDtoService;
+    private ReadWriteDao commentAnswerService;
 
     @Autowired
     public CommentResourceController(QuestionService questionService, CommentQuestionService commentQuestionService, CommentDtoService commentDtoService) {
@@ -114,6 +121,34 @@ public class CommentResourceController {
         data.getProps().put("answerId", answerId);
         return new ResponseEntity<>(commentDtoService.getPageDto(data), HttpStatus.OK);
     }
+    @Operation(
+            summary = "Добавление комментария к ответу",
+            description = "Добавление комментария к ответу"
+    )
+    @ApiResponse(responseCode = "200", description = "Комментарий добавлен", content = {
+            @Content(mediaType = "application/json")
+    })
+    @ApiResponse(responseCode = "400", description = "Комментарий не добавлен", content = {
+            @Content(mediaType = "application/json")
+    })
+    @PostMapping("/{id}")
+    public ResponseEntity<?> addCommentAnswer(@PathVariable Long id, @RequestBody String bodyComment,
+                                              Authentication auth) {
+        User user = (User) auth.getPrincipal();
+        ReadOnlyDao answerService = null;
+        Optional<Answer> answer = answerService.getById(id);
+        if (answer.isEmpty()) {
+            return new ResponseEntity<>("There is no answer " + id.toString(), HttpStatus.BAD_REQUEST);
+        }
+        CommentAnswer commentAnswer = new CommentAnswer(bodyComment, user);
+        commentAnswer.setAnswer(answer.get());
+        commentAnswerService.persist(commentAnswer);
+        return new ResponseEntity<>("Comment successfully added", HttpStatus.OK);
+    }
+
+
+
+
 
 
 }
