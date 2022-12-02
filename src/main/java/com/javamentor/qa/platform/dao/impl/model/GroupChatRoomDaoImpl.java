@@ -3,15 +3,12 @@ package com.javamentor.qa.platform.dao.impl.model;
 import com.javamentor.qa.platform.dao.abstracts.model.GroupChatRoomDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
-import com.javamentor.qa.platform.models.entity.user.User;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+
 
 @Service
 public class GroupChatRoomDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> implements GroupChatRoomDao {
@@ -39,7 +36,7 @@ public class GroupChatRoomDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> impl
     @Override
     public Optional<GroupChat> getGroupChatAndUsers(long id) {
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery
-                //return (entityManager.createQuery
+
                         ("select groupChat from GroupChat groupChat join fetch groupChat.chat join fetch groupChat.users where groupChat.id=:id", GroupChat.class)
 
                 .setParameter("id", id));

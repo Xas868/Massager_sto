@@ -1,15 +1,20 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import javax.swing.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -287,11 +292,11 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         mockMvc.perform(post("/api/user/chat/group/{id}/join", 101)
                         .param("userId", "103")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user102"))
+                        .header("Authorization", "Bearer " + getToken("user112@mail.ru", "user102"))
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$", Is.is("This user with id 102 can't invite other users")));
+                .andExpect(jsonPath("$", Is.is("This user with id 112 can't invite other users")));
     }
 
     // Пользователь не добавлен в групповой чат (Чат - существует, Добавляет - не автор чата, Пользователь - состоит в чате, Параметр userId - передается)
@@ -305,11 +310,11 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
         mockMvc.perform(post("/api/user/chat/group/{id}/join", 101)
                         .param("userId", "103")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user102"))
+                        .header("Authorization", "Bearer " + getToken("user112@mail.ru", "user102"))
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$", Is.is("This user with id 102 can't invite other users")));
+                .andExpect(jsonPath("$", Is.is("This user with id 112 can't invite other users")));
     }
 
     // Пользователь не добавлен в групповой чат (Чат - не существует, Добавляет - автор чата, Пользователь - не состоит в чате, Параметр userId - передается)
@@ -483,6 +488,37 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
+
+    //Все хорошо. Картинку пытается изменить создатель чата. Картинку может менять только создатель чата
+    @Test
+    @Sql("/script/TestChatResourceController/shouldUpdateImageGroupChat/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldUpdateImageGroupChat/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void shouldUpdateImageGroupChat() throws Exception {
+        mockMvc.perform(put("/api/user/chat/{id}/group/image", 114)
+                        .content("image")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user110@mail.ru", "user1")))
+                .andDo(print())
+                .andExpect(status().isOk());
+        GroupChat groupChat1= (GroupChat) entityManager.createQuery("from GroupChat c where c.id = :id")
+                .setParameter("id", (long) 114).getResultList().get(0);
+        assertThat(groupChat1.getImage()).isEqualTo("image");
+    }
+
+    // Картинку пытается изменить не создатель чата. Картинку может менять только создатель чата
+    @Test
+    @Sql("/script/TestChatResourceController/shouldNotUpdateImageGroupChat/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldNotUpdateImageGroupChat/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void shouldNotUpdateImageGroupChat() throws Exception {
+        mockMvc.perform(put("/api/user/chat/{id}/group/image", 115)
+                        .content("image")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user110@mail.ru", "user1")))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+
     // Все хорошо, пользователь добавлен в group чат
     @Test
     @Sql("/script/TestChatResourceController/shouldAddUserInGroupChat/Before.sql")
