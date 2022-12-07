@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTests {
-
     // Проверка передачи всех верных данных
     @Test
     @Sql(scripts = "/script/TestUserResourceController/getUserDtoId_shouldFindAllData_whenExists/Before.sql",
