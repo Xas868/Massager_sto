@@ -1,2 +1,2 @@
 alter table bookmarks
-add column note varchar;
+add column note text;
