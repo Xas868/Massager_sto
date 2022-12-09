@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoAllU
 import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoByVoteImpl;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
+import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.CalendarPeriod;
 import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
@@ -174,8 +175,9 @@ public class UserResourceController {
                     }),
     })
     @GetMapping("/api/user/profile/questions")
-    public ResponseEntity<List<UserProfileQuestionDto>> getAllUserProfileQuestionDtoById(@AuthenticationPrincipal User user) {
-        return new ResponseEntity<>(userDtoService.getAllUserProfileQuestionDtoById(user.getId()), HttpStatus.OK);
+    public ResponseEntity<List<UserProfileQuestionDto>> getAllUserProfileQuestionDtoById(@AuthenticationPrincipal User user,
+                                                                                         @RequestParam(required = false, defaultValue = "VOTE", name = "sort") ProfileQuestionSort profileQuestionSort) {
+        return new ResponseEntity<>(userDtoService.getAllUserProfileQuestionDtoByIdAndSort(user.getId(), profileQuestionSort), HttpStatus.OK);
     }
 
     @Operation(summary = "Получение всех удаленных вопросов в виде UserProfileQuestionDto по email авторизованного пользователя " +
@@ -233,19 +235,19 @@ public class UserResourceController {
     @GetMapping("/api/user/top")
     public ResponseEntity<List<UserDto>> getTopUsersForDaysRankedByNumberOfQuestions(
             @RequestParam(name = "usersCount", required = false, defaultValue = "10")
-            @Parameter (name = "Количество юзеров, которых необходимо получить.",
+            @Parameter(name = "Количество юзеров, которых необходимо получить.",
                     description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
             Integer usersCount,
             @RequestParam(name = "period", required = false, defaultValue = "week")
-            @Parameter (name = "Количество дней, по которым будет идти поиск", description = "Необязательный параметр. Позволяет настроить пероид времени, " +
+            @Parameter(name = "Количество дней, по которым будет идти поиск", description = "Необязательный параметр. Позволяет настроить пероид времени, " +
                     "по которому будет идти поиск. Значение по умолчанию \"week\" ")
             CalendarPeriod calendarPeriod) {
         return new ResponseEntity<>(userDtoService.getTopUsersForDaysRankedByNumberOfQuestions(calendarPeriod), HttpStatus.OK);
     }
 
-    @Operation(summary = "Получение количества ответов авторизованного пользователя." ,
+    @Operation(summary = "Получение количества ответов авторизованного пользователя.",
             description = "Контроллер возвращает целое число, которое отражает количество ответов авторизованного пользователя за неделю. В качестве параметра принимает авторизованного пользователя.")
-    @Parameter (name = "user", description = "Авторизованный пользователь, количество ответов которого будет отображено.", required = true)
+    @Parameter(name = "user", description = "Авторизованный пользователь, количество ответов которого будет отображено.", required = true)
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -255,8 +257,8 @@ public class UserResourceController {
                                     mediaType = "application/json")
                     })
     })
-    @GetMapping ("api/user/profile/question/week")
-    public ResponseEntity<Long> getAnswersPerWeekByUserId (@AuthenticationPrincipal User user) {
+    @GetMapping("api/user/profile/question/week")
+    public ResponseEntity<Long> getAnswersPerWeekByUserId(@AuthenticationPrincipal User user) {
         return new ResponseEntity<Long>(userDtoService.getCountAnswersPerWeekByUserId(user.getId()), HttpStatus.OK);
 
     }
