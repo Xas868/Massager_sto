@@ -12,6 +12,63 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTests {
+    // Проверка получения вопросов пользователя по количеству голосов и не бросает ошибку если запрос без параметров
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getUserProfileQuestionDtoShouldReturnAllQuestionDto() throws Exception {
+        mockMvc.perform(get("/api/user/profile/questions")
+                .content("")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+        )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(6)))
+                .andExpect(jsonPath("$.[0].questionId", Is.is(101)));
+
+    }
+
+    // Проверка сортировки вопросов пользователя по количеству просмотров
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getUserProfileQuestionDtoShouldSortAllQuestionDtoByCountOfViews() throws Exception {
+        mockMvc.perform(get("/api/user/profile/questions?sort=VIEW")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(6)))
+                .andExpect(jsonPath("$.[0].questionId", Is.is(100)));
+
+    }
+
+    // Проверка сортировки вопросов пользователя по дате создания
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getUserProfileQuestionDtoShouldSortAllQuestionDtoByNew() throws Exception {
+        mockMvc.perform(get("/api/user/profile/questions?sort=NEW")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(6)))
+                .andExpect(jsonPath("$.[0].questionId", Is.is(105)));
+
+    }
+
 
     // Проверка передачи всех верных данных
     @Test
@@ -347,6 +404,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items[0].listTagDto[2].name", Is.is("LTGDJP6")))
                 .andExpect(jsonPath("$.items[0].listTagDto[2].description", Is.is("Description of tag 6")));
     }
+
     // Проверка filter email.
     @Test
     @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldFilterEmail_whenExists/Before.sql",
