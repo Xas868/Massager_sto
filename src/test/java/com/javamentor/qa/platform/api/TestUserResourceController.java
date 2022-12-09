@@ -12,6 +12,48 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTests {
+    // Проверка BookMarks
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/getUserBookMarksDtoShouldWhenExist/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/getUserBookMarksDtoShouldWhenExist/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getUserBookMarksDtoShouldWhenExist() throws Exception {
+        mockMvc.perform(get("/api/user/profile/bookmarks")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(2)))
+                .andExpect(jsonPath("$.[0].questionId", Is.is(100)))
+                .andExpect(jsonPath("$[0].title", Is.is("Question 100")))
+                .andExpect(jsonPath("$[0].listTagDto.size()", Is.is(3)))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.[0].countView", Is.is(0)))
+                .andExpect(jsonPath("$.[0].note", Is.is("note 1")));
+
+    }
+
+    // Не должен бросать ошибку если нету закладок
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/getUserBookMarksDtoShouldWhenExist/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/getUserBookMarksDtoShouldWhenExist/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getUserBookMarksDtoShouldWorkWhenNotExist() throws Exception {
+        mockMvc.perform(get("/api/user/profile/bookmarks")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(0)));
+
+    }
+
     // Проверка передачи всех верных данных
     @Test
     @Sql(scripts = "/script/TestUserResourceController/getUserDtoId_shouldFindAllData_whenExists/Before.sql",
@@ -131,6 +173,8 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$", Is.is("Пользователь не найден!")));
     }
+
+    //
 
     // Проверка передачи всех верных данных
     @Test
@@ -346,6 +390,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items[0].listTagDto[2].name", Is.is("LTGDJP6")))
                 .andExpect(jsonPath("$.items[0].listTagDto[2].description", Is.is("Description of tag 6")));
     }
+
     // Проверка filter email.
     @Test
     @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldFilterEmail_whenExists/Before.sql",
