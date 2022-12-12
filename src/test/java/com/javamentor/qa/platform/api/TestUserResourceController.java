@@ -30,8 +30,8 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.[0].questionId", Is.is(100)))
                 .andExpect(jsonPath("$[0].title", Is.is("Question 100")))
                 .andExpect(jsonPath("$[0].listTagDto.size()", Is.is(3)))
-                .andExpect(jsonPath("$.[0].countAnswer", Is.is(0)))
-                .andExpect(jsonPath("$.[0].countView", Is.is(0)))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.[0].countView", Is.is(4)))
                 .andExpect(jsonPath("$.[0].note", Is.is("note 1")));
 
     }
