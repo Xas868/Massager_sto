@@ -3,7 +3,10 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoAllUsersByRepImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoAllUsersImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoByVoteImpl;
-import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.dto.BookMarksDto;
+import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.dto.UserDto;
+import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -30,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
-import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Optional;
 

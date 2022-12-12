@@ -8,15 +8,11 @@ import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
-import com.javamentor.qa.platform.models.entity.question.comparator.DateComparator;
-import com.javamentor.qa.platform.models.entity.question.comparator.ViewComparator;
-import com.javamentor.qa.platform.models.entity.question.comparator.VoteComparator;
 import com.javamentor.qa.platform.models.util.CalendarPeriod;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Map;
@@ -64,13 +60,8 @@ public class UserDtoServiceImpl extends DtoServiceImpl<UserDto> implements UserD
 
     @Override
     public List<UserProfileQuestionDto> getAllUserProfileQuestionDtoByIdAndSort(Long id, ProfileQuestionSort profileQuestionSort) {
-        Comparator<UserProfileQuestionDto> comparator = (
-                profileQuestionSort.equals(ProfileQuestionSort.VOTE) ? new VoteComparator()
-                        : profileQuestionSort.equals(ProfileQuestionSort.VIEW) ? new ViewComparator()
-                        : new DateComparator());
-
         return getAllUserProfileQuestionDtoById(id).stream()
-                .sorted(comparator)
+                .sorted(profileQuestionSort.getComparator())
                 .collect(Collectors.toList());
     }
 
