@@ -28,4 +28,6 @@ public class BookMarks {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Question question;
+
+    private String note;
 }

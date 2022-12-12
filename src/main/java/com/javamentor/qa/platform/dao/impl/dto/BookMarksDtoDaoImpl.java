@@ -22,8 +22,9 @@ public class BookMarksDtoDaoImpl implements BookMarksDtoDao {
                         "(select count(a.id) from Answer a where a.question.id = b.question.id)," +
                         "(select sum(case when v.vote = 'UP_VOTE' then 1 else -1 end) from VoteQuestion v where v.question.id = b.question.id)," +
                         "(select count(qv.id) FROM QuestionViewed qv where qv.question.id = b.question.id)," +
-                        "b.question.persistDateTime) " +
-                        "from BookMarks b where b.question.isDeleted=false and b.user.id =: id")
+                        "b.question.persistDateTime," +
+                        "b.note) " +
+                        "from BookMarks b where b.question.isDeleted=false and b.user.id =: id", BookMarksDto.class)
                 .setParameter("id", id)
                 .getResultList();
     }
