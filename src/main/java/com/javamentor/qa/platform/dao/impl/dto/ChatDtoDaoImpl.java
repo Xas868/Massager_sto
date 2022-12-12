@@ -2,10 +2,13 @@ package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.ChatDtoDao;
 import com.javamentor.qa.platform.models.dto.ChatDto;
+import com.javamentor.qa.platform.models.dto.ChatUserDto;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.GroupChatDto;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.models.entity.user.User;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -37,6 +40,21 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
     }
 
     @Override
+    public List<ChatUserDto> getChatUsersDtoByChatId(Long chatId) {
+        return entityManager.createQuery("select distinct new com.javamentor.qa.platform.models.dto.ChatUserDto" +
+                                "(" +
+                                "u.id, " +
+                                "u.fullName," +
+                                "u.imageLink, " +
+                                "CASE WHEN  m.id = u.id THEN 'MODERATOR' else (case when u.id = gc.userAuthor.id then 'AUTHOR' end) end" +
+                                ") " +
+                                "from GroupChat as gc join gc.users u join gc.moderators m where gc.id = :chatId  "
+                        , ChatUserDto.class)
+                .setParameter("chatId", chatId)
+                .getResultList();
+    }
+
+    @Override
     public Optional<GroupChatDto> getGroupChatDto(long chatId) {
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.GroupChatDto" +
                         "(" +
@@ -48,5 +66,12 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
                         "from GroupChat as gc where gc.id = :chatId " +
                         "order by gc.chat.persistDate", GroupChatDto.class)
                 .setParameter("chatId", chatId));
+    }
+
+    public Boolean checkUpUserIsMemberOfGroupChat(long id, long chatId) {
+        if (entityManager.createQuery
+                        (" select u from  GroupChat as gc join gc.users u where u.id =: id AND gc.id =: chatId  ", User.class)
+                .setParameter("id", id)
+                .setParameter("chatId", chatId).getResultList().isEmpty()) {return false;} else {return true;}
     }
 }

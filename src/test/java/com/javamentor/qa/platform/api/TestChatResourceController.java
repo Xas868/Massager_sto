@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.api;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import org.hamcrest.core.Is;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
@@ -11,6 +12,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
 import javax.swing.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -386,6 +388,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }
+
     //Пользователь пытается удалить глобальный чат
     @Test
     @Sql("/script/TestChatResourceController/shouldNODeleteGlobalChat/Before.sql")
@@ -500,12 +503,12 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                         .header("Authorization", "Bearer " + getToken("user110@mail.ru", "user1")))
                 .andDo(print())
                 .andExpect(status().isOk());
-        GroupChat groupChat1= (GroupChat) entityManager.createQuery("from GroupChat c where c.id = :id")
+        GroupChat groupChat1 = (GroupChat) entityManager.createQuery("from GroupChat c where c.id = :id")
                 .setParameter("id", (long) 114).getResultList().get(0);
         assertThat(groupChat1.getImage()).isEqualTo("image");
     }
 
-// Картинку пытается изменить не создатель чата. Картинку может менять только создатель чата
+    // Картинку пытается изменить не создатель чата. Картинку может менять только создатель чата
     @Test
     @Sql("/script/TestChatResourceController/shouldNotUpdateImageGroupChat/Before.sql")
     @Sql(scripts = "/script/TestChatResourceController/shouldNotUpdateImageGroupChat/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -514,6 +517,59 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                         .content("image")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + getToken("user110@mail.ru", "user1")))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    // все хорошо. лист участников групчата получает участник групчата. групчат существует
+    @Test
+    @Sql("/script/TestChatResourceController/shouldGetUsersListOfGroupChat/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldGetUsersListOfGroupChat/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void shouldGetUsersListOfGroupChat() throws Exception {
+        mockMvc.perform(get("/api/user/chat/{chat_id}/users", 114)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user111@mail.ru", "user1")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(4))
+                .andExpect(jsonPath("$.[2].userId").value(110))
+                .andExpect(jsonPath("$.[2].fullName").value("user110@mail.ru"))
+                .andExpect(jsonPath("$.[2].linkImage").value("/images/noUserAvatar.png"))
+                .andExpect(jsonPath("$.[2].roleChatStatus").value("MODERATOR"))
+                .andExpect(jsonPath("$.[1].userId").value(111))
+                .andExpect(jsonPath("$.[1].fullName").value("user111@mail.ru"))
+                .andExpect(jsonPath("$.[1].linkImage").value("/images/noUserAvatar.png"))
+                .andExpect(jsonPath("$.[1].roleChatStatus").value("AUTHOR"))
+                .andExpect(jsonPath("$.[0].userId").value(124))
+                .andExpect(jsonPath("$.[0].fullName").value("user124@mail.ru"))
+                .andExpect(jsonPath("$.[0].linkImage").value("/images/saveMe.png"))
+                .andExpect(jsonPath("$.[0].roleChatStatus").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$.[3].userId").value(148))
+                .andExpect(jsonPath("$.[3].fullName").value("user148@mail.ru"))
+                .andExpect(jsonPath("$.[3].linkImage").value("/images/noUserAvatar.png"))
+                .andExpect(jsonPath("$.[3].roleChatStatus").value(IsNull.nullValue()));
+    }
+
+    // /лист пользователей нельзя получить. авторизированный пользователь не состоит в данном групчате
+    @Test
+    @Sql("/script/TestChatResourceController/shouldNotGetUsersListOfGroupChat_doesntMemberOfChat/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldNotGetUsersListOfGroupChat_doesntMemberOfChat/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void shouldNotGetUsersListOfGroupChat_doesntMemberOfChat() throws Exception {
+        mockMvc.perform(get("/api/user/chat/{chat_id}/users", 116)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user148@mail.ru", "user1")))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    //лист пользователей нельзя получить. групчат не существует
+    @Test
+    @Sql("/script/TestChatResourceController/shouldNotGetUsersListOfGroupChat_groupChatDoesntExists/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldNotGetUsersListOfGroupChat_groupChatDoesntExists/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void shouldNotGetUsersListOfGroupChat_groupChatDoesntExists() throws Exception {
+        mockMvc.perform(get("/api/user/chat/{chat_id}/users", 150)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user111@mail.ru", "user1")))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }

@@ -3,12 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.dao.impl.pagination.chatdto.ChatPageDtoDaoByUserIdAndNameImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.chatdto.ChatPageDtoDaoByUserIdImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.messagedto.MessagePageDtoFindInChatByWord;
-import com.javamentor.qa.platform.models.dto.ChatDto;
-import com.javamentor.qa.platform.models.dto.CreateGroupChatDto;
-import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
-import com.javamentor.qa.platform.models.dto.MessageDto;
-import com.javamentor.qa.platform.models.dto.PageDTO;
-import com.javamentor.qa.platform.models.dto.SingleChatDto;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.chat.SingleChat;
@@ -179,7 +174,7 @@ public class ChatResourceController {
         User userAuth = (User) authentication.getPrincipal();
 
         if (user.isPresent() && groupChat.isPresent()) {
-            if ( !userAuth.getId().equals(groupChat.get().getUserAuthor().getId()) ) {
+            if (!userAuth.getId().equals(groupChat.get().getUserAuthor().getId())) {
                 return new ResponseEntity<>("This user with id " + userAuth.getId() + " can't invite other users", HttpStatus.BAD_REQUEST);
             }
 
@@ -237,8 +232,18 @@ public class ChatResourceController {
             @PathVariable(name = "id")
             @Parameter(name = "id чата", required = true, description = "Id является обязательным параметром.")
             Long id,
-            @Valid @RequestBody String image){
+            @Valid @RequestBody String image) {
         groupChatRoomService.updateImageGroupChat(id, image);
         return new ResponseEntity<>("image update", HttpStatus.OK);
+    }
+
+    @Operation(summary = "Получение списка пользователей в определенном групповом чате", description = "Получение списка пользователей в определенном групповом чате по его id")
+    @GetMapping("/{chat_id}/users")
+    public ResponseEntity<List<ChatUserDto>> getListChatUsersDtoByChatId(
+            Authentication authentication,
+            @PathVariable(name = "chat_id")
+            @Parameter(name = "id чата", required = true, description = "Id является обязательным параметром.")
+            long chatId) {
+        return new ResponseEntity<>(chatDtoService.getChatUsersDtoByChatId(chatId), HttpStatus.OK);
     }
 }
