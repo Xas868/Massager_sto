@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.BookMarksDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -32,7 +34,7 @@ public class ProfileUserResourceController {
     private final BookMarksDtoService bookMarksDtoService;
 
     public ProfileUserResourceController(
-                                  UserService userService,UserDtoService userDtoService,BookMarksDtoService bookMarksDtoService) {
+            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService) {
 
         this.userService = userService;
         this.userDtoService = userDtoService;
@@ -54,8 +56,9 @@ public class ProfileUserResourceController {
                     }),
     })
     @GetMapping("/questions")
-    public ResponseEntity<List<UserProfileQuestionDto>> getAllUserProfileQuestionDtoById(@AuthenticationPrincipal User user) {
-        return new ResponseEntity<>(userDtoService.getAllUserProfileQuestionDtoById(user.getId()), HttpStatus.OK);
+    public ResponseEntity<List<UserProfileQuestionDto>> getAllUserProfileQuestionDtoById(@AuthenticationPrincipal User user,
+                                                                                         @RequestParam(required = false, defaultValue = "VOTE", name = "sort") ProfileQuestionSort profileQuestionSort) {
+        return new ResponseEntity<>(userDtoService.getAllUserProfileQuestionDtoByIdAndSort(user.getId(), profileQuestionSort), HttpStatus.OK);
     }
 
 
@@ -96,6 +99,7 @@ public class ProfileUserResourceController {
                 .getAllBookMarksInUserProfile(user.getId()),
                 HttpStatus.OK);
     }
+
     @Operation(summary = "Получение количества ответов авторизованного пользователя.",
             description = "Контроллер возвращает целое число, которое отражает количество ответов авторизованного пользователя за неделю. В качестве параметра принимает авторизованного пользователя.")
     @Parameter(name = "user", description = "Авторизованный пользователь, количество ответов которого будет отображено.", required = true)
