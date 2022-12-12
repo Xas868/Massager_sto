@@ -21,7 +21,7 @@ VALUES (100, 'I am test user', 'Moskow', 'user100@mail.ru', 'User 100', '/images
  *  Table: question
  */
 INSERT INTO question (id, description, is_deleted, last_redaction_date, persist_date, title, user_id)
-VALUES (105, 'What do you think about question 100?', false, DATE(NOW()), DATE(NOW()), 'Question 100', 101),
+VALUES (105, 'What do you think about question 100?', false, DATE(NOW()), DATE(NOW()), 'Question 105', 101),
        (100, 'What do you think about question 100?', false, DATE(NOW()), DATE(NOW()), 'Question 100', 101),
        (101, 'What do you think about question 101?', false, DATE(NOW()), DATE(NOW()), 'Question 101', 101),
        (102, 'What do you think about question 102?', false, DATE(NOW()), DATE(NOW()), 'Question 102', 101),
@@ -34,6 +34,8 @@ VALUES (105, 'What do you think about question 100?', false, DATE(NOW()), DATE(N
 INSERT INTO tag (id, description, name, persist_date)
 VALUES (100, 'Description of tag 1', 'vfOxMU1', '2022-11-12 22:09:06.639083'),
        (101, 'Description of tag 2', 'iThKcj2', '2022-11-12 22:09:06.639579'),
+       (103, 'Description of tag 3', 'iThKcj3', '2022-11-12 22:09:06.639579'),
+       (104, 'Description of tag 4', 'iThKcj4', '2022-11-12 22:09:06.639579'),
        (102, 'Description of tag 3', 'LTGDJP3', '2022-11-12 22:09:06.639579');
 
 /*
@@ -42,6 +44,8 @@ VALUES (100, 'Description of tag 1', 'vfOxMU1', '2022-11-12 22:09:06.639083'),
 INSERT INTO question_has_tag (question_id, tag_id)
 VALUES (100, 100),
        (100, 101),
+       (105, 104),
+       (101, 101),
        (100, 102);
 /*
  *  Table: reputation
@@ -74,7 +78,8 @@ values (1, DATE(NOW()), 'UP_VOTE', 100, 101),
        (20, DATE(NOW()), 'UP_VOTE', 101, 101),
        (21, DATE(NOW()), 'DOWN_VOTE', 101, 101),
        (22, DATE(NOW()), 'DOWN_VOTE', 101, 101),
-       (23, DATE(NOW()), 'DOWN_VOTE', 101, 101);
+       (23, DATE(NOW()), 'DOWN_VOTE', 101, 101),
+       (24, DATE(NOW()), 'DOWN_VOTE', 105, 101);
 
 
 
@@ -90,4 +95,15 @@ values (1, DATE(NOW()), 100, 101),
        (9, DATE(NOW()), 100, 101),
        (10, DATE(NOW()), 100, 101),
        (11, DATE(NOW()), 100, 101),
-       (12, DATE(NOW()), 100, 101);
+       (12, DATE(NOW()), 101, 101),
+       (13, DATE(NOW()), 105, 101);
+
+
+INSERT INTO answer (id, date_accept_time, html_body, is_deleted, is_deleted_by_moderator, is_helpful, persist_date,
+                    update_date, question_id, user_id, moderator_id) VALUES
+    (100, DATE(NOW()), 'Answer 102', false, false, false, DATE(NOW()), DATE(NOW()), 101, 101, null),
+    (101, DATE(NOW()), 'Answer 102', false, false, false, DATE(NOW()), DATE(NOW()), 100, 101, null),
+    (104, DATE(NOW()), 'Answer 102', false, false, false, DATE(NOW()), DATE(NOW()), 105, 101, null),
+    (105, DATE(NOW()), 'Answer 102', false, false, false, DATE(NOW()), DATE(NOW()), 105, 101, null),
+    (102, DATE(NOW()), 'Answer 102', false, false, false, DATE(NOW()), DATE(NOW()), 100, 101, null),
+    (103, DATE(NOW()), 'Answer 102', false, false, false, DATE(NOW()), DATE(NOW()), 100, 101, null);
