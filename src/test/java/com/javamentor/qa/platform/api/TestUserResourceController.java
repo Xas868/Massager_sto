@@ -27,7 +27,17 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", Is.is(6)))
-                .andExpect(jsonPath("$.[0].questionId", Is.is(101)));
+                .andExpect(jsonPath("$.[0].questionId", Is.is(101)))
+                .andExpect(jsonPath("$[0].title", Is.is("Question 101")))
+
+                .andExpect(jsonPath("$[0].listTagDto.size()", Is.is(1)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("iThKcj2")))
+                .andExpect(jsonPath("$.[0].listTagDto[0].description", Is.is("Description of tag 2")))
+
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.[0].view", Is.is(1)))
+                .andExpect(jsonPath("$.[0].vote", Is.is(5)));
 
     }
 
@@ -46,7 +56,17 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", Is.is(6)))
-                .andExpect(jsonPath("$.[0].questionId", Is.is(100)));
+                .andExpect(jsonPath("$.[0].questionId", Is.is(100)))
+                .andExpect(jsonPath("$[0].title", Is.is("Question 100")))
+
+                .andExpect(jsonPath("$[0].listTagDto.size()", Is.is(3)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(100)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("vfOxMU1")))
+                .andExpect(jsonPath("$.[0].listTagDto[0].description", Is.is("Description of tag 1")))
+
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(3)))
+                .andExpect(jsonPath("$.[0].view", Is.is(11)))
+                .andExpect(jsonPath("$.[0].vote", Is.is(4)));
 
     }
 
@@ -65,7 +85,17 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", Is.is(6)))
-                .andExpect(jsonPath("$.[0].questionId", Is.is(105)));
+                .andExpect(jsonPath("$.[0].questionId", Is.is(105)))
+                .andExpect(jsonPath("$[0].title", Is.is("Question 105")))
+
+                .andExpect(jsonPath("$[0].listTagDto.size()", Is.is(1)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("iThKcj4")))
+                .andExpect(jsonPath("$.[0].listTagDto[0].description", Is.is("Description of tag 4")))
+
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(2)))
+                .andExpect(jsonPath("$.[0].view", Is.is(1)))
+                .andExpect(jsonPath("$.[0].vote", Is.is(-1)));
 
     }
 
