@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
+
 @Service
 public class GroupChatRoomDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> implements GroupChatRoomDao {
 
@@ -16,7 +17,7 @@ public class GroupChatRoomDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> impl
     public EntityManager entityManager;
 
     @Override
-    public void deleteUserFromGroupChatById(Long id, Long userId){
+    public void deleteUserFromGroupChatById(Long id, Long userId) {
         entityManager
                 .createNativeQuery("delete from groupchat_has_users where chat_id=:id and user_id=:userId")
                 .setParameter("id", id)
@@ -26,18 +27,25 @@ public class GroupChatRoomDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> impl
 
     @Override
     public boolean isUserAuthor(Long id, Long userId) {
-       return entityManager.createQuery("select case when (count(gc) > 0)  then true else false end from GroupChat gc where gc.id = :idChat and gc.userAuthor.id = :id", Boolean.class)
-               .setParameter("id", userId)
-               .setParameter("idChat", id)
-               .getSingleResult();
+        return entityManager.createQuery("select case when (count(gc) > 0)  then true else false end from GroupChat gc where gc.id = :idChat and gc.userAuthor.id = :id", Boolean.class)
+                .setParameter("id", userId)
+                .setParameter("idChat", id)
+                .getSingleResult();
     }
 
     @Override
     public Optional<GroupChat> getGroupChatAndUsers(long id) {
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery
+
                         ("select groupChat from GroupChat groupChat join fetch groupChat.chat join fetch groupChat.users where groupChat.id=:id", GroupChat.class)
+
                 .setParameter("id", id));
 
     }
 
+
 }
+
+
+
+
