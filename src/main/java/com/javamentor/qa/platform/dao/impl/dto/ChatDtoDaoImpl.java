@@ -68,7 +68,7 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
                 .setParameter("chatId", chatId));
     }
 
-    public Boolean checkUpUserIsMemberOfGroupChat(long id, long chatId) {
+    public Boolean isExistUserOfGroupChat(long id, long chatId) {
         if (entityManager.createQuery
                         (" select u from  GroupChat as gc join gc.users u where u.id =: id AND gc.id =: chatId  ", User.class)
                 .setParameter("id", id)

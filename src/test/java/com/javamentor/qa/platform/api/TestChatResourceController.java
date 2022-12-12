@@ -642,7 +642,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     @Sql("/script/TestChatResourceController/shouldGetUsersListOfGroupChat/Before.sql")
     @Sql(scripts = "/script/TestChatResourceController/shouldGetUsersListOfGroupChat/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldGetUsersListOfGroupChat() throws Exception {
-        mockMvc.perform(get("/api/user/chat/{chat_id}/users", 114)
+        mockMvc.perform(get("/api/user/chat/{chatId}/users", 114)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + getToken("user111@mail.ru", "user1")))
                 .andDo(print())
@@ -671,7 +671,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     @Sql("/script/TestChatResourceController/shouldNotGetUsersListOfGroupChat_doesntMemberOfChat/Before.sql")
     @Sql(scripts = "/script/TestChatResourceController/shouldNotGetUsersListOfGroupChat_doesntMemberOfChat/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldNotGetUsersListOfGroupChat_doesntMemberOfChat() throws Exception {
-        mockMvc.perform(get("/api/user/chat/{chat_id}/users", 116)
+        mockMvc.perform(get("/api/user/chat/{chatId}/users", 116)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + getToken("user148@mail.ru", "user1")))
                 .andDo(print())
@@ -683,7 +683,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     @Sql("/script/TestChatResourceController/shouldNotGetUsersListOfGroupChat_groupChatDoesntExists/Before.sql")
     @Sql(scripts = "/script/TestChatResourceController/shouldNotGetUsersListOfGroupChat_groupChatDoesntExists/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldNotGetUsersListOfGroupChat_groupChatDoesntExists() throws Exception {
-        mockMvc.perform(get("/api/user/chat/{chat_id}/users", 150)
+        mockMvc.perform(get("/api/user/chat/{chatId}/users", 150)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + getToken("user111@mail.ru", "user1")))
                 .andDo(print())

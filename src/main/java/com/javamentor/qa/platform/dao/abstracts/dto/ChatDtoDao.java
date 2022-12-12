@@ -14,6 +14,6 @@ public interface ChatDtoDao {
 
     List<ChatUserDto> getChatUsersDtoByChatId(Long chatId);
 
-    public Boolean checkUpUserIsMemberOfGroupChat(long id, long chatId);
+    public Boolean isExistUserOfGroupChat(long id, long chatId);
 
 }

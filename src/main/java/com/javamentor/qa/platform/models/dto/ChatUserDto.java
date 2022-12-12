@@ -9,7 +9,6 @@ public class ChatUserDto {
     private Long userId;
     private String fullName;
     private String linkImage;
-
     private RoleChatStatus roleChatStatus;
 
     public ChatUserDto(Long userId, String fullName, String linkImage, String roleChatStatus) {
@@ -18,13 +17,5 @@ public class ChatUserDto {
         this.linkImage = linkImage;
         this.roleChatStatus = RoleChatStatus.fromStringToEnum(roleChatStatus);
 
-    }
-
-    enum RoleChatStatus {
-        AUTHOR, MODERATOR;
-
-        public static RoleChatStatus fromStringToEnum(String roleChatStatus) {
-            return (roleChatStatus == null ? null : RoleChatStatus.valueOf(roleChatStatus));
-        }
     }
 }

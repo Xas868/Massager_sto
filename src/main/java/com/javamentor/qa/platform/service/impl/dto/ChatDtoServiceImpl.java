@@ -51,7 +51,7 @@ public class ChatDtoServiceImpl extends DtoServiceImpl<ChatDto> implements ChatD
             throw new GroupChatException("The group chat doesn`t exist. Sorry boy");
         }
         GroupChat groupChat = groupChatOptional.get();
-        if (!chatDtoDao.checkUpUserIsMemberOfGroupChat(user.getId(), groupChat.getId())) {
+        if (!chatDtoDao.isExistUserOfGroupChat(user.getId(), groupChat.getId())) {
             throw new GroupChatException("You aren`t member of group chat. The information for groupchat`s members . Sorry boy");
         }
         return chatDtoDao.getChatUsersDtoByChatId(chatId);
