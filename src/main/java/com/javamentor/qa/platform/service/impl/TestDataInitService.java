@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.service.impl;
 
+import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.chat.*;
 import com.javamentor.qa.platform.models.entity.question.*;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
@@ -11,6 +12,8 @@ import com.javamentor.qa.platform.models.entity.user.UserChatPin;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.service.abstracts.model.*;
+import com.javamentor.qa.platform.webapp.controllers.exceptions.QuestionNotFoundException;
+import com.javamentor.qa.platform.webapp.controllers.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
@@ -40,6 +43,7 @@ public class TestDataInitService {
     private final QuestionViewedService questionViewedService;
     private final MessageStarService messageStarService;
     private final UserChatPinService userChatPinService;
+    private final BookmarksService bookmarksService;
     private final long NUM_OF_USERS = 100L;
     private final long NUM_OF_TAGS = 50L;
     private final long NUM_OF_QUESTIONS = 100L;
@@ -79,6 +83,31 @@ public class TestDataInitService {
         createMessageStar();
         createUserChatPinChats();
         createGroupChatModeratorsAndUsers();
+        createBookMarks();
+    }
+
+    public void createBookMarks() {
+        ArrayList<BookMarks> bookMarks = new ArrayList<>((int) NUM_OF_USERS);
+
+        User user = userService.getById(1L).orElseThrow(() -> new UserNotFoundException("user with this id  not found"));
+        bookMarks.add(
+                BookMarks.builder()
+                        .user(user)
+                        .question(questionService.getQuestionByIdWithAuthor(user.getId()).orElseThrow(() -> new QuestionNotFoundException("question with author id  not found")))
+                        .note(String.format("BookMark %d note", 1))
+                        .build()
+        );
+
+        User user2 = userService.getById(1L).orElseThrow(() -> new UserNotFoundException("user with this id  not found"));
+        bookMarks.add(
+                BookMarks.builder()
+                        .user(user2)
+                        .question(questionService.getQuestionByIdWithAuthor(user.getId()).orElseThrow(() -> new QuestionNotFoundException("question with author id  not found")))
+                        .note(String.format("BookMark %d note", 2))
+                        .build()
+        );
+
+        bookmarksService.persistAll(bookMarks);
     }
 
     public void createMessage() {
@@ -113,7 +142,7 @@ public class TestDataInitService {
             GroupChat groupChat = GroupChat.builder()
                     .chat(Chat.builder().chatType(ChatType.GROUP).build())
                     .title("GroupChat" + i)
-                    .image("image"+i)
+                    .image("image" + i)
                     .userAuthor(getRandomUser())
                     .build();
             groupChats.add(groupChat);
@@ -498,7 +527,7 @@ public class TestDataInitService {
             Set<User> chatModerators = new HashSet<>();
             for (int j = 1; j <= NUM_OF_MODERATORS_GROUPCHAT; j++) {
                 User user = getRandomUser();
-                if ( !groupChat.getUserAuthor().equals(user) ) {
+                if (!groupChat.getUserAuthor().equals(user)) {
                     chatModerators.add(user);
                 }
             }
@@ -508,7 +537,7 @@ public class TestDataInitService {
             Set<User> chatUsers = new HashSet<>();
             for (int j = 1; j <= NUM_OF_USERS_GROUPCHAT; j++) {
                 User user = getRandomUser();
-                if ( !groupChat.getUsers().contains(user) ) {
+                if (!groupChat.getUsers().contains(user)) {
                     chatUsers.add(getRandomUser());
                 }
             }
