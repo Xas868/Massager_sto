@@ -21,4 +21,4 @@ insert into group_chat (chat_id, title, author_id, image) values
 
 
 insert into groupchat_has_users (chat_id, user_id) values
-    (101, 101);
+    (101, 102);

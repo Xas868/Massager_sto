@@ -34,7 +34,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 
 @Tag(name = "ChatResourceController", description = "Позволяет работать с чатами")
 @RestController
@@ -227,7 +231,7 @@ public class ChatResourceController {
             }
 
             if (groupChat.get().getUsers().contains(user.get())) {
-                return new ResponseEntity<>("userPresent", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("The user is already in the group chat", HttpStatus.BAD_REQUEST);
             }
 
             Set<User> userSet = groupChat.get().getUsers();
@@ -236,6 +240,6 @@ public class ChatResourceController {
             return new ResponseEntity<>("userAdded", HttpStatus.OK);
         }
 
-        return new ResponseEntity<>("it's bad request", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("user does not exist", HttpStatus.BAD_REQUEST);
     }
 }

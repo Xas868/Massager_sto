@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.models.entity.user.User;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -9,9 +10,10 @@ import org.springframework.test.context.jdbc.Sql;
 
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.ArrayList;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import javax.swing.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -19,7 +21,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTests {
 
@@ -387,6 +388,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }
+
     //Пользователь пытается удалить глобальный чат
     @Test
     @Sql("/script/TestChatResourceController/shouldNODeleteGlobalChat/Before.sql")
@@ -501,7 +503,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                         .header("Authorization", "Bearer " + getToken("user110@mail.ru", "user1")))
                 .andDo(print())
                 .andExpect(status().isOk());
-        GroupChat groupChat1= (GroupChat) entityManager.createQuery("from GroupChat c where c.id = :id")
+        GroupChat groupChat1 = (GroupChat) entityManager.createQuery("from GroupChat c where c.id = :id")
                 .setParameter("id", (long) 114).getResultList().get(0);
         assertThat(groupChat1.getImage()).isEqualTo("image");
     }
@@ -520,25 +522,31 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     }
 
 
-    // Пользователь добавлен в групповой чат ("добавляет пользователя  автор чата")
+    // Пользователь добавлен в групповой чат
     @Test
-    @Sql(scripts = "/script/TestChatResourceController/shouldAddUserInGroupChatWhenExist/Before.sql",
+    @Sql(scripts = "/script/TestChatResourceController/shouldAddUserInGroupChat/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestChatResourceController/shouldAddUserInGroupChatWhenExist/After.sql",
+    @Sql(scripts = "/script/TestChatResourceController/shouldAddUserInGroupChat/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void shouldAddUserInGroupChatWhenExist() throws Exception {
+    void shouldAddUserInGroupChat() throws Exception {
 
-        mockMvc.perform(post("/api/user/chat/group/{id}/join", 101)
-                        .param("userId", "102")
+        mockMvc.perform(post("/api/user/chat/group/{id}/join", 120)
+                        .param("userId", "124")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                        .header("Authorization", "Bearer " + getToken("user110@mail.ru", "user1"))
                 )
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is("userAdded")));
+                .andExpect(status().isOk());
+        assertThat(entityManager.createQuery
+                        (" select u from  GroupChat as gc join gc.users u where u.id =: id AND gc.id =: chatId  ", User.class)
+                .setParameter("id", (long) 124)
+                .setParameter("chatId", (long) 120).getResultList().isEmpty())
+                .isEqualTo(false);
+
+
     }
 
-    // Пользователь не добавлен в групповой чат  ("добавляет пользователя автор чата")
+    // Пользователь не добавлен в групповой чат ( Пользователь уже сущетсвует в групп чате)
     @Test
     @Sql(scripts = "/script/TestChatResourceController/shouldError400WhenNotPass/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -552,9 +560,10 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+
     }
 
-    // Пользователь добавлен в групповой чат  ("добавляет пользователя  админ чата")
+    // Пользователь не добавлен в групповой чат ("юзер с ролью admin пытается добавить пользователя в групп чат")
     @Test
     @Sql(scripts = "/script/TestChatResourceController/shouldAddUserInGroupChatWhenAuthorAdmin/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -562,14 +571,15 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldAddUserInGroupChatWhenAuthorAdmin() throws Exception {
 
-        mockMvc.perform(post("/api/user/chat/group/{id}/join", 101)
-                        .param("userId", "122")
+        mockMvc.perform(post("/api/user/chat/group/{id}/join", 120)
+                        .param("userId", "110")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user121@mail.ru", "user121"))
+                        .header("Authorization", "Bearer " + getToken("user190@mail.ru", "user1"))
                 )
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }
+
     // Пользователь не добавлен в групповой чат ("добавляет пользователя не автор чата")
     @Test
     @Sql(scripts = "/script/TestChatResourceController/shouldErrorWhenNotPassAddNotAuthor/Before.sql",
@@ -587,6 +597,7 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$", Is.is("This user with id 112 can't invite other users")));
     }
+
     // Пользователь не добавлен в групповой чат (добавляет пользователя автор чата, пользователь не существует)
     @Test
     @Sql(scripts = "/script/TestChatResourceController/shouldAddUserInGroupChatWhenNotExist/Before.sql",
@@ -601,10 +612,12 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )
                 .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$", Is.is("it's bad request")));
+                .andExpect(status().isBadRequest());
+
+
     }
-    // Пользователь не добавлен в групповой чат (добавляет пользователя автор чата, пользователь состоит в чате)
+    // Пользователь не добавлен в групповой чат
+
     @Test
     @Sql(scripts = "/script/TestChatResourceController/shouldErrorBadRequestWhenUserPresent/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -618,8 +631,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )
                 .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$", Is.is("userPresent")));
+                .andExpect(status().isBadRequest());
+
     }
 
 }
