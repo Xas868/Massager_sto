@@ -16,12 +16,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @Tag(name = "ProfileUserResourceController", description = "Позволяет работать с профилем пользователя")
 @RestController
+@RequestMapping("/api/user/profile")
 
 public class ProfileUserResourceController {
 
@@ -51,7 +53,7 @@ public class ProfileUserResourceController {
                                     mediaType = "application/json")
                     }),
     })
-    @GetMapping("/api/user/profile/questions")
+    @GetMapping("/questions")
     public ResponseEntity<List<UserProfileQuestionDto>> getAllUserProfileQuestionDtoById(@AuthenticationPrincipal User user) {
         return new ResponseEntity<>(userDtoService.getAllUserProfileQuestionDtoById(user.getId()), HttpStatus.OK);
     }
@@ -69,7 +71,7 @@ public class ProfileUserResourceController {
                                     mediaType = "application/json")
                     }),
     })
-    @GetMapping("/api/user/profile/delete/questions")
+    @GetMapping("/delete/questions")
     public ResponseEntity<List<UserProfileQuestionDto>> getAllUserProfileQuestionDtoByUserIdIsDelete(@AuthenticationPrincipal User user) {
         return new ResponseEntity<>(userDtoService
                 .getUserProfileQuestionDtoByUserIdIsDeleted(user.getId()),
@@ -88,7 +90,7 @@ public class ProfileUserResourceController {
                                     mediaType = "application/json")
                     }),
     })
-    @GetMapping("/api/user/profile/bookmarks")
+    @GetMapping("/bookmarks")
     public ResponseEntity<List<BookMarksDto>> getAllBookMarksInUserProfile(@AuthenticationPrincipal User user) {
         return new ResponseEntity<>(bookMarksDtoService
                 .getAllBookMarksInUserProfile(user.getId()),
@@ -106,7 +108,7 @@ public class ProfileUserResourceController {
                                     mediaType = "application/json")
                     })
     })
-    @GetMapping("api/user/profile/question/week")
+    @GetMapping("/question/week")
     public ResponseEntity<Long> getAnswersPerWeekByUserId(@AuthenticationPrincipal User user) {
         return new ResponseEntity<Long>(userDtoService.getCountAnswersPerWeekByUserId(user.getId()), HttpStatus.OK);
 
