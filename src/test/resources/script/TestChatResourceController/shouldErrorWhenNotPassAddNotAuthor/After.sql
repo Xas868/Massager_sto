@@ -1,0 +1,5 @@
+TRUNCATE role CASCADE;
+
+TRUNCATE chat CASCADE;
+
+TRUNCATE group_chat CASCADE;
