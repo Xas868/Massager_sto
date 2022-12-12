@@ -50,3 +50,18 @@ INSERT INTO reputation (id, count, persist_date, type, answer_id, author_id, que
 insert into bookmarks(question_id, user_id, note)
 values (100, 100, 'note 1'),
        (101, 100, 'note 2');
+
+
+INSERT INTO answer (id, date_accept_time, html_body, is_deleted, is_deleted_by_moderator, is_helpful, persist_date,
+                    update_date, question_id, user_id, moderator_id) VALUES
+    (100, DATE(NOW()), 'Answer 102', false, false, false, DATE(NOW()), DATE(NOW()), 100, 100, null);
+
+insert into question_viewed(id, persist_date, question_id, user_id)
+VALUES (1, Date(now()), 100, 101),
+       (2, Date(now()), 100, 101),
+       (3, Date(now()), 100, 101),
+       (4, Date(now()), 100, 101),
+       (5, Date(now()), 101, 101),
+       (6, Date(now()), 101, 101),
+       (7, Date(now()), 101, 101),
+       (8, Date(now()), 101, 101);
