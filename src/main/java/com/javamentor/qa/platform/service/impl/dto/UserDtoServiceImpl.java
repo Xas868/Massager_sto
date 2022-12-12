@@ -15,7 +15,11 @@ import com.javamentor.qa.platform.models.util.CalendarPeriod;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
