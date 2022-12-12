@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+
 @Tag(name = "ChatResourceController", description = "Позволяет работать с чатами")
 @RestController
 @RequestMapping("/api/user/chat")
@@ -164,37 +165,6 @@ public class ChatResourceController {
         return new ResponseEntity<>("List of user's ids is empty", HttpStatus.BAD_REQUEST);
     }
 
-    @Operation(summary = "Добавление пользователя в group чат.", description = "Добавление пользователя в group чат по его id")
-    @PostMapping("/group/{id}/join")
-    public ResponseEntity<String> addUserInGroupChat(
-            Authentication authentication,
-            @PathVariable("id")
-            @Parameter(name = "Id group чата.", required = true, description = "Id group чата является обязательным параметром.")
-            Long id,
-            @RequestParam("userId")
-            @Parameter(name = "id Пользователя", required = true, description = "Id пользователя является обязательным параметром.")
-            Long userId) {
-        Optional<GroupChat> groupChat = groupChatRoomService.getGroupChatAndUsers(id);
-        Optional<User> user = userService.getById(userId);
-        User userAuth = (User) authentication.getPrincipal();
-
-        if (user.isPresent() && groupChat.isPresent()) {
-            if ( !userAuth.getId().equals(groupChat.get().getUserAuthor().getId()) ) {
-                return new ResponseEntity<>("This user with id " + userAuth.getId() + " can't invite other users", HttpStatus.BAD_REQUEST);
-            }
-
-            if (groupChat.get().getUsers().contains(user.get())) {
-                return new ResponseEntity<>("userPresent", HttpStatus.BAD_REQUEST);
-            }
-
-            Set<User> userSet = groupChat.get().getUsers();
-            userSet.add(user.get());
-            groupChatRoomService.update(groupChat.get());
-            return new ResponseEntity<>("userAdded", HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>("it's bad request", HttpStatus.BAD_REQUEST);
-    }
 
     @Operation(
             summary = "Получение пагинированного списка поиска в сообщениях в чате по неточному совпадению",
@@ -240,5 +210,36 @@ public class ChatResourceController {
             @Valid @RequestBody String image){
         groupChatRoomService.updateImageGroupChat(id, image);
         return new ResponseEntity<>("image update", HttpStatus.OK);
+    }
+    @Operation(summary = "Добавление пользователя в group чат.", description = "Добавление пользователя в group чат по его id")
+    @PostMapping("/group/{id}/join")
+    public ResponseEntity<String> addUserInGroupChat(
+            Authentication authentication,
+            @PathVariable("id")
+            @Parameter(name = "Id group чата.", required = true, description = "Id group чата является обязательным параметром.")
+            Long id,
+            @RequestParam("userId")
+            @Parameter(name = "id Пользователя", required = true, description = "Id пользователя является обязательным параметром.")
+            Long userId) {
+        Optional<GroupChat> groupChat = groupChatRoomService.getGroupChatAndUsers(id);
+        Optional<User> user = userService.getById(userId);
+        User userAuth = (User) authentication.getPrincipal();
+
+        if (user.isPresent() && groupChat.isPresent()) {
+            if ( !userAuth.getId().equals(groupChat.get().getUserAuthor().getId()) ) {
+                return new ResponseEntity<>("This user with id " + userAuth.getId() + " can't invite other users", HttpStatus.BAD_REQUEST);
+            }
+
+            if (groupChat.get().getUsers().contains(user.get())) {
+                return new ResponseEntity<>("The user is already in the group chat", HttpStatus.BAD_REQUEST);
+            }
+
+            Set<User> userSet = groupChat.get().getUsers();
+            userSet.add(user.get());
+            groupChatRoomService.update(groupChat.get());
+            return new ResponseEntity<>("userAdded", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("user does not exist", HttpStatus.BAD_REQUEST);
     }
 }
