@@ -7,14 +7,15 @@ import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
+import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
 import com.javamentor.qa.platform.models.util.CalendarPeriod;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,23 +39,30 @@ public class UserDtoServiceImpl extends DtoServiceImpl<UserDto> implements UserD
 
     @Override
     public List<UserProfileQuestionDto> getUserProfileQuestionDtoByUserIdIsDeleted(Long id) {
-        List<UserProfileQuestionDto> resultList=userDtoDao.getAllUserProfileQuestionDtoByUserIdWhereQuestionIsDeleted(id);
+        List<UserProfileQuestionDto> resultList = userDtoDao.getAllUserProfileQuestionDtoByUserIdWhereQuestionIsDeleted(id);
         var map = tagDtoDao.getTagDtoByQuestionIds(
                 resultList.stream().map(UserProfileQuestionDto::getQuestionId).collect(Collectors.toList())
         );
-        resultList.forEach(q -> q.setListTagDto(map.containsKey(q.getQuestionId())?map.get(q.getQuestionId()):new ArrayList<>()));
+        resultList.forEach(q -> q.setListTagDto(map.containsKey(q.getQuestionId()) ? map.get(q.getQuestionId()) : new ArrayList<>()));
         return resultList;
     }
 
     @Override
     public List<UserProfileQuestionDto> getAllUserProfileQuestionDtoById(Long id) {
-        List<UserProfileQuestionDto> resultList=userDtoDao.getAllUserProfileQuestionDtoById(id);
+        List<UserProfileQuestionDto> resultList = userDtoDao.getAllUserProfileQuestionDtoById(id);
         var map = tagDtoDao.getTagDtoByQuestionIds(
                 resultList.stream().map(UserProfileQuestionDto::getQuestionId).collect(Collectors.toList())
         );
         resultList.forEach(q ->
-                q.setListTagDto(map.containsKey(q.getQuestionId())?map.get(q.getQuestionId()):new ArrayList<>()));
+                q.setListTagDto(map.containsKey(q.getQuestionId()) ? map.get(q.getQuestionId()) : new ArrayList<>()));
         return resultList;
+    }
+
+    @Override
+    public List<UserProfileQuestionDto> getAllUserProfileQuestionDtoByIdAndSort(Long id, ProfileQuestionSort profileQuestionSort) {
+        return getAllUserProfileQuestionDtoById(id).stream()
+                .sorted(profileQuestionSort.getComparator())
+                .collect(Collectors.toList());
     }
 
     @Override
