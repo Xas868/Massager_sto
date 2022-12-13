@@ -266,24 +266,6 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(status().isBadRequest());
     }
 
-    // Пользователь не добавлен в групповой чат (Чат - существует, Добавляет - автор чата, Пользователь - состоит в чате, Параметр userId - передается)
-    @Test
-    @Sql(scripts = "/script/TestChatResourceController/addUserInGroupChat_shouldBadRequest_whenUserPresent/Before.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestChatResourceController/addUserInGroupChat_shouldBadRequest_whenUserPresent/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void addUserInGroupChat_shouldBadRequest_whenUserPresent() throws Exception {
-
-        mockMvc.perform(post("/api/user/chat/group/{id}/join", 101)
-                        .param("userId", "102")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$", Is.is("userPresent")));
-    }
-
     // Пользователь не добавлен в групповой чат (Чат - существует, Добавляет - не автор чата, Пользователь - не состоит в чате, Параметр userId - передается)
     @Test
     @Sql(scripts = "/script/TestChatResourceController/addUserInGroupChat_shouldBadRequest_whenChatAuthorNotAdd/Before.sql",
@@ -318,42 +300,6 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$", Is.is("This user with id 112 can't invite other users")));
-    }
-
-    // Пользователь не добавлен в групповой чат (Чат - не существует, Добавляет - автор чата, Пользователь - не состоит в чате, Параметр userId - передается)
-    @Test
-    @Sql(scripts = "/script/TestChatResourceController/addUserInGroupChat_shouldBadRequest_whenChatNotExists/Before.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestChatResourceController/addUserInGroupChat_shouldBadRequest_whenChatNotExists/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void addUserInGroupChat_shouldBadRequest_whenChatNotExists() throws Exception {
-
-        mockMvc.perform(post("/api/user/chat/group/{id}/join", 150)
-                        .param("userId", "102")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$", Is.is("it's bad request")));
-    }
-
-    // Пользователь не добавлен в групповой чат (Чат - существует, Добавляет - автор чата, Пользователь - не существует, Параметр userId - передается)
-    @Test
-    @Sql(scripts = "/script/TestChatResourceController/addUserInGroupChat_shouldBadRequest_whenUserNotExists/Before.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestChatResourceController/addUserInGroupChat_shouldBadRequest_whenUserNotExists/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void addUserInGroupChat_shouldBadRequest_whenUserNotExists() throws Exception {
-
-        mockMvc.perform(post("/api/user/chat/group/{id}/join", 101)
-                        .param("userId", "150")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$", Is.is("it's bad request")));
     }
 
     // Пользователь добавлен в групповой чат (Чат - существует, Добавляет - пользователь с ролью Админ(состоит в чате и является Автором чата), Пользователь - не состоит в чате, Параметр userId - передается)
