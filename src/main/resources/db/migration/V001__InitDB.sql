@@ -7,6 +7,7 @@ create sequence ignore_tag_seq start 1 increment 1;
 create sequence message_seq start 1 increment 1;
 create sequence question_seq start 1 increment 1;
 create sequence question_viewed_seq start 1 increment 1;
+create sequence answer_viewed_seq start 1 increment 1;
 create sequence related_tag_seq start 1 increment 1;
 create sequence reputation_seq start 1 increment 1;
 create sequence role_seq start 1 increment 1;
@@ -117,6 +118,14 @@ create table question_viewed (
                                  id int8 not null,
                                  persist_date timestamp,
                                  question_id int8,
+                                 user_id int8,
+                                 primary key (id)
+);
+
+create table answer_viewed (
+                                 id int8 not null,
+                                 persist_date timestamp,
+                                 answer_id int8,
                                  user_id int8,
                                  primary key (id)
 );
@@ -323,6 +332,16 @@ alter table question_viewed
 
 alter table question_viewed
     add constraint question_viewed_user_fk
+        foreign key (user_id)
+            references user_entity;
+
+alter table answer_viewed
+    add constraint answer_viewed_question_fk
+        foreign key (answer_id)
+            references question;
+
+alter table answer_viewed
+    add constraint answer_viewed_user_fk
         foreign key (user_id)
             references user_entity;
 

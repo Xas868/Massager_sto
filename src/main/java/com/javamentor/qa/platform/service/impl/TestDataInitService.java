@@ -44,10 +44,11 @@ public class TestDataInitService {
     private final MessageStarService messageStarService;
     private final UserChatPinService userChatPinService;
     private final BookmarksService bookmarksService;
+    private final AnswerViewedService answerViewedService;
     private final long NUM_OF_USERS = 100L;
     private final long NUM_OF_TAGS = 50L;
     private final long NUM_OF_QUESTIONS = 100L;
-    private final long NUM_OF_ANSWERS = 50L;
+    private final long NUM_OF_ANSWERS = 100L;
     private final int MAX_TRACKED_TAGS = 3;
     private final int MAX_IGNORED_TAGS = 3;
     private final long NUM_OF_REPUTATIONS = 100L;
@@ -84,6 +85,7 @@ public class TestDataInitService {
         createUserChatPinChats();
         createGroupChatModeratorsAndUsers();
         createBookMarks();
+        createAnswerViewed();
     }
 
     public void createBookMarks() {
@@ -374,6 +376,21 @@ public class TestDataInitService {
             }
             for (User user : users) {
                 questionViewedService.markQuestionLikeViewed(user, question);
+            }
+        }
+    }
+    public void createAnswerViewed() {
+        List<Answer> answers = answerService.getAll();
+        for (int i = 0; i < NUM_OF_ANSWERS; i++) {
+            int numberOfViews = new Random().nextInt((int) NUM_OF_USERS);
+            Answer answer = answers.get(i);
+            Set<User> users = new HashSet<>();
+            for (int j = 0; j < numberOfViews; j++) {
+                User user = getRandomUser();
+                users.add(user);
+            }
+            for (User user : users) {
+                answerViewedService.markAnswerLikeViewed(user, answer);
             }
         }
     }

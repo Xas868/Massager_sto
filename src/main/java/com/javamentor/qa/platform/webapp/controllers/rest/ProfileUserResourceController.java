@@ -1,8 +1,10 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.BookMarksDto;
+import com.javamentor.qa.platform.models.dto.UserProfileAnswerDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
+import com.javamentor.qa.platform.models.entity.question.answer.ProfileAnswerSort;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
@@ -116,5 +118,23 @@ public class ProfileUserResourceController {
     public ResponseEntity<Long> getAnswersPerWeekByUserId(@AuthenticationPrincipal User user) {
         return new ResponseEntity<Long>(userDtoService.getCountAnswersPerWeekByUserId(user.getId()), HttpStatus.OK);
 
+    }
+
+    @Operation(summary = "Получение всех ответов авторизированного пользователя " +
+            "возвращается список объектов UserProfileAnswerDto ",
+            description = "Получение всех ответов авторизированного пользователя")
+    @Parameter(name = "sort", description = "есть не обязательный параметр sort VOTE - по голосам, NEW - по дате по умолчанию сортируется по голосам,")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Возвращает список UserProfileAnswerDto(long answerId,String title, Long vote, Long view, Long questionId, LocalDateTime persistDateTime)",
+                    content = {
+                            @Content(mediaType = "application/json")
+                    }),
+    })
+    @GetMapping("/answers")
+    public ResponseEntity<List<UserProfileAnswerDto>> getAllUserProfileQuestionDtoById(@AuthenticationPrincipal User user,
+                                                                                       @RequestParam(required = false, defaultValue = "VOTE", name = "sort") ProfileAnswerSort profileAnswerSort) {
+        return new ResponseEntity<>(userDtoService.getAllUserProfileAnswerDtoByIdAndSort(user.getId(), profileAnswerSort), HttpStatus.OK);
     }
 }
