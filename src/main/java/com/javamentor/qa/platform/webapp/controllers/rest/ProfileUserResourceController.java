@@ -140,7 +140,7 @@ public class ProfileUserResourceController {
     @GetMapping("/answers")
     public ResponseEntity<PageDTO<UserProfileAnswerDto>> getAllUserProfileQuestionDtoById(@AuthenticationPrincipal User user,
                                                                                           @RequestParam(required = false, defaultValue = "VOTE", name = "sort") ProfileAnswerSort profileAnswerSort,
-                                                                                          @RequestParam int page,
+                                                                                          @RequestParam(required = false, defaultValue = "1") int page,
                                                                                           @RequestParam(defaultValue = "10") int items) {
         PaginationData data = new PaginationData(
                 page, items, UserProfileDtoDaoImpl.class.getSimpleName()
