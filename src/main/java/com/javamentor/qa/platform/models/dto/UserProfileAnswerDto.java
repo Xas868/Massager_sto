@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 public class UserProfileAnswerDto {
     private Long answerId;
+    private String title;
     private Long view;
     private Long vote;
     private Long questionId;
