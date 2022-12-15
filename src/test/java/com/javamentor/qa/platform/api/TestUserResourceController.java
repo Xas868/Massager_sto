@@ -1320,7 +1320,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestUserResourceController/getUserProfileAnswerDtoShouldReturnAllQuestionDto/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getUserProfileAnswerDtoShouldReturnAllQuestionDto() throws Exception {
+    void getUserProfileAnswerDtoShouldReturnAllAnswerDto() throws Exception {
         mockMvc.perform(get("/api/user/profile/answers")
                         .content("")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -1331,7 +1331,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.length()", Is.is(5)))
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
                 .andExpect(jsonPath("$.totalPageCount", Is.is(3)))
-                .andExpect(jsonPath("$.totalResultCount", Is.is(22)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(21)))
                 .andExpect(jsonPath("$.items.size()", Is.is(10)))
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
 
@@ -1339,7 +1339,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items[0].title", Is.is("Question 101")))
 
                 .andExpect(jsonPath("$.items[0].view", Is.is(1)))
-                .andExpect(jsonPath("$.items[0].vote", Is.is(5)))
+                .andExpect(jsonPath("$.items[0].vote", Is.is(6)))
                 .andExpect(jsonPath("$.items[0].questionId", Is.is(101)));
 
     }
@@ -1350,7 +1350,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestUserResourceController/getUserProfileAnswerDtoShouldReturnAllQuestionDto/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getUserProfileAnswerDtoShouldSortAllQuestionDtoByNew() throws Exception {
+    void getUserProfileAnswerDtoShouldSortAllAnswerDtoByNew() throws Exception {
         mockMvc.perform(get("/api/user/profile/answers?sort=NEW")
                         .content("")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -1361,7 +1361,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.length()", Is.is(5)))
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
                 .andExpect(jsonPath("$.totalPageCount", Is.is(3)))
-                .andExpect(jsonPath("$.totalResultCount", Is.is(22)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(21)))
                 .andExpect(jsonPath("$.items.size()", Is.is(10)))
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(10)))
 

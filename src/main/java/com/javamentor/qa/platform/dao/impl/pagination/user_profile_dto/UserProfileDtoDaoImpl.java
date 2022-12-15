@@ -6,8 +6,6 @@ import com.javamentor.qa.platform.models.dto.UserProfileAnswerDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.answer.ProfileAnswerSort;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.dto.UserProfileDtoService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
