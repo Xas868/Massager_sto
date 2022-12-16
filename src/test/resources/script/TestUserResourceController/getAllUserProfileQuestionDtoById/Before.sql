@@ -50,6 +50,17 @@ INSERT INTO question (id, description, is_deleted, last_redaction_date, persist_
     (104, 'What do you think about question 104?', false, DATE(NOW()), DATE(NOW()), 'Question 104', 110);
 
 /*
+ *  Table: answer
+ */
+INSERT INTO answer (id, date_accept_time, html_body, is_deleted, is_deleted_by_moderator, is_helpful, persist_date,
+                    update_date, question_id, user_id, moderator_id) VALUES
+    (101, DATE(NOW()), 'Answer 101', false, false, false, DATE(NOW()), DATE(NOW()), 101, 110, null),
+    (102, DATE(NOW()), 'Answer 102', false, false, false, DATE(NOW()), DATE(NOW()), 102, 109, null),
+    (103, DATE(NOW()), 'Answer 103', false, false, false, DATE(NOW()), DATE(NOW()), 103, 108, null),
+    (104, DATE(NOW()), 'Answer 104', false, false, false, DATE(NOW()), DATE(NOW()), 104, 107, null),
+    (105, DATE(NOW()), 'Answer 105', false, false, false, DATE(NOW()), DATE(NOW()), 101, 106, null);
+
+/*
  *  Table: tag
  */
 INSERT INTO tag (id, description, name, persist_date) VALUES
@@ -93,13 +104,13 @@ INSERT INTO question_has_tag (question_id, tag_id) VALUES
  *  Table: reputation
  */
 INSERT INTO reputation (id, count, persist_date, type, answer_id, author_id, question_id, sender_id) VALUES
-    (101, 1000, DATE(NOW()), 0, null, 101, 101, null),
-    (102, 900, DATE(NOW()), 0, null, 102, 102, null),
-    (103, 800, DATE(NOW()), 0, null, 103, 103, null),
-    (104, 700, DATE(NOW()), 0, null, 104, 104, null),
-    (105, 600, DATE(NOW()), 0, null, 105, 101, null),
-    (106, 500, DATE(NOW()), 0, null, 106, 102, null),
-    (107, 400, DATE(NOW()), 0, null, 107, 103, null),
-    (108, 300, DATE(NOW()), 0, null, 108, 104, null),
-    (109, 200, DATE(NOW()), 0, null, 109, 103, null),
-    (110, 100, DATE(NOW()), 0, null, 110, 104, null);
+    (101, 1000, DATE(NOW()), 2, null, 101, 101, null),
+    (102, 900, DATE(NOW()), 3, null, 102, 102, null),
+    (103, 8000, DATE(NOW()), 2, null, 103, 103, null),
+    (104, 700, DATE(NOW()), 3, null, 104, 104, null),
+    (105, 600, DATE(NOW()), 2, null, 105, 101, null),
+    (106, 500, DATE(NOW()), 3, null, 106, 102, null),
+    (107, 400, DATE(NOW()), 2, null, 107, 103, null),
+    (108, 300, DATE(NOW()), 3, null, 108, 104, null),
+    (109, 2000, DATE(NOW()), 2, null, 109, 101, null),
+    (110, 100, DATE(NOW()), 3, null, 110, 102, null);
