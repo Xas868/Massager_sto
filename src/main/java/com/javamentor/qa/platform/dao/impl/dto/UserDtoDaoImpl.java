@@ -11,11 +11,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,8 +26,10 @@ public class UserDtoDaoImpl implements UserDtoDao {
     public List<UserProfileQuestionDto> getAllUserProfileQuestionDtoById(Long id) {
         return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.UserProfileQuestionDto(" +
                         "q.id,q.title," +
-                        "coalesce((select count(a.id) from Answer a where a.question.id=q.id),0),q.persistDateTime ) " +
-                        "from Question q where q.user.id=:id")
+                        "coalesce((select count(a.id) from Answer a where a.question.id=q.id),0),q.persistDateTime," +
+                        "(select count (qv.question.id) from QuestionViewed qv where qv.question.id = q.id)," +
+                        "(select coalesce(sum(case when vq.vote = 'UP_VOTE' then 1 else -1 end), 0) from VoteQuestion vq where vq.question.id = q.id))" +
+                        "from Question q where q.user.id=:id", UserProfileQuestionDto.class)
                 .setParameter("id", id)
                 .getResultList();
     }
@@ -116,7 +115,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
     @Override
     public List<Long> getUnregisteredUserIds(List<Long> userIds) {
-        List<Long> foundIds =  entityManager.createQuery("select id from User where id in(:ids)")
+        List<Long> foundIds = entityManager.createQuery("select id from User where id in(:ids)")
                 .setParameter("ids", userIds)
                 .getResultList();
 
