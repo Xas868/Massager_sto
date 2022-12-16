@@ -44,7 +44,7 @@ INSERT INTO user_entity (id, about, city, email, full_name, image_link, is_delet
  *  Table: question
  */
 INSERT INTO question (id, description, is_deleted, last_redaction_date, persist_date, title, user_id) VALUES
-    (101, 'What do you think about question 101?', false, DATE(NOW()), '2022-10-06T00:00:00', 'Question 101', 101),
+    (101, 'What do you think about question 101?', true, DATE(NOW()), '2022-10-06T00:00:00', 'Question 101', 101),
     (102, 'What do you think about question 102?', false, DATE(NOW()), DATE(NOW()), 'Question 102', 101),
     (103, 'What do you think about question 103?', false, DATE(NOW()), DATE(NOW()), 'Question 103', 104),
     (104, 'What do you think about question 104?', false, DATE(NOW()), DATE(NOW()), 'Question 104', 110);

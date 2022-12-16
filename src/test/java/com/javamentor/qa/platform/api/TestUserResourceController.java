@@ -1,12 +1,21 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
+import com.javamentor.qa.platform.models.entity.user.User;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -14,6 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTests {
+
+
 
     // Проверка передачи всех верных данных
     @Test
@@ -1202,7 +1213,21 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(status().isOk());
 
+        String user = String.valueOf(entityManager.createQuery("select password from User where id = 100")
+                .getResultList());
+        user = user.replaceAll("[()<\\[\\]>]","");
+
+        Boolean bool = passwordEncoder.matches((CharSequence) "46xEPoAOu", user);
+
+        assertThat(bool).isEqualTo(true);
+
+
     }
+
+
+
+
+    //
     //Получение всех вопросов авторизированного пользователя
 
     @Test
@@ -1213,11 +1238,28 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
 
         this.mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/user/profile/questions")
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization",
                                 "Bearer " + getToken("user101@mail.ru", "user101")))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].title", Is.is("Question 101")))
+                .andExpect(jsonPath("$.[0].questionId", Is.is(101)))
+                .andExpect(jsonPath("$.[0].persistDateTime", Is.is("2022-10-06T00:00:00")))
+                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("vfOxMU1")))
+                .andExpect(jsonPath("$.[0].listTagDto[0].description", Is.is("Description of tag 1")))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(2)))
+
+                .andExpect(jsonPath("$.[1].title", Is.is("Question 102")))
+                .andExpect(jsonPath("$.[1].questionId", Is.is(102)))
+                .andExpect(jsonPath("$.[1].persistDateTime", Is.is("2022-10-06T00:00:00")))
+                .andExpect(jsonPath("$.[1].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.[1].listTagDto[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.[1].listTagDto[0].name", Is.is("vfOxMU4")))
+                .andExpect(jsonPath("$.[1].listTagDto[0].description", Is.is("Description of tag 4")));
+        // .andExpect(jsonPath("$.totalResultCount", Is.is(1)));
+
 
     }
 
@@ -1234,7 +1276,15 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                         .header("Authorization",
                                 "Bearer " + getToken("user101@mail.ru", "user101")))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].title", Is.is("Question 101")))
+                .andExpect(jsonPath("$.[0].questionId", Is.is(101)))
+                .andExpect(jsonPath("$.[0].persistDateTime", Is.is("2022-10-06T00:00:00")))
+                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("vfOxMU1")))
+                .andExpect(jsonPath("$.[0].listTagDto[0].description", Is.is("Description of tag 1")))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(2)));
+
 
     }
 
@@ -1250,9 +1300,18 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                         .get("/api/user/profile/bookmarks")
                         .contentType("application/json")
                         .header("Authorization",
-                                "Bearer " + getToken("user100@mail.ru", "user100")))
+                                "Bearer " + getToken("user101@mail.ru", "user101")))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].title", Is.is("Question 101")))
+                .andExpect(jsonPath("$.[0].questionId", Is.is(101)))
+                .andExpect(jsonPath("$.[0].persistDateTime", Is.is("2022-10-06T00:00:00")))
+                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("vfOxMU1")))
+                .andExpect(jsonPath("$.[0].listTagDto[0].description", Is.is("Description of tag 1")))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(2)))
+                .andExpect(jsonPath("$.[0].countVote", Is.is(1)))
+                .andExpect(jsonPath("$.[0].countView", Is.is(2)));
 
     }
 

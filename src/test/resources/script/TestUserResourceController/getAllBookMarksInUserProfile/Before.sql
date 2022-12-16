@@ -49,7 +49,16 @@ INSERT INTO question (id, description, is_deleted, last_redaction_date, persist_
     (103, 'What do you think about question 103?', false, DATE(NOW()), DATE(NOW()), 'Question 103', 104),
     (104, 'What do you think about question 104?', false, DATE(NOW()), DATE(NOW()), 'Question 104', 110);
 
-/*
+INSERT INTO bookmarks (id, question_id, user_id) VALUES
+    (101,101,101);
+
+INSERT INTO question_viewed(id, persist_date, question_id,user_id) VALUES
+        (1,'2022-10-06T00:00:00',101,102),
+        (2,'2022-10-06T00:00:00',101,103);
+INSERT  INTO votes_on_questions (id, persist_date, vote, question_id, user_id) VALUES
+        (1, '2022-10-06T00:00:00', 'UP_VOTE', 101, 102);
+
+                                                                       /*
  *  Table: answer
  */
 INSERT INTO answer (id, date_accept_time, html_body, is_deleted, is_deleted_by_moderator, is_helpful, persist_date,
