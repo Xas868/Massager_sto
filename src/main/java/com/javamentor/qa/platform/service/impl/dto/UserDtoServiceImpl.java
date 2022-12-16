@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.UserProfileTagDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
 import com.javamentor.qa.platform.models.util.CalendarPeriod;
@@ -63,6 +64,11 @@ public class UserDtoServiceImpl extends DtoServiceImpl<UserDto> implements UserD
         return getAllUserProfileQuestionDtoById(id).stream()
                 .sorted(profileQuestionSort.getComparator())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserProfileTagDto> getUserProfileTagDto(Long id) {
+        return userDtoDao.getUserProfileTagDto(id);
     }
 
     @Override

@@ -3,10 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoAllUsersByRepImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoAllUsersImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoByVoteImpl;
-import com.javamentor.qa.platform.models.dto.BookMarksDto;
-import com.javamentor.qa.platform.models.dto.PageDTO;
-import com.javamentor.qa.platform.models.dto.UserDto;
-import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -190,6 +187,11 @@ public class UserResourceController {
                     "по которому будет идти поиск. Значение по умолчанию \"week\" ")
             CalendarPeriod calendarPeriod) {
         return new ResponseEntity<>(userDtoService.getTopUsersForDaysRankedByNumberOfQuestions(calendarPeriod), HttpStatus.OK);
+    }
+
+    @GetMapping("/api/user/profile/tag")
+    public ResponseEntity<List<UserProfileTagDto>> getUserProfileTagDto(@AuthenticationPrincipal User user){
+        return new ResponseEntity<>(userDtoService.getUserProfileTagDto(user.getId()), HttpStatus.OK);
     }
 
 }

@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.service.abstracts.dto;
 
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.UserProfileTagDto;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
 import com.javamentor.qa.platform.models.util.CalendarPeriod;
 
@@ -18,4 +19,6 @@ public interface UserDtoService extends PageDtoService<UserDto> {
     List<Long> getUnregisteredUserIds(List<Long> userIds);
 
     List<UserProfileQuestionDto> getAllUserProfileQuestionDtoByIdAndSort(Long id, ProfileQuestionSort profileQuestionSort);
+
+    List<UserProfileTagDto> getUserProfileTagDto(Long id);
 }

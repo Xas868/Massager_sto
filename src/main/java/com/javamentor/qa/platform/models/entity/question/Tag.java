@@ -44,6 +44,11 @@ public class Tag implements Serializable {
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     private List<Question> questions;
 
+    public Tag(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     @PrePersist
     private void prePersistFunction() {
         checkConstraints();
