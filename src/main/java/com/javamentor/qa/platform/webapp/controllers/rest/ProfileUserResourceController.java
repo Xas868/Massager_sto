@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.dao.impl.pagination.user_profile_dto.UserProfileDtoDaoImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileAnswerPageDtoDaoImpl;
 import com.javamentor.qa.platform.models.dto.BookMarksDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.UserProfileAnswerDto;
@@ -11,8 +11,8 @@ import com.javamentor.qa.platform.models.entity.question.answer.ProfileAnswerSor
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.UserProfileDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.impl.dto.UserProfileAnswerPageDtoDaoServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -38,15 +38,15 @@ public class ProfileUserResourceController {
     private final UserService userService;
     private final UserDtoService userDtoService;
     private final BookMarksDtoService bookMarksDtoService;
-    private final UserProfileDtoService userProfileDtoService;
+    private final UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService;
 
     public ProfileUserResourceController(
-            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, UserProfileDtoService userProfileDtoService) {
+            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, UserProfileAnswerPageDtoDaoImpl userProfilePageDtoDao, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService) {
 
         this.userService = userService;
         this.userDtoService = userDtoService;
         this.bookMarksDtoService = bookMarksDtoService;
-        this.userProfileDtoService = userProfileDtoService;
+        this.userProfileAnswerPageDtoDaoService = userProfileAnswerPageDtoDaoService;
     }
 
 
@@ -144,12 +144,11 @@ public class ProfileUserResourceController {
                                                                                           @RequestParam(required = false, defaultValue = "VOTE", name = "sort") ProfileAnswerSort profileAnswerSort,
                                                                                           @RequestParam(required = false, defaultValue = "1") int page,
                                                                                           @RequestParam(defaultValue = "10") int items) {
-        PaginationData data = new PaginationData(
-                page, items, UserProfileDtoDaoImpl.class.getSimpleName()
-        );
+        PaginationData data = new PaginationData(page, items, UserProfileAnswerPageDtoDaoImpl.class.getSimpleName());
         data.getProps().put("user", user);
+        data.getProps().put("userId", user.getId());
         data.getProps().put("profileAnswerSort", profileAnswerSort);
 
-        return new ResponseEntity<>(userProfileDtoService.getPageDto(data), HttpStatus.OK);
+        return new ResponseEntity<>(userProfileAnswerPageDtoDaoService.getPageDto(data), HttpStatus.OK);
     }
 }

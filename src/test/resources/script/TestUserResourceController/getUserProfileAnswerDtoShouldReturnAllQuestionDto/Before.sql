@@ -33,25 +33,25 @@ INSERT INTO answer (id, date_accept_time, html_body, is_deleted, is_deleted_by_m
 VALUES
        (101, CURRENT_TIMESTAMP, 'Answer 102', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 101, 101, null),
        (104, CURRENT_TIMESTAMP, 'Answer 102', false, false, false, CURRENT_TIMESTAMP + interval '1 hour', DATE(NOW()), 105, 101, null),
-       (100, CURRENT_TIMESTAMP, 'Answer 102', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 100, 101, null),
-       (105, CURRENT_TIMESTAMP, 'Answer 102', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 103, 101, null),
-       (102, CURRENT_TIMESTAMP, 'Answer 102', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 100, 101, null),
-       (107, CURRENT_TIMESTAMP, 'Answer 107', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 100, 101, null),
-       (108, CURRENT_TIMESTAMP, 'Answer 108', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 100, 101, null),
-       (109, CURRENT_TIMESTAMP, 'Answer 109', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 100, 101, null),
-       (110, CURRENT_TIMESTAMP, 'Answer 110', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 102, 101, null),
-       (111, CURRENT_TIMESTAMP, 'Answer 111', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 102, 101, null),
-       (112, CURRENT_TIMESTAMP, 'Answer 112', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 102, 101, null),
-       (113, CURRENT_TIMESTAMP, 'Answer 113', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 102, 101, null),
-       (114, CURRENT_TIMESTAMP, 'Answer 114', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 102, 101, null),
-       (115, CURRENT_TIMESTAMP, 'Answer 115', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 102, 101, null),
-       (116, CURRENT_TIMESTAMP, 'Answer 116', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 102, 101, null),
-       (117, CURRENT_TIMESTAMP, 'Answer 117', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 102, 101, null),
-       (118, CURRENT_TIMESTAMP, 'Answer 118', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 102, 101, null),
-       (119, CURRENT_TIMESTAMP, 'Answer 119', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 102, 101, null),
-       (120, CURRENT_TIMESTAMP, 'Answer 120', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 102, 101, null),
-       (121, CURRENT_TIMESTAMP, 'Answer 121', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 102, 101, null),
-       (122, CURRENT_TIMESTAMP, 'Answer 122', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 102, 101, null);
+       (100, CURRENT_TIMESTAMP, 'Answer 102', false, false, false, CURRENT_TIMESTAMP + interval '1 minute', DATE(NOW()), 100, 101, null),
+       (105, CURRENT_TIMESTAMP, 'Answer 102', false, false, false, CURRENT_TIMESTAMP + interval '2 minute', DATE(NOW()), 103, 101, null),
+       (102, CURRENT_TIMESTAMP, 'Answer 102', false, false, false, CURRENT_TIMESTAMP + interval '3 minute', DATE(NOW()), 100, 101, null),
+       (107, CURRENT_TIMESTAMP, 'Answer 107', false, false, false, CURRENT_TIMESTAMP + interval '4 minute', DATE(NOW()), 100, 101, null),
+       (108, CURRENT_TIMESTAMP, 'Answer 108', false, false, false, CURRENT_TIMESTAMP + interval '5 minute', DATE(NOW()), 100, 101, null),
+       (109, CURRENT_TIMESTAMP, 'Answer 109', false, false, false, CURRENT_TIMESTAMP + interval '6 minute', DATE(NOW()), 100, 101, null),
+       (110, CURRENT_TIMESTAMP, 'Answer 110', false, false, false, CURRENT_TIMESTAMP + interval '7 minute', DATE(NOW()), 102, 101, null),
+       (111, CURRENT_TIMESTAMP, 'Answer 111', false, false, false, CURRENT_TIMESTAMP + interval '8 minute', DATE(NOW()), 102, 101, null),
+       (112, CURRENT_TIMESTAMP, 'Answer 112', false, false, false, CURRENT_TIMESTAMP + interval '9 minute', DATE(NOW()), 102, 101, null),
+       (113, CURRENT_TIMESTAMP, 'Answer 113', false, false, false, CURRENT_TIMESTAMP + interval '10 minute', DATE(NOW()), 102, 101, null),
+       (114, CURRENT_TIMESTAMP, 'Answer 114', false, false, false, CURRENT_TIMESTAMP + interval '11 minute', DATE(NOW()), 102, 101, null),
+       (115, CURRENT_TIMESTAMP, 'Answer 115', false, false, false, CURRENT_TIMESTAMP + interval '12 minute', DATE(NOW()), 102, 101, null),
+       (116, CURRENT_TIMESTAMP, 'Answer 116', false, false, false, CURRENT_TIMESTAMP + interval '13 minute', DATE(NOW()), 102, 101, null),
+       (117, CURRENT_TIMESTAMP, 'Answer 117', false, false, false, CURRENT_TIMESTAMP + interval '14 minute', DATE(NOW()), 102, 101, null),
+       (118, CURRENT_TIMESTAMP, 'Answer 118', false, false, false, CURRENT_TIMESTAMP + interval '15 minute', DATE(NOW()), 102, 101, null),
+       (119, CURRENT_TIMESTAMP, 'Answer 119', false, false, false, CURRENT_TIMESTAMP + interval '16 minute', DATE(NOW()), 102, 101, null),
+       (120, CURRENT_TIMESTAMP, 'Answer 120', false, false, false, CURRENT_TIMESTAMP + interval '17 minute', DATE(NOW()), 102, 101, null),
+       (121, CURRENT_TIMESTAMP, 'Answer 121', false, false, false, CURRENT_TIMESTAMP + interval '18 minute', DATE(NOW()), 102, 101, null),
+       (122, CURRENT_TIMESTAMP, 'Answer 122', false, false, false, CURRENT_TIMESTAMP + interval '19 minute', DATE(NOW()), 102, 101, null);
 
 /*
  *  Table: tag
@@ -133,6 +133,7 @@ values (1, DATE(NOW()), 'UP_VOTE', 100, 101),
        (24, DATE(NOW()), 'DOWN_VOTE', 104, 101),
        (25, DATE(NOW()), 'DOWN_VOTE', 104, 101),
        (26, DATE(NOW()), 'DOWN_VOTE', 104, 101),
+       (28, DATE(NOW()), 'DOWN_VOTE', 113, 101),
        (27, DATE(NOW()), 'DOWN_VOTE', 104, 101);
 
 
@@ -150,25 +151,10 @@ values (1, DATE(NOW()), 100, 101),
        (10, DATE(NOW()), 100, 101),
        (11, DATE(NOW()), 100, 101),
        (12, DATE(NOW()), 101, 101),
+       (14, DATE(NOW()), 102, 101),
+       (15, DATE(NOW()), 102, 101),
        (13, DATE(NOW()), 105, 101);
 
-insert into answer_viewed(id, persist_date, answer_id, user_id)
-values (1, DATE(NOW()), 100, 101),
-       (2, DATE(NOW()), 100, 101),
-       (3, DATE(NOW()), 100, 101),
-       (4, DATE(NOW()), 100, 101),
-       (5, DATE(NOW()), 100, 101),
-       (6, DATE(NOW()), 100, 101),
-       (7, DATE(NOW()), 100, 101),
-       (8, DATE(NOW()), 100, 101),
-       (9, DATE(NOW()), 100, 101),
-       (10, DATE(NOW()), 100, 101),
-       (11, DATE(NOW()), 100, 101),
-       (12, DATE(NOW()), 101, 101),
-       (13, DATE(NOW()), 105, 101),
-       (14, DATE(NOW()), 104, 101),
-       (15, DATE(NOW()), 104, 101),
-       (16, DATE(NOW()), 104, 101);
 
 
 
