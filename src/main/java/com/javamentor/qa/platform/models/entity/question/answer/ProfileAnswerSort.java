@@ -10,13 +10,7 @@ import java.util.Comparator;
 @Getter
 @AllArgsConstructor
 public enum ProfileAnswerSort {
-    VOTE(new AnswerVoteComparator(), "va.vote"),
-    NEW(new AnswerDateComparator(), "a.persist_date");
+    VOTE(new AnswerVoteComparator()),
+    NEW(new AnswerDateComparator());
     private Comparator<UserProfileAnswerDto> comparator;
-    private String comparingField;
-
-
-    public String getComparingField() {
-        return comparingField;
-    }
 }

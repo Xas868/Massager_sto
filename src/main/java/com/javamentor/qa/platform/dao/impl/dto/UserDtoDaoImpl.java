@@ -4,7 +4,6 @@ import com.javamentor.qa.platform.dao.abstracts.dto.UserDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.AnswerDTO;
 import com.javamentor.qa.platform.models.dto.UserDto;
-import com.javamentor.qa.platform.models.dto.UserProfileAnswerDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.util.CalendarPeriod;
 import org.hibernate.transform.ResultTransformer;
@@ -123,17 +122,5 @@ public class UserDtoDaoImpl implements UserDtoDao {
         List<Long> notFoundIds = userIds.stream().filter(aObject -> !foundIds.contains(aObject)).collect(Collectors.toList());
 
         return notFoundIds;
-    }
-
-    @Override
-    public List<UserProfileAnswerDto> getAllUserProfileAnswerDtoById(Long id) {
-        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.UserProfileAnswerDto(" +
-                        "a.id," +
-                        "(select count (av.answer.id) from AnswerViewed av where av.answer.id = a.id)," +
-                        "(select coalesce(sum(case when va.vote = 'UP_VOTE' then 1 else -1 end), 0) from VoteAnswer va where va.answer.id = a.id)," +
-                        "a.question.id, a.persistDateTime)" +
-                        "from Answer a where a.user.id=:id", UserProfileAnswerDto.class)
-                .setParameter("id", id)
-                .getResultList();
     }
 }

@@ -94,13 +94,4 @@ public class UserDtoServiceImpl extends DtoServiceImpl<UserDto> implements UserD
     public List<Long> getUnregisteredUserIds(List<Long> userIds) {
         return userDtoDao.getUnregisteredUserIds(userIds);
     }
-
-
-
-    @Override
-    public List<UserProfileAnswerDto> getAllUserProfileAnswerDtoByIdAndSort(Long id, ProfileAnswerSort profileAnswerSort) {
-        return userDtoDao.getAllUserProfileAnswerDtoById(id).stream()
-                .sorted(profileAnswerSort.getComparator())
-                .collect(Collectors.toList());
-    }
 }

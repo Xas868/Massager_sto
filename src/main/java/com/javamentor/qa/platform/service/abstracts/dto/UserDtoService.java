@@ -24,6 +24,4 @@ public interface UserDtoService extends PageDtoService<UserDto> {
     List<Long> getUnregisteredUserIds(List<Long> userIds);
 
     List<UserProfileQuestionDto> getAllUserProfileQuestionDtoByIdAndSort(Long id, ProfileQuestionSort profileQuestionSort);
-
-    List<UserProfileAnswerDto> getAllUserProfileAnswerDtoByIdAndSort(Long id, ProfileAnswerSort profileAnswerSort);
 }

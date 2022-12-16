@@ -127,8 +127,20 @@ public class ProfileUserResourceController {
 
     @Operation(summary = "Получение всех ответов авторизированного пользователя " +
             "возвращается список объектов UserProfileAnswerDto ",
-            description = "Получение всех ответов авторизированного пользователя")
-    @Parameter(name = "sort", description = "есть не обязательный параметр sort VOTE - по голосам, NEW - по дате по умолчанию сортируется по голосам,")
+            description = "Получение всех ответов авторизированного пользователя \n" +
+                    "возвращает \n" +
+                    "public class UserProfileAnswerDto {\n" +
+                    "    private Long answerId;\n" +
+                    "    private String title;\n" +
+                    "    private Long vote;\n" +
+                    "\n" +
+                    "    private Long questionId;\n" +
+                    "    private LocalDateTime persistDate;\n" +
+                    "\n" +
+                    "}")
+    @Parameter(name = "sort", description = "есть не обязательный параметр sort VOTE - по голосам, NEW - по дате. По умолчанию сортируется по голосам")
+    @Parameter(name = "page", description = "есть не обязательный параметр page - указывает на страницу")
+    @Parameter(name = "items", description = "есть не обязательный параметр items - количество ответов в одной странице")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
