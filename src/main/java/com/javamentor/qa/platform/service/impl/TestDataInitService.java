@@ -272,28 +272,28 @@ public class TestDataInitService {
     public void createQuestions() {
         List<Question> questions = new ArrayList<>();
         for (int i = 1; i <= NUM_OF_QUESTIONS; i++) {
-            Question question = Question.builder()
-                    .title("Question " + i)
-                    .description("What do you think about question " + i + "?")
-                    .persistDateTime(LocalDateTime.now().minusDays(i))
-                    .lastUpdateDateTime(LocalDateTime.now().minusDays(i).plusHours(12))
-                    .user(userService.getById(98L).get())
-                    .tags(getRandomTagList())
-                    .build();
-            questions.add(question);
+            for (int j = 0; j < NUM_OF_QUESTIONS / 5; j++) {
+                Question question = Question.builder()
+                        .title("Question " + i)
+                        .description("What do you think about question " + i + "?")
+                        .persistDateTime(LocalDateTime.now().minusDays(i))
+                        .lastUpdateDateTime(LocalDateTime.now().minusDays(i).plusHours(12))
+                        .user(getRandomUser())
+                        .tags(getRandomTagList())
+                        .build();
+                questions.add(question);
+            }
         }
-
         questionService.persistAll(questions);
-
     }
 
     public void createAnswers() {
         List<Answer> answers = new ArrayList<>();
         for (int i = 1; i <= NUM_OF_ANSWERS; i++) {
-            for (int j = 1; j < NUM_OF_ANSWERS; j++) {
+            for (int j = 1; j < NUM_OF_ANSWERS / 5; j++) {
                 Answer answer = Answer.builder()
                         .htmlBody("Answer " + i)
-                        .user(userService.getById((long)i).get())
+                        .user(userService.getById((long) i).get())
                         .editModerator(getRandomAdmin())
                         .question(getRandomQuestion())
                         .isDeleted(false)
