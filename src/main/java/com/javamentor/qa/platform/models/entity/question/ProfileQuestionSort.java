@@ -14,8 +14,10 @@ import java.util.Comparator;
 @Getter
 @AllArgsConstructor
 public enum ProfileQuestionSort {
-    NEW(new DateComparator()),
-    VIEW(new ViewComparator()),
-    VOTE(new VoteComparator());
+    NEW(new DateComparator(),"q.persistDateTime desc" ),
+    VIEW(new ViewComparator(),"qView desc"),
+    VOTE(new VoteComparator(),"qVote desc");
     private Comparator<UserProfileQuestionDto> comparator;
+    private String comparingField;
+
 }

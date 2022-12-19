@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileAnswerPageDtoDaoImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileQuestionsPageDtoDaoImpl;
 import com.javamentor.qa.platform.models.dto.BookMarksDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.UserProfileAnswerDto;
@@ -10,6 +11,7 @@ import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
 import com.javamentor.qa.platform.models.entity.question.answer.ProfileAnswerSort;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.ProfileUserDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.impl.dto.UserProfileAnswerPageDtoDaoServiceImpl;
@@ -39,14 +41,16 @@ public class ProfileUserResourceController {
     private final UserDtoService userDtoService;
     private final BookMarksDtoService bookMarksDtoService;
     private final UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService;
+    private final ProfileUserDtoService profileUserDtoService;
 
     public ProfileUserResourceController(
-            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, UserProfileAnswerPageDtoDaoImpl userProfilePageDtoDao, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService) {
+            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, ProfileUserDtoService profileUserDtoService) {
 
         this.userService = userService;
         this.userDtoService = userDtoService;
         this.bookMarksDtoService = bookMarksDtoService;
-        this.userProfileAnswerPageDtoDaoService = userProfileAnswerPageDtoDaoService;
+        this.profileUserDtoService = profileUserDtoService;
+
     }
 
 
@@ -63,9 +67,17 @@ public class ProfileUserResourceController {
                     }),
     })
     @GetMapping("/questions")
-    public ResponseEntity<List<UserProfileQuestionDto>> getAllUserProfileQuestionDtoById(@AuthenticationPrincipal User user,
-                                                                                         @RequestParam(required = false, defaultValue = "VOTE", name = "sort") ProfileQuestionSort profileQuestionSort) {
-        return new ResponseEntity<>(userDtoService.getAllUserProfileQuestionDtoByIdAndSort(user.getId(), profileQuestionSort), HttpStatus.OK);
+    public ResponseEntity<PageDTO<UserProfileQuestionDto>> getAllUserProfileQuestionDtoById(@AuthenticationPrincipal User user,
+                                                                                            @RequestParam(required = false, defaultValue = "VOTE", name = "sort") ProfileQuestionSort profileQuestionSort,
+                                                                                            @RequestParam(required = false, defaultValue = "1") int currentPage,
+                                                                                            @RequestParam(required = false, defaultValue = "10") int items) {
+
+        PaginationData data = new PaginationData(currentPage, items, UserProfileQuestionsPageDtoDaoImpl.class.getSimpleName());
+        data.getProps().put("userId", user.getId());
+        data.getProps().put("sorted", profileQuestionSort);
+
+
+        return new ResponseEntity<>(profileUserDtoService.getPageDto(data), HttpStatus.OK);
     }
 
 
