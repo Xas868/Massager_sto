@@ -49,7 +49,7 @@ public class TestDataInitService {
     private final long NUM_OF_USERS = 100L;
     private final long NUM_OF_TAGS = 50L;
     private final long NUM_OF_QUESTIONS = 100L;
-    private final long NUM_OF_ANSWERS = 50L;
+    private final long NUM_OF_ANSWERS = 100L;
     private final int MAX_TRACKED_TAGS = 3;
     private final int MAX_IGNORED_TAGS = 3;
     private final long NUM_OF_REPUTATIONS = 100L;
@@ -299,15 +299,17 @@ public class TestDataInitService {
     public void createQuestions() {
         List<Question> questions = new ArrayList<>();
         for (int i = 1; i <= NUM_OF_QUESTIONS; i++) {
-            Question question = Question.builder()
-                    .title("Question " + i)
-                    .description("What do you think about question " + i + "?")
-                    .persistDateTime(LocalDateTime.now().minusDays(i))
-                    .lastUpdateDateTime(LocalDateTime.now().minusDays(i).plusHours(12))
-                    .user(getRandomUser())
-                    .tags(getRandomTagList())
-                    .build();
-            questions.add(question);
+            for (int j = 0; j < NUM_OF_QUESTIONS / 5; j++) {
+                Question question = Question.builder()
+                        .title("Question " + i)
+                        .description("What do you think about question " + i + "?")
+                        .persistDateTime(LocalDateTime.now().minusDays(i))
+                        .lastUpdateDateTime(LocalDateTime.now().minusDays(i).plusHours(12))
+                        .user(getRandomUser())
+                        .tags(getRandomTagList())
+                        .build();
+                questions.add(question);
+            }
         }
 
         questionService.persistAll(questions);
@@ -317,16 +319,18 @@ public class TestDataInitService {
     public void createAnswers() {
         List<Answer> answers = new ArrayList<>();
         for (int i = 1; i <= NUM_OF_ANSWERS; i++) {
-            Answer answer = Answer.builder()
-                    .htmlBody("Answer " + i)
-                    .user(getRandomUser())
-                    .editModerator(getRandomAdmin())
-                    .question(getRandomQuestion())
-                    .isDeleted(false)
-                    .isHelpful(false)
-                    .isDeletedByModerator(false)
-                    .build();
-            answers.add(answer);
+            for (int j = 1; j < NUM_OF_ANSWERS / 5; j++) {
+                Answer answer = Answer.builder()
+                        .htmlBody("Answer " + i)
+                        .user(userService.getById((long) i).get())
+                        .editModerator(getRandomAdmin())
+                        .question(getRandomQuestion())
+                        .isDeleted(false)
+                        .isHelpful(false)
+                        .isDeletedByModerator(false)
+                        .build();
+                answers.add(answer);
+            }
         }
 
         answerService.persistAll(answers);
@@ -371,20 +375,18 @@ public class TestDataInitService {
 
     public void createVoteAnswer() {
         List<VoteAnswer> voteAnswers = new ArrayList<>();
-        for (long i = 1; i <= NUM_OF_VOTEANSWERS; i++) {
-            User randomUser = getRandomUser();
-            Answer randomAnswer = getRandomAnswer();
-            while (didThisUserVoteForThisAnswer(randomUser.getId(), randomAnswer.getId(), voteAnswers)) {
-                randomUser = getRandomUser();
-                randomAnswer = getRandomAnswer();
+        for (long i = 1; i <= NUM_OF_USERS; i++) {
+            User randomUser = userService.getById(i).get();
+            Answer randomAnswer = answerService.getById(i).get();
+            for (int j = 0; j < NUM_OF_USERS; j++) {
+                VoteAnswer voteAnswer = VoteAnswer.builder()
+                        .answer(randomAnswer)
+                        .vote(new Random().nextInt(100) % 2 == 0 ? VoteType.UP_VOTE : VoteType.DOWN_VOTE)
+                        .persistDateTime(LocalDateTime.now())
+                        .user(randomUser)
+                        .build();
+                voteAnswers.add(voteAnswer);
             }
-            VoteAnswer voteAnswer = VoteAnswer.builder()
-                    .answer(randomAnswer)
-                    .vote(new Random().nextInt(100) % 2 == 0 ? VoteType.UP_VOTE : VoteType.DOWN_VOTE)
-                    .persistDateTime(LocalDateTime.now())
-                    .user(randomUser)
-                    .build();
-            voteAnswers.add(voteAnswer);
         }
         voteAnswerService.persistAll(voteAnswers);
     }
