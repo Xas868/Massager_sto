@@ -41,14 +41,13 @@ public class ProfileUserResourceController {
     private final ProfileUserDtoService profileUserDtoService;
 
     public ProfileUserResourceController(
-            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, GroupBookmarkService groupBookmarkService) {
+            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, GroupBookmarkService groupBookmarkService, ProfileUserDtoService profileUserDtoService) {
 
         this.userService = userService;
         this.userDtoService = userDtoService;
         this.bookMarksDtoService = bookMarksDtoService;
         this.groupBookmarkService = groupBookmarkService;
         this.profileUserDtoService = profileUserDtoService;
-
     }
 
     @Operation(summary = "Получение всех вопросов авторизированного пользователя неотсортированных" +
@@ -131,6 +130,5 @@ public class ProfileUserResourceController {
     @GetMapping("/question/week")
     public ResponseEntity<Long> getAnswersPerWeekByUserId(@AuthenticationPrincipal User user) {
         return new ResponseEntity<Long>(userDtoService.getCountAnswersPerWeekByUserId(user.getId()), HttpStatus.OK);
-
     }
 }
