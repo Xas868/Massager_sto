@@ -44,11 +44,12 @@ public class ProfileUserResourceController {
     private final ProfileUserDtoService profileUserDtoService;
 
     public ProfileUserResourceController(
-            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, ProfileUserDtoService profileUserDtoService) {
+            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService, ProfileUserDtoService profileUserDtoService) {
 
         this.userService = userService;
         this.userDtoService = userDtoService;
         this.bookMarksDtoService = bookMarksDtoService;
+        this.userProfileAnswerPageDtoDaoService = userProfileAnswerPageDtoDaoService;
         this.profileUserDtoService = profileUserDtoService;
 
     }
