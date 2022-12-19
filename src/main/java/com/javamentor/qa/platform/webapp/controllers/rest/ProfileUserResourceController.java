@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarkService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -32,14 +33,15 @@ public class ProfileUserResourceController {
     private final UserService userService;
     private final UserDtoService userDtoService;
     private final BookMarksDtoService bookMarksDtoService;
+    private final GroupBookmarkService groupBookmarkService;
 
     public ProfileUserResourceController(
-            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService) {
+            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, GroupBookmarkService groupBookmarkService) {
 
         this.userService = userService;
         this.userDtoService = userDtoService;
         this.bookMarksDtoService = bookMarksDtoService;
-
+        this.groupBookmarkService = groupBookmarkService;
     }
 
 
