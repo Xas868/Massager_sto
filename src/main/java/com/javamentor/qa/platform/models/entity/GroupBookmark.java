@@ -29,14 +29,14 @@ import java.util.Set;
 @Table(name = "group_bookmark")
 public class GroupBookmark {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
     private String title;
     @ManyToMany
     @ToString.Exclude
-    @JoinTable(name = "group_has_bookmark")
+    @JoinTable(name = "bookmark_has_group")
     private Set<BookMarks> bookMarks;
 
     @Override
