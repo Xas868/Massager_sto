@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.models.entity;
 
+import com.javamentor.qa.platform.models.entity.user.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -8,14 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.hibernate.Hibernate;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.ManyToMany;
-import javax.persistence.JoinTable;
+import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
 
@@ -38,6 +32,9 @@ public class GroupBookmark {
     @ToString.Exclude
     @JoinTable(name = "bookmark_has_group")
     private Set<BookMarks> bookMarks;
+
+    @ManyToOne
+    private User user;
 
     @Override
     public boolean equals(Object o) {

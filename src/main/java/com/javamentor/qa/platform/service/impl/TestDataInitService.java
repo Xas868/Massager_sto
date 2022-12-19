@@ -96,8 +96,9 @@ public class TestDataInitService {
         for (int i = 0; i < NUM_OF_BOOKMARK_GROUP; i++) {
             int randNumber1 = random.nextInt((int) (NUM_OF_USERS * 5)), randNumber2 = random.nextInt((int) (NUM_OF_USERS * 5));
             groupBookmarks.add(GroupBookmark.builder()
-                            .title(String.format("group bookmark %d", i))
-                            .bookMarks((new HashSet<>(bookmarksService.getAll().subList(Math.min(randNumber1, randNumber2), Math.max(randNumber1, randNumber2)))))
+                    .title(String.format("group bookmark %d", i))
+                    .bookMarks((new HashSet<>(bookmarksService.getAll().subList(Math.min(randNumber1, randNumber2), Math.max(randNumber1, randNumber2)))))
+                    .user(getRandomUser())
                     .build());
         }
         groupBookmarkService.persistAll(groupBookmarks);

@@ -131,4 +131,22 @@ public class ProfileUserResourceController {
     public ResponseEntity<Long> getAnswersPerWeekByUserId(@AuthenticationPrincipal User user) {
         return new ResponseEntity<Long>(userDtoService.getCountAnswersPerWeekByUserId(user.getId()), HttpStatus.OK);
     }
+    @Operation(summary = "Получение списка названий групп пользователя",
+            description = "Возвращает список имен(title) GroupBookMark")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Возвращает список имен(title) GroupBookMark",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json"
+                            )
+                    }
+            )
+    })
+
+    @GetMapping("/bookmark/group")
+    public ResponseEntity<List<String>> getAllUserBookMarkGroupNames(@AuthenticationPrincipal User user){
+        return new ResponseEntity<List<String>>(groupBookmarkService.getAllUserBookMarkGroupNames(user.getId()), HttpStatus.OK);
+    }
 }

@@ -4,7 +4,8 @@ alter table bookmarks
 create table group_bookmark
 (
     id bigserial not null unique primary key,
-    title varchar(255) not null
+    title varchar(255) not null,
+    user_id bigint references user_entity(id)
 );
 
 create table bookmark_has_group

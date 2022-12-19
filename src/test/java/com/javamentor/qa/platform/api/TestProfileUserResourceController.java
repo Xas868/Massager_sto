@@ -110,6 +110,7 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(10)));
 
     }
+
     // Проверка получения вопросов пользователя по параметру currentPage
     @Test
     @Sql(scripts = "/script/TestProfileUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/Before.sql",
@@ -142,6 +143,7 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(5)));
 
     }
+
     // Проверка получения вопросов пользователя по параметру items
     @Test
     @Sql(scripts = "/script/TestProfileUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/Before.sql",
@@ -173,5 +175,26 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$.items.[0].vote", Is.is(3)))
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(3)));
 
+    }
+
+    //Проверка получения списка имён GroupBookMark
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllUserProfileGroupBookMarkNames() throws Exception {
+        mockMvc.perform(get("/api/user/profile/bookmark/group")
+                .content("")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+        )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(4)))
+                .andExpect(jsonPath("$[0]", Is.is("group_bookmark1")))
+                .andExpect(jsonPath("$[1]", Is.is("group_bookmark2")))
+                .andExpect(jsonPath("$[2]", Is.is("group_bookmark3")))
+                .andExpect(jsonPath("$[3]", Is.is("group_bookmark4")));
     }
 }
