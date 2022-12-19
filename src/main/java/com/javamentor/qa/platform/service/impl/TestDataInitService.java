@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.service.impl;
 
 import com.javamentor.qa.platform.models.entity.BookMarks;
+import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.chat.*;
 import com.javamentor.qa.platform.models.entity.question.*;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
@@ -44,6 +45,7 @@ public class TestDataInitService {
     private final MessageStarService messageStarService;
     private final UserChatPinService userChatPinService;
     private final BookmarksService bookmarksService;
+    private final GroupBookmarkService groupBookmarkService;
     private final long NUM_OF_USERS = 100L;
     private final long NUM_OF_TAGS = 50L;
     private final long NUM_OF_QUESTIONS = 100L;
@@ -63,6 +65,7 @@ public class TestDataInitService {
     private final long NUM_OF_MODERATORS_GROUPCHAT = 5L;
 
     private final long NUM_OF_USERS_GROUPCHAT = 30L;
+    private final long NUM_OF_BOOKMARK_GROUP = 30L;
 
     public void init() {
         createRoles();
@@ -84,17 +87,41 @@ public class TestDataInitService {
         createUserChatPinChats();
         createGroupChatModeratorsAndUsers();
         createBookMarks();
+        createGroupBookMarks();
+    }
+
+    private void createGroupBookMarks() {
+        ArrayList<GroupBookmark> groupBookmarks = new ArrayList<>((int) NUM_OF_BOOKMARK_GROUP);
+        Random random = new Random();
+        for (int i = 0; i < NUM_OF_BOOKMARK_GROUP; i++) {
+            int randNumber1 = random.nextInt((int) (NUM_OF_USERS * 5)), randNumber2 = random.nextInt((int) (NUM_OF_USERS * 5));
+            groupBookmarks.add(GroupBookmark.builder()
+                            .title(String.format("group bookmark %d", i))
+                            .bookMarks((new HashSet<>(bookmarksService.getAll().subList(Math.min(randNumber1, randNumber2), Math.max(randNumber1, randNumber2)))))
+                    .build());
+        }
+        groupBookmarkService.persistAll(groupBookmarks);
     }
 
     public void createBookMarks() {
-        ArrayList<BookMarks> bookMarks = new ArrayList<>((int) NUM_OF_USERS);
+        ArrayList<BookMarks> bookMarks = new ArrayList<>((int) NUM_OF_USERS * 5);
+
+        for (int i = 0; i < NUM_OF_USERS * 5; i++) {
+            bookMarks.add(
+                    BookMarks.builder()
+                            .user(getRandomUser())
+                            .question(getRandomQuestion())
+                            .note(String.format("BookMarks %d note", 1))
+                            .build()
+            );
+        }
 
         User user = userService.getById(1L).orElseThrow(() -> new UserNotFoundException("user with this id  not found"));
         bookMarks.add(
                 BookMarks.builder()
                         .user(user)
                         .question(questionService.getQuestionByIdWithAuthor(user.getId()).orElseThrow(() -> new QuestionNotFoundException("question with author id  not found")))
-                        .note(String.format("BookMark %d note", 1))
+                        .note(String.format("BookMarks %d note", 1))
                         .build()
         );
 
@@ -103,7 +130,7 @@ public class TestDataInitService {
                 BookMarks.builder()
                         .user(user2)
                         .question(questionService.getQuestionByIdWithAuthor(user.getId()).orElseThrow(() -> new QuestionNotFoundException("question with author id  not found")))
-                        .note(String.format("BookMark %d note", 2))
+                        .note(String.format("BookMarks %d note", 2))
                         .build()
         );
 
