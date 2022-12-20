@@ -174,4 +174,47 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(3)));
 
     }
+
+    // Проверка BookMarks
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/getUserBookMarksDtoShouldWhenExist/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/getUserBookMarksDtoShouldWhenExist/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getUserBookMarksDtoShouldWhenExist() throws Exception {
+        mockMvc.perform(get("/api/user/profile/bookmarks")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(2)))
+                .andExpect(jsonPath("$[0].bookmarkId",Is.is(1)))
+                .andExpect(jsonPath("$.[0].questionId", Is.is(100)))
+                .andExpect(jsonPath("$[0].title", Is.is("Question 100")))
+                .andExpect(jsonPath("$[0].listTagDto.size()", Is.is(3)))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.[0].countView", Is.is(4)))
+                .andExpect(jsonPath("$.[0].note", Is.is("note 1")));
+
+    }
+
+    // Не должен бросать ошибку если нету закладок
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/getUserBookMarksDtoShouldWhenExist/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/getUserBookMarksDtoShouldWhenExist/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getUserBookMarksDtoShouldWorkWhenNotExist() throws Exception {
+        mockMvc.perform(get("/api/user/profile/bookmarks")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(0)));
+
+    }
 }
