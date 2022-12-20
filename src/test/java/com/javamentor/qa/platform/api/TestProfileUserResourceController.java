@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -185,10 +186,10 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void getAllUserProfileGroupBookMarkNames() throws Exception {
         mockMvc.perform(get("/api/user/profile/bookmark/group")
-                .content("")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
-        )
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", Is.is(4)))
@@ -196,5 +197,21 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$[1]", Is.is("group_bookmark2")))
                 .andExpect(jsonPath("$[2]", Is.is("group_bookmark3")))
                 .andExpect(jsonPath("$[3]", Is.is("group_bookmark4")));
+    }
+
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/createNewUserProfileGroupBookMark/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/createNewUserProfileGroupBookMark/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void createNewUserProfileGroupBookMark() throws Exception {
+        mockMvc.perform(post("/api/user/profile/bookmark/group")
+                        .content("testGroupBookMark")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
+                )
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$", Is.is("testGroupBookMark")));
     }
 }

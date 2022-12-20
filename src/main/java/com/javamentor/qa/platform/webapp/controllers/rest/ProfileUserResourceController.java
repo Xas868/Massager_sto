@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileQu
 import com.javamentor.qa.platform.models.dto.BookMarksDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -25,6 +26,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
@@ -131,6 +135,7 @@ public class ProfileUserResourceController {
     public ResponseEntity<Long> getAnswersPerWeekByUserId(@AuthenticationPrincipal User user) {
         return new ResponseEntity<Long>(userDtoService.getCountAnswersPerWeekByUserId(user.getId()), HttpStatus.OK);
     }
+
     @Operation(summary = "Получение списка названий групп пользователя",
             description = "Возвращает список имен(title) GroupBookMark")
     @ApiResponses(value = {
@@ -146,7 +151,29 @@ public class ProfileUserResourceController {
     })
 
     @GetMapping("/bookmark/group")
-    public ResponseEntity<List<String>> getAllUserBookMarkGroupNames(@AuthenticationPrincipal User user){
+    public ResponseEntity<List<String>> getAllUserBookMarkGroupNames(@AuthenticationPrincipal User user) {
         return new ResponseEntity<List<String>>(groupBookmarkService.getAllUserBookMarkGroupNames(user.getId()), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Создание новой группы закладок")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Создание новой группы закладок",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json"
+                                    )
+                            })
+            }
+    )
+    @PostMapping("/bookmark/group")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<String> addNewGroupBookMark(@AuthenticationPrincipal User user, @RequestBody String title) {
+        groupBookmarkService.persist(GroupBookmark.builder()
+                .user(user)
+                .title(title)
+                .build());
+        return new ResponseEntity<>(title,HttpStatus.CREATED);
     }
 }
