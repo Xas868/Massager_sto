@@ -91,14 +91,13 @@ public class TestDataInitService {
     }
 
     private void createGroupBookMarks() {
-        ArrayList<GroupBookmark> groupBookmarks = new ArrayList<>((int) NUM_OF_BOOKMARK_GROUP);
-        Random random = new Random();
+         ArrayList<GroupBookmark> groupBookmarks = new ArrayList<>((int) NUM_OF_BOOKMARK_GROUP);
         for (int i = 0; i < NUM_OF_BOOKMARK_GROUP; i++) {
-            int randNumber1 = random.nextInt((int) (NUM_OF_USERS * 5)), randNumber2 = random.nextInt((int) (NUM_OF_USERS * 5));
+            User randomUser = getRandomUser();
             groupBookmarks.add(GroupBookmark.builder()
                     .title(String.format("group bookmark %d", i))
-                    .bookMarks((new HashSet<>(bookmarksService.getAll().subList(Math.min(randNumber1, randNumber2), Math.max(randNumber1, randNumber2)))))
-                    .user(getRandomUser())
+                    .bookMarks((new HashSet<>(bookmarksService.getAllBookMarksByUserId(randomUser.getId()))))
+                    .user(randomUser)
                     .build());
         }
         groupBookmarkService.persistAll(groupBookmarks);
@@ -112,7 +111,7 @@ public class TestDataInitService {
                     BookMarks.builder()
                             .user(getRandomUser())
                             .question(getRandomQuestion())
-                            .note(String.format("BookMarks %d note", 1))
+                            .note(String.format("BookMarks %d note", i))
                             .build()
             );
         }

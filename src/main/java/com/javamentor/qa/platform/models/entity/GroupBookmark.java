@@ -28,12 +28,12 @@ public class GroupBookmark {
     private Long id;
 
     private String title;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @ToString.Exclude
     @JoinTable(name = "bookmark_has_group")
     private Set<BookMarks> bookMarks;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User user;
 
     @Override

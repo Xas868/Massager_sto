@@ -9,6 +9,8 @@ import com.javamentor.qa.platform.webapp.controllers.exceptions.AddBookmarkExcep
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class BookmarksServiceImpl  extends ReadWriteServiceImpl<BookMarks, Long> implements BookmarksService {
 
@@ -30,5 +32,10 @@ public class BookmarksServiceImpl  extends ReadWriteServiceImpl<BookMarks, Long>
                 .user(user)
                 .build();
         bookmarksDao.persist(bookMarks);
+    }
+
+    @Override
+    public List<BookMarks> getAllBookMarksByUserId(Long id) {
+        return bookmarksDao.getAllBookMarksByUserId(id);
     }
 }

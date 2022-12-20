@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository
 public class BookmarksDaoImpl extends ReadWriteDaoImpl<BookMarks, Long> implements BookmarksDao {
@@ -20,5 +21,18 @@ public class BookmarksDaoImpl extends ReadWriteDaoImpl<BookMarks, Long> implemen
                 .setParameter("userId", userId)
                 .setParameter("questionId", questionId)
                 .getSingleResult() == 0;
+    }
+
+    @Override
+    public List<BookMarks> getAllBookMarksByUserId(Long id) {
+        return entityManager.createQuery("select new BookMarks (" +
+                        "b.id," +
+                        "b.user," +
+                        "b.question," +
+                        "b.note" +
+                        ")" +
+                        "from BookMarks b where b.user.id = :id", BookMarks.class)
+                .setParameter("id", id)
+                .getResultList();
     }
 }

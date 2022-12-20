@@ -199,6 +199,7 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$[3]", Is.is("group_bookmark4")));
     }
 
+    //Проверка создания новой группы закладок
     @Test
     @Sql(scripts = "/script/TestProfileUserResourceController/createNewUserProfileGroupBookMark/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -213,5 +214,22 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$", Is.is("testGroupBookMark")));
+    }
+
+    //Проверка создания новой группы закладок должен вернуть ошибку если тело метода пустое
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/createNewUserProfileGroupBookMark/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/createNewUserProfileGroupBookMark/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void createNewUserProfileGroupBookMarkShouldReturnBadRequestIfBodyIsEmpty() throws Exception {
+        mockMvc.perform(post("/api/user/profile/bookmark/group")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("request body (title field) must not be empty")));
     }
 }

@@ -168,8 +168,10 @@ public class ProfileUserResourceController {
             }
     )
     @PostMapping("/bookmark/group")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<String> addNewGroupBookMark(@AuthenticationPrincipal User user, @RequestBody String title) {
+    public ResponseEntity<String> addNewGroupBookMark(@AuthenticationPrincipal User user, @RequestBody(required = false) String title) {
+        if (title == null || title.isEmpty()){
+            return new ResponseEntity<>("request body (title field) must not be empty",HttpStatus.BAD_REQUEST);
+        }
         groupBookmarkService.persist(GroupBookmark.builder()
                 .user(user)
                 .title(title)
