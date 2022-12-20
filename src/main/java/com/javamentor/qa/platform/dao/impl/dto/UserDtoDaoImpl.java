@@ -128,19 +128,10 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
     @Override
     public List<UserProfileTagDto> getUserProfileTagDto(Long id) {
-        List resultList1 = entityManager.createQuery("select tt.trackedTag.id from TrackedTag tt where tt.user.id = 7")
-                .getResultList();
-
-        for (int i = 0; i < resultList1.size(); i++) {
-            entityManager.createQuery("select count () from VoteQuestion vq where :t in (vq.question.tags)")
-                    .setParameter("t", resultList1.get(i));
-        }
-
         List<UserProfileTagDto> resultList = entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.UserProfileTagDto(" +
                         "t.trackedTag.name," +
-                        "(select coalesce(sum(case when v.vote = 'UP_VOTE' then 1 else -1 end), 0) from VoteAnswer v)," +
-                        "t.trackedTag.questions" +
-                        ")" +
+                        "(select getAnswerQuestionVoteCount())," +
+                        "t.id)" +
                         "from TrackedTag t  where t.user.id = :id", UserProfileTagDto.class)
                 .setParameter("id", id)
                 .getResultList();

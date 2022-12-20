@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileQu
 import com.javamentor.qa.platform.models.dto.BookMarksDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.UserProfileTagDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -128,6 +129,10 @@ public class ProfileUserResourceController {
     @GetMapping("/question/week")
     public ResponseEntity<Long> getAnswersPerWeekByUserId(@AuthenticationPrincipal User user) {
         return new ResponseEntity<Long>(userDtoService.getCountAnswersPerWeekByUserId(user.getId()), HttpStatus.OK);
+    }
 
+    @GetMapping("/tag")
+    public ResponseEntity<List<UserProfileTagDto>> getUserProfileTagDto(@AuthenticationPrincipal User user){
+        return new ResponseEntity<>(userDtoService.getUserProfileTagDto(user.getId()), HttpStatus.OK);
     }
 }

@@ -187,10 +187,4 @@ public class UserResourceController {
             CalendarPeriod calendarPeriod) {
         return new ResponseEntity<>(userDtoService.getTopUsersForDaysRankedByNumberOfQuestions(calendarPeriod), HttpStatus.OK);
     }
-
-    @GetMapping("/api/user/profile/tag")
-    public ResponseEntity<List<UserProfileTagDto>> getUserProfileTagDto(@AuthenticationPrincipal User user){
-        return new ResponseEntity<>(userDtoService.getUserProfileTagDto(user.getId()), HttpStatus.OK);
-    }
-
 }
