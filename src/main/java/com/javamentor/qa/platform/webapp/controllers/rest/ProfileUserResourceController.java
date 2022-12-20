@@ -8,9 +8,7 @@ import com.javamentor.qa.platform.models.dto.UserProfileTagDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.ProfileUserDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.*;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 @Tag(name = "ProfileUserResourceController", description = "Позволяет работать с профилем пользователя")
@@ -38,15 +38,16 @@ public class ProfileUserResourceController {
     private final UserDtoService userDtoService;
     private final BookMarksDtoService bookMarksDtoService;
     private final ProfileUserDtoService profileUserDtoService;
+    private final UserProfileTagDtoService userProfileTagDtoService;
 
     public ProfileUserResourceController(
-            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, ProfileUserDtoService profileUserDtoService) {
+            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, ProfileUserDtoService profileUserDtoService, UserProfileTagDtoService userProfileTagDtoService) {
 
         this.userService = userService;
         this.userDtoService = userDtoService;
         this.bookMarksDtoService = bookMarksDtoService;
         this.profileUserDtoService = profileUserDtoService;
-
+        this.userProfileTagDtoService = userProfileTagDtoService;
     }
 
     @Operation(summary = "Получение всех вопросов авторизированного пользователя неотсортированных" +
@@ -133,6 +134,6 @@ public class ProfileUserResourceController {
 
     @GetMapping("/tag")
     public ResponseEntity<List<UserProfileTagDto>> getUserProfileTagDto(@AuthenticationPrincipal User user){
-        return new ResponseEntity<>(userDtoService.getUserProfileTagDto(user.getId()), HttpStatus.OK);
+        return new ResponseEntity<>(userProfileTagDtoService.getAllUserProfileTagDtoByUserId(user.getId()).orElse(new ArrayList<>()),HttpStatus.OK);
     }
 }

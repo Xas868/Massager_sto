@@ -5,11 +5,9 @@ import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.AnswerDTO;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
-import com.javamentor.qa.platform.models.dto.UserProfileTagDto;
 import com.javamentor.qa.platform.models.util.CalendarPeriod;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
-import org.yaml.snakeyaml.nodes.Tag;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -124,17 +122,5 @@ public class UserDtoDaoImpl implements UserDtoDao {
         List<Long> notFoundIds = userIds.stream().filter(aObject -> !foundIds.contains(aObject)).collect(Collectors.toList());
 
         return notFoundIds;
-    }
-
-    @Override
-    public List<UserProfileTagDto> getUserProfileTagDto(Long id) {
-        List<UserProfileTagDto> resultList = entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.UserProfileTagDto(" +
-                        "t.trackedTag.name," +
-                        "(select getAnswerQuestionVoteCount())," +
-                        "t.id)" +
-                        "from TrackedTag t  where t.user.id = :id", UserProfileTagDto.class)
-                .setParameter("id", id)
-                .getResultList();
-        return resultList;
     }
 }

@@ -19,7 +19,7 @@ public class AnswerDaoImpl extends ReadWriteDaoImpl<Answer, Long> implements Ans
     @Override
     public Optional<Answer> getAnswerWithAuthor(long answerId) {
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery(
-                "SELECT a FROM Answer a JOIN User u ON a.user.id = u.id WHERE a.id = :answerId", Answer.class)
+                        "SELECT a FROM Answer a JOIN User u ON a.user.id = u.id WHERE a.id = :answerId", Answer.class)
                 .setParameter("answerId", answerId));
     }
 
@@ -28,6 +28,20 @@ public class AnswerDaoImpl extends ReadWriteDaoImpl<Answer, Long> implements Ans
     public void deleteById(Long id) {
         String hql = "UPDATE Answer a SET a.isDeleted = true WHERE a.id = :id";
         entityManager.createQuery(hql).setParameter("id", id).executeUpdate();
+    }
+
+    @Override
+    public Optional<Long> getCountOfAnswerVoteByQuestionId(Long id) {
+        return SingleResultUtil.getSingleResultOrNull(
+                entityManager.createQuery("select sum(case when va.vote = 'UP_VOTE' then 1 else -1 end) from VoteAnswer va where va.answer.question.id = id", java.lang.Long.class)
+                        .setParameter("id", id)
+        );
+    }
+
+    @Override
+    public Optional<Long> getCountOfAnswerToQuestionByQuestionId(Long id) {
+        return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("select count (a) from Answer a where a.question.id = id", java.lang.Long.class)
+                .setParameter("id", id));
     }
 
     @Transactional

@@ -26,4 +26,14 @@ public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implem
     public void deleteById(Long id) {
         answerDao.deleteById(id);
     }
+
+    @Override
+    public Optional<Long> getCountOfAnswerVoteByQuestionId(Long id) {
+        return answerDao.getCountOfAnswerVoteByQuestionId(id);
+    }
+
+    @Override
+    public Optional<Long>  getCountOfAnswerToQuestionByQuestionId(Long id) {
+        return answerDao.getCountOfAnswerToQuestionByQuestionId(id);
+    }
 }

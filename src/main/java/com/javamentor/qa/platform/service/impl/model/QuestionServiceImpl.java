@@ -6,6 +6,8 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import org.springframework.stereotype.Service;
+
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +31,23 @@ public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> im
         return questionDao.getCountQuestion();
     }
 
+    @Override
+    public Optional<List<Long>> getAllQuestionIdByTagId(Long id) {
+        return questionDao.getAllQuestionIdByTagId(id);
+    }
+
     public Optional<Question> getQuestionByIdWithAuthor(Long id){
         return questionDao.getQuestionByIdWithAuthor(id);
+    }
+
+    @Override
+    public Long getCountOfViewByQuestionId(Long id) {
+        return questionDao.getCountOfViewByQuestionId(id);
+    }
+
+    @Override
+    public Long getCountOfVoteByQuestionId(Long id) {
+        return questionDao.getCountOfVoteByQuestionId(id);
     }
 
     @Override
