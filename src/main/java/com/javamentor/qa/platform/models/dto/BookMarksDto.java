@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookMarksDto {
+    private Long bookmarkId;
     private Long questionId;
     private String title;
     private List<TagDto> listTagDto;
@@ -23,7 +24,8 @@ public class BookMarksDto {
     private LocalDateTime persistDateTime;
     private String note;
 
-    public BookMarksDto(Long questionId, String title, Long countAnswer, Long countVote, Long countView, LocalDateTime persistDateTime, String note) {
+    public BookMarksDto(Long bookmarkId, Long questionId, String title, Long countAnswer, Long countVote, Long countView, LocalDateTime persistDateTime, String note) {
+        this.bookmarkId = bookmarkId;
         this.questionId = questionId;
         this.title = title;
         this.countAnswer = countAnswer;

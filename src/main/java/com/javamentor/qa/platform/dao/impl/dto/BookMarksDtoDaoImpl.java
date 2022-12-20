@@ -16,7 +16,8 @@ public class BookMarksDtoDaoImpl implements BookMarksDtoDao {
 
     @Override
     public List<BookMarksDto> getAllBookMarksInUserProfile(Long id) {
-        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.BookMarksDto (" +
+        List<BookMarksDto> id1 = entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.BookMarksDto (" +
+                        "b.id," +
                         "b.question.id," +
                         "b.question.title ," +
                         "(select count(a.id) from Answer a where a.question.id = b.question.id)," +
@@ -27,5 +28,6 @@ public class BookMarksDtoDaoImpl implements BookMarksDtoDao {
                         "from BookMarks b where b.question.isDeleted=false and b.user.id =: id", BookMarksDto.class)
                 .setParameter("id", id)
                 .getResultList();
+        return id1;
     }
 }
