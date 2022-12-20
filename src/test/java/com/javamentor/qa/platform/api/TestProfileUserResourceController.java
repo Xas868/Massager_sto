@@ -242,17 +242,34 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$[3]", Is.is("group_bookmark4")));
     }
 
+    //Проверка получения списка имён GroupBookMark не должен бросать ошибку если нету группы закладок у пользователя
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllUserProfileGroupBookMarkNamesShouldWorkIfGroupBookMarkNotExists() throws Exception {
+        mockMvc.perform(get("/api/user/profile/bookmark/group")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(0)));
+    }
+
     //Проверка создания новой группы закладок
     @Test
-    @Sql(scripts = "/script/TestProfileUserResourceController/createNewUserProfileGroupBookMark/Before.sql",
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestProfileUserResourceController/createNewUserProfileGroupBookMark/After.sql",
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void createNewUserProfileGroupBookMark() throws Exception {
         mockMvc.perform(post("/api/user/profile/bookmark/group")
                         .content("testGroupBookMark")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -261,15 +278,15 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
 
     //Проверка создания новой группы закладок должен вернуть ошибку если тело метода пустое
     @Test
-    @Sql(scripts = "/script/TestProfileUserResourceController/createNewUserProfileGroupBookMark/Before.sql",
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestProfileUserResourceController/createNewUserProfileGroupBookMark/After.sql",
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void createNewUserProfileGroupBookMarkShouldReturnBadRequestIfBodyIsEmpty() throws Exception {
         mockMvc.perform(post("/api/user/profile/bookmark/group")
                         .content("")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
