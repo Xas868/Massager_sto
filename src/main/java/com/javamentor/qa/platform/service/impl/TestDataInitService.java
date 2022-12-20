@@ -144,6 +144,8 @@ public class TestDataInitService {
                     .title("GroupChat" + i)
                     .image("image" + i)
                     .userAuthor(getRandomUser())
+                    .moderators(new HashSet<>(List.of(getRandomUser(), getRandomUser())))
+                    .users(new HashSet<>(List.of(getRandomUser(), getRandomUser(), getRandomUser(), getRandomUser())))
                     .build();
             groupChats.add(groupChat);
         }
