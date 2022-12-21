@@ -1,16 +1,20 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileAnswerPageDtoDaoImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileQuestionsPageDtoDaoImpl;
 import com.javamentor.qa.platform.models.dto.BookMarksDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.dto.UserProfileAnswerDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
+import com.javamentor.qa.platform.models.entity.question.answer.ProfileAnswerSort;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.ProfileUserDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.impl.dto.UserProfileAnswerPageDtoDaoServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -36,17 +40,20 @@ public class ProfileUserResourceController {
     private final UserService userService;
     private final UserDtoService userDtoService;
     private final BookMarksDtoService bookMarksDtoService;
+    private final UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService;
     private final ProfileUserDtoService profileUserDtoService;
 
     public ProfileUserResourceController(
-            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, ProfileUserDtoService profileUserDtoService) {
+            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService, ProfileUserDtoService profileUserDtoService) {
 
         this.userService = userService;
         this.userDtoService = userDtoService;
         this.bookMarksDtoService = bookMarksDtoService;
+        this.userProfileAnswerPageDtoDaoService = userProfileAnswerPageDtoDaoService;
         this.profileUserDtoService = profileUserDtoService;
 
     }
+
 
     @Operation(summary = "Получение всех вопросов авторизированного пользователя неотсортированных" +
             "В запросе нет параметров,возвращается список объектов UserProfileQuestionDto ",
@@ -129,5 +136,32 @@ public class ProfileUserResourceController {
     public ResponseEntity<Long> getAnswersPerWeekByUserId(@AuthenticationPrincipal User user) {
         return new ResponseEntity<Long>(userDtoService.getCountAnswersPerWeekByUserId(user.getId()), HttpStatus.OK);
 
+    }
+
+    @Operation(summary = "Получение пагинированного списка ответов авторизированного пользователя " +
+            "возвращается пагинированный список объектов UserProfileAnswerDto ",
+            description = "Получение пагинированного списка ответов авторизированного пользователя ")
+    @Parameter(name = "sort", description = "есть не обязательный параметр sort VOTE - по голосам, NEW - по дате. По умолчанию сортируется по голосам")
+    @Parameter(name = "page", description = "есть не обязательный параметр page - указывает на страницу")
+    @Parameter(name = "items", description = "есть не обязательный параметр items - количество ответов в одной странице")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Возвращает список UserProfileAnswerDto(long answerId,String title, Long vote, Long view, Long questionId, LocalDateTime persistDateTime)",
+                    content = {
+                            @Content(mediaType = "application/json")
+                    }),
+    })
+    @GetMapping("/answers")
+    public ResponseEntity<PageDTO<UserProfileAnswerDto>> getAllUserProfileQuestionDtoById(@AuthenticationPrincipal User user,
+                                                                                          @RequestParam(required = false, defaultValue = "VOTE", name = "sort") ProfileAnswerSort profileAnswerSort,
+                                                                                          @RequestParam(required = false, defaultValue = "1") int page,
+                                                                                          @RequestParam(defaultValue = "10") int items) {
+        PaginationData data = new PaginationData(page, items, UserProfileAnswerPageDtoDaoImpl.class.getSimpleName());
+        data.getProps().put("user", user);
+        data.getProps().put("userId", user.getId());
+        data.getProps().put("profileAnswerSort", profileAnswerSort);
+
+        return new ResponseEntity<>(userProfileAnswerPageDtoDaoService.getPageDto(data), HttpStatus.OK);
     }
 }
