@@ -1,12 +1,9 @@
-truncate table role;
-truncate table user_entity;
-truncate table question;
-truncate table question;
 /*
  *  Table: role
  */
 INSERT INTO role (id, name)
-VALUES (100, 'ROLE_USER');
+VALUES (100, 'ROLE_USER'),
+       (101, 'ROLE_USER');
 
 /*
  *  Table: user_entity

@@ -8,7 +8,6 @@ import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,46 +31,38 @@ public class UserProfileTagDtoServiceImpl implements UserProfileTagDtoService {
                 .map(t -> questionService.getAllQuestionIdByTagId(t.getId()).orElse(new ArrayList<>()))
                 .collect(Collectors.toList());
 
-        List<Long> countOfAnswerVote = new ArrayList<>(questionIds.size());
-        for (int i = 0; i < questionIds.size(); i++) {
-            long voteCount = 0;
-            for (int j = 0; j < questionIds.get(i).size(); j++) {
-                voteCount += answerService.getCountOfAnswerVoteByQuestionId(questionIds.get(i).get(j)).orElse(0L);
-            }
-            countOfAnswerVote.add(voteCount);
-        }
+        System.out.println();
 
-        List<Long> countOfVoteQuestions = new ArrayList<>();
-
-        for (int i = 0; i < questionIds.size(); i++) {
-            long voteCount = 0;
-            for (int j = 0; j < questionIds.get(i).size(); j++) {
-                voteCount += questionService.getCountOfVoteByQuestionId(questionIds.get(i).get(j));
-            }
-            countOfVoteQuestions.add(voteCount);
-        }
+        List<Long> countOfVoteQuestions = questionIds.stream()
+                .map(q -> q.stream()
+                        .map(questionService::getCountOfVoteByQuestionId)
+                        .mapToLong(v -> v.orElse(0L))
+                        .sum()
+                )
+                .collect(Collectors.toList());
 
 
-        List<Long> countOfQuestionBelowTag = new ArrayList<>(questionIds.size());
+        List<Long> countOfQuestionBelowTag = questionIds.stream()
+                .map(v -> (long) v.size())
+                .collect(Collectors.toList());
 
-        for (int i = 0; i < questionIds.size(); i++) {
-            countOfQuestionBelowTag.add((long) questionIds.get(i).size());
-        }
+        List<Long> countOfAnswerVote = questionIds.stream()
+                .map(q -> q.stream()
+                        .map(answerService::getCountOfAnswerVoteByQuestionId)
+                        .mapToLong(v -> v.orElse(0L))
+                        .sum()
+                )
+                .collect(Collectors.toList());
 
-        List<Long> countOfAnswerBelowQuestionBelowTag = new ArrayList<>(questionIds.size());
-
-        for (int i = 0; i < questionIds.size(); i++) {
-            long count = 0;
-            for (int j = 0; j < questionIds.get(i).size(); j++) {
-                Long aLong = answerService.getCountOfAnswerToQuestionByQuestionId(questionIds.get(i).get(j)).orElse(0L);
-                count += aLong;
-            }
-            countOfAnswerBelowQuestionBelowTag.add(count);
-        }
+        List<Long> countOfAnswerBelowQuestionBelowTag = questionIds.stream()
+                .map(v -> v.stream()
+                        .map(answerService::getCountOfAnswerToQuestionByQuestionId)
+                        .mapToLong(value -> value.orElse(0L))
+                        .sum()
+                ).collect(Collectors.toList());
 
         ArrayList<UserProfileTagDto> userProfileTagDtos = new ArrayList<>(trackedTagsByUserId.size());
         TagDto tagDto;
-
 
         for (int i = 0; i < trackedTagsByUserId.size(); i++) {
             tagDto = trackedTagsByUserId.get(i);

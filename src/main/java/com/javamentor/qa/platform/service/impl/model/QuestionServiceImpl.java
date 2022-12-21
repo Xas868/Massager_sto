@@ -41,12 +41,12 @@ public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> im
     }
 
     @Override
-    public Long getCountOfViewByQuestionId(Long id) {
+    public Optional<Long> getCountOfViewByQuestionId(Long id) {
         return questionDao.getCountOfViewByQuestionId(id);
     }
 
     @Override
-    public Long getCountOfVoteByQuestionId(Long id) {
+    public Optional<Long> getCountOfVoteByQuestionId(Long id) {
         return questionDao.getCountOfVoteByQuestionId(id);
     }
 

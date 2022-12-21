@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.dao.abstracts.model;
 
 import com.javamentor.qa.platform.models.entity.question.Question;
 
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,7 +12,7 @@ public interface QuestionDao extends ReadWriteDao<Question, Long> {
 
     Optional<List<Long>> getAllQuestionIdByTagId(Long id);
 
-    Long getCountOfViewByQuestionId(Long id);
+    Optional<Long> getCountOfViewByQuestionId(Long id);
 
-    Long getCountOfVoteByQuestionId(Long id);
+    Optional<Long> getCountOfVoteByQuestionId(Long id);
 }

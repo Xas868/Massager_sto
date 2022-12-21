@@ -12,6 +12,6 @@ public interface QuestionService extends ReadWriteService<Question, Long> {
 
     Optional<Question> getQuestionByIdWithAuthor(Long id);
 
-    Long getCountOfViewByQuestionId(Long id);
-    Long getCountOfVoteByQuestionId(Long id);
+    Optional<Long> getCountOfViewByQuestionId(Long id);
+    Optional<Long> getCountOfVoteByQuestionId(Long id);
 }

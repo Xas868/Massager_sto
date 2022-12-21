@@ -110,6 +110,7 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(10)));
 
     }
+
     // Проверка получения вопросов пользователя по параметру currentPage
     @Test
     @Sql(scripts = "/script/TestProfileUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/Before.sql",
@@ -142,6 +143,7 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(5)));
 
     }
+
     // Проверка получения вопросов пользователя по параметру items
     @Test
     @Sql(scripts = "/script/TestProfileUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/Before.sql",
@@ -190,7 +192,7 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", Is.is(2)))
-                .andExpect(jsonPath("$[0].bookmarkId",Is.is(1)))
+                .andExpect(jsonPath("$[0].bookmarkId", Is.is(1)))
                 .andExpect(jsonPath("$.[0].questionId", Is.is(100)))
                 .andExpect(jsonPath("$[0].title", Is.is("Question 100")))
                 .andExpect(jsonPath("$[0].listTagDto.size()", Is.is(3)))
@@ -216,5 +218,12 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", Is.is(0)));
 
+    }
+    // Проверка получения тегов пользователя
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserTagsDtoShouldReturnAllUserProfileTagDto/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    void getAllUserTagsDtoShouldReturnAllUserProfileTagDto(){
+        mockMvc.perform(get("/api/user/profile/tags"))
     }
 }

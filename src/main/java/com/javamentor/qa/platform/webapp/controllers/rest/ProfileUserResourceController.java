@@ -132,7 +132,7 @@ public class ProfileUserResourceController {
         return new ResponseEntity<Long>(userDtoService.getCountAnswersPerWeekByUserId(user.getId()), HttpStatus.OK);
     }
 
-    @GetMapping("/tag")
+    @GetMapping("/tags")
     public ResponseEntity<List<UserProfileTagDto>> getUserProfileTagDto(@AuthenticationPrincipal User user){
         return new ResponseEntity<>(userProfileTagDtoService.getAllUserProfileTagDtoByUserId(user.getId()).orElse(new ArrayList<>()),HttpStatus.OK);
     }
