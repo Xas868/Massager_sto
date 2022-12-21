@@ -121,6 +121,7 @@ create table question_viewed (
                                  primary key (id)
 );
 
+
 create table related_tag (
                              id int8 not null,
                              child_tag int8 not null,
@@ -325,6 +326,7 @@ alter table question_viewed
     add constraint question_viewed_user_fk
         foreign key (user_id)
             references user_entity;
+
 
 alter table related_tag
     add constraint related_tag_child_tag_fk

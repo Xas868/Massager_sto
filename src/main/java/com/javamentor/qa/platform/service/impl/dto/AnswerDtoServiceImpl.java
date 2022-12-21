@@ -10,10 +10,8 @@ import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.List;
