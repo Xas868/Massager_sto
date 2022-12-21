@@ -3,7 +3,6 @@ package com.javamentor.qa.platform.dao.impl.model;
 import com.javamentor.qa.platform.dao.abstracts.model.AnswerDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,24 +28,6 @@ public class AnswerDaoImpl extends ReadWriteDaoImpl<Answer, Long> implements Ans
     public void deleteById(Long id) {
         String hql = "UPDATE Answer a SET a.isDeleted = true WHERE a.id = :id";
         entityManager.createQuery(hql).setParameter("id", id).executeUpdate();
-    }
-
-    @Override
-    public Optional<Long> getCountOfAnswerVoteByQuestionId(Long id) {
-        return Optional.ofNullable(
-                entityManager.createQuery("select coalesce(sum(case when va.vote = 'UP_VOTE' then 1 else -1 end), 0) from VoteAnswer va where va.answer.question.id = :id", Long.class)
-                        .setParameter("id", id)
-                        .getSingleResult()
-        );
-    }
-
-    @Override
-    public Optional<Long> getCountOfAnswerToQuestionByQuestionId(Long id) {
-        return Optional.ofNullable(
-                entityManager.createQuery("select count (a) from Answer a where a.question.id = :id", Long.class)
-                        .setParameter("id", id)
-                        .getSingleResult()
-        );
     }
 
     @Transactional

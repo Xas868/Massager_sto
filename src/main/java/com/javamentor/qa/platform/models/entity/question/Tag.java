@@ -8,7 +8,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
-import javax.persistence.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -44,11 +53,6 @@ public class Tag implements Serializable {
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     private List<Question> questions;
 
-    public Tag(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
     @PrePersist
     private void prePersistFunction() {
         checkConstraints();
@@ -80,6 +84,4 @@ public class Tag implements Serializable {
     public int hashCode() {
         return Objects.hash(id, name, description, persistDateTime);
     }
-
-
 }
