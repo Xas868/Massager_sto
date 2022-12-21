@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
@@ -50,15 +49,14 @@ public class ProfileUserResourceController {
     private final ProfileUserDtoService profileUserDtoService;
 
     public ProfileUserResourceController(
-            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService, ProfileUserDtoService profileUserDtoService) {
+            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService, GroupBookmarkService groupBookmarkService, ProfileUserDtoService profileUserDtoService1) {
 
         this.userService = userService;
         this.userDtoService = userDtoService;
         this.bookMarksDtoService = bookMarksDtoService;
         this.userProfileAnswerPageDtoDaoService = userProfileAnswerPageDtoDaoService;
         this.groupBookmarkService = groupBookmarkService;
-        this.profileUserDtoService = profileUserDtoService;
-
+        this.profileUserDtoService = profileUserDtoService1;
     }
 
     @Operation(summary = "Получение всех вопросов авторизированного пользователя неотсортированных" +
