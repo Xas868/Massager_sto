@@ -6,3 +6,4 @@ truncate question_has_tag cascade;
 truncate reputation cascade;
 truncate votes_on_questions cascade;
 truncate question_viewed cascade;
+truncate tag_tracked cascade;

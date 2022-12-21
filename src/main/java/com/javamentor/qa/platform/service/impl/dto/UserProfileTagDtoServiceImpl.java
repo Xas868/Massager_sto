@@ -31,8 +31,6 @@ public class UserProfileTagDtoServiceImpl implements UserProfileTagDtoService {
                 .map(t -> questionService.getAllQuestionIdByTagId(t.getId()).orElse(new ArrayList<>()))
                 .collect(Collectors.toList());
 
-        System.out.println();
-
         List<Long> countOfVoteQuestions = questionIds.stream()
                 .map(q -> q.stream()
                         .map(questionService::getCountOfVoteByQuestionId)
@@ -68,6 +66,7 @@ public class UserProfileTagDtoServiceImpl implements UserProfileTagDtoService {
             tagDto = trackedTagsByUserId.get(i);
             userProfileTagDtos.add(
                     UserProfileTagDto.builder()
+                            .id(tagDto.getId())
                             .tagName(tagDto.getName())
                             .countVoteTag(countOfVoteQuestions.get(i) + countOfAnswerVote.get(i))
                             .countAnswerQuestion(countOfQuestionBelowTag.get(i) + countOfAnswerBelowQuestionBelowTag.get(i))

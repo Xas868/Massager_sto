@@ -223,7 +223,37 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
     @Test
     @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserTagsDtoShouldReturnAllUserProfileTagDto/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    void getAllUserTagsDtoShouldReturnAllUserProfileTagDto(){
-        mockMvc.perform(get("/api/user/profile/tags"))
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserTagsDtoShouldReturnAllUserProfileTagDto/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllUserTagsDtoShouldReturnAllUserProfileTagDto() throws Exception {
+        mockMvc.perform(get("/api/user/profile/tags")
+                .content("")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+        )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()",Is.is(4)))
+                .andExpect(jsonPath("$[0].id",Is.is(100)))
+                .andExpect(jsonPath("$[0].tagName",Is.is("vfOxMU1")))
+                .andExpect(jsonPath("$[0].countVoteTag",Is.is(15)))
+                .andExpect(jsonPath("$[0].countAnswerQuestion", Is.is(9)));
+    }
+
+    // Проверка получения тегов пользователя
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserTagsDtoShouldReturnAllUserProfileTagDto/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserTagsDtoShouldReturnAllUserProfileTagDto/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllUserTagsDtoShouldNotThrowExceptionIfTagNotExists() throws Exception {
+        mockMvc.perform(get("/api/user/profile/tags")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user120@mail.ru", "user120"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()",Is.is(0)));
     }
 }

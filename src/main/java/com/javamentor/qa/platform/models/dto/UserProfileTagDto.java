@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UserProfileTagDto {
+    private long id;
     private String tagName;
     private Long countVoteTag;
     private Long countAnswerQuestion;

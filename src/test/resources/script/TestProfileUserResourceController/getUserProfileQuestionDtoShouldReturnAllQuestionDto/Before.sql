@@ -1,7 +1,3 @@
-truncate table role;
-truncate table user_entity;
-truncate table question;
-truncate table question;
 /*
  *  Table: role
  */
