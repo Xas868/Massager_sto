@@ -240,7 +240,7 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$[0].countAnswerQuestion", Is.is(9)));
     }
 
-    // Проверка получения тегов пользователя
+    // Проверка получения тегов пользователя не должен бросать ошибку если у пользователя нету тегов
     @Test
     @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserTagsDtoShouldReturnAllUserProfileTagDto/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)

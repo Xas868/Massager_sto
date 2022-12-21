@@ -28,10 +28,12 @@ public class UserProfileTagDtoServiceImpl implements UserProfileTagDtoService {
     public Optional<List<UserProfileTagDto>> getAllUserProfileTagDtoByUserId(Long id) {
         List<TagDto> trackedTagsByUserId = tagDtoDao.getTrackedTagsByUserId(id);
         List<List<Long>> questionIds = trackedTagsByUserId.stream()
+                .parallel()
                 .map(t -> questionService.getAllQuestionIdByTagId(t.getId()).orElse(new ArrayList<>()))
                 .collect(Collectors.toList());
 
         List<Long> countOfVoteQuestions = questionIds.stream()
+                .parallel()
                 .map(q -> q.stream()
                         .map(questionService::getCountOfVoteByQuestionId)
                         .mapToLong(v -> v.orElse(0L))
@@ -41,10 +43,12 @@ public class UserProfileTagDtoServiceImpl implements UserProfileTagDtoService {
 
 
         List<Long> countOfQuestionBelowTag = questionIds.stream()
+                .parallel()
                 .map(v -> (long) v.size())
                 .collect(Collectors.toList());
 
         List<Long> countOfAnswerVote = questionIds.stream()
+                .parallel()
                 .map(q -> q.stream()
                         .map(answerService::getCountOfAnswerVoteByQuestionId)
                         .mapToLong(v -> v.orElse(0L))
@@ -53,6 +57,7 @@ public class UserProfileTagDtoServiceImpl implements UserProfileTagDtoService {
                 .collect(Collectors.toList());
 
         List<Long> countOfAnswerBelowQuestionBelowTag = questionIds.stream()
+                .parallel()
                 .map(v -> v.stream()
                         .map(answerService::getCountOfAnswerToQuestionByQuestionId)
                         .mapToLong(value -> value.orElse(0L))
