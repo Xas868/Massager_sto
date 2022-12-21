@@ -138,12 +138,16 @@ public class TestDataInitService {
 
     public void createGroupChat() {
         List<GroupChat> groupChats = new ArrayList<>();
+        List<User> users;
         for (int i = 1; i <= NUM_OF_GROUPCHAT; i++) {
+            users = Arrays.asList(getRandomUser(), getRandomUser(), getRandomUser(), getRandomUser(), getRandomUser());
             GroupChat groupChat = GroupChat.builder()
                     .chat(Chat.builder().chatType(ChatType.GROUP).build())
                     .title("GroupChat" + i)
                     .image("image" + i)
                     .userAuthor(getRandomUser())
+                    .users(new HashSet<>(users))
+                    .moderators(new HashSet<>(List.of(users.get(1), users.get(2))))
                     .build();
             groupChats.add(groupChat);
         }
