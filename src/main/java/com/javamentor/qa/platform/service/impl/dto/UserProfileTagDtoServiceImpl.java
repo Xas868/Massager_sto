@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.service.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.UserProfileTagDto;
+import com.javamentor.qa.platform.service.abstracts.dto.UserProfileTagDtoDaoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserProfileTagDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
@@ -18,11 +19,13 @@ public class UserProfileTagDtoServiceImpl implements UserProfileTagDtoService {
     private final TagDtoDao tagDtoDao;
     private final QuestionService questionService;
     private final AnswerService answerService;
+    private final UserProfileTagDtoDaoService userProfileTagDtoDaoService;
 
-    public UserProfileTagDtoServiceImpl(TagDtoDao tagDtoDao, QuestionService questionService, AnswerService answerService) {
+    public UserProfileTagDtoServiceImpl(TagDtoDao tagDtoDao, QuestionService questionService, AnswerService answerService, UserProfileTagDtoDaoService userProfileTagDtoDaoService) {
         this.tagDtoDao = tagDtoDao;
         this.questionService = questionService;
         this.answerService = answerService;
+        this.userProfileTagDtoDaoService = userProfileTagDtoDaoService;
     }
 
     public Optional<List<UserProfileTagDto>> getAllUserProfileTagDtoByUserId(Long id) {
