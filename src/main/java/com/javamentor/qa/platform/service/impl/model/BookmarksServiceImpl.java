@@ -9,10 +9,8 @@ import com.javamentor.qa.platform.webapp.controllers.exceptions.AddBookmarkExcep
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
-public class BookmarksServiceImpl  extends ReadWriteServiceImpl<BookMarks, Long> implements BookmarksService {
+public class BookmarksServiceImpl extends ReadWriteServiceImpl<BookMarks, Long> implements BookmarksService {
 
     private final BookmarksDao bookmarksDao;
 
@@ -24,7 +22,7 @@ public class BookmarksServiceImpl  extends ReadWriteServiceImpl<BookMarks, Long>
     @Override
     @Transactional
     public void addQuestionInBookmarks(User user, Question question) {
-        if(!bookmarksDao.findBookmarksByUserAndQuestion(user.getId(), question.getId())){
+        if (!bookmarksDao.findBookmarksByUserAndQuestion(user.getId(), question.getId())) {
             throw new AddBookmarkException("The bookmark has not been added");
         }
         BookMarks bookMarks = BookMarks.builder()
@@ -32,10 +30,5 @@ public class BookmarksServiceImpl  extends ReadWriteServiceImpl<BookMarks, Long>
                 .user(user)
                 .build();
         bookmarksDao.persist(bookMarks);
-    }
-
-    @Override
-    public List<BookMarks> getAllBookMarksByUserId(Long id) {
-        return bookmarksDao.getAllBookMarksByUserId(id);
     }
 }
