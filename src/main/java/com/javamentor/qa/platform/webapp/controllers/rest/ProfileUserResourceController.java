@@ -169,13 +169,13 @@ public class ProfileUserResourceController {
     )
     @PostMapping("/bookmark/group")
     public ResponseEntity<String> addNewGroupBookMark(@AuthenticationPrincipal User user, @RequestBody(required = false) String title) {
-        if (title == null || title.isEmpty()){
-            return new ResponseEntity<>("request body (title field) must not be empty",HttpStatus.BAD_REQUEST);
+        if (title == null || title.isEmpty()) {
+            return new ResponseEntity<>("request body (title field) must not be empty", HttpStatus.BAD_REQUEST);
         }
         groupBookmarkService.persist(GroupBookmark.builder()
                 .user(user)
                 .title(title)
                 .build());
-        return new ResponseEntity<>(title,HttpStatus.CREATED);
+        return new ResponseEntity<>(title, HttpStatus.CREATED);
     }
 }
