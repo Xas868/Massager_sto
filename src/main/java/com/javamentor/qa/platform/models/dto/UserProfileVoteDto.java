@@ -11,10 +11,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserProfileVoteDto {
 
-    Long countVoteUp;
-    Long countVoteDown;
-    Long countVoteQuestion;
-    Long countVoteAnswer;
-    Long countVoteMonth;
+    private Long countVoteUp;
+    private Long countVoteDown;
+    private Long countVoteQuestion;
+    private Long countVoteAnswer;
+    private Long countVoteMonth;
 
 }
