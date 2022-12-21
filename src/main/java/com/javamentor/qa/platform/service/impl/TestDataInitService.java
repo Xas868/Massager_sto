@@ -288,9 +288,7 @@ public class TestDataInitService {
                 questions.add(question);
             }
         }
-
         questionService.persistAll(questions);
-
     }
 
     public void createAnswers() {
