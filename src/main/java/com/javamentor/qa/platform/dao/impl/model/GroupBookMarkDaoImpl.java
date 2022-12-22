@@ -14,7 +14,7 @@ public class GroupBookMarkDaoImpl extends ReadWriteDaoImpl<GroupBookmark, Long> 
     private EntityManager entityManager;
 
     @Override
-    public List<String> getAllUserBookMarkGroupNames(Long id) {
+    public List<String> getAllUserBookMarkGroupNamesByUserId(Long id) {
         return entityManager.createQuery("select gb.title from GroupBookmark gb where gb.user.id = :id", String.class)
                 .setParameter("id", id)
                 .getResultList();

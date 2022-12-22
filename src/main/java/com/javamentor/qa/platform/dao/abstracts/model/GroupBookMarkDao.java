@@ -4,6 +4,6 @@ import com.javamentor.qa.platform.models.entity.GroupBookmark;
 
 import java.util.List;
 
-public interface GroupBookMarkDao extends ReadWriteDao<GroupBookmark,Long> {
-    List<String> getAllUserBookMarkGroupNames(Long id);
+public interface GroupBookMarkDao extends ReadWriteDao<GroupBookmark, Long> {
+    List<String> getAllUserBookMarkGroupNamesByUserId(Long id);
 }

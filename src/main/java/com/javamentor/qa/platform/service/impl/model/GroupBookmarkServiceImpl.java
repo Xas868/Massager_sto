@@ -10,13 +10,14 @@ import java.util.List;
 @Service
 public class GroupBookmarkServiceImpl extends ReadWriteServiceImpl<GroupBookmark, Long> implements GroupBookmarkService {
     private final GroupBookMarkDao groupBookMarkDao;
+
     public GroupBookmarkServiceImpl(GroupBookMarkDao groupBookMarkDao) {
         super(groupBookMarkDao);
         this.groupBookMarkDao = groupBookMarkDao;
     }
 
     @Override
-    public List<String> getAllUserBookMarkGroupNames(Long id) {
-        return groupBookMarkDao.getAllUserBookMarkGroupNames(id);
+    public List<String> getAllUserBookMarkGroupNamesByUserId(Long id) {
+        return groupBookMarkDao.getAllUserBookMarkGroupNamesByUserId(id);
     }
 }
