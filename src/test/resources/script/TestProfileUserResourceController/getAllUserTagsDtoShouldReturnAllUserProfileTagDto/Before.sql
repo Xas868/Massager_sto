@@ -19,7 +19,19 @@ VALUES (100, 'I am test user', 'Moskow', 'user100@mail.ru', 'User 100', '/images
 
        (120, 'I am test user', 'Moskow', 'user120@mail.ru', 'User 120', '/images/noUserAvatar.png', false, true,
         DATE(NOW()),
-        null, null, null, 'user_120', '$2a$12$7wzYir/6IUMdX9OBbEP1fui1vX0nfRDHlYJNACxbiefhkei.8uUna', DATE(NOW()), 100);
+        null, null, null, 'user_120', '$2a$12$7wzYir/6IUMdX9OBbEP1fui1vX0nfRDHlYJNACxbiefhkei.8uUna', DATE(NOW()), 100),
+
+       (121, 'I am test user', 'Moskow', 'user121@mail.ru', 'User 121', '/images/noUserAvatar.png', false, true,
+        DATE(NOW()),
+        null, null, null, 'user_121', '$2a$12$dHEQG75Nm6/iTDsCranumOYhZHrW8Vh6ipZSY34p/s2ZNwWxcoOp2', DATE(NOW()), 100),
+
+       (122, 'I am test user', 'Moskow', 'user122@mail.ru', 'User 122', '/images/noUserAvatar.png', false, true,
+        DATE(NOW()),
+        null, null, null, 'user_122', '$2a$12$p.PUJXN9wqG8f5cG.hPfqOCitaJK3sSqckbbSTNC1UgsokHSe4/6O', DATE(NOW()), 100),
+
+       (123, 'I am test user', 'Moskow', 'user123@mail.ru', 'User 123', '/images/noUserAvatar.png', false, true,
+        DATE(NOW()),
+        null, null, null, 'user_123', '$2a$12$nD.NVehiux6nHPmJ2qd0XuFQK6Q1RFxpr.njho00NaWJWabY.i1de', DATE(NOW()), 100);
 
 /*
  *  Table: question
@@ -30,7 +42,11 @@ VALUES (105, 'What do you think about question 100?', false, DATE(NOW()), DATE(N
        (101, 'What do you think about question 101?', false, DATE(NOW()), DATE(NOW()), 'Question 101', 101),
        (102, 'What do you think about question 102?', false, DATE(NOW()), DATE(NOW()), 'Question 102', 101),
        (103, 'What do you think about question 103?', false, DATE(NOW()), DATE(NOW()), 'Question 103', 101),
-       (104, 'What do you think about question 104?', false, DATE(NOW()), DATE(NOW()), 'Question 104', 101);
+       (104, 'What do you think about question 104?', false, DATE(NOW()), DATE(NOW()), 'Question 104', 101),
+       (121, 'What do you think about question 121?', false, DATE(NOW()), DATE(NOW()), 'Question 121', 121),
+       (122, 'What do you think about question 122?', false, DATE(NOW()), DATE(NOW()), 'Question 122', 122),
+       (123, 'What do you think about question 123?', false, DATE(NOW()), DATE(NOW()), 'Question 123', 123),
+       (124, 'What do you think about question 124?', false, DATE(NOW()), DATE(NOW()), 'Question 124', 123);
 
 INSERT INTO answer (id, date_accept_time, html_body, is_deleted, is_deleted_by_moderator, is_helpful, persist_date,
                     update_date, question_id, user_id, moderator_id)
@@ -55,7 +71,8 @@ VALUES
     (119, CURRENT_TIMESTAMP, 'Answer 119', false, false, false, CURRENT_TIMESTAMP + interval '16 minute', DATE(NOW()), 102, 101, null),
     (120, CURRENT_TIMESTAMP, 'Answer 120', false, false, false, CURRENT_TIMESTAMP + interval '17 minute', DATE(NOW()), 102, 101, null),
     (121, CURRENT_TIMESTAMP, 'Answer 121', false, false, false, CURRENT_TIMESTAMP + interval '18 minute', DATE(NOW()), 102, 101, null),
-    (122, CURRENT_TIMESTAMP, 'Answer 122', false, false, false, CURRENT_TIMESTAMP + interval '19 minute', DATE(NOW()), 102, 101, null);
+    (122, CURRENT_TIMESTAMP, 'Answer 122', false, false, false, CURRENT_TIMESTAMP + interval '19 minute', DATE(NOW()), 102, 101, null),
+    (123, CURRENT_TIMESTAMP, 'Answer 122', false, false, false, CURRENT_TIMESTAMP + interval '19 minute', DATE(NOW()), 121, 101, null);
 
 /*
  *  Table: tag
@@ -63,9 +80,12 @@ VALUES
 INSERT INTO tag (id, description, name, persist_date)
 VALUES (100, 'Description of tag 1', 'vfOxMU1', '2022-11-12 22:09:06.639083'),
        (101, 'Description of tag 2', 'iThKcj2', '2022-11-12 22:09:06.639579'),
+       (102, 'Description of tag 3', 'LTGDJP3', '2022-11-12 22:09:06.639579'),
        (103, 'Description of tag 3', 'iThKcj3', '2022-11-12 22:09:06.639579'),
        (104, 'Description of tag 4', 'iThKcj4', '2022-11-12 22:09:06.639579'),
-       (102, 'Description of tag 3', 'LTGDJP3', '2022-11-12 22:09:06.639579');
+       (105, 'Description of tag 5', 'fbgdsdf8', '2022-11-12 22:09:06.639580'),
+       (106, 'Description of tag 6', 'fbgdsdf9', '2022-11-12 22:09:06.639581'),
+       (107, 'Description of tag 7', 'fbgdsdf10', '2022-11-12 22:09:06.639582');
 
 insert into tag_tracked(id, persist_date, tracked_tag_id, user_id)
 values
@@ -73,7 +93,10 @@ values
     (2, CURRENT_TIMESTAMP, 101, 101),
     (3, CURRENT_TIMESTAMP, 102, 101),
     (4, CURRENT_TIMESTAMP, 103, 101),
-    (5, CURRENT_TIMESTAMP, 104, 100);
+    (5, CURRENT_TIMESTAMP, 104, 100),
+    (6, CURRENT_TIMESTAMP, 105, 121),
+    (7, CURRENT_TIMESTAMP, 106, 122),
+    (8, CURRENT_TIMESTAMP, 107, 123);
 
 /*
  *  Table: question_has_tag
@@ -86,7 +109,11 @@ VALUES (100, 100),
        (101, 100),
        (101, 102),
        (101, 103),
-       (100, 102);
+       (100, 102),
+       (121, 105),
+       (122, 106),
+       (123, 107),
+       (124, 107);
 /*
  *  Table: reputation
  */
@@ -119,7 +146,8 @@ values (1, DATE(NOW()), 'UP_VOTE', 100, 101),
        (21, DATE(NOW()), 'DOWN_VOTE', 101, 101),
        (22, DATE(NOW()), 'DOWN_VOTE', 101, 101),
        (23, DATE(NOW()), 'DOWN_VOTE', 101, 101),
-       (24, DATE(NOW()), 'DOWN_VOTE', 105, 101);
+       (24, DATE(NOW()), 'DOWN_VOTE', 105, 101),
+       (25, DATE(NOW()), 'DOWN_VOTE', 122, 122);
 
 insert into votes_on_answers(id, persist_date, vote, answer_id, user_id)
 values (1, DATE(NOW()), 'UP_VOTE', 100, 101),
