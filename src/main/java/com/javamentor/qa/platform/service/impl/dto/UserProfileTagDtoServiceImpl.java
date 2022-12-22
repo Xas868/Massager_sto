@@ -6,7 +6,6 @@ import com.javamentor.qa.platform.service.abstracts.dto.UserProfileTagDtoService
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserProfileTagDtoServiceImpl implements UserProfileTagDtoService {
@@ -16,7 +15,7 @@ public class UserProfileTagDtoServiceImpl implements UserProfileTagDtoService {
         this.userProfileTagDtoDao = userProfileTagDtoDao;
     }
 
-    public Optional<List<UserProfileTagDto>> getAllUserProfileTagDtoByUserId(Long id) {
+    public List<UserProfileTagDto> getAllUserProfileTagDtoByUserId(Long id) {
         return userProfileTagDtoDao.getAllUserProfileTagDtoByUserId(id);
     }
 }
