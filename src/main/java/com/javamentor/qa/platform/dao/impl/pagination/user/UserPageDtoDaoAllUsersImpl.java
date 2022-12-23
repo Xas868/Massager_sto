@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.dao.impl.pagination.userdto;
+package com.javamentor.qa.platform.dao.impl.pagination.user;
 
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
 import com.javamentor.qa.platform.models.dto.UserDto;
@@ -10,8 +10,8 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Map;
 
-@Repository("UserPageDtoDaoAllUsersByRepImpl")
-public class UserPageDtoDaoAllUsersByRepImpl implements PageDtoDao<UserDto> {
+@Repository("UserPageDtoDaoAllUsersImpl")
+public class UserPageDtoDaoAllUsersImpl implements PageDtoDao<UserDto> {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -24,15 +24,14 @@ public class UserPageDtoDaoAllUsersByRepImpl implements PageDtoDao<UserDto> {
         int offset = (properties.getCurrentPage() - 1) * itemsOnPage;
         String hql = "select new com.javamentor.qa.platform.models.dto.UserDto" +
                 "(u.id, u.email, u.fullName, u.imageLink, u.city, " +
-                "SUM(COALESCE(r.count, 0)) AS reputation)" +
-                "from User u left join Reputation r ON r.author.id=u.id " +
-                "where u.isDeleted = false ";
+                "(select sum(r.count) from Reputation r where r.author.id=u.id)) " +
+                "from User u where u.isDeleted = false ";
 
         if (filter != null) {
             hql += "and (upper(u.nickname) like upper(:filter) " +
                     "or upper(u.email) like upper(:filter) " +
                     "or upper(u.fullName) like upper(:filter)) " +
-                    "group by u.id order by reputation desc";
+                    "order by u.persistDateTime";
             return entityManager.createQuery(hql, UserDto.class)
                     .setParameter("filter", "%" + filter + "%")
                     .setFirstResult(offset)
@@ -40,7 +39,7 @@ public class UserPageDtoDaoAllUsersByRepImpl implements PageDtoDao<UserDto> {
                     .getResultList();
         }
 
-        hql += "group by u.id order by reputation desc";
+        hql += "order by u.persistDateTime";
         return entityManager.createQuery(hql, UserDto.class)
                 .setFirstResult(offset)
                 .setMaxResults(itemsOnPage)
@@ -62,4 +61,5 @@ public class UserPageDtoDaoAllUsersByRepImpl implements PageDtoDao<UserDto> {
         return (Long) entityManager.createQuery("select count(u.id) from User u where u.isDeleted = false ")
                 .getSingleResult();
     }
+
 }

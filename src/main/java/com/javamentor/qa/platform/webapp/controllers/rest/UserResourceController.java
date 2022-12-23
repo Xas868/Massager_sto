@@ -1,17 +1,12 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoAllUsersByRepImpl;
-import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoAllUsersImpl;
-import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoByVoteImpl;
-import com.javamentor.qa.platform.models.dto.BookMarksDto;
+import com.javamentor.qa.platform.dao.impl.pagination.user.UserPageDtoDaoAllUsersByRepImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.user.UserPageDtoDaoAllUsersImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.user.UserPageDtoDaoByVoteImpl;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.UserDto;
-import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
-import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
-import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.CalendarPeriod;
-import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,13 +37,11 @@ public class UserResourceController {
 
     private final UserDtoService userDtoService;
     private final UserService userService;
-    private final BookMarksDtoService bookMarksDtoService;
 
     public UserResourceController(UserDtoService userDtoService,
-                                  UserService userService, BookMarksDtoService bookMarksDtoService) {
+                                  UserService userService) {
         this.userDtoService = userDtoService;
         this.userService = userService;
-        this.bookMarksDtoService = bookMarksDtoService;
     }
 
     @GetMapping("/api/user/{userId}")
@@ -191,5 +184,4 @@ public class UserResourceController {
             CalendarPeriod calendarPeriod) {
         return new ResponseEntity<>(userDtoService.getTopUsersForDaysRankedByNumberOfQuestions(calendarPeriod), HttpStatus.OK);
     }
-
 }
