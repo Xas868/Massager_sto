@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -183,5 +184,4 @@ public class UserResourceController {
             CalendarPeriod calendarPeriod) {
         return new ResponseEntity<>(userDtoService.getTopUsersForDaysRankedByNumberOfQuestions(calendarPeriod), HttpStatus.OK);
     }
-
 }

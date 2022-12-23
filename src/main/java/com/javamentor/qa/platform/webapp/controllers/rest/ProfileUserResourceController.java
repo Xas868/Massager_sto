@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.dto.BookMarksDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.UserProfileAnswerDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.UserProfileTagDto;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
@@ -14,6 +15,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.ProfileUserDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.UserProfileTagDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarkService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.impl.dto.UserProfileAnswerPageDtoDaoServiceImpl;
@@ -47,17 +49,20 @@ public class ProfileUserResourceController {
     private final UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService;
     private final GroupBookmarkService groupBookmarkService;
     private final ProfileUserDtoService profileUserDtoService;
+    private final UserProfileTagDtoService userProfileTagDtoService;
 
     public ProfileUserResourceController(
-            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService, GroupBookmarkService groupBookmarkService, ProfileUserDtoService profileUserDtoService1) {
+            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService, ProfileUserDtoService profileUserDtoService, UserProfileTagDtoService userProfileTagDtoService, GroupBookmarkService groupBookmarkService) {
 
         this.userService = userService;
         this.userDtoService = userDtoService;
         this.bookMarksDtoService = bookMarksDtoService;
         this.userProfileAnswerPageDtoDaoService = userProfileAnswerPageDtoDaoService;
+        this.profileUserDtoService = profileUserDtoService;
+        this.userProfileTagDtoService = userProfileTagDtoService;
         this.groupBookmarkService = groupBookmarkService;
-        this.profileUserDtoService = profileUserDtoService1;
     }
+
 
     @Operation(summary = "Получение всех вопросов авторизированного пользователя неотсортированных" +
             "В запросе нет параметров,возвращается список объектов UserProfileQuestionDto ",
@@ -141,47 +146,22 @@ public class ProfileUserResourceController {
         return new ResponseEntity<Long>(userDtoService.getCountAnswersPerWeekByUserId(user.getId()), HttpStatus.OK);
     }
 
-    @Operation(summary = "Получение списка названий групп пользователя",
-            description = "Возвращает список имен(title) GroupBookMark")
+    @Operation(summary = "Получение всех тегов авторизованного пользователя " +
+            "Параметры запроса не требуются",
+            description = "Получение списка UserProfileTagDto авторизованного пользователя ")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Возвращает список имен(title) GroupBookMark",
+                    description = "Возвращает список List<UserProfileTagDto> (id, tagName, countVoteTag, countAnswerQuestion)",
                     content = {
                             @Content(
-                                    mediaType = "application/json"
-                            )
-                    }
-            )
+                                    mediaType = "application/json")
+                    }),
     })
 
-    @GetMapping("/bookmark/group")
-    public ResponseEntity<List<String>> getAllUserBookMarkGroupNames(@AuthenticationPrincipal User user) {
-        return new ResponseEntity<List<String>>(groupBookmarkService.getAllUserBookMarkGroupNamesByUserId(user.getId()), HttpStatus.OK);
-    }
-
-    @Operation(summary = "Создание новой группы закладок")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200",
-                            description = "Создание новой группы закладок",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json"
-                                    )
-                            })
-            }
-    )
-    @PostMapping("/bookmark/group")
-    public ResponseEntity<String> addNewGroupBookMark(@AuthenticationPrincipal User user, @RequestBody(required = false) String title) {
-        if (title == null || title.isEmpty()) {
-            return new ResponseEntity<>("request body (title field) must not be empty", HttpStatus.BAD_REQUEST);
-        }
-        groupBookmarkService.persist(GroupBookmark.builder()
-                .user(user)
-                .title(title)
-                .build());
-        return new ResponseEntity<>(title, HttpStatus.CREATED);
+    @GetMapping("/tags")
+    public ResponseEntity<List<UserProfileTagDto>> getUserProfileTagDto(@AuthenticationPrincipal User user) {
+        return new ResponseEntity<>(userProfileTagDtoService.getAllUserProfileTagDtoByUserId(user.getId()), HttpStatus.OK);
     }
 
     @Operation(summary = "Получение пагинированного списка ответов авторизированного пользователя " +

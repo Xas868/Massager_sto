@@ -84,6 +84,7 @@ public class TestDataInitService {
     private final BookmarksService bookmarksService;
     private final GroupBookmarkService groupBookmarkService;
     private final long NUM_OF_USERS = 100L;
+    private final long NUM_OF_USERS = 200L;
     private final long NUM_OF_TAGS = 50L;
     private final long NUM_OF_QUESTIONS = 100L;
     private final long NUM_OF_ANSWERS = 100L;

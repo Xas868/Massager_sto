@@ -143,7 +143,6 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(5)));
 
     }
-
     // Проверка получения вопросов пользователя по параметру items
     @Test
     @Sql(scripts = "/script/TestProfileUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/Before.sql",
@@ -340,6 +339,107 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$.items[0].vote", Is.is(-1)))
                 .andExpect(jsonPath("$.items[0].questionId", Is.is(102)));
 
+    }
+
+    // Проверка получения тегов пользователя
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserTagsDtoShouldReturnAllUserProfileTagDto/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserTagsDtoShouldReturnAllUserProfileTagDto/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllUserTagsDtoShouldReturnAllUserProfileTagDto() throws Exception {
+        mockMvc.perform(get("/api/user/profile/tags")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(4)))
+                .andExpect(jsonPath("$[0].id", Is.is(100)))
+                .andExpect(jsonPath("$[0].tagName", Is.is("vfOxMU1")))
+                .andExpect(jsonPath("$[0].countVoteTag", Is.is(15)))
+                .andExpect(jsonPath("$[0].countAnswerQuestion", Is.is(9)));
+    }
+
+    // Проверка получения тегов пользователя не должен бросать ошибку если у пользователя нету тегов
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserTagsDtoShouldReturnAllUserProfileTagDto/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserTagsDtoShouldReturnAllUserProfileTagDto/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllUserTagsDtoShouldNotThrowExceptionIfTagNotExists() throws Exception {
+        mockMvc.perform(get("/api/user/profile/tags")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user120@mail.ru", "user120"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(0)));
+    }
+
+    // Проверка получения тегов пользователя если countVoteTag = 0 и countAnswerQuestion = 1
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserTagsDtoShouldReturnAllUserProfileTagDto/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserTagsDtoShouldReturnAllUserProfileTagDto/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllUserTagsDtoShouldNotThrowExceptionIfTagQuestionNotExists() throws Exception {
+        mockMvc.perform(get("/api/user/profile/tags")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user121@mail.ru", "user121"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(1)))
+                .andExpect(jsonPath("$[0].id", Is.is(105)))
+                .andExpect(jsonPath("$[0].tagName", Is.is("fbgdsdf8")))
+                .andExpect(jsonPath("$[0].countVoteTag", Is.is(0)))
+                .andExpect(jsonPath("$[0].countAnswerQuestion", Is.is(1)));
+    }
+
+    // Проверка получения тегов пользователя если countAnswerQuestion состоит только из вопросов
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserTagsDtoShouldReturnAllUserProfileTagDto/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserTagsDtoShouldReturnAllUserProfileTagDto/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllUserTagsDtoShouldNotThrowExceptionIfTagQuestionAnswerNotExists() throws Exception {
+        mockMvc.perform(get("/api/user/profile/tags")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user123@mail.ru", "user123"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(1)))
+                .andExpect(jsonPath("$[0].id", Is.is(107)))
+                .andExpect(jsonPath("$[0].tagName", Is.is("fbgdsdf10")))
+                .andExpect(jsonPath("$[0].countVoteTag", Is.is(0)))
+                .andExpect(jsonPath("$[0].countAnswerQuestion", Is.is(2)));
+    }
+
+    // Проверка получения тегов пользователя если countVoteTag состоит только из вопросов т.е. пользователь только создает вопросы
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserTagsDtoShouldReturnAllUserProfileTagDto/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserTagsDtoShouldReturnAllUserProfileTagDto/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllUserTagsDtoShouldWorkIfTagQuestionAnswerNotExists() throws Exception {
+        mockMvc.perform(get("/api/user/profile/tags")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user122@mail.ru", "user122"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(1)))
+                .andExpect(jsonPath("$[0].id", Is.is(106)))
+                .andExpect(jsonPath("$[0].tagName", Is.is("fbgdsdf9")))
+                .andExpect(jsonPath("$[0].countVoteTag", Is.is(-1)))
+                .andExpect(jsonPath("$[0].countAnswerQuestion", Is.is(1)));
     }
 
     //Проверка получения списка имён GroupBookMark

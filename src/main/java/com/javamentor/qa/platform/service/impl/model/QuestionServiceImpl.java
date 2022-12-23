@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> im
         return questionDao.getCountQuestion();
     }
 
-    public Optional<Question> getQuestionByIdWithAuthor(Long id){
+    public Optional<Question> getQuestionByIdWithAuthor(Long id) {
         return questionDao.getQuestionByIdWithAuthor(id);
     }
 
