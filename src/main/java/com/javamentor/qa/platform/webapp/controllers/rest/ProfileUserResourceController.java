@@ -190,4 +190,47 @@ public class ProfileUserResourceController {
 
         return new ResponseEntity<>(userProfileAnswerPageDtoDaoService.getPageDto(data), HttpStatus.OK);
     }
+
+    @Operation(summary = "Получение списка названий групп пользователя",
+            description = "Возвращает список имен(title) GroupBookMark")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Возвращает список имен(title) GroupBookMark",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json"
+                            )
+                    }
+            )
+    })
+
+    @GetMapping("/bookmark/group")
+    public ResponseEntity<List<String>> getAllUserBookMarkGroupNames(@AuthenticationPrincipal User user) {
+        return new ResponseEntity<List<String>>(groupBookmarkService.getAllUserBookMarkGroupNamesByUserId(user.getId()), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Создание новой группы закладок")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Создание новой группы закладок",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json"
+                                    )
+                            })
+            }
+    )
+    @PostMapping("/bookmark/group")
+    public ResponseEntity<String> addNewGroupBookMark(@AuthenticationPrincipal User user, @RequestBody(required = false) String title) {
+        if (title == null || title.isEmpty()) {
+            return new ResponseEntity<>("request body (title field) must not be empty", HttpStatus.BAD_REQUEST);
+        }
+        groupBookmarkService.persist(GroupBookmark.builder()
+                .user(user)
+                .title(title)
+                .build());
+        return new ResponseEntity<>(title, HttpStatus.CREATED);
+    }
 }
