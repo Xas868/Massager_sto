@@ -44,7 +44,7 @@ public class TestDataInitService {
     private final MessageStarService messageStarService;
     private final UserChatPinService userChatPinService;
     private final BookmarksService bookmarksService;
-    private final long NUM_OF_USERS = 100L;
+    private final long NUM_OF_USERS = 200L;
     private final long NUM_OF_TAGS = 50L;
     private final long NUM_OF_QUESTIONS = 100L;
     private final long NUM_OF_ANSWERS = 100L;
@@ -330,9 +330,10 @@ public class TestDataInitService {
 
     public void createVoteQuestion() {
         List<VoteQuestion> voteQuestions = new ArrayList<>();
-        for (long i = 1; i <= NUM_OF_VOTEQUESTIONS; i++) {
+        List<Question> allQuestions = questionService.getAll();
+        for (long i = 1; i <= NUM_OF_USERS; i++) {
             User randomUser = getRandomUser();
-            Question randomQuestion = getRandomQuestion();
+            Question randomQuestion = allQuestions.get((int) i);
             while (didThisUserVoteForThisQuestion(randomUser.getId(), randomQuestion.getId(), voteQuestions)) {
                 randomUser = getRandomUser();
                 randomQuestion = getRandomQuestion();

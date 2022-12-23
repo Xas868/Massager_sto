@@ -19,7 +19,7 @@ public class AnswerDaoImpl extends ReadWriteDaoImpl<Answer, Long> implements Ans
     @Override
     public Optional<Answer> getAnswerWithAuthor(long answerId) {
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery(
-                "SELECT a FROM Answer a JOIN User u ON a.user.id = u.id WHERE a.id = :answerId", Answer.class)
+                        "SELECT a FROM Answer a JOIN User u ON a.user.id = u.id WHERE a.id = :answerId", Answer.class)
                 .setParameter("answerId", answerId));
     }
 
