@@ -71,8 +71,7 @@ VALUES
     (119, CURRENT_TIMESTAMP, 'Answer 119', false, false, false, CURRENT_TIMESTAMP + interval '16 minute', DATE(NOW()), 102, 101, null),
     (120, CURRENT_TIMESTAMP, 'Answer 120', false, false, false, CURRENT_TIMESTAMP + interval '17 minute', DATE(NOW()), 102, 101, null),
     (121, CURRENT_TIMESTAMP, 'Answer 121', false, false, false, CURRENT_TIMESTAMP + interval '18 minute', DATE(NOW()), 102, 101, null),
-    (122, CURRENT_TIMESTAMP, 'Answer 122', false, false, false, CURRENT_TIMESTAMP + interval '19 minute', DATE(NOW()), 102, 101, null),
-    (123, CURRENT_TIMESTAMP, 'Answer 122', false, false, false, CURRENT_TIMESTAMP + interval '19 minute', DATE(NOW()), 121, 101, null);
+    (122, CURRENT_TIMESTAMP, 'Answer 122', false, false, false, CURRENT_TIMESTAMP + interval '19 minute', DATE(NOW()), 102, 101, null);
 
 /*
  *  Table: tag
