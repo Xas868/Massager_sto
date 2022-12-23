@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.dto.BookMarksDto;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.UserProfileAnswerDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.UserProfileTagDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
 import com.javamentor.qa.platform.models.entity.question.answer.ProfileAnswerSort;
@@ -13,6 +14,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.ProfileUserDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.UserProfileTagDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.impl.dto.UserProfileAnswerPageDtoDaoServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,18 +44,18 @@ public class ProfileUserResourceController {
     private final BookMarksDtoService bookMarksDtoService;
     private final UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService;
     private final ProfileUserDtoService profileUserDtoService;
+    private final UserProfileTagDtoService userProfileTagDtoService;
 
     public ProfileUserResourceController(
-            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService, ProfileUserDtoService profileUserDtoService) {
+            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService, ProfileUserDtoService profileUserDtoService, UserProfileTagDtoService userProfileTagDtoService) {
 
         this.userService = userService;
         this.userDtoService = userDtoService;
         this.bookMarksDtoService = bookMarksDtoService;
         this.userProfileAnswerPageDtoDaoService = userProfileAnswerPageDtoDaoService;
         this.profileUserDtoService = profileUserDtoService;
-
+        this.userProfileTagDtoService = userProfileTagDtoService;
     }
-
 
     @Operation(summary = "Получение всех вопросов авторизированного пользователя неотсортированных" +
             "В запросе нет параметров,возвращается список объектов UserProfileQuestionDto ",
@@ -135,7 +137,24 @@ public class ProfileUserResourceController {
     @GetMapping("/question/week")
     public ResponseEntity<Long> getAnswersPerWeekByUserId(@AuthenticationPrincipal User user) {
         return new ResponseEntity<Long>(userDtoService.getCountAnswersPerWeekByUserId(user.getId()), HttpStatus.OK);
+    }
 
+    @Operation(summary = "Получение всех тегов авторизованного пользователя " +
+            "Параметры запроса не требуются",
+            description = "Получение списка UserProfileTagDto авторизованного пользователя ")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Возвращает список List<UserProfileTagDto> (id, tagName, countVoteTag, countAnswerQuestion)",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json")
+                    }),
+    })
+
+    @GetMapping("/tags")
+    public ResponseEntity<List<UserProfileTagDto>> getUserProfileTagDto(@AuthenticationPrincipal User user) {
+        return new ResponseEntity<>(userProfileTagDtoService.getAllUserProfileTagDtoByUserId(user.getId()), HttpStatus.OK);
     }
 
     @Operation(summary = "Получение пагинированного списка ответов авторизированного пользователя " +
