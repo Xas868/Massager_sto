@@ -1,6 +1,8 @@
+create sequence if not exists group_bookmark_seq start 1 increment 1;
+
 create table group_bookmark
 (
-    id bigserial not null unique primary key,
+    id bigint not null unique primary key,
     title varchar(255) not null,
     user_id bigint not null references user_entity(id)
 );
