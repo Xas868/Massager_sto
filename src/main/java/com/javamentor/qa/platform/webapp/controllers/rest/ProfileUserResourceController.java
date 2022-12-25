@@ -223,14 +223,19 @@ public class ProfileUserResourceController {
             }
     )
     @PostMapping("/bookmark/group")
-    public ResponseEntity<String> addNewGroupBookMark(@AuthenticationPrincipal User user, @RequestBody(required = false) String title) {
+    public ResponseEntity addNewGroupBookMark(@AuthenticationPrincipal User user, @RequestBody(required = false) String title) {
         if (title == null || title.isEmpty()) {
             return new ResponseEntity<>("request body (title field) must not be empty", HttpStatus.BAD_REQUEST);
         }
-        groupBookmarkService.persist(GroupBookmark.builder()
+        if (groupBookmarkService.isGroupBookMarkExistsByName(user.getId(), title)) {
+            return new ResponseEntity<>("user already has group bookmark with title " + title, HttpStatus.BAD_REQUEST);
+        }
+        GroupBookmark groupBookmark = GroupBookmark.builder()
                 .user(user)
                 .title(title)
-                .build());
-        return new ResponseEntity<>(title, HttpStatus.CREATED);
+                .build();
+
+        groupBookmarkService.persist(groupBookmark);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

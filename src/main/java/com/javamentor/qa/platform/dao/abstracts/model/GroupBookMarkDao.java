@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface GroupBookMarkDao extends ReadWriteDao<GroupBookmark, Long> {
     List<String> getAllUserBookMarkGroupNamesByUserId(Long id);
+
+    boolean isGroupBookMarkExistsByName(Long id, String title);
 }

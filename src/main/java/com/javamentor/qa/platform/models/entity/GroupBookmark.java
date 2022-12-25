@@ -3,7 +3,9 @@ package com.javamentor.qa.platform.models.entity;
 import com.javamentor.qa.platform.models.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
 
@@ -19,10 +21,13 @@ import javax.persistence.Table;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
+@ToString
 @Builder
+@Entity
 @Table(name = "group_bookmark")
 public class GroupBookmark {
     @Id
@@ -39,6 +44,11 @@ public class GroupBookmark {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ToString.Exclude
     private User user;
+
+    public GroupBookmark(String title, User user) {
+        this.title = title;
+        this.user = user;
+    }
 
     @Override
     public boolean equals(Object o) {

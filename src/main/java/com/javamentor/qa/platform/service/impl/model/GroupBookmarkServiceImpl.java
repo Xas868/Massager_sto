@@ -20,4 +20,9 @@ public class GroupBookmarkServiceImpl extends ReadWriteServiceImpl<GroupBookmark
     public List<String> getAllUserBookMarkGroupNamesByUserId(Long id) {
         return groupBookMarkDao.getAllUserBookMarkGroupNamesByUserId(id);
     }
+
+    @Override
+    public boolean isGroupBookMarkExistsByName(Long id, String title) {
+        return groupBookMarkDao.isGroupBookMarkExistsByName(id, title);
+    }
 }

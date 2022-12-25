@@ -1,10 +1,14 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
+import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import org.hamcrest.core.Is;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -111,6 +115,7 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(10)));
 
     }
+
     // Проверка получения вопросов пользователя по параметру currentPage
     @Test
     @Sql(scripts = "/script/TestProfileUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/Before.sql",
@@ -143,6 +148,7 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(5)));
 
     }
+
     // Проверка получения вопросов пользователя по параметру items
     @Test
     @Sql(scripts = "/script/TestProfileUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/Before.sql",
@@ -191,7 +197,7 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", Is.is(2)))
-                .andExpect(jsonPath("$[0].bookmarkId",Is.is(1)))
+                .andExpect(jsonPath("$[0].bookmarkId", Is.is(1)))
                 .andExpect(jsonPath("$.[0].questionId", Is.is(100)))
                 .andExpect(jsonPath("$[0].title", Is.is("Question 100")))
                 .andExpect(jsonPath("$[0].listTagDto.size()", Is.is(3)))
@@ -487,14 +493,24 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
     @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void createNewUserProfileGroupBookMark() throws Exception {
+        String newGroupBookMarkName = "testGroupBookMark";
         mockMvc.perform(post("/api/user/profile/bookmark/group")
-                        .content("testGroupBookMark")
+                        .content(newGroupBookMarkName)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )
                 .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$", Is.is("testGroupBookMark")));
+                .andExpect(status().isCreated());
+
+        List<GroupBookmark> groupBookmarks = entityManager.createQuery("select new com.javamentor.qa.platform.models.entity.GroupBookmark (" +
+                        "gb.title," +
+                        "gb.user" +
+                        ") from GroupBookmark gb where gb.user.id = :id", GroupBookmark.class)
+                .setParameter("id", 101L)
+                .getResultList();
+
+        Assertions.assertEquals(newGroupBookMarkName, groupBookmarks.get(4).getTitle());
+        Assertions.assertEquals(101L, groupBookmarks.get(4).getUser().getId());
     }
 
     //Проверка создания новой группы закладок должен вернуть ошибку если тело метода пустое
@@ -512,5 +528,23 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$", Is.is("request body (title field) must not be empty")));
+    }
+
+    //Проверка создания новой группы закладок
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void createNewUserProfileGroupBookMarkShouldReturnBadRequestIfGroupBookMarkExists() throws Exception {
+        String newGroupBookMarkName = "group_bookmark1";
+        mockMvc.perform(post("/api/user/profile/bookmark/group")
+                        .content(newGroupBookMarkName)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("user already has group bookmark with title group_bookmark1")));
     }
 }
