@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserProfileAnswerDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.UserProfileVoteDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
 import com.javamentor.qa.platform.models.entity.question.answer.ProfileAnswerSort;
@@ -94,4 +95,12 @@ public class UserDtoServiceImpl extends DtoServiceImpl<UserDto> implements UserD
     public List<Long> getUnregisteredUserIds(List<Long> userIds) {
         return userDtoDao.getUnregisteredUserIds(userIds);
     }
+
+
+    @Override
+    public List<UserProfileVoteDto> getCountVotesAnswersAndQuestions(Long id){
+        return userDtoDao.getCountVotesAnswersAndQuestions(id);
+    }
+
+
 }

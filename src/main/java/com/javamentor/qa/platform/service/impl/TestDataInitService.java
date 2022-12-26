@@ -1,8 +1,19 @@
 package com.javamentor.qa.platform.service.impl;
 
 import com.javamentor.qa.platform.models.entity.BookMarks;
-import com.javamentor.qa.platform.models.entity.chat.*;
-import com.javamentor.qa.platform.models.entity.question.*;
+import com.javamentor.qa.platform.models.entity.GroupBookmark;
+import com.javamentor.qa.platform.models.entity.chat.Chat;
+import com.javamentor.qa.platform.models.entity.chat.ChatType;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.models.entity.chat.Message;
+import com.javamentor.qa.platform.models.entity.chat.MessageStar;
+import com.javamentor.qa.platform.models.entity.chat.SingleChat;
+import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
+import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.RelatedTag;
+import com.javamentor.qa.platform.models.entity.question.Tag;
+import com.javamentor.qa.platform.models.entity.question.TrackedTag;
+import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
@@ -11,7 +22,26 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.UserChatPin;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
-import com.javamentor.qa.platform.service.abstracts.model.*;
+import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.BookmarksService;
+import com.javamentor.qa.platform.service.abstracts.model.ChatRoomService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarkService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
+import com.javamentor.qa.platform.service.abstracts.model.IgnoredTagService;
+import com.javamentor.qa.platform.service.abstracts.model.MessageService;
+import com.javamentor.qa.platform.service.abstracts.model.MessageStarService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
+import com.javamentor.qa.platform.service.abstracts.model.RelatedTagService;
+import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
+import com.javamentor.qa.platform.service.abstracts.model.RoleService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
+import com.javamentor.qa.platform.service.abstracts.model.TagService;
+import com.javamentor.qa.platform.service.abstracts.model.TrackedTagService;
+import com.javamentor.qa.platform.service.abstracts.model.UserChatPinService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.QuestionNotFoundException;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +49,15 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +82,7 @@ public class TestDataInitService {
     private final MessageStarService messageStarService;
     private final UserChatPinService userChatPinService;
     private final BookmarksService bookmarksService;
+    private final GroupBookmarkService groupBookmarkService;
     private final long NUM_OF_USERS = 200L;
     private final long NUM_OF_TAGS = 50L;
     private final long NUM_OF_QUESTIONS = 100L;
@@ -63,6 +102,7 @@ public class TestDataInitService {
     private final long NUM_OF_MODERATORS_GROUPCHAT = 5L;
 
     private final long NUM_OF_USERS_GROUPCHAT = 30L;
+    private final long NUM_OF_BOOKMARK_GROUP = 30L;
 
     public void init() {
         createRoles();
@@ -84,17 +124,45 @@ public class TestDataInitService {
         createUserChatPinChats();
         createGroupChatModeratorsAndUsers();
         createBookMarks();
+        createGroupBookMarks();
+    }
+
+    private void createGroupBookMarks() {
+        ArrayList<GroupBookmark> groupBookmarks = new ArrayList<>((int) NUM_OF_BOOKMARK_GROUP);
+        List<BookMarks> bookMarksList = bookmarksService.getAll();
+        for (int i = 0; i < NUM_OF_BOOKMARK_GROUP; i++) {
+            User randomUser = getRandomUser();
+            groupBookmarks.add(GroupBookmark.builder()
+                    .title(String.format("group bookmark %d", i))
+                    .bookMarks((new HashSet<>(bookMarksList.stream()
+                            .filter(bookMark -> Objects.equals(bookMark.getUser().getId(), randomUser.getId()))
+                            .collect(Collectors.toSet())
+                    )))
+                    .user(randomUser)
+                    .build());
+        }
+        groupBookmarkService.persistAll(groupBookmarks);
     }
 
     public void createBookMarks() {
-        ArrayList<BookMarks> bookMarks = new ArrayList<>((int) NUM_OF_USERS);
+        ArrayList<BookMarks> bookMarks = new ArrayList<>((int) NUM_OF_USERS * 5);
+
+        for (int i = 0; i < NUM_OF_USERS * 5; i++) {
+            bookMarks.add(
+                    BookMarks.builder()
+                            .user(getRandomUser())
+                            .question(getRandomQuestion())
+                            .note(String.format("BookMarks %d note", i))
+                            .build()
+            );
+        }
 
         User user = userService.getById(1L).orElseThrow(() -> new UserNotFoundException("user with this id  not found"));
         bookMarks.add(
                 BookMarks.builder()
                         .user(user)
                         .question(questionService.getQuestionByIdWithAuthor(user.getId()).orElseThrow(() -> new QuestionNotFoundException("question with author id  not found")))
-                        .note(String.format("BookMark %d note", 1))
+                        .note(String.format("BookMarks %d note", 1))
                         .build()
         );
 
@@ -103,7 +171,7 @@ public class TestDataInitService {
                 BookMarks.builder()
                         .user(user2)
                         .question(questionService.getQuestionByIdWithAuthor(user.getId()).orElseThrow(() -> new QuestionNotFoundException("question with author id  not found")))
-                        .note(String.format("BookMark %d note", 2))
+                        .note(String.format("BookMarks %d note", 2))
                         .build()
         );
 
@@ -330,10 +398,9 @@ public class TestDataInitService {
 
     public void createVoteQuestion() {
         List<VoteQuestion> voteQuestions = new ArrayList<>();
-        List<Question> allQuestions = questionService.getAll();
-        for (long i = 1; i <= NUM_OF_USERS; i++) {
+        for (long i = 1; i <= NUM_OF_VOTEQUESTIONS; i++) {
             User randomUser = getRandomUser();
-            Question randomQuestion = allQuestions.get((int) i);
+            Question randomQuestion = getRandomQuestion();
             while (didThisUserVoteForThisQuestion(randomUser.getId(), randomQuestion.getId(), voteQuestions)) {
                 randomUser = getRandomUser();
                 randomQuestion = getRandomQuestion();

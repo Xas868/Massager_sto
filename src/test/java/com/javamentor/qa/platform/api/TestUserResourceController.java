@@ -1226,4 +1226,48 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
 
 
 
+
+
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/getVotesByUser_whenVotesZero/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/getVotesByUser_whenVotesZero/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getVotesByUser_whenVotesZero() throws Exception {
+        mockMvc.perform(get("/api/user/profile/vote")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.countVoteUp", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteDown", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteQuestion", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteMonth", Is.is(0)));
+
+    }
+
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/getVotesByUser_whenVotesExists/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/getVotesByUser_whenVotesExists/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getVotesByUser_whenVotesExists() throws Exception {
+        mockMvc.perform(get("/api/user/profile/vote")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.countVoteUp", Is.is(4)))
+                .andExpect(jsonPath("$.countVoteDown", Is.is(2)))
+                .andExpect(jsonPath("$.countVoteQuestion", Is.is(3)))
+                .andExpect(jsonPath("$.countVoteAnswer", Is.is(3)))
+                .andExpect(jsonPath("$.countVoteMonth", Is.is(6)));
+
+    }
+
+
+
 }
