@@ -16,11 +16,11 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
     @Sql(scripts = "/script/TestAnswerResourceController/upVote/Before.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestAnswerResourceController/upVote/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void upVote() throws Exception {
-
-        mockMvc.perform(patch("/api/user/question/{questionId}/answer/101/upVote")
+//        {questionId}
+        mockMvc.perform(patch("/api/user/question/101/answer/101/upVote")
 //                        .param("password", "46xEPoAOu")
                         .contentType("application/json")
-                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101")))
+                        .header("Authorization", "Bearer " + getToken("user102@mail.ru", "user102")))
                 .andDo(print())
                 .andExpect(status().isOk());
 

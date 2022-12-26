@@ -44,7 +44,7 @@ INSERT INTO user_entity (id, about, city, email, full_name, image_link, is_delet
  *  Table: question
  */
 INSERT INTO question (id, description, is_deleted, last_redaction_date, persist_date, title, user_id) VALUES
-    (101, 'What do you think about question 101?', false, DATE(NOW()), '2022-10-06T00:00:00', 'Question 101', 101),
+    (101, 'What do you think about question 101?', false, DATE(NOW()), '2022-10-06T00:00:00', 'Question 101', 110),
     (102, 'What do you think about question 102?', false, DATE(NOW()), '2022-10-06T00:00:00', 'Question 102', 101),
     (103, 'What do you think about question 103?', false, DATE(NOW()), DATE(NOW()), 'Question 103', 104),
     (104, 'What do you think about question 104?', false, DATE(NOW()), DATE(NOW()), 'Question 104', 110);
@@ -54,7 +54,7 @@ INSERT INTO question (id, description, is_deleted, last_redaction_date, persist_
  */
 INSERT INTO answer (id, date_accept_time, html_body, is_deleted, is_deleted_by_moderator, is_helpful, persist_date,
                     update_date, question_id, user_id, moderator_id) VALUES
-    (101, DATE(NOW()), 'Answer 101', false, false, false, '2022-10-06T00:00:00', DATE(NOW()), 101, 110, null),
+    (101, DATE(NOW()), 'Answer 101', false, false, false, DATE(NOW()), DATE(NOW()), 101, 110, null),
     (102, DATE(NOW()), 'Answer 102', false, false, false, DATE(NOW()), DATE(NOW()), 102, 109, null),
     (103, DATE(NOW()), 'Answer 103', false, false, false, DATE(NOW()), DATE(NOW()), 103, 108, null),
     (104, DATE(NOW()), 'Answer 104', false, false, false, DATE(NOW()), DATE(NOW()), 104, 107, null),
