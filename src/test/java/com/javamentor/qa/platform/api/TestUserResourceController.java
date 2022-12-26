@@ -1184,109 +1184,47 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items.length()", Is.is(0)));
     }
 
-    //Пользователь оставил 3 ответа за неделю
+
     @Test
-    @Sql(scripts = "/script/TestUserResourceController/getAnswersPerWeekByUserId_shouldFindAllData_whenExists/Before.sql",
+    @Sql(scripts = "/script/TestUserResourceController/getVotesByUser_whenVotesZero/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/getAnswersPerWeekByUserId_shouldFindAllData_whenExists/After.sql",
+    @Sql(scripts = "/script/TestUserResourceController/getVotesByUser_whenVotesZero/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getAnswersPerWeekByUserId_shouldFindAllData_whenExists() throws Exception {
-        mockMvc.perform(get("/api/user/profile/question/week")
+    void getVotesByUser_whenVotesZero() throws Exception {
+        mockMvc.perform(get("/api/user/profile/vote")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(3)));
+                .andExpect(jsonPath("$.countVoteUp", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteDown", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteQuestion", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteMonth", Is.is(0)));
+
     }
 
-    //Пользователь оставил 0 ответов за неделю
     @Test
-    @Sql(scripts = "/script/TestUserResourceController/getAnswersPerWeekByUserId_shouldFindAllData_whenEmpty/Before.sql",
+    @Sql(scripts = "/script/TestUserResourceController/getVotesByUser_whenVotesExists/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/getAnswersPerWeekByUserId_shouldFindAllData_whenEmpty/After.sql",
+    @Sql(scripts = "/script/TestUserResourceController/getVotesByUser_whenVotesExists/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getAnswersPerWeekByUserId_shouldFindAllData_whenEmpty() throws Exception {
-        mockMvc.perform(get("/api/user/profile/question/week")
+    void getVotesByUser_whenVotesExists() throws Exception {
+        mockMvc.perform(get("/api/user/profile/vote")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(0)));
-    }
+                .andExpect(jsonPath("$.countVoteUp", Is.is(4)))
+                .andExpect(jsonPath("$.countVoteDown", Is.is(2)))
+                .andExpect(jsonPath("$.countVoteQuestion", Is.is(3)))
+                .andExpect(jsonPath("$.countVoteAnswer", Is.is(3)))
+                .andExpect(jsonPath("$.countVoteMonth", Is.is(6)));
 
-    // Проверка пользователей в топе по количеству ответов. Первые 3 пользователя имеют самое большое количество ответов
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/getTopUsersForDaysRankedByNumberOfAnswers_shouldFindAllData_WhenExists/Before.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/getTopUsersForDaysRankedByNumberOfAnswers_shouldFindAllData_WhenExists/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getTopUsersForDaysRankedByNumberOfAnswers_shouldFindAllData_WhenExists() throws Exception {
-        mockMvc.perform(get("/api/user/top")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", Is.is(10)))
-
-                .andExpect(jsonPath("$[0].id", Is.is(110)))
-                .andExpect(jsonPath("$[0].email", Is.is("user110@mail.ru")))
-
-                .andExpect(jsonPath("$[1].id", Is.is(101)))
-                .andExpect(jsonPath("$[1].email", Is.is("user101@mail.ru")))
-
-                .andExpect(jsonPath("$[2].id", Is.is(102)))
-                .andExpect(jsonPath("$[2].email", Is.is("user102@mail.ru")));
     }
 
 
-    // Проверка пользователей в топе по количеству ответов. Пользователи не оставили ни одного ответа
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/getTopUsersForDaysRankedByNumberOfAnswers_shouldFindAllData_WhenEmpty/Before.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/getTopUsersForDaysRankedByNumberOfAnswers_shouldFindAllData_WhenEmpty/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getTopUsersForDaysRankedByNumberOfAnswers_shouldFindAllData_WhenEmpty() throws Exception {
-        mockMvc.perform(get("/api/user/top")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", Is.is(0)));
-    }
 
-    // Пользователь добавил в закладки 5 вопросов
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/getAllBookMarksInUserProfile_ShouldFindAllData_WhenExists/Before.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/getAllBookMarksInUserProfile_ShouldFindAllData_WhenExists/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getAllBookMarksInUserProfile_ShouldFindAllData_WhenExists() throws Exception {
-        mockMvc.perform(get("/api/user/profile/bookmarks")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", Is.is(5)));
-    }
-
-    // Пользователь добавил в закладки 0 вопросов
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/getAllBookMarksInUserProfile_ShouldFindAllData_WhenEmpty/Before.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/getAllBookMarksInUserProfile_ShouldFindAllData_WhenEmpty/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getAllBookMarksInUserProfile_ShouldFindAllData_WhenEmpty() throws Exception {
-        mockMvc.perform(get("/api/user/profile/bookmarks")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", Is.is(0)));
-    }
 }

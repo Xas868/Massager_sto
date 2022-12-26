@@ -5,7 +5,9 @@ import com.javamentor.qa.platform.dao.impl.pagination.user.UserPageDtoDaoAllUser
 import com.javamentor.qa.platform.dao.impl.pagination.user.UserPageDtoDaoByVoteImpl;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.UserDto;
+import com.javamentor.qa.platform.models.dto.UserProfileVoteDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
+import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.CalendarPeriod;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
@@ -184,4 +186,24 @@ public class UserResourceController {
             CalendarPeriod calendarPeriod) {
         return new ResponseEntity<>(userDtoService.getTopUsersForDaysRankedByNumberOfQuestions(calendarPeriod), HttpStatus.OK);
     }
+
+
+    @Operation(summary = "Получение количества голосов пользователя в профиле.",
+            description = "Контролер возвращает количество голосов (UP и DOWN) вопросов и ответов, а также количество голосов за месяц.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Возвращает UserProfileVoteDto с количеством голосов.",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json")
+                    })
+    })
+    @GetMapping("api/user/profile/vote")
+    public ResponseEntity<List<UserProfileVoteDto>> getVotesUsersInProfile(@AuthenticationPrincipal User user){
+        return new ResponseEntity<>(userDtoService.getCountVotesAnswersAndQuestions(user.getId()), HttpStatus.OK);
+    }
+
+
+
 }
