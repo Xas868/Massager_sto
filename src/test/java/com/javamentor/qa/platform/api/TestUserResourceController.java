@@ -1,12 +1,23 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
+import com.javamentor.qa.platform.models.entity.user.User;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -346,6 +357,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items[0].listTagDto[2].name", Is.is("LTGDJP6")))
                 .andExpect(jsonPath("$.items[0].listTagDto[2].description", Is.is("Description of tag 6")));
     }
+
     // Проверка filter email.
     @Test
     @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldFilterEmail_whenExists/Before.sql",
@@ -1183,6 +1195,37 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.totalResultCount", Is.is(0)))
                 .andExpect(jsonPath("$.items.length()", Is.is(0)));
     }
+
+
+    //Смена пароля
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/changePassword/Before.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/changePassword/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void changePassword() throws Exception {
+
+        mockMvc.perform(patch("/api/user/change/password")
+                        .param("password", "46xEPoAOu")
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100")))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        String user = String.valueOf(entityManager.createQuery("select password from User where id = 100")
+                .getResultList());
+        user = user.replaceAll("[()<\\[\\]>]","");
+
+        Boolean bool = passwordEncoder.matches((CharSequence) "46xEPoAOu", user);
+
+        assertThat(bool).isEqualTo(true);
+
+
+    }
+
+
+
+
+
+
 
 
     @Test

@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.configs;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @SpringBootApplication
 @ComponentScan("com.javamentor.qa.platform")
 @EntityScan("com.javamentor.qa.platform.models.entity")
+
 @EnableCaching
 public class JmApplication {
 
