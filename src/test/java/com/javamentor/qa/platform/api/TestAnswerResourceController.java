@@ -54,4 +54,29 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
 
 
     }
+
+    //Голосование за
+    @Test
+    @Sql(scripts = "/script/TestAnswerResourceController/createAnswer/Before.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestAnswerResourceController/createAnswer/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void createAnswer() throws Exception {
+//        {questionId}
+        mockMvc.perform(post("/api/user/question/101/answer/101/upVote")
+//                        .param("password", "46xEPoAOu")
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(1)));
+
+//        String user = String.valueOf(entityManager.createQuery("select password from User where id = 100")
+//                .getResultList());
+//        user = user.replaceAll("[()<\\[\\]>]","");
+//
+//        Boolean bool = passwordEncoder.matches((CharSequence) "46xEPoAOu", user);
+//
+//        assertThat(bool).isEqualTo(true);
+
+
+    }
 }
