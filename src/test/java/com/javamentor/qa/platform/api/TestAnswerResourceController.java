@@ -61,13 +61,23 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
     @Sql(scripts = "/script/TestAnswerResourceController/createAnswer/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void createAnswer() throws Exception {
 //        {questionId}
-        mockMvc.perform(post("/api/user/question/101/answer/101/upVote")
+        mockMvc.perform(post("/api/user/question/101/answer/add")
+                        .content("string")
 //                        .param("password", "46xEPoAOu")
                         .contentType("application/json")
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101")))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(1)));
+                .andExpect(jsonPath("$.id", Is.is(1)))
+                .andExpect(jsonPath("$.userId", Is.is(101)))
+                .andExpect(jsonPath("$.userReputation", Is.is(1000)));
+//                .andExpect(jsonPath("$.[0].questionId", Is.is(101)))
+//                .andExpect(jsonPath("$.[0].persistDateTime", Is.is("2022-10-06T00:00:00")))
+//                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(101)))
+//                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("vfOxMU1")))
+//                .andExpect(jsonPath("$.[0].listTagDto[0].description", Is.is("Description of tag 1")))
+//                .andExpect(jsonPath("$.[0].countAnswer", Is.is(2)));
+//                .andExpect(jsonPath("$", Is.is(1)));
 
 //        String user = String.valueOf(entityManager.createQuery("select password from User where id = 100")
 //                .getResultList());
