@@ -2,8 +2,10 @@ package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import org.hamcrest.core.Is;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.MvcResult;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -55,37 +57,45 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
 
     }
 
-    //Голосование за
+
+    //Создание ответа на вопрос
     @Test
     @Sql(scripts = "/script/TestAnswerResourceController/createAnswer/Before.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestAnswerResourceController/createAnswer/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void createAnswer() throws Exception {
-//        {questionId}
-        mockMvc.perform(post("/api/user/question/101/answer/add")
+        String user1 = "";
+        //jsonPathResultMatchers = jsonPath("$.persistDateTime");
+        MvcResult Mockmvc = mockMvc.perform(post("/api/user/question/101/answer/add")
                         .content("string")
-//                        .param("password", "46xEPoAOu")
                         .contentType("application/json")
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Is.is(1)))
                 .andExpect(jsonPath("$.userId", Is.is(101)))
-                .andExpect(jsonPath("$.userReputation", Is.is(1000)));
-//                .andExpect(jsonPath("$.[0].questionId", Is.is(101)))
-//                .andExpect(jsonPath("$.[0].persistDateTime", Is.is("2022-10-06T00:00:00")))
-//                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(101)))
-//                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("vfOxMU1")))
-//                .andExpect(jsonPath("$.[0].listTagDto[0].description", Is.is("Description of tag 1")))
-//                .andExpect(jsonPath("$.[0].countAnswer", Is.is(2)));
-//                .andExpect(jsonPath("$", Is.is(1)));
+                .andExpect(jsonPath("$.userReputation", Is.is(1000)))
+                .andExpect(jsonPath("$.questionId", Is.is(101)))
+                .andExpect(jsonPath("$.htmlBody", Is.is("string")))
+                .andExpect(jsonPath("$.isHelpful", Is.is(false)))
+                .andExpect(jsonPath("$.isUserVote", Is.is(IsNull.nullValue())))
+                .andExpect(jsonPath("$.dateAccept", Is.is(IsNull.nullValue())))
+                .andExpect(jsonPath("$.countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.image", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.nickName", Is.is("user_101")))
+                .andExpect(jsonPath("$.commentOnTheAnswerToTheQuestion").isEmpty())
+                .andReturn();
 
-//        String user = String.valueOf(entityManager.createQuery("select password from User where id = 100")
-//                .getResultList());
-//        user = user.replaceAll("[()<\\[\\]>]","");
-//
-//        Boolean bool = passwordEncoder.matches((CharSequence) "46xEPoAOu", user);
-//
-//        assertThat(bool).isEqualTo(true);
+
+        String responseBody = Mockmvc.getResponse().getContentAsString();
+
+
+
+        String persistDateTimeVar = String.valueOf(entityManager.createQuery("select persistDateTime from Answer where id = 1")
+                .getResultList());
+        persistDateTimeVar = persistDateTimeVar.replaceAll("[()<\\[\\]>]","");
+
+        Boolean bool = responseBody.contains(persistDateTimeVar);
+        assertThat(bool).isEqualTo(true);
 
 
     }
