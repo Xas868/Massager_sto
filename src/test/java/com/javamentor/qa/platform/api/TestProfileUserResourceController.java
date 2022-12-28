@@ -8,11 +8,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
-
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -596,12 +596,14 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andDo(print())
                 .andExpect(status().isCreated());
 
-        List<GroupBookmark> groupBookmarks = entityManager.createQuery("select new com.javamentor.qa.platform.models.entity.GroupBookmark (" +
-                                                                       "gb.title," +
-                                                                       "gb.user" +
-                                                                       ") from GroupBookmark gb where gb.user.id = :id", GroupBookmark.class)
-                .setParameter("id", 101L)
-                .getResultList();
+        List<GroupBookmark> groupBookmarks =
+                entityManager.createQuery(
+                                "select new com.javamentor.qa.platform.models.entity.GroupBookmark (" +
+                                "gb.title," +
+                                "gb.user" +
+                                ") from GroupBookmark gb where gb.user.id = :id", GroupBookmark.class)
+                        .setParameter("id", 101L)
+                        .getResultList();
 
         Assertions.assertEquals(newGroupBookMarkName, groupBookmarks.get(4).getTitle());
         Assertions.assertEquals(101L, groupBookmarks.get(4).getUser().getId());
@@ -694,6 +696,15 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$.[0].bookmarkId", Is.is(101)))
                 .andExpect(jsonPath("$.[0].questionId", Is.is(101)))
                 .andExpect(jsonPath("$.[0].title", Is.is("Question 101")))
+                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("vfOxMU1")))
+                .andExpect(jsonPath("$.[0].listTagDto[0].description", Is.is("Description of tag 1")))
+                .andExpect(jsonPath("$.[0].listTagDto[1].id", Is.is(102)))
+                .andExpect(jsonPath("$.[0].listTagDto[1].name", Is.is("iThKcj2")))
+                .andExpect(jsonPath("$.[0].listTagDto[1].description", Is.is("Description of tag 2")))
+                .andExpect(jsonPath("$.[0].listTagDto[2].id", Is.is(103)))
+                .andExpect(jsonPath("$.[0].listTagDto[2].name", Is.is("LTGDJP3")))
+                .andExpect(jsonPath("$.[0].listTagDto[2].description", Is.is("Description of tag 3")))
                 .andExpect(jsonPath("$.[0].countAnswer", Is.is(0)))
                 .andExpect(jsonPath("$.[0].countVote").value(IsNull.nullValue()))
                 .andExpect(jsonPath("$.[0].countView", Is.is(0)))
@@ -702,6 +713,15 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$.[1].bookmarkId", Is.is(102)))
                 .andExpect(jsonPath("$.[1].questionId", Is.is(102)))
                 .andExpect(jsonPath("$.[1].title", Is.is("Question 102")))
+                .andExpect(jsonPath("$.[1].listTagDto[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.[1].listTagDto[0].name", Is.is("vfOxMU4")))
+                .andExpect(jsonPath("$.[1].listTagDto[0].description", Is.is("Description of tag 4")))
+                .andExpect(jsonPath("$.[1].listTagDto[1].id", Is.is(105)))
+                .andExpect(jsonPath("$.[1].listTagDto[1].name", Is.is("iThKcj5")))
+                .andExpect(jsonPath("$.[1].listTagDto[1].description", Is.is("Description of tag 5")))
+                .andExpect(jsonPath("$.[1].listTagDto[2].id", Is.is(106)))
+                .andExpect(jsonPath("$.[1].listTagDto[2].name", Is.is("LTGDJP6")))
+                .andExpect(jsonPath("$.[1].listTagDto[2].description", Is.is("Description of tag 6")))
                 .andExpect(jsonPath("$.[1].countAnswer", Is.is(0)))
                 .andExpect(jsonPath("$.[1].countVote").value(IsNull.nullValue()))
                 .andExpect(jsonPath("$.[1].countView", Is.is(0)))
@@ -710,6 +730,15 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$.[2].bookmarkId", Is.is(103)))
                 .andExpect(jsonPath("$.[2].questionId", Is.is(103)))
                 .andExpect(jsonPath("$.[2].title", Is.is("Question 103")))
+                .andExpect(jsonPath("$.[2].listTagDto[0].id", Is.is(107)))
+                .andExpect(jsonPath("$.[2].listTagDto[0].name", Is.is("vfOxMU7")))
+                .andExpect(jsonPath("$.[2].listTagDto[0].description", Is.is("Description of tag 7")))
+                .andExpect(jsonPath("$.[2].listTagDto[1].id", Is.is(108)))
+                .andExpect(jsonPath("$.[2].listTagDto[1].name", Is.is("iThKcj8")))
+                .andExpect(jsonPath("$.[2].listTagDto[1].description", Is.is("Description of tag 8")))
+                .andExpect(jsonPath("$.[2].listTagDto[2].id", Is.is(109)))
+                .andExpect(jsonPath("$.[2].listTagDto[2].name", Is.is("LTGDJP9")))
+                .andExpect(jsonPath("$.[2].listTagDto[2].description", Is.is("Description of tag 9")))
                 .andExpect(jsonPath("$.[2].countAnswer", Is.is(0)))
                 .andExpect(jsonPath("$.[2].countVote").value(IsNull.nullValue()))
                 .andExpect(jsonPath("$.[2].countView", Is.is(0)))
@@ -748,14 +777,37 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", Is.is(8)))
 
-                .andExpect(jsonPath("$[0].bookmarkId", Is.is(108)))
-                .andExpect(jsonPath("$[1].bookmarkId", Is.is(107)))
-                .andExpect(jsonPath("$[2].bookmarkId", Is.is(106)))
-                .andExpect(jsonPath("$[3].bookmarkId", Is.is(105)))
-                .andExpect(jsonPath("$[4].bookmarkId", Is.is(104)))
-                .andExpect(jsonPath("$[5].bookmarkId", Is.is(103)))
-                .andExpect(jsonPath("$[6].bookmarkId", Is.is(102)))
-                .andExpect(jsonPath("$[7].bookmarkId", Is.is(101)));
+                .andExpect(jsonPath("$[0].bookmarkId", Is.is(101)))
+                .andExpect(jsonPath("$[0].questionId", Is.is(101)))
+                .andExpect(jsonPath("$[0].persistDateTime", Is.is("2022-12-28T00:00:00")))
+
+                .andExpect(jsonPath("$[1].bookmarkId", Is.is(102)))
+                .andExpect(jsonPath("$[1].questionId", Is.is(102)))
+                .andExpect(jsonPath("$[1].persistDateTime", Is.is("2022-12-27T00:00:00")))
+
+                .andExpect(jsonPath("$[2].bookmarkId", Is.is(103)))
+                .andExpect(jsonPath("$[2].questionId", Is.is(103)))
+                .andExpect(jsonPath("$[2].persistDateTime", Is.is("2022-12-26T00:00:00")))
+
+                .andExpect(jsonPath("$[3].bookmarkId", Is.is(104)))
+                .andExpect(jsonPath("$[3].questionId", Is.is(104)))
+                .andExpect(jsonPath("$[3].persistDateTime", Is.is("2022-12-25T00:00:00")))
+
+                .andExpect(jsonPath("$[4].bookmarkId", Is.is(105)))
+                .andExpect(jsonPath("$[4].questionId", Is.is(105)))
+                .andExpect(jsonPath("$[4].persistDateTime", Is.is("2022-12-24T00:00:00")))
+
+                .andExpect(jsonPath("$[5].bookmarkId", Is.is(106)))
+                .andExpect(jsonPath("$[5].questionId", Is.is(106)))
+                .andExpect(jsonPath("$[5].persistDateTime", Is.is("2022-12-23T00:00:00")))
+
+                .andExpect(jsonPath("$[6].bookmarkId", Is.is(107)))
+                .andExpect(jsonPath("$[6].questionId", Is.is(107)))
+                .andExpect(jsonPath("$[6].persistDateTime", Is.is("2022-12-22T00:00:00")))
+
+                .andExpect(jsonPath("$[7].bookmarkId", Is.is(108)))
+                .andExpect(jsonPath("$[7].questionId", Is.is(108)))
+                .andExpect(jsonPath("$[7].persistDateTime", Is.is("2022-12-21T00:00:00")));
     }
 
 
