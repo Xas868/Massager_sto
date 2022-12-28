@@ -45,18 +45,18 @@ INSERT INTO user_entity (id, about, city, email, full_name, image_link, is_delet
  */
 INSERT INTO question (id, description, is_deleted, last_redaction_date, persist_date, title, user_id) VALUES
     (101, 'What do you think about question 101?', false, DATE(NOW()), DATE(NOW()), 'Question 101', 101),
-    (102, 'What do you think about question 102?', false, DATE(NOW()), DATE(NOW()), 'Question 102', 102),
-    (103, 'What do you think about question 103?', false, DATE(NOW()), DATE(NOW()), 'Question 103', 103),
-    (104, 'What do you think about question 104?', false, DATE(NOW()), DATE(NOW()), 'Question 104', 104),
-    (105, 'What do you think about question 105?', false, DATE(NOW()), DATE(NOW()), 'Question 105', 105),
-    (106, 'What do you think about question 106?', false, DATE(NOW()), DATE(NOW()), 'Question 106', 106),
-    (107, 'What do you think about question 107?', false, DATE(NOW()), DATE(NOW()), 'Question 107', 107),
-    (108, 'What do you think about question 108?', false, DATE(NOW()), DATE(NOW()), 'Question 108', 108);
+    (102, 'What do you think about question 102?', false, DATE(NOW()), DATE(NOW()) + 1, 'Question 102', 102),
+    (103, 'What do you think about question 103?', false, DATE(NOW()), DATE(NOW()) + 2, 'Question 103', 103),
+    (104, 'What do you think about question 104?', false, DATE(NOW()), DATE(NOW()) + 3, 'Question 104', 104),
+    (105, 'What do you think about question 105?', false, DATE(NOW()), DATE(NOW()) + 4, 'Question 105', 105),
+    (106, 'What do you think about question 106?', false, DATE(NOW()), DATE(NOW()) + 5, 'Question 106', 106),
+    (107, 'What do you think about question 107?', false, DATE(NOW()), DATE(NOW()) + 6, 'Question 107', 107),
+    (108, 'What do you think about question 108?', false, DATE(NOW()), DATE(NOW()) + 7, 'Question 108', 108);
 
 /*
  *  Table: bookmarks
     Test user: user101
-    Total count of bookmarks: 5
+    Total count of bookmarks: 8
  */
 
 INSERT INTO bookmarks (id, question_id, user_id) VALUES
@@ -65,10 +65,9 @@ INSERT INTO bookmarks (id, question_id, user_id) VALUES
     (103, 103, 101),
     (104, 104, 101),
     (105, 105, 101),
-    (106, 106, 106),
-    (107, 107, 107),
-    (108, 108, 108);
-
+    (106, 106, 101),
+    (107, 107, 101),
+    (108, 108, 101);
 
 
 /*

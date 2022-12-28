@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.dao.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.BookmarksDao;
-import com.javamentor.qa.platform.models.entity.BookMarks;
+import com.javamentor.qa.platform.models.entity.bookmark.BookMarks;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
