@@ -22,9 +22,9 @@ public class QuestionDaoImpl extends ReadWriteDaoImpl<Question, Long> implements
     }
 
     @Override
-    public Optional<Question> getQuestionByIdWithAuthor(Long id){
+    public Optional<Question> getQuestionByIdWithAuthor(Long id) {
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery(
-                "select q from Question q inner join User u on q.user.id = u.id where q.id=:id",Question.class)
+                        "select q from Question q inner join User u on q.user.id = u.id where q.id=:id", Question.class)
                 .setParameter("id", id));
     }
 }

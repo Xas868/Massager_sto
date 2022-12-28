@@ -1,146 +1,28 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
+import com.javamentor.qa.platform.models.entity.user.User;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTests {
-    // Проверка получения вопросов пользователя по количеству голосов и не бросает ошибку если запрос без параметров
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/Before.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getUserProfileQuestionDtoShouldReturnAllQuestionDto() throws Exception {
-        mockMvc.perform(get("/api/user/profile/questions")
-                .content("")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
-        )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", Is.is(6)))
-                .andExpect(jsonPath("$.[0].questionId", Is.is(101)))
-                .andExpect(jsonPath("$[0].title", Is.is("Question 101")))
-
-                .andExpect(jsonPath("$[0].listTagDto.size()", Is.is(1)))
-                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(101)))
-                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("iThKcj2")))
-                .andExpect(jsonPath("$.[0].listTagDto[0].description", Is.is("Description of tag 2")))
-
-                .andExpect(jsonPath("$.[0].countAnswer", Is.is(1)))
-                .andExpect(jsonPath("$.[0].view", Is.is(1)))
-                .andExpect(jsonPath("$.[0].vote", Is.is(5)));
-
-    }
-
-    // Проверка сортировки вопросов пользователя по количеству просмотров
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/Before.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getUserProfileQuestionDtoShouldSortAllQuestionDtoByCountOfViews() throws Exception {
-        mockMvc.perform(get("/api/user/profile/questions?sort=VIEW")
-                        .content("")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", Is.is(6)))
-                .andExpect(jsonPath("$.[0].questionId", Is.is(100)))
-                .andExpect(jsonPath("$[0].title", Is.is("Question 100")))
-
-                .andExpect(jsonPath("$[0].listTagDto.size()", Is.is(3)))
-                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(100)))
-                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("vfOxMU1")))
-                .andExpect(jsonPath("$.[0].listTagDto[0].description", Is.is("Description of tag 1")))
-
-                .andExpect(jsonPath("$.[0].countAnswer", Is.is(3)))
-                .andExpect(jsonPath("$.[0].view", Is.is(11)))
-                .andExpect(jsonPath("$.[0].vote", Is.is(4)));
-
-    }
-
-    // Проверка сортировки вопросов пользователя по дате создания
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/Before.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getUserProfileQuestionDtoShouldSortAllQuestionDtoByNew() throws Exception {
-        mockMvc.perform(get("/api/user/profile/questions?sort=NEW")
-                        .content("")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", Is.is(6)))
-                .andExpect(jsonPath("$.[0].questionId", Is.is(105)))
-                .andExpect(jsonPath("$[0].title", Is.is("Question 105")))
-
-                .andExpect(jsonPath("$[0].listTagDto.size()", Is.is(1)))
-                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(104)))
-                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("iThKcj4")))
-                .andExpect(jsonPath("$.[0].listTagDto[0].description", Is.is("Description of tag 4")))
-
-                .andExpect(jsonPath("$.[0].countAnswer", Is.is(2)))
-                .andExpect(jsonPath("$.[0].view", Is.is(1)))
-                .andExpect(jsonPath("$.[0].vote", Is.is(-1)));
-
-    }
-
-    // Проверка BookMarks
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/getUserBookMarksDtoShouldWhenExist/Before.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/getUserBookMarksDtoShouldWhenExist/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getUserBookMarksDtoShouldWhenExist() throws Exception {
-        mockMvc.perform(get("/api/user/profile/bookmarks")
-                        .content("")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", Is.is(2)))
-                .andExpect(jsonPath("$.[0].questionId", Is.is(100)))
-                .andExpect(jsonPath("$[0].title", Is.is("Question 100")))
-                .andExpect(jsonPath("$[0].listTagDto.size()", Is.is(3)))
-                .andExpect(jsonPath("$.[0].countAnswer", Is.is(1)))
-                .andExpect(jsonPath("$.[0].countView", Is.is(4)))
-                .andExpect(jsonPath("$.[0].note", Is.is("note 1")));
-
-    }
-
-    // Не должен бросать ошибку если нету закладок
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/getUserBookMarksDtoShouldWhenExist/Before.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/getUserBookMarksDtoShouldWhenExist/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getUserBookMarksDtoShouldWorkWhenNotExist() throws Exception {
-        mockMvc.perform(get("/api/user/profile/bookmarks")
-                        .content("")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", Is.is(0)));
-
-    }
-
     // Проверка передачи всех верных данных
     @Test
     @Sql(scripts = "/script/TestUserResourceController/getUserDtoId_shouldFindAllData_whenExists/Before.sql",
@@ -475,6 +357,7 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.items[0].listTagDto[2].name", Is.is("LTGDJP6")))
                 .andExpect(jsonPath("$.items[0].listTagDto[2].description", Is.is("Description of tag 6")));
     }
+
     // Проверка filter email.
     @Test
     @Sql(scripts = "/script/TestUserResourceController/paginationById_shouldFilterEmail_whenExists/Before.sql",
@@ -1312,4 +1195,79 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andExpect(jsonPath("$.totalResultCount", Is.is(0)))
                 .andExpect(jsonPath("$.items.length()", Is.is(0)));
     }
+
+
+    //Смена пароля
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/changePassword/Before.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/changePassword/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void changePassword() throws Exception {
+
+        mockMvc.perform(patch("/api/user/change/password")
+                        .param("password", "46xEPoAOu")
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100")))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        String user = String.valueOf(entityManager.createQuery("select password from User where id = 100")
+                .getResultList());
+        user = user.replaceAll("[()<\\[\\]>]","");
+
+        Boolean bool = passwordEncoder.matches((CharSequence) "46xEPoAOu", user);
+
+        assertThat(bool).isEqualTo(true);
+
+
+    }
+
+
+
+
+
+
+
+
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/getVotesByUser_whenVotesZero/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/getVotesByUser_whenVotesZero/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getVotesByUser_whenVotesZero() throws Exception {
+        mockMvc.perform(get("/api/user/profile/vote")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.countVoteUp", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteDown", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteQuestion", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.countVoteMonth", Is.is(0)));
+
+    }
+
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/getVotesByUser_whenVotesExists/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/getVotesByUser_whenVotesExists/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getVotesByUser_whenVotesExists() throws Exception {
+        mockMvc.perform(get("/api/user/profile/vote")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.countVoteUp", Is.is(4)))
+                .andExpect(jsonPath("$.countVoteDown", Is.is(2)))
+                .andExpect(jsonPath("$.countVoteQuestion", Is.is(3)))
+                .andExpect(jsonPath("$.countVoteAnswer", Is.is(3)))
+                .andExpect(jsonPath("$.countVoteMonth", Is.is(6)));
+
+    }
+
+
+
 }

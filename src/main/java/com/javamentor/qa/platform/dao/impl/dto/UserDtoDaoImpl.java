@@ -5,6 +5,8 @@ import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.AnswerDTO;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.UserProfileVoteDto;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.util.CalendarPeriod;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -123,4 +125,25 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
         return notFoundIds;
     }
+
+    @Override
+    public List<UserProfileVoteDto> getCountVotesAnswersAndQuestions(Long id) {
+        return entityManager
+                .createQuery("select new com.javamentor.qa.platform.models.dto.UserProfileVoteDto(" +
+                        "(select coalesce(sum(case when voa.vote = :upVote then 1 else 0 end), 0) from VoteAnswer voa where voa.user.id = u.id) " +
+                        "+ (select coalesce(sum(case when voq.vote = :upVote then 1 else 0 end), 0) from VoteQuestion voq where voq.user.id = u.id), " +
+                        "(select coalesce(sum(case when voan.vote = :downVote then 1 else 0 end), 0) from VoteAnswer voan where voan.user.id = u.id) " +
+                        "+ (select coalesce(sum(case when voqu.vote = :downVote then 1 else 0 end), 0) from VoteQuestion voqu where voqu.user.id = u.id), " +
+                        "(select count(qv.id) from VoteQuestion qv where qv.user.id = u.id), " +
+                        "(select count(an.id) from VoteAnswer an where an.user.id = u.id), " +
+                        "(select count(van.id) from VoteAnswer van where van.user.id = u.id and van.persistDateTime >= :date)" +
+                        "+ (select count(vqu.id) from VoteQuestion vqu where vqu.user.id = u.id and vqu.localDateTime >= :date)) " +
+                        "from User u where u.id = :id", UserProfileVoteDto.class)
+                .setParameter("date", LocalDateTime.now().minusDays(30))
+                .setParameter("upVote", VoteType.UP_VOTE)
+                .setParameter("downVote", VoteType.DOWN_VOTE)
+                .setParameter("id", id)
+                .getResultList();
+    }
+
 }
