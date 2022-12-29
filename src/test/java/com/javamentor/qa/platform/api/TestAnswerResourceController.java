@@ -1,11 +1,17 @@
 package com.javamentor.qa.platform.api;
 
+import com.google.gson.Gson;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
+import org.apache.coyote.Response;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mapstruct.MapperConfig;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MvcResult;
+import org.xmlunit.util.Mapper;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -13,6 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVCTests {
 
@@ -29,16 +36,8 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is(1)));
-
-//        String user = String.valueOf(entityManager.createQuery("select password from User where id = 100")
-//                .getResultList());
-//        user = user.replaceAll("[()<\\[\\]>]","");
-//
-//        Boolean bool = passwordEncoder.matches((CharSequence) "46xEPoAOu", user);
-//
-//        assertThat(bool).isEqualTo(true);
-
-
+        String persistDateTimeVar = String.valueOf(entityManager.createQuery("select sum(count) from Reputation where author = 101")
+                .getResultList());
     }
 
     //Голосование за
@@ -90,6 +89,9 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
 
 
 
+//        ResponseDto responseDto
+//                = new Gson().fromJson(responseBody, ResponseDto.class);
+
         String persistDateTimeVar = String.valueOf(entityManager.createQuery("select persistDateTime from Answer where id = 1")
                 .getResultList());
         persistDateTimeVar = persistDateTimeVar.replaceAll("[()<\\[\\]>]","");
@@ -99,4 +101,7 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
 
 
     }
+
+
 }
+
