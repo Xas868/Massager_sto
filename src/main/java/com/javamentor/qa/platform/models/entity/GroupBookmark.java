@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.models.entity;
 
+import com.javamentor.qa.platform.models.entity.bookmark.BookMarks;
 import com.javamentor.qa.platform.models.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

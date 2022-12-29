@@ -1221,13 +1221,6 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
 
     }
 
-
-
-
-
-
-
-
     @Test
     @Sql(scripts = "/script/TestUserResourceController/getVotesByUser_whenVotesZero/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -1268,6 +1261,60 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
 
     }
 
+    // Проверка пользователей в топе по количеству ответов.
+    // Первые 3 пользователя c id [110, 101, 102] имеют самое большое количество ответов
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/getTopUsersForDaysRankedByNumberOfAnswers_shouldFindAllData_WhenExists/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/getTopUsersForDaysRankedByNumberOfAnswers_shouldFindAllData_WhenExists/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getTopUsersForDaysRankedByNumberOfAnswers_shouldFindAllData_WhenExists() throws Exception {
+        mockMvc.perform(get("/api/user/top")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(10)))
+
+                .andExpect(jsonPath("$[0].id", Is.is(110)))
+                .andExpect(jsonPath("$[0].email", Is.is("user110@mail.ru")))
+                .andExpect(jsonPath("$[0].fullName", Is.is("User 110")))
+                .andExpect(jsonPath("$[0].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$[0].city", Is.is("Moscow")))
+                .andExpect(jsonPath("$[0].reputation", Is.is(100)))
+
+                .andExpect(jsonPath("$[1].id", Is.is(101)))
+                .andExpect(jsonPath("$[1].email", Is.is("user101@mail.ru")))
+                .andExpect(jsonPath("$[1].fullName", Is.is("User 101")))
+                .andExpect(jsonPath("$[1].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$[1].city", Is.is("Moscow")))
+                .andExpect(jsonPath("$[1].reputation", Is.is(1000)))
+
+                .andExpect(jsonPath("$[2].id", Is.is(102)))
+                .andExpect(jsonPath("$[2].email", Is.is("user102@mail.ru")))
+                .andExpect(jsonPath("$[2].fullName", Is.is("User 102")))
+                .andExpect(jsonPath("$[2].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$[2].city", Is.is("Moscow")))
+                .andExpect(jsonPath("$[2].reputation", Is.is(900)));
 
 
+    }
+
+    // Проверка пользователей в топе по количеству ответов.
+    // Пользователи не оставили ни одного ответа, JSON Body = []
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/getTopUsersForDaysRankedByNumberOfAnswers_shouldFindAllData_WhenEmpty/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/getTopUsersForDaysRankedByNumberOfAnswers_shouldFindAllData_WhenEmpty/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getTopUsersForDaysRankedByNumberOfAnswers_shouldFindAllData_WhenEmpty() throws Exception {
+        mockMvc.perform(get("/api/user/top")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(0)));
+    }
 }
