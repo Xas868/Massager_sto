@@ -1240,11 +1240,11 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.countVoteUp", Is.is(0)))
-                .andExpect(jsonPath("$.countVoteDown", Is.is(0)))
-                .andExpect(jsonPath("$.countVoteQuestion", Is.is(0)))
-                .andExpect(jsonPath("$.countVoteAnswer", Is.is(0)))
-                .andExpect(jsonPath("$.countVoteMonth", Is.is(0)));
+                .andExpect(jsonPath("$.[0].countVoteUp", Is.is(0)))
+                .andExpect(jsonPath("$.[0].countVoteDown", Is.is(0)))
+                .andExpect(jsonPath("$.[0].countVoteQuestion", Is.is(0)))
+                .andExpect(jsonPath("$.[0].countVoteAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.[0].countVoteMonth", Is.is(0)));
 
     }
 
@@ -1260,11 +1260,11 @@ public class TestUserResourceController extends AbstractClassForDRRiderMockMVCTe
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.countVoteUp", Is.is(4)))
-                .andExpect(jsonPath("$.countVoteDown", Is.is(2)))
-                .andExpect(jsonPath("$.countVoteQuestion", Is.is(3)))
-                .andExpect(jsonPath("$.countVoteAnswer", Is.is(3)))
-                .andExpect(jsonPath("$.countVoteMonth", Is.is(6)));
+                .andExpect(jsonPath("$.[0].countVoteUp", Is.is(4)))
+                .andExpect(jsonPath("$.[0].countVoteDown", Is.is(2)))
+                .andExpect(jsonPath("$.[0].countVoteQuestion", Is.is(3)))
+                .andExpect(jsonPath("$.[0].countVoteAnswer", Is.is(3)))
+                .andExpect(jsonPath("$.[0].countVoteMonth", Is.is(6)));
 
     }
 
