@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.models.entity;
+package com.javamentor.qa.platform.models.entity.bookmark;
 
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.user.User;
