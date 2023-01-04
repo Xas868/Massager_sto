@@ -2,7 +2,9 @@ package com.javamentor.qa.platform.api;
 
 import com.google.gson.Gson;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import org.apache.coyote.Response;
+import org.assertj.core.api.Assertions;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVCTests {
 
     //Голосование за
+    @SuppressWarnings("JpaQlInspection")
     @Test
     @Sql(scripts = "/script/TestAnswerResourceController/upVote/Before.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestAnswerResourceController/upVote/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -36,8 +39,12 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is(1)));
-        String persistDateTimeVar = String.valueOf(entityManager.createQuery("select sum(count) from Reputation where author = 101")
+
+        String count1 = String.valueOf(entityManager.createQuery("select sum(r.count) as s from Reputation as r where r.author = 110")
+//                .setParameter("author",  101L)
                 .getResultList());
+        count1 = count1.replaceAll("[()<\\[\\]>]","");
+        assertThat(count1).isEqualTo("110");
     }
 
     //Голосование за
@@ -53,18 +60,23 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is(-1)));
 
-
+        String count1 = String.valueOf(entityManager.createQuery("select sum(r.count) as s from Reputation as r where r.author = 110")
+                .getResultList());
+        count1 = count1.replaceAll("[()<\\[\\]>]","");
+        assertThat(count1).isEqualTo("95");
     }
 
 
     //Создание ответа на вопрос
+//    @SuppressWarnings("JpaQlInspection")
     @Test
     @Sql(scripts = "/script/TestAnswerResourceController/createAnswer/Before.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestAnswerResourceController/createAnswer/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void createAnswer() throws Exception {
         String user1 = "";
         //jsonPathResultMatchers = jsonPath("$.persistDateTime");
-        MvcResult Mockmvc = mockMvc.perform(post("/api/user/question/101/answer/add")
+//        MvcResult Mockmvc =
+                mockMvc.perform(post("/api/user/question/101/answer/add")
                         .content("string")
                         .contentType("application/json")
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101")))
@@ -85,20 +97,21 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
                 .andReturn();
 
 
-        String responseBody = Mockmvc.getResponse().getContentAsString();
 
 
 
-//        ResponseDto responseDto
-//                = new Gson().fromJson(responseBody, ResponseDto.class);
 
-        String persistDateTimeVar = String.valueOf(entityManager.createQuery("select persistDateTime from Answer where id = 1")
-                .getResultList());
-        persistDateTimeVar = persistDateTimeVar.replaceAll("[()<\\[\\]>]","");
 
-        Boolean bool = responseBody.contains(persistDateTimeVar);
-        assertThat(bool).isEqualTo(true);
+//        String persistDateTimeVar = String.valueOf(entityManager.createQuery("select persistDateTime from Answer where id = 1")
+//                .getResultList());
 
+
+        String answer1 = String.valueOf( entityManager.createQuery("select u.question from Answer as u where u.user = 101 and u.question = 101")
+//                .setParameter("question",  (long)101)
+//                .setParameter("user", (long) 101)
+                .getResultList().get(0));
+         answer1 = answer1.replaceAll("[()<\\[\\]>]","");
+         assertThat(answer1).isEqualTo("101");
 
     }
 
