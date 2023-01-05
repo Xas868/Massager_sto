@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.service.impl;
 
-import com.javamentor.qa.platform.models.entity.BookMarks;
+import com.javamentor.qa.platform.models.entity.bookmark.BookMarks;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.chat.Chat;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
@@ -166,7 +166,7 @@ public class TestDataInitService {
                         .build()
         );
 
-        User user2 = userService.getById(1L).orElseThrow(() -> new UserNotFoundException("user with this id  not found"));
+        User user2 = userService.getById(2L).orElseThrow(() -> new UserNotFoundException("user with this id  not found"));
         bookMarks.add(
                 BookMarks.builder()
                         .user(user2)
