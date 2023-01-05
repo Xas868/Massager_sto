@@ -43,19 +43,22 @@ public class ProfileUserResourceController {
 
     private final UserService userService;
     private final UserDtoService userDtoService;
+    private final BookMarksDtoService bookMarksDtoService;
     private final UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService;
+    private final GroupBookmarkService groupBookmarkService;
     private final ProfileUserDtoService profileUserDtoService;
     private final UserProfileTagDtoService userProfileTagDtoService;
 
     public ProfileUserResourceController(
-            UserService userService, UserDtoService userDtoService, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService, ProfileUserDtoService profileUserDtoService, UserProfileTagDtoService userProfileTagDtoService) {
+            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService, ProfileUserDtoService profileUserDtoService, UserProfileTagDtoService userProfileTagDtoService, GroupBookmarkService groupBookmarkService) {
 
         this.userService = userService;
         this.userDtoService = userDtoService;
+        this.bookMarksDtoService = bookMarksDtoService;
         this.userProfileAnswerPageDtoDaoService = userProfileAnswerPageDtoDaoService;
         this.profileUserDtoService = profileUserDtoService;
         this.userProfileTagDtoService = userProfileTagDtoService;
-
+        this.groupBookmarkService = groupBookmarkService;
     }
 
 
@@ -168,6 +171,5 @@ public class ProfileUserResourceController {
 
         return new ResponseEntity<>(userProfileAnswerPageDtoDaoService.getPageDto(data), HttpStatus.OK);
     }
-
 
 }

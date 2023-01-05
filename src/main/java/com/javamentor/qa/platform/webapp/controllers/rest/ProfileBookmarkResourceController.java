@@ -2,8 +2,9 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
 import com.javamentor.qa.platform.models.dto.BookMarksDto;
-import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
+import com.javamentor.qa.platform.models.entity.bookmark.BookMarks;
+import com.javamentor.qa.platform.models.entity.bookmark.SortBookmark;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.BookmarksService;
@@ -31,10 +32,12 @@ public class ProfileBookmarkResourceController {
     private final GroupBookmarkService groupBookmarkService;
     private final BookmarksService bookmarksService;
 
+
     public ProfileBookmarkResourceController(BookMarksDtoService bookMarksDtoService, GroupBookmarkService groupBookmarkService, BookmarksService bookmarksService) {
         this.bookMarksDtoService = bookMarksDtoService;
         this.groupBookmarkService = groupBookmarkService;
         this.bookmarksService = bookmarksService;
+
     }
 
 
@@ -51,10 +54,15 @@ public class ProfileBookmarkResourceController {
                     }),
     })
     @GetMapping("/bookmarks")
-    public ResponseEntity<List<BookMarksDto>> getAllBookMarksInUserProfile(@AuthenticationPrincipal User user) {
+    public ResponseEntity<List<BookMarksDto>> getAllBookMarksInUserProfile(@AuthenticationPrincipal User user,
+                                                                           @RequestParam(
+                                                                                   required = false,
+                                                                                   defaultValue = "NEW",
+                                                                                   name = "sortBookmark"
+                                                                           ) SortBookmark sortBookmark) {
         return new ResponseEntity<>(bookMarksDtoService
-                .getAllBookMarksInUserProfile(user.getId()),
-                HttpStatus.OK);
+                .getAllBookMarksInUserProfile(user.getId(), sortBookmark), HttpStatus.OK);
+
     }
 
     @Operation(summary = "Получение списка названий групп пользователя",
