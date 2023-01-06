@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserDtoServiceImpl extends DtoServiceImpl<UserDto> implements UserDtoService {
-    private final UserDtoDao userDtoDao;
+    private UserDtoDao userDtoDao;
     private final TagDtoDao tagDtoDao;
 
     public UserDtoServiceImpl(UserDtoDao userDtoDao, Map<String, PageDtoDao<UserDto>> daoMap, TagDtoDao tagDtoDao) {
@@ -98,7 +98,7 @@ public class UserDtoServiceImpl extends DtoServiceImpl<UserDto> implements UserD
 
 
     @Override
-    public List<UserProfileVoteDto> getCountVotesAnswersAndQuestions(Long id){
+    public Optional<UserProfileVoteDto> getCountVotesAnswersAndQuestions(Long id){
         return userDtoDao.getCountVotesAnswersAndQuestions(id);
     }
 

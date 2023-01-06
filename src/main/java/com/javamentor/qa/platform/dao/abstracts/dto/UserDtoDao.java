@@ -18,5 +18,5 @@ public interface UserDtoDao {
 
     List<Long> getUnregisteredUserIds(List<Long> userIds);
 
-    List<UserProfileVoteDto> getCountVotesAnswersAndQuestions(Long id);
+    Optional<UserProfileVoteDto> getCountVotesAnswersAndQuestions(Long id);
 }
