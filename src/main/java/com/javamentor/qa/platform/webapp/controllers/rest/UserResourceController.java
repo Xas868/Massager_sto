@@ -200,7 +200,7 @@ public class UserResourceController {
                     })
     })
     @GetMapping("api/user/profile/vote")
-    public ResponseEntity<List<UserProfileVoteDto>> getVotesUsersInProfile(@AuthenticationPrincipal User user){
-        return new ResponseEntity<>(userDtoService.getCountVotesAnswersAndQuestions(user.getId()), HttpStatus.OK);
+    public ResponseEntity <UserProfileVoteDto> getVotesUsersInProfile(@AuthenticationPrincipal User user){
+        return new ResponseEntity(userDtoService.getCountVotesAnswersAndQuestions(user.getId()), HttpStatus.OK);
     }
 }
