@@ -101,17 +101,20 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
 
 
 
+//        String persistDateTimeVar2 = "dqwdqwd";
+        String persistDateTimeVar = String.valueOf(entityManager.createQuery("select persistDateTime from Answer where id = 1")
+                .getResultList());
+        String answer1= String.valueOf(entityManager.createQuery("select ans.question from Answer as ans join ans.user u on ans.user = u.id where ans.id =1 and u.id=101")
+                .getResultList().get(0));
+        //        u.user = 101 and u.question = 101
 
-//        String persistDateTimeVar = String.valueOf(entityManager.createQuery("select persistDateTime from Answer where id = 1")
-//                .getResultList());
-//        u.user = 101 and u.question = 101
-
-        String answer1 = valueOf(entityManager.createQuery("select u.question as q from Answer as u where u.user = 101 and u.question = 101")
+//        String answer1 = valueOf(entityManager.createQuery("select u.question as q from Answer as u where u.user = 101 and u.question = 101")
 //                .setParameter("question",  (long)101)
 //                .setParameter("user", (long) 101)
-                .getResultList());
+//                .getResultList());
          answer1 = answer1.replaceAll("[()<\\[\\]>]","");
-         assertThat(answer1).isEqualTo("101");
+        assertThat(answer1).isEqualTo("101");
+//         assertThat(answer1).isEqualTo("101");
 
     }
 
