@@ -10,5 +10,5 @@ public interface BookmarksService extends ReadWriteService<BookMarks, Long> {
 
     void addQuestionInBookmarks(User user, Question question);
 
-    Optional <BookMarks> getBookmarkByQuestionId(Long userId, Long questionId);
+    Optional <BookMarks> getBookmarkByQuestionIdAndUserId(Long userId, Long questionId);
 }

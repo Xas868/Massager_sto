@@ -2,11 +2,13 @@ package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
+import com.javamentor.qa.platform.models.entity.bookmark.BookMarks;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
@@ -172,6 +174,10 @@ public class TestProfileBookmarkResourceController extends AbstractClassForDRRid
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
+        assertThat(entityManager
+                    .createQuery("select bm.id from BookMarks bm where bm.question.id = 101")
+                .getSingleResult())
+                .isNotNull();
 
     }
 
@@ -187,6 +193,10 @@ public class TestProfileBookmarkResourceController extends AbstractClassForDRRid
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+        assertThat(entityManager
+                .createQuery("select bm.id from BookMarks bm where bm.question.id = 101")
+                .getSingleResult())
+                .isNotNull();
 
     }
 

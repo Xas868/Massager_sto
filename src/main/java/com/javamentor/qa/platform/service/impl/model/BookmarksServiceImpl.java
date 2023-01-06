@@ -35,8 +35,8 @@ public class BookmarksServiceImpl extends ReadWriteServiceImpl<BookMarks, Long> 
     }
 
     @Override
-    public Optional<BookMarks> getBookmarkByQuestionId(Long userId, Long questionId) {
-        return bookmarksDao.getBookmarkByQuestionId(userId, questionId);
+    public Optional<BookMarks> getBookmarkByQuestionIdAndUserId(Long userId, Long questionId) {
+        return bookmarksDao.getBookmarkByQuestionIdAndUserId(userId, questionId);
     }
 
 }

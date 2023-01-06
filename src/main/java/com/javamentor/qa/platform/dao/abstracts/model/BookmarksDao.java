@@ -9,5 +9,5 @@ public interface BookmarksDao extends ReadWriteDao<BookMarks, Long> {
     boolean findBookmarksByUserAndQuestion(Long userId, Long questionId);
 
 
-    Optional<BookMarks> getBookmarkByQuestionId(Long userId, Long questionId);
+    Optional<BookMarks> getBookmarkByQuestionIdAndUserId(Long userId, Long questionId);
 }
