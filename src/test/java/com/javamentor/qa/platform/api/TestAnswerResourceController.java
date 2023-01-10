@@ -15,6 +15,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MvcResult;
 import org.xmlunit.util.Mapper;
 
+import java.util.List;
+
 import static java.lang.String.valueOf;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -104,17 +106,10 @@ public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVC
 //        String persistDateTimeVar2 = "dqwdqwd";
         String persistDateTimeVar = String.valueOf(entityManager.createQuery("select persistDateTime from Answer where id = 1")
                 .getResultList());
-        String answer1= String.valueOf(entityManager.createQuery("select ans.question from Answer as ans join ans.user u on ans.user = u.id where ans.id =1 and u.id=101")
-                .getResultList().get(0));
-        //        u.user = 101 and u.question = 101
+        Boolean answer1 = entityManager.createQuery("select count(ans)>0 from Answer as ans join ans.user u on ans.user = u.id where u.id=101 and ans.question =101", Boolean.class)
+                .getSingleResult();
+        assertThat(answer1).isEqualTo(true);
 
-//        String answer1 = valueOf(entityManager.createQuery("select u.question as q from Answer as u where u.user = 101 and u.question = 101")
-//                .setParameter("question",  (long)101)
-//                .setParameter("user", (long) 101)
-//                .getResultList());
-         answer1 = answer1.replaceAll("[()<\\[\\]>]","");
-        assertThat(answer1).isEqualTo("101");
-//         assertThat(answer1).isEqualTo("101");
 
     }
 
