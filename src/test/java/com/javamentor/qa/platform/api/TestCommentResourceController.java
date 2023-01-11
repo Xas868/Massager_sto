@@ -325,8 +325,8 @@ public class TestCommentResourceController extends AbstractClassForDRRiderMockMV
 
     //идеальный вариант, корректный id question, без параметров
     @Test
-    @Sql("script/testCommentResourceController/shouldGetAllCommentsOfQuestion/Before.sql")
-    @Sql(scripts = "script/testCommentResourceController/shouldGetAllCommentsOfQuestion/After.sql",
+    @Sql("/script/TestCommentResourceController/shouldGetAllCommentsOfQuestion/Before.sql")
+    @Sql(scripts = "/script/TestCommentResourceController/shouldGetAllCommentsOfQuestion/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetAllCommentsOfQuestion() throws Exception {
 
@@ -357,8 +357,8 @@ public class TestCommentResourceController extends AbstractClassForDRRiderMockMV
 
     //вариант, когда в таблице репутации нет упоминания о нужном вопросе
     @Test
-    @Sql("script/testCommentResourceController/shouldGetAllCommentsOfQuestionWithoutReputation/Before.sql")
-    @Sql(scripts = "script/testCommentResourceController/shouldGetAllCommentsOfQuestionWithoutReputation/After.sql",
+    @Sql("/script/TestCommentResourceController/shouldGetAllCommentsOfQuestionWithoutReputation/Before.sql")
+    @Sql(scripts = "/script/TestCommentResourceController/shouldGetAllCommentsOfQuestionWithoutReputation/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetAllCommentsOfQuestionWithoutReputation() throws Exception {
 
@@ -389,8 +389,8 @@ public class TestCommentResourceController extends AbstractClassForDRRiderMockMV
 
     //корректный id question, items=2 (выводится 2 объекта вместо 3х)
     @Test
-    @Sql("script/testCommentResourceController/shouldGetAllCommentsOfQuestionWithVariables/Before.sql")
-    @Sql(scripts = "script/testCommentResourceController/shouldGetAllCommentsOfQuestionWithVariables/After.sql",
+    @Sql("/script/TestCommentResourceController/shouldGetAllCommentsOfQuestionWithVariables/Before.sql")
+    @Sql(scripts = "/script/TestCommentResourceController/shouldGetAllCommentsOfQuestionWithVariables/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetAllCommentsOfQuestionWithVariables() throws Exception {
 
@@ -416,8 +416,8 @@ public class TestCommentResourceController extends AbstractClassForDRRiderMockMV
 
     //некорректный id question, ничего не находится
     @Test
-    @Sql("script/testCommentResourceController/shouldGetZeroCommentsFromWrongQuestionId/Before.sql")
-    @Sql(scripts = "script/testCommentResourceController/shouldGetZeroCommentsFromWrongQuestionId/After.sql",
+    @Sql("/script/TestCommentResourceController/shouldGetZeroCommentsFromWrongQuestionId/Before.sql")
+    @Sql(scripts = "/script/TestCommentResourceController/shouldGetZeroCommentsFromWrongQuestionId/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetZeroCommentsFromWrongQuestionId() throws Exception {
 
