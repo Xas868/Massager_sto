@@ -17,4 +17,5 @@ public class UserProfileAnswerDto {
     private Long vote;
     private Long questionId;
     private LocalDateTime persistDateTime;
+    private Boolean isHelpful;
 }
