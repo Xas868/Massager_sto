@@ -1,8 +1,20 @@
+truncate  user_entity cascade;
+truncate  group_bookmark cascade;
+truncate  role cascade;
+truncate  bookmarks cascade;
+truncate  question cascade;
+truncate  answer cascade;
+truncate  reputation cascade;
+truncate  question_viewed cascade;
+truncate  tag cascade;
+truncate  question_has_tag cascade;
+
 /*
  *  Table: role
  */
 INSERT INTO role (id, name) VALUES
     (100, 'ROLE_USER');
+
 
 
 /*

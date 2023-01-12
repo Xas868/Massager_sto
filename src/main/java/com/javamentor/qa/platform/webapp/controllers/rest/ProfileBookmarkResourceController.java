@@ -33,7 +33,7 @@ import java.util.Optional;
 
 @RestController
 @Tag(name = "ProfileBookmarkResourceController", description = "Позволяет работать с закладками пользователя")
-@RequestMapping("/api/user/profile/bookmark")
+@RequestMapping("/api/user/profile")
 public class ProfileBookmarkResourceController {
 
     private final BookMarksDtoService bookMarksDtoService;
@@ -135,7 +135,7 @@ public class ProfileBookmarkResourceController {
                                             mediaType = "application/json"
                                     )
                             })
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/bookmark/{id}")
     public ResponseEntity<?> deleteBookmarkByQuestionId(@PathVariable("id") @RequestBody Long questionId){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<BookMarks> bookmarks = bookmarksService.getBookmarkByQuestionIdAndUserId(user.getId(), questionId);
