@@ -253,7 +253,8 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
 
                 .andExpect(jsonPath("$.items[0].view", Is.is(1)))
                 .andExpect(jsonPath("$.items[0].vote", Is.is(6)))
-                .andExpect(jsonPath("$.items[0].questionId", Is.is(101)));
+                .andExpect(jsonPath("$.items[0].questionId", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].isHelpful", Is.is(false)));
 
     }
 
@@ -283,7 +284,8 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
 
                 .andExpect(jsonPath("$.items[0].view", Is.is(1)))
                 .andExpect(jsonPath("$.items[0].vote", Is.is(-5)))
-                .andExpect(jsonPath("$.items[0].questionId", Is.is(105)));
+                .andExpect(jsonPath("$.items[0].questionId", Is.is(105)))
+                .andExpect(jsonPath("$.items[0].isHelpful", Is.is(false)));
 
     }
 
@@ -314,7 +316,8 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
 
                 .andExpect(jsonPath("$.items[0].view", Is.is(1)))
                 .andExpect(jsonPath("$.items[0].vote", Is.is(6)))
-                .andExpect(jsonPath("$.items[0].questionId", Is.is(101)));
+                .andExpect(jsonPath("$.items[0].questionId", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].isHelpful", Is.is(false)));
 
     }
 
@@ -345,7 +348,8 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
 
                 .andExpect(jsonPath("$.items[0].view", Is.is(2)))
                 .andExpect(jsonPath("$.items[0].vote", Is.is(-1)))
-                .andExpect(jsonPath("$.items[0].questionId", Is.is(102)));
+                .andExpect(jsonPath("$.items[0].questionId", Is.is(102)))
+                .andExpect(jsonPath("$.items[0].isHelpful", Is.is(false)));
 
     }
 
