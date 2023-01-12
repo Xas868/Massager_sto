@@ -105,9 +105,16 @@ public class TestProfileBookmarkResourceController extends AbstractClassForDRRid
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", Is.is(4)))
+                .andExpect(jsonPath("$[0].id", Is.is(100)))
                 .andExpect(jsonPath("$[0].title", Is.is("group_bookmark1")))
+
+                .andExpect(jsonPath("$[1].id", Is.is(101)))
                 .andExpect(jsonPath("$[1].title", Is.is("group_bookmark2")))
+
+                .andExpect(jsonPath("$[2].id", Is.is(102)))
                 .andExpect(jsonPath("$[2].title", Is.is("group_bookmark3")))
+
+                .andExpect(jsonPath("$[3].id", Is.is(103)))
                 .andExpect(jsonPath("$[3].title", Is.is("group_bookmark4")));
     }
 

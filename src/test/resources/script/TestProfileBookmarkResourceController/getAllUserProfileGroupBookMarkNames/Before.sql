@@ -15,8 +15,8 @@ VALUES (100, 'I am test user', 'Moskow', 'user100@mail.ru', 'User 100', '/images
         DATE(NOW()),
         null, null, null, 'user_101', '$2a$10$fyHD1Ut8.knrIds5S7/ee.Q5S5c.NQ3sr8k0YzUXsitEbGK.a7JZi', DATE(NOW()), 1);
 
-insert into group_bookmark(title, user_id)
-values ('group_bookmark1', 101),
-       ('group_bookmark2', 101),
-       ('group_bookmark3', 101),
-       ('group_bookmark4', 101);
+insert into group_bookmark(id, title, user_id)
+values (100, 'group_bookmark1', 101),
+       (101, 'group_bookmark2', 101),
+       (102, 'group_bookmark3', 101),
+       (103, 'group_bookmark4', 101);
