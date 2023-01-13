@@ -2,12 +2,13 @@ package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
-import com.javamentor.qa.platform.models.entity.bookmark.BookMarks;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -44,6 +45,33 @@ public class TestProfileBookmarkResourceController extends AbstractClassForDRRid
 
     }
 
+
+    //Получение всех закладок в профиле пользователя в виде BookMarksDto
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllBookMarksInUserProfile/Before.sql")
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllBookMarksInUserProfile/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void getAllBookMarksInUserProfile() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/profile/bookmarks")
+                        .contentType("application/json")
+                        .header("Authorization",
+                                "Bearer " + getToken("user101@mail.ru", "user101")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].title", Is.is("Question 101")))
+                .andExpect(jsonPath("$.[0].questionId", Is.is(101)))
+                .andExpect(jsonPath("$.[0].persistDateTime", Is.is("2022-10-06T00:00:00")))
+                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("vfOxMU1")))
+                .andExpect(jsonPath("$.[0].listTagDto[0].description", Is.is("Description of tag 1")))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(2)))
+                .andExpect(jsonPath("$.[0].countVote", Is.is(1)))
+                .andExpect(jsonPath("$.[0].countView", Is.is(2)));
+
+    }
+
     // Не должен бросать ошибку если нету закладок
     @Test
     @Sql(scripts = "/script/TestProfileBookmarkResourceController/getUserBookMarksDtoShouldWhenExist/Before.sql",
@@ -77,10 +105,17 @@ public class TestProfileBookmarkResourceController extends AbstractClassForDRRid
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", Is.is(4)))
-                .andExpect(jsonPath("$[0]", Is.is("group_bookmark1")))
-                .andExpect(jsonPath("$[1]", Is.is("group_bookmark2")))
-                .andExpect(jsonPath("$[2]", Is.is("group_bookmark3")))
-                .andExpect(jsonPath("$[3]", Is.is("group_bookmark4")));
+                .andExpect(jsonPath("$[0].id", Is.is(100)))
+                .andExpect(jsonPath("$[0].title", Is.is("group_bookmark1")))
+
+                .andExpect(jsonPath("$[1].id", Is.is(101)))
+                .andExpect(jsonPath("$[1].title", Is.is("group_bookmark2")))
+
+                .andExpect(jsonPath("$[2].id", Is.is(102)))
+                .andExpect(jsonPath("$[2].title", Is.is("group_bookmark3")))
+
+                .andExpect(jsonPath("$[3].id", Is.is(103)))
+                .andExpect(jsonPath("$[3].title", Is.is("group_bookmark4")));
     }
 
     //Проверка получения списка имён GroupBookMark не должен бросать ошибку если нету группы закладок у пользователя
