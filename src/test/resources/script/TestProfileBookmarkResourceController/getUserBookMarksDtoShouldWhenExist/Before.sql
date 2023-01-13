@@ -1,13 +1,13 @@
-truncate  user_entity cascade;
-truncate  group_bookmark cascade;
-truncate  role cascade;
-truncate  bookmarks cascade;
-truncate  question cascade;
-truncate  answer cascade;
-truncate  reputation cascade;
-truncate  question_viewed cascade;
-truncate  tag cascade;
-truncate  question_has_tag cascade;
+TRUNCATE  user_entity CASCADE;
+TRUNCATE  group_bookmark CASCADE;
+TRUNCATE  role CASCADE;
+TRUNCATE  bookmarks CASCADE;
+TRUNCATE  question CASCADE;
+TRUNCATE  answer CASCADE;
+TRUNCATE  reputation CASCADE;
+TRUNCATE  question_viewed CASCADE;
+TRUNCATE  tag CASCADE;
+TRUNCATE  question_has_tag CASCADE;
 
 /*
  *  Table: role
