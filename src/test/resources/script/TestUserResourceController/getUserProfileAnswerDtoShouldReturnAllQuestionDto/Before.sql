@@ -34,7 +34,7 @@ VALUES
        (101, CURRENT_TIMESTAMP, 'Answer 102', false, false, false, CURRENT_TIMESTAMP, DATE(NOW()), 101, 101, null),
        (104, CURRENT_TIMESTAMP, 'Answer 102', false, false, false, CURRENT_TIMESTAMP + interval '1 hour', DATE(NOW()), 105, 101, null),
        (100, CURRENT_TIMESTAMP, 'Answer 102', false, false, false, CURRENT_TIMESTAMP + interval '1 minute', DATE(NOW()), 100, 101, null),
-       (105, CURRENT_TIMESTAMP, 'Answer 102', false, false, false, CURRENT_TIMESTAMP + interval '2 minute', DATE(NOW()), 103, 101, null),
+       (105, CURRENT_TIMESTAMP, 'Answer 105', false, false, true, CURRENT_TIMESTAMP + interval '2 minute', DATE(NOW()), 103, 101, null),
        (102, CURRENT_TIMESTAMP, 'Answer 102', false, false, false, CURRENT_TIMESTAMP + interval '3 minute', DATE(NOW()), 100, 101, null),
        (107, CURRENT_TIMESTAMP, 'Answer 107', false, false, false, CURRENT_TIMESTAMP + interval '4 minute', DATE(NOW()), 100, 101, null),
        (108, CURRENT_TIMESTAMP, 'Answer 108', false, false, false, CURRENT_TIMESTAMP + interval '5 minute', DATE(NOW()), 100, 101, null),
@@ -61,7 +61,8 @@ VALUES (100, 'Description of tag 1', 'vfOxMU1', '2022-11-12 22:09:06.639083'),
        (101, 'Description of tag 2', 'iThKcj2', '2022-11-12 22:09:06.639579'),
        (103, 'Description of tag 3', 'iThKcj3', '2022-11-12 22:09:06.639579'),
        (104, 'Description of tag 4', 'iThKcj4', '2022-11-12 22:09:06.639579'),
-       (102, 'Description of tag 3', 'LTGDJP3', '2022-11-12 22:09:06.639579');
+       (102, 'Description of tag 3', 'LTGDJP3', '2022-11-12 22:09:06.639579'),
+       (105, 'Description of tag 5', 'LTGDJP5', '2022-11-12 22:09:06.639579');
 
 /*
  *  Table: question_has_tag
@@ -71,7 +72,8 @@ VALUES (100, 100),
        (100, 101),
        (105, 104),
        (101, 101),
-       (100, 102);
+       (100, 102),
+       (103, 105);
 /*
  *  Table: reputation
  */
@@ -104,7 +106,9 @@ values (1, DATE(NOW()), 'UP_VOTE', 100, 101),
        (21, DATE(NOW()), 'DOWN_VOTE', 101, 101),
        (22, DATE(NOW()), 'DOWN_VOTE', 101, 101),
        (23, DATE(NOW()), 'DOWN_VOTE', 101, 101),
-       (24, DATE(NOW()), 'DOWN_VOTE', 105, 101);
+       (24, DATE(NOW()), 'DOWN_VOTE', 105, 101),
+       (25, DATE(NOW()), 'UP_VOTE', 103, 101),
+       (26, DATE(NOW()), 'UP_VOTE', 103, 101);
 
 insert into votes_on_answers(id, persist_date, vote, answer_id, user_id)
 values (1, DATE(NOW()), 'UP_VOTE', 100, 101),
@@ -134,7 +138,9 @@ values (1, DATE(NOW()), 'UP_VOTE', 100, 101),
        (25, DATE(NOW()), 'DOWN_VOTE', 104, 101),
        (26, DATE(NOW()), 'DOWN_VOTE', 104, 101),
        (28, DATE(NOW()), 'DOWN_VOTE', 113, 101),
-       (27, DATE(NOW()), 'DOWN_VOTE', 104, 101);
+       (27, DATE(NOW()), 'DOWN_VOTE', 104, 101),
+       (29, DATE(NOW()), 'UP_VOTE', 105, 101),
+       (30, DATE(NOW()), 'UP_VOTE', 105, 101);
 
 
 
@@ -153,7 +159,9 @@ values (1, DATE(NOW()), 100, 101),
        (12, DATE(NOW()), 101, 101),
        (14, DATE(NOW()), 102, 101),
        (15, DATE(NOW()), 102, 101),
-       (13, DATE(NOW()), 105, 101);
+       (13, DATE(NOW()), 105, 101),
+       (16, DATE(NOW()), 103, 101),
+       (17, DATE(NOW()), 103, 101);
 
 
 
