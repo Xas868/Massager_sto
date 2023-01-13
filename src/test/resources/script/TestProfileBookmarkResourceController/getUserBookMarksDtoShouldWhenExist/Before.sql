@@ -59,9 +59,9 @@ INSERT INTO reputation (id, count, persist_date, type, answer_id, author_id, que
     (103, 800, DATE(NOW()), 1, null, 100, 100, null);
 
 
-insert into bookmarks(question_id, user_id, note)
-values (100, 100, 'note 1'),
-       (101, 100, 'note 2');
+insert into bookmarks(id,question_id, user_id, note)
+values (1, 100, 100, 'note 1'),
+       (2, 101, 100, 'note 2');
 
 
 INSERT INTO answer (id, date_accept_time, html_body, is_deleted, is_deleted_by_moderator, is_helpful, persist_date,
