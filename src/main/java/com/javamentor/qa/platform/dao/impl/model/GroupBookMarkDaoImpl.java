@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.dao.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.GroupBookMarkDao;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
+import com.javamentor.qa.platform.models.dto.UserProfileGroup;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -14,8 +15,9 @@ public class GroupBookMarkDaoImpl extends ReadWriteDaoImpl<GroupBookmark, Long> 
     private EntityManager entityManager;
 
     @Override
-    public List<String> getAllUserBookMarkGroupNamesByUserId(Long id) {
-        return entityManager.createQuery("select gb.title from GroupBookmark gb where gb.user.id = :id", String.class)
+    public List<UserProfileGroup> getAllUserBookMarkGroupNamesByUserId(Long id) {
+        return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.UserProfileGroup (gb.id, gb.title) " +
+                        "from GroupBookmark gb where gb.user.id =: id", UserProfileGroup.class)
                 .setParameter("id", id)
                 .getResultList();
     }

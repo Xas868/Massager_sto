@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.BookMarksDto;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
+import com.javamentor.qa.platform.models.dto.UserProfileGroup;
 import com.javamentor.qa.platform.models.entity.bookmark.BookMarks;
 import com.javamentor.qa.platform.models.entity.bookmark.SortBookmark;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -87,8 +88,8 @@ public class ProfileBookmarkResourceController {
             )
     })
     @GetMapping("/bookmark/group")
-    public ResponseEntity<List<String>> getAllUserBookMarkGroupNames(@AuthenticationPrincipal User user) {
-        return new ResponseEntity<List<String>>(groupBookmarkService.getAllUserBookMarkGroupNamesByUserId(user.getId()), HttpStatus.OK);
+    public ResponseEntity<List<UserProfileGroup>> getAllUserBookMarkGroupNames(@AuthenticationPrincipal User user) {
+        return new ResponseEntity<>(groupBookmarkService.getAllUserBookMarkGroupNamesByUserId(user.getId()), HttpStatus.OK);
     }
 
     @Operation(summary = "Создание новой группы закладок")
