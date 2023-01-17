@@ -249,6 +249,11 @@ public class TestProfileBookmarkResourceController extends AbstractClassForDRRid
                 )
                 .andDo(print())
                 .andExpect(status().isCreated());
+        assertThat(entityManager.createQuery("from BookMarks bm where bm.user.id = :id")
+                .setParameter("id", (long) 101)
+                .getResultList()
+                .isEmpty())
+                .isEqualTo(false);
 
     }
 
@@ -266,6 +271,11 @@ public class TestProfileBookmarkResourceController extends AbstractClassForDRRid
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+        assertThat(entityManager.createQuery("from BookMarks bm where bm.user.id = :id")
+                .setParameter("id", (long) 101)
+                .getResultList()
+                .isEmpty())
+                .isEqualTo(false);
 
     }
 

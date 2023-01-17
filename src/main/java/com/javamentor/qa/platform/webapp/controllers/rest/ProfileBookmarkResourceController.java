@@ -163,15 +163,14 @@ public class ProfileBookmarkResourceController {
                                                         @RequestBody(required = false) String note) {
 
         Optional<BookMarks> bookMarks = bookmarksService.getById(bookmarkId);
-        if (bookMarks.isPresent()) {
+        if (bookMarks.isPresent() && user.getId().equals(bookMarks.get().getUser().getId())) {
             BookMarks bm = bookMarks.get();
             bm.setNote(note);
-            bm.setUser(user);
             bookmarksService.update(bm);
             return new ResponseEntity<>("Note is added", HttpStatus.CREATED);
         }
 
-        return new ResponseEntity<>("Bookmark is empty", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Bookmark is not found", HttpStatus.BAD_REQUEST);
 
 
 
