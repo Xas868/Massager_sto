@@ -123,21 +123,21 @@ public class ProfileBookmarkResourceController {
 
     @Operation(summary = "Удаление закладки авторизированного пользователя по questionId")
     @ApiResponse(responseCode = "200",
-                            description = "Bookmark удален",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json"
-                                    )
-                            })
+            description = "Bookmark удален",
+            content = {
+                    @Content(
+                            mediaType = "application/json"
+                    )
+            })
     @ApiResponse(responseCode = "400",
-                            description = "Bookmark с таким questionId не существует",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json"
-                                    )
-                            })
+            description = "Bookmark с таким questionId не существует",
+            content = {
+                    @Content(
+                            mediaType = "application/json"
+                    )
+            })
     @DeleteMapping("/bookmark/{id}")
-    public ResponseEntity<?> deleteBookmarkByQuestionId(@PathVariable("id") @RequestBody Long questionId){
+    public ResponseEntity<?> deleteBookmarkByQuestionId(@PathVariable("id") @RequestBody Long questionId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<BookMarks> bookmarks = bookmarksService.getBookmarkByQuestionIdAndUserId(user.getId(), questionId);
         if (bookmarks.isPresent()) {
@@ -146,6 +146,36 @@ public class ProfileBookmarkResourceController {
         }
         return new ResponseEntity<>("Закладка с id = " + questionId + " не существует", HttpStatus.BAD_REQUEST);
     }
+
+
+    @Operation(summary = "Изменение названия группы Bookmark")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Изменение названия группы Bookmark",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json"
+                                    )
+                            })
+            }
+    )
+    @PostMapping("/bookmark/group")
+    public ResponseEntity changeGroupBookmarkName(@AuthenticationPrincipal User user, @RequestBody(required = false) String title) {
+        if (title == null || title.isEmpty()) {
+            return new ResponseEntity<>("request body (title field) must not be empty", HttpStatus.BAD_REQUEST);
+        }
+        if (groupBookmarkService.isGroupBookMarkExistsByName(user.getId(), title)) {
+            return new ResponseEntity<>("user already has group bookmark with title " + title, HttpStatus.BAD_REQUEST);
+        }
+        GroupBookmark groupBookmark = GroupBookmark.builder()
+                .user(user)
+                .title(title)
+                .build();
+
+        groupBookmarkService.persist(groupBookmark);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+
 }
-
-
