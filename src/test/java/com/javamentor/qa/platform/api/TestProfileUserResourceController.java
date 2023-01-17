@@ -463,13 +463,13 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                                 "Bearer " + getToken("user101@mail.ru", "user101")))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.items[0].title", Is.is("Question 101")))
-                .andExpect(jsonPath("$.items[0].questionId", Is.is(101)))
-                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2022-10-06T00:00:00")))
-                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(101)))
-                .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("vfOxMU1")))
-                .andExpect(jsonPath("$.items[0].listTagDto[0].description", Is.is("Description of tag 1")))
-                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(2)));
+                .andExpect(jsonPath("$.[0].title", Is.is("Question 101")))
+                .andExpect(jsonPath("$.[0].questionId", Is.is(101)))
+                .andExpect(jsonPath("$.[0].persistDateTime", Is.is("2022-10-06T00:00:00")))
+                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("vfOxMU1")))
+                .andExpect(jsonPath("$.[0].listTagDto[0].description", Is.is("Description of tag 1")))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(2)));
 
 
     }
