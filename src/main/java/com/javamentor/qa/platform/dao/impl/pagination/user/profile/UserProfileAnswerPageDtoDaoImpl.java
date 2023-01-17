@@ -29,8 +29,9 @@ public class UserProfileAnswerPageDtoDaoImpl implements PageDtoDao<UserProfileAn
                         "a.question.title," +
                         "(select count (qv) from QuestionViewed qv where a.question.id = qv.question.id)," +
                         "(select coalesce(sum(case when va.vote = 'UP_VOTE' then 1 else -1 end), 0) from VoteAnswer va where va.answer.id = a.id ) as sVote," +
-                        "a.question.id, a.persistDateTime)" +
-                        "from Answer a where a.user.id=:id order by " + profileAnswerSort.getComparingField(), UserProfileAnswerDto.class)
+                        "a.question.id, a.persistDateTime, a.isHelpful)" +
+                        "from Answer a where a.user.id=:id order by " +
+                         profileAnswerSort.getComparingField(), UserProfileAnswerDto.class)
                 .setParameter("id", user.getId())
                 .setFirstResult(offset)
                 .setMaxResults(itemsOnPage)
