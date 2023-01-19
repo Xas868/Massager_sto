@@ -19,14 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
@@ -160,22 +153,30 @@ public class ProfileBookmarkResourceController {
                             })
             }
     )
-    @PostMapping("/bookmark/group")
-    public ResponseEntity changeGroupBookmarkName(@AuthenticationPrincipal User user, @RequestBody(required = false) String title) {
+    @PutMapping("/{bookmarkId}/group")
+    public ResponseEntity changeGroupBookmarkName(@PathVariable("bookmarkId") long bookmarkId, @RequestBody(required = false) String title) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (title == null || title.isEmpty()) {
             return new ResponseEntity<>("request body (title field) must not be empty", HttpStatus.BAD_REQUEST);
         }
         if (groupBookmarkService.isGroupBookMarkExistsByName(user.getId(), title)) {
+
             return new ResponseEntity<>("user already has group bookmark with title " + title, HttpStatus.BAD_REQUEST);
         }
+            groupBookmarkService.getAllUserBookMarkGroupNamesByUserId(user.getId());
         GroupBookmark groupBookmark = GroupBookmark.builder()
                 .user(user)
                 .title(title)
+                .id(bookmarkId)
                 .build();
+        groupBookmarkService.update(groupBookmark);
+        return new ResponseEntity<>(HttpStatus.OK);
 
-        groupBookmarkService.persist(groupBookmark);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
+//    {
+//
+//        return new ResponseEntity<>("Group must exist", HttpStatus.BAD_REQUEST);
+//    }
+}
 
 
 }

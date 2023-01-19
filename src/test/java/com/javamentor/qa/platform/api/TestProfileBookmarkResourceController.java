@@ -236,4 +236,22 @@ public class TestProfileBookmarkResourceController extends AbstractClassForDRRid
     }
 
 
+
+    @Test
+    @Sql(scripts = "/script/TestProfileBookmarkResourceController/ShouldDeleteBookmarkByQuestionId/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileBookmarkResourceController/ShouldDeleteBookmarkByQuestionId/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void changeNameBookmark() throws Exception{
+        mockMvc.perform(delete("/api/user/profile/{bookmarkId}/group", 101)
+                        .content("testGroupBookMark")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+
+    }
 }
+
+
