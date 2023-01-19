@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.dao.abstracts.model.ReputationDao;
 import com.javamentor.qa.platform.dao.abstracts.model.VoteQuestionDao;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
@@ -29,7 +30,7 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion,L
         User user = voteQuestion.getUser();
         User authorQuestion = question.getUser();
         int countVq = voteQuestion.getCountVQ();
-        Reputation reputation = new Reputation(authorQuestion,user,countVq, ReputationType.VoteQuestion,question);
+        Reputation reputation = new Reputation(authorQuestion,user,countVq, (voteQuestion.getVote().equals(VoteType.UP_VOTE))?ReputationType.VOTE_UP_CREATE_QUESTION : ReputationType.VOTE_DOWN_CREATE_QUESTION,question);
         voteQuestionDao.persist(voteQuestion);
         reputationDao.persist(reputation);
     }

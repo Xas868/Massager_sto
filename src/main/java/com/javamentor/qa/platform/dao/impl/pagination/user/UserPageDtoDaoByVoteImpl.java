@@ -26,8 +26,8 @@ public class UserPageDtoDaoByVoteImpl implements PageDtoDao<UserDto> {
         int offset = (properties.getCurrentPage() - 1) * itemsOnPage;
         String hql = "SELECT u.id, u.email, u.fullName, u.imageLink, u.city, " +
                 "SUM(CASE WHEN r.count = NULL THEN 0 ELSE r.count END) AS reputation," +
-                "SUM(CASE WHEN (r.type = :voteAns OR r.type = :voteQuest) AND r.count > 0 THEN 1" +
-                "WHEN (r.type = :voteAns OR r.type = :voteQuest) AND r.count < 0 THEN -1 ELSE 0 END) AS voteOrder " +
+                "SUM(CASE WHEN (r.type = :voteAnsUp OR r.type = :voteAnsDown OR r.type = :voteCreateQuestUp OR r.type = :voteCreateQuestDown) AND r.count > 0 THEN 1" +
+                "WHEN (r.type = :voteAnsUp OR r.type=:voteAnsDown OR r.type = :voteCreateQuestUp OR r.type = :voteCreateQuestDown) AND r.count < 0 THEN -1 ELSE 0 END) AS voteOrder " +
                 "FROM User u LEFT JOIN Reputation r ON r.author.id = u.id ";
 
         if (filter != null) {
@@ -37,8 +37,10 @@ public class UserPageDtoDaoByVoteImpl implements PageDtoDao<UserDto> {
                     "GROUP BY u.id ORDER BY voteOrder DESC, u.id ASC";
             return entityManager.createQuery(hql)
                     .setParameter("filter", "%" + filter + "%")
-                    .setParameter("voteAns", ReputationType.VoteAnswer)
-                    .setParameter("voteQuest", ReputationType.VoteQuestion)
+                    .setParameter("voteAnsUp", ReputationType.VOTE_UP_ANSWER)
+                    .setParameter("voteAnsDown", ReputationType.VOTE_DOWN_ANSWER)
+                    .setParameter("voteCreateQuestUp", ReputationType.VOTE_UP_CREATE_QUESTION)
+                    .setParameter("voteCreateQuestDown", ReputationType.VOTE_DOWN_CREATE_QUESTION)
                     .setFirstResult(offset)
                     .setMaxResults(itemsOnPage)
                     .unwrap(org.hibernate.query.Query.class)
@@ -64,8 +66,10 @@ public class UserPageDtoDaoByVoteImpl implements PageDtoDao<UserDto> {
 
         hql += "GROUP BY u.id ORDER BY voteOrder DESC, u.id ASC";
         return entityManager.createQuery(hql)
-                .setParameter("voteAns", ReputationType.VoteAnswer)
-                .setParameter("voteQuest", ReputationType.VoteQuestion)
+                .setParameter("voteAnsUp", ReputationType.VOTE_UP_ANSWER)
+                .setParameter("voteAnsDown", ReputationType.VOTE_DOWN_ANSWER)
+                .setParameter("voteCreateQuestUp", ReputationType.VOTE_UP_CREATE_QUESTION)
+                .setParameter("voteCreateQuestDown", ReputationType.VOTE_DOWN_CREATE_QUESTION)
                 .setFirstResult(offset)
                 .setMaxResults(itemsOnPage)
                 .unwrap(org.hibernate.query.Query.class)

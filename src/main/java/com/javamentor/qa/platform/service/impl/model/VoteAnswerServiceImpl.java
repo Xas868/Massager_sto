@@ -46,7 +46,7 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
         reputationDao.persist(Reputation.builder()
                 .count(count)
                 .persistDate(Timestamp.from(Instant.now()).toLocalDateTime())
-                .type(ReputationType.VoteAnswer)
+                .type(((voteAnswer.getVote().equals(VoteType.UP_VOTE))?ReputationType.VOTE_UP_ANSWER : ReputationType.VOTE_DOWN_ANSWER))
                 .answer(voteAnswer.getAnswer())
                 .author(voteAnswer.getAnswer().getUser())
                 .sender(voteAnswer.getUser())
