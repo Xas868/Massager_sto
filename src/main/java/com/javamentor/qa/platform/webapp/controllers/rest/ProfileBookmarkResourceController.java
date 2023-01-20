@@ -203,10 +203,7 @@ public class ProfileBookmarkResourceController {
         groupBookmarkService.update(groupBookmark);
         return new ResponseEntity<>(HttpStatus.OK);
 
-//    {
-//
-//        return new ResponseEntity<>("Group must exist", HttpStatus.BAD_REQUEST);
-//    }
+
     }
 
 
