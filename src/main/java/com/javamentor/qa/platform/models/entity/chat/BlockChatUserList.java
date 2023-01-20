@@ -9,8 +9,15 @@ import lombok.Builder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.ManyToOne;
+import javax.persistence.FetchType;
+import javax.persistence.Column;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -36,4 +43,16 @@ public class BlockChatUserList {
     @CreationTimestamp
     private LocalDateTime persistDate;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BlockChatUserList that = (BlockChatUserList) o;
+        return Objects.equals(id, that.id) && Objects.equals(profile, that.profile) && Objects.equals(blocked, that.blocked) && Objects.equals(persistDate, that.persistDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, profile, blocked, persistDate);
+    }
 }
