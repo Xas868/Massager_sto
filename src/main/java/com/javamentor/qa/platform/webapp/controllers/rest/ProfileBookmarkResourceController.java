@@ -130,7 +130,7 @@ public class ProfileBookmarkResourceController {
                     )
             })
     @DeleteMapping("/bookmark/{id}")
-    public ResponseEntity<?> deleteBookmarkByQuestionId(@PathVariable("id") @RequestBody Long questionId) {
+    public ResponseEntity<?> deleteBookmarkByQuestionId(@PathVariable("id") @RequestBody Long questionId){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<BookMarks> bookmarks = bookmarksService.getBookmarkByQuestionIdAndUserId(user.getId(), questionId);
         if (bookmarks.isPresent()) {
@@ -140,6 +140,37 @@ public class ProfileBookmarkResourceController {
         return new ResponseEntity<>("Закладка с id = " + questionId + " не существует", HttpStatus.BAD_REQUEST);
     }
 
+
+
+    @Operation(
+            summary = "Добавление примечания к закладке",
+            description = "Добавление примечания к закладке"
+    )
+    @ApiResponse(responseCode = "200", description = "Примечание добавлено", content = {
+            @Content(mediaType = "application/json")
+    })
+    @ApiResponse(responseCode = "400", description = "Примечание не добавлено", content = {
+            @Content(mediaType = "application/json")
+    })
+    @PostMapping("/bookmark/{bookmarkId}/note")
+    public ResponseEntity<?> addNoteToBookmarkInProfile(@PathVariable("bookmarkId") Long bookmarkId,
+                                                        @AuthenticationPrincipal User user,
+                                                        @RequestBody(required = false) String note) {
+
+        Optional<BookMarks> bookMarks = bookmarksService.getById(bookmarkId);
+        if (bookMarks.isPresent() && user.getId().equals(bookMarks.get().getUser().getId())) {
+            BookMarks bm = bookMarks.get();
+            bm.setNote(note);
+            bookmarksService.update(bm);
+            return new ResponseEntity<>("Note is added", HttpStatus.CREATED);
+        }
+
+        return new ResponseEntity<>("Bookmark is not found", HttpStatus.BAD_REQUEST);
+
+
+
+
+    }
 
     @Operation(summary = "Изменение названия группы Bookmark")
     @ApiResponses(
@@ -176,7 +207,7 @@ public class ProfileBookmarkResourceController {
 //
 //        return new ResponseEntity<>("Group must exist", HttpStatus.BAD_REQUEST);
 //    }
-}
+    }
 
 
 }

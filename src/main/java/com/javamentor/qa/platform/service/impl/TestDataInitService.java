@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.models.entity.bookmark.BookMarks;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.chat.Chat;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
+import com.javamentor.qa.platform.models.entity.chat.BlockChatUserList;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.chat.Message;
 import com.javamentor.qa.platform.models.entity.chat.MessageStar;
@@ -42,6 +43,7 @@ import com.javamentor.qa.platform.service.abstracts.model.UserChatPinService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.BlockChatUserListService;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.QuestionNotFoundException;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -83,6 +85,7 @@ public class TestDataInitService {
     private final UserChatPinService userChatPinService;
     private final BookmarksService bookmarksService;
     private final GroupBookmarkService groupBookmarkService;
+    private final BlockChatUserListService blockChatUserListService;
     private final long NUM_OF_USERS = 200L;
     private final long NUM_OF_TAGS = 50L;
     private final long NUM_OF_QUESTIONS = 100L;
@@ -103,6 +106,7 @@ public class TestDataInitService {
 
     private final long NUM_OF_USERS_GROUPCHAT = 30L;
     private final long NUM_OF_BOOKMARK_GROUP = 30L;
+    private final long NUM_OF_BLOCKS = 30L;
 
     public void init() {
         createRoles();
@@ -125,6 +129,20 @@ public class TestDataInitService {
         createGroupChatModeratorsAndUsers();
         createBookMarks();
         createGroupBookMarks();
+        createBlockChatUserList();
+    }
+
+    private void createBlockChatUserList(){
+        ArrayList<BlockChatUserList> blockChatUserLists = new ArrayList<>();
+        for (int i = 1; i <= NUM_OF_BLOCKS; i++){
+            BlockChatUserList b = BlockChatUserList.builder()
+                    .persistDate(LocalDateTime.now())
+                    .profile(getRandomUser())
+                    .blocked(getRandomUser())
+                    .build();
+            blockChatUserLists.add(b);
+        }
+        blockChatUserListService.persistAll(blockChatUserLists);
     }
 
     private void createGroupBookMarks() {
