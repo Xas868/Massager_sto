@@ -238,18 +238,28 @@ public class TestProfileBookmarkResourceController extends AbstractClassForDRRid
 
 
     @Test
-    @Sql(scripts = "/script/TestProfileBookmarkResourceController/ShouldDeleteBookmarkByQuestionId/Before.sql",
+    @Sql(scripts = "/script/TestProfileBookmarkResourceController/changeGroupBookmarkName/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestProfileBookmarkResourceController/ShouldDeleteBookmarkByQuestionId/After.sql",
+    @Sql(scripts = "/script/TestProfileBookmarkResourceController/changeGroupBookmarkName/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void changeNameBookmark() throws Exception{
-        mockMvc.perform(delete("/api/user/profile/{bookmarkId}/group", 101)
+    void changeGroupBookmarkName() throws Exception{
+        mockMvc.perform(put("/api/user/profile/{bookmarkId}/group", 101)
                         .content("testGroupBookMark")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
+
+        List<GroupBookmark> groupBookmarks = entityManager.createQuery("select new com.javamentor.qa.platform.models.entity.GroupBookmark (" +
+                        "gb.title," +
+                        "gb.user" +
+                        ") from GroupBookmark gb where gb.user.id = :id", GroupBookmark.class)
+                .setParameter("id", 101L)
+                .getResultList();
+
+        Assertions.assertEquals("testGroupBookMark", groupBookmarks.get(3).getTitle());
+        Assertions.assertEquals(101L, groupBookmarks.get(3).getUser().getId());
 
     }
 }

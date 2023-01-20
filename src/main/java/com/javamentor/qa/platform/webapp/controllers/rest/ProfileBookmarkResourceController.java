@@ -154,7 +154,7 @@ public class ProfileBookmarkResourceController {
             }
     )
     @PutMapping("/{bookmarkId}/group")
-    public ResponseEntity changeGroupBookmarkName(@PathVariable("bookmarkId") long bookmarkId, @RequestBody(required = false) String title) {
+    public ResponseEntity<?> changeGroupBookmarkName(@PathVariable("bookmarkId") long bookmarkId, @RequestBody(required = false) String title) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (title == null || title.isEmpty()) {
             return new ResponseEntity<>("request body (title field) must not be empty", HttpStatus.BAD_REQUEST);
