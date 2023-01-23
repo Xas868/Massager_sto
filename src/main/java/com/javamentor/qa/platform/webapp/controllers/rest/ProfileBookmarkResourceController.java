@@ -185,7 +185,7 @@ public class ProfileBookmarkResourceController {
             }
     )
     @PutMapping("/{bookmarkId}/group")
-    public ResponseEntity<?> changeGroupBookmarkName(@PathVariable("bookmarkId") long bookmarkId, @RequestBody(required = false) String title) {
+    public ResponseEntity<?> changeGroupBookmarkName(@PathVariable("bookmarkId") long bookmarkId, @RequestBody String title) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (title == null || title.isEmpty()) {
             return new ResponseEntity<>("request body (title field) must not be empty", HttpStatus.BAD_REQUEST);
@@ -194,11 +194,13 @@ public class ProfileBookmarkResourceController {
 
             return new ResponseEntity<>("user already has group bookmark with title " + title, HttpStatus.BAD_REQUEST);
         }
+
             groupBookmarkService.getAllUserBookMarkGroupNamesByUserId(user.getId());
         GroupBookmark groupBookmark = GroupBookmark.builder()
                 .user(user)
                 .title(title)
                 .id(bookmarkId)
+
                 .build();
         groupBookmarkService.update(groupBookmark);
         return new ResponseEntity<>(HttpStatus.OK);
