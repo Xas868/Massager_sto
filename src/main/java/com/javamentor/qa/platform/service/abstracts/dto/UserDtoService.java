@@ -27,5 +27,5 @@ public interface UserDtoService extends PageDtoService<UserDto> {
     List<UserProfileQuestionDto> getAllUserProfileQuestionDtoByIdAndSort(Long id, ProfileQuestionSort profileQuestionSort);
 
 
-    List<UserProfileVoteDto> getCountVotesAnswersAndQuestions(Long id);
+    Optional<UserProfileVoteDto> getCountVotesAnswersAndQuestions(Long id);
 }

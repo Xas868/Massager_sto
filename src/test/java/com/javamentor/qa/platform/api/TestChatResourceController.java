@@ -14,8 +14,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-import javax.swing.*;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -27,8 +25,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
     //вариант, есть 3 чата, 2 из них одиночные, в обоих участвует user100@mail.ru
     @Test
-    @Sql("script/testChatResourceController/shouldGetAllSingleChats/Before.sql")
-    @Sql(scripts = "script/testChatResourceController/shouldGetAllSingleChats/After.sql",
+    @Sql("/script/TestChatResourceController/shouldGetAllSingleChats/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldGetAllSingleChats/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetAllSingleChats() throws Exception {
 
@@ -54,8 +52,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
     //вариант, есть 3 чата, все из них групповые
     @Test
-    @Sql("script/testChatResourceController/shouldGetZeroSingleChatsBecauseAllChatsAreGroup/Before.sql")
-    @Sql(scripts = "script/testChatResourceController/shouldGetZeroSingleChatsBecauseAllChatsAreGroup/After.sql",
+    @Sql("/script/TestChatResourceController/shouldGetZeroSingleChatsBecauseAllChatsAreGroup/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldGetZeroSingleChatsBecauseAllChatsAreGroup/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetZeroSingleChatsBecauseAllChatsAreGroup() throws Exception {
 
@@ -71,8 +69,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
     //вариант, когда авторизован админ
     @Test
-    @Sql("script/testChatResourceController/shouldGet403StatusWhenUserIsAdmin/Before.sql")
-    @Sql(scripts = "script/testChatResourceController/shouldGet403StatusWhenUserIsAdmin/After.sql",
+    @Sql("/script/TestChatResourceController/shouldGet403StatusWhenUserIsAdmin/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldGet403StatusWhenUserIsAdmin/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGet403StatusWhenUserIsAdmin() throws Exception {
 
@@ -87,8 +85,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
     //вариант, есть 3 чата, 2 из них одиночные, в обоих участвует и авторизован user100@mail.ru с ролью User, остальные Admin
     @Test
-    @Sql("script/testChatResourceController/shouldGetAllSingleChatsWithAdmins/Before.sql")
-    @Sql(scripts = "script/testChatResourceController/shouldGetAllSingleChatsWithAdmins/After.sql",
+    @Sql("/script/TestChatResourceController/shouldGetAllSingleChatsWithAdmins/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldGetAllSingleChatsWithAdmins/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetAllSingleChatsWithAdmins() throws Exception {
 
@@ -114,8 +112,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
     //вариант, есть 3 чата, 2 из них групповые и в них участвует авторизованный пользователь, items = 10, currentPage = 1
     @Test
-    @Sql("script/testChatResourceController/shouldGetAllGroupChats/Before.sql")
-    @Sql(scripts = "script/testChatResourceController/shouldGetAllGroupChats/After.sql",
+    @Sql("/script/TestChatResourceController/shouldGetAllGroupChats/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldGetAllGroupChats/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetAllGroupChats() throws Exception {
 
@@ -141,8 +139,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
     //вариант, есть 3 чата, 2 из них групповые и в них участвует авторизованный пользователь, items = 1, currentPage = 1
     @Test
-    @Sql("script/testChatResourceController/shouldGetGroupChatWithVariables/Before.sql")
-    @Sql(scripts = "script/testChatResourceController/shouldGetGroupChatWithVariables/After.sql",
+    @Sql("/script/TestChatResourceController/shouldGetGroupChatWithVariables/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldGetGroupChatWithVariables/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetGroupChatWithVariables() throws Exception {
 
@@ -163,8 +161,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
     //вариант, есть 3 чата, 2 из них групповые и в них НЕ участвует авторизованный пользователь, items = 10, currentPage = 1
     @Test
-    @Sql("script/testChatResourceController/shouldZeroGroupChatWhenThatChatsAreWithoutThisUser/Before.sql")
-    @Sql(scripts = "script/testChatResourceController/shouldZeroGroupChatWhenThatChatsAreWithoutThisUser/After.sql",
+    @Sql("/script/TestChatResourceController/shouldZeroGroupChatWhenThatChatsAreWithoutThisUser/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldZeroGroupChatWhenThatChatsAreWithoutThisUser/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldZeroGroupChatWhenThatChatsAreWithoutThisUser() throws Exception {
 
@@ -180,8 +178,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
     //вариант: получаем групповые чаты, есть 4 чата из них в 3 есть авторизированный пользователей и из этих 3, два group чата и 1 single чат, items = 10, currentPage = 1
     @Test
-    @Sql("script/testChatResourceController/shouldGetGroupChatsWhenAuthorizedUserInTwoGroupChatsAndOneSingleChat/Before.sql")
-    @Sql(scripts = "script/testChatResourceController/shouldGetGroupChatsWhenAuthorizedUserInTwoGroupChatsAndOneSingleChat/After.sql",
+    @Sql("/script/TestChatResourceController/shouldGetGroupChatsWhenAuthorizedUserInTwoGroupChatsAndOneSingleChat/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldGetGroupChatsWhenAuthorizedUserInTwoGroupChatsAndOneSingleChat/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetGroupChatsWhenAuthorizedUserInTwoGroupChatsAndOneSingleChat() throws Exception {
 
@@ -207,8 +205,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
     //вариант: получаем single чаты, есть 4 чата из них в 3 есть авторизированный пользователей и из этих 3, два сингл чата и 1 групп чат, items = 10, currentPage = 1
     @Test
-    @Sql("script/testChatResourceController/shouldGetSingleChatsWhenAuthorizedUserInTwoSingleChatsAndOneGroupChat/Before.sql")
-    @Sql(scripts = "script/testChatResourceController/shouldGetSingleChatsWhenAuthorizedUserInTwoSingleChatsAndOneGroupChat/After.sql",
+    @Sql("/script/TestChatResourceController/shouldGetSingleChatsWhenAuthorizedUserInTwoSingleChatsAndOneGroupChat/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldGetSingleChatsWhenAuthorizedUserInTwoSingleChatsAndOneGroupChat/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetSingleChatsWhenAuthorizedUserInTwoSingleChatsAndOneGroupChat() throws Exception {
 
@@ -378,8 +376,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     // Количество сообщений (items), Номер текущей страницы (currentPage), Слово или часть слова (word).
     // 3 сообщения на одной странице и без необязательного параметра items
     @Test
-    @Sql("script/testChatResourceController/shouldGetPageMessageByWord/Before.sql")
-    @Sql(scripts = "script/testChatResourceController/shouldGetPageMessageByWord/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql("/script/TestChatResourceController/shouldGetPageMessageByWord/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldGetPageMessageByWord/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetPageMessageByWord() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/user/chat/{id}/message/find", 101)
@@ -399,8 +397,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
     // 2 сообщения на одной странице и 1 сообщение на другой странице, текущая страница вторая
     @Test
-    @Sql("script/testChatResourceController/shouldGetTwoPageOneMessageByWord/Before.sql")
-    @Sql(scripts = "script/testChatResourceController/shouldGetTwoPageOneMessageByWord/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql("/script/TestChatResourceController/shouldGetTwoPageOneMessageByWord/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldGetTwoPageOneMessageByWord/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetTwoPageOneMessageByWord() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/user/chat/{id}/message/find", 101)
@@ -419,8 +417,8 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
 
     // ошибка 400 не указан обязательный параметр
     @Test
-    @Sql("script/testChatResourceController/shouldError400NotParamert/Before.sql")
-    @Sql(scripts = "script/testChatResourceController/shouldError400NotParamert/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql("/script/TestChatResourceController/shouldError400NotParamert/Before.sql")
+    @Sql(scripts = "/script/TestChatResourceController/shouldError400NotParamert/After.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldError400NotParamert() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/user/chat/{id}/message/find", 101)

@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.GroupBookMarkDao;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
+import com.javamentor.qa.platform.models.dto.UserProfileGroup;
 import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarkService;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ public class GroupBookmarkServiceImpl extends ReadWriteServiceImpl<GroupBookmark
     }
 
     @Override
-    public List<String> getAllUserBookMarkGroupNamesByUserId(Long id) {
+    public List<UserProfileGroup> getAllUserBookMarkGroupNamesByUserId(Long id) {
         return groupBookMarkDao.getAllUserBookMarkGroupNamesByUserId(id);
     }
 

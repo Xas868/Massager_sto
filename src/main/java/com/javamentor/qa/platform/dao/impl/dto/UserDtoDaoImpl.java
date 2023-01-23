@@ -127,8 +127,8 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
     @Override
-    public List<UserProfileVoteDto> getCountVotesAnswersAndQuestions(Long id) {
-        return entityManager
+    public Optional<UserProfileVoteDto> getCountVotesAnswersAndQuestions(Long id) {
+        return SingleResultUtil.getSingleResultOrNull(entityManager
                 .createQuery("select new com.javamentor.qa.platform.models.dto.UserProfileVoteDto(" +
                         "(select coalesce(sum(case when voa.vote = :upVote then 1 else 0 end), 0) from VoteAnswer voa where voa.user.id = u.id) " +
                         "+ (select coalesce(sum(case when voq.vote = :upVote then 1 else 0 end), 0) from VoteQuestion voq where voq.user.id = u.id), " +
@@ -138,12 +138,13 @@ public class UserDtoDaoImpl implements UserDtoDao {
                         "(select count(an.id) from VoteAnswer an where an.user.id = u.id), " +
                         "(select count(van.id) from VoteAnswer van where van.user.id = u.id and van.persistDateTime >= :date)" +
                         "+ (select count(vqu.id) from VoteQuestion vqu where vqu.user.id = u.id and vqu.localDateTime >= :date)) " +
-                        "from User u where u.id = :id", UserProfileVoteDto.class)
+                        "from User u where u.id = :id",UserProfileVoteDto.class)
                 .setParameter("date", LocalDateTime.now().minusDays(30))
                 .setParameter("upVote", VoteType.UP_VOTE)
                 .setParameter("downVote", VoteType.DOWN_VOTE)
-                .setParameter("id", id)
-                .getResultList();
+                .setParameter("id", id));
+
+
     }
 
 }

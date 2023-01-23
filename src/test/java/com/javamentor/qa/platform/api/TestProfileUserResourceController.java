@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.api;
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import org.hamcrest.core.Is;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -19,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestProfileUserResourceController extends AbstractClassForDRRiderMockMVCTests {
+
     // Проверка получения вопросов пользователя по количеству голосов и не бросает ошибку если запрос без параметров
     @Test
     @Sql(scripts = "/script/TestProfileUserResourceController/getUserProfileQuestionDtoShouldReturnAllQuestionDto/Before.sql",
@@ -184,48 +187,7 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
 
     }
 
-    // Проверка BookMarks
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/getUserBookMarksDtoShouldWhenExist/Before.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/getUserBookMarksDtoShouldWhenExist/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getUserBookMarksDtoShouldWhenExist() throws Exception {
-        mockMvc.perform(get("/api/user/profile/bookmarks")
-                        .content("")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", Is.is(2)))
-                .andExpect(jsonPath("$[0].bookmarkId", Is.is(1)))
-                .andExpect(jsonPath("$.[0].questionId", Is.is(100)))
-                .andExpect(jsonPath("$[0].title", Is.is("Question 100")))
-                .andExpect(jsonPath("$[0].listTagDto.size()", Is.is(3)))
-                .andExpect(jsonPath("$.[0].countAnswer", Is.is(1)))
-                .andExpect(jsonPath("$.[0].countView", Is.is(4)))
-                .andExpect(jsonPath("$.[0].note", Is.is("note 1")));
 
-    }
-
-    // Не должен бросать ошибку если нету закладок
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/getUserBookMarksDtoShouldWhenExist/Before.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/getUserBookMarksDtoShouldWhenExist/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getUserBookMarksDtoShouldWorkWhenNotExist() throws Exception {
-        mockMvc.perform(get("/api/user/profile/bookmarks")
-                        .content("")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", Is.is(0)));
-
-    }
 
     // Проверка получения ответов пользователя по количеству голосов и не бросает ошибку если запрос без параметров
     @Test
@@ -517,131 +479,230 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
     }
 
 
-    //Получение всех закладок в профиле пользователя в виде BookMarksDto
+    //Пользователь оставил 3 ответа за неделю
     @Test
-    @Sql(scripts = "/script/TestProfileUserResourceController/getAllBookMarksInUserProfile/Before.sql")
-    @Sql(scripts = "/script/TestProfileUserResourceController/getAllBookMarksInUserProfile/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void getAllBookMarksInUserProfile() throws Exception {
-
-        this.mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/user/profile/bookmarks")
-                        .contentType("application/json")
-                        .header("Authorization",
-                                "Bearer " + getToken("user101@mail.ru", "user101")))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].title", Is.is("Question 101")))
-                .andExpect(jsonPath("$.[0].questionId", Is.is(101)))
-                .andExpect(jsonPath("$.[0].persistDateTime", Is.is("2022-10-06T00:00:00")))
-                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(101)))
-                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("vfOxMU1")))
-                .andExpect(jsonPath("$.[0].listTagDto[0].description", Is.is("Description of tag 1")))
-                .andExpect(jsonPath("$.[0].countAnswer", Is.is(2)))
-                .andExpect(jsonPath("$.[0].countVote", Is.is(1)))
-                .andExpect(jsonPath("$.[0].countView", Is.is(2)));
-
-    }
-
-
-    //Проверка получения списка имён GroupBookMark
-    @Test
-    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/Before.sql",
+    @Sql(scripts = "/script/TestUserResourceController/getAnswersPerWeekByUserId_shouldFindAllData_whenExists/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/After.sql",
+    @Sql(scripts = "/script/TestUserResourceController/getAnswersPerWeekByUserId_shouldFindAllData_whenExists/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getAllUserProfileGroupBookMarkNames() throws Exception {
-        mockMvc.perform(get("/api/user/profile/bookmark/group")
-                        .content("")
+    void getAnswersPerWeekByUserId_shouldFindAllData_whenExists() throws Exception {
+        mockMvc.perform(get("/api/user/profile/question/week")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", Is.is(4)))
-                .andExpect(jsonPath("$[0]", Is.is("group_bookmark1")))
-                .andExpect(jsonPath("$[1]", Is.is("group_bookmark2")))
-                .andExpect(jsonPath("$[2]", Is.is("group_bookmark3")))
-                .andExpect(jsonPath("$[3]", Is.is("group_bookmark4")));
+                .andExpect(jsonPath("$", Is.is(3)));
     }
 
-    //Проверка получения списка имён GroupBookMark не должен бросать ошибку если нету группы закладок у пользователя
+    //Пользователь оставил 0 ответов за неделю
     @Test
-    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/Before.sql",
+    @Sql(scripts = "/script/TestUserResourceController/getAnswersPerWeekByUserId_shouldFindAllData_WhenEmpty/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/After.sql",
+    @Sql(scripts = "/script/TestUserResourceController/getAnswersPerWeekByUserId_shouldFindAllData_WhenEmpty/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getAllUserProfileGroupBookMarkNamesShouldWorkIfGroupBookMarkNotExists() throws Exception {
-        mockMvc.perform(get("/api/user/profile/bookmark/group")
-                        .content("")
+    void getAnswersPerWeekByUserId_shouldFindAllData_whenEmpty() throws Exception {
+        mockMvc.perform(get("/api/user/profile/question/week")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + getToken("user100@mail.ru", "user100"))
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(0)));
+    }
+
+
+    // Пользователь добавил в закладки 3 вопроса, questionId [101, 102, 103]
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllBookMarksInUserProfile_ShouldFindAllData_WhenExists/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllBookMarksInUserProfile_ShouldFindAllData_WhenExists/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllBookMarksInUserProfile_ShouldFindAllData_WhenExists() throws Exception {
+        mockMvc.perform(get("/api/user/profile/bookmarks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(3)))
+
+                .andExpect(jsonPath("$.[0].bookmarkId", Is.is(101)))
+                .andExpect(jsonPath("$.[0].questionId", Is.is(101)))
+                .andExpect(jsonPath("$.[0].title", Is.is("Question 101")))
+                .andExpect(jsonPath("$.[0].listTagDto[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.[0].listTagDto[0].name", Is.is("vfOxMU1")))
+                .andExpect(jsonPath("$.[0].listTagDto[0].description", Is.is("Description of tag 1")))
+                .andExpect(jsonPath("$.[0].listTagDto[1].id", Is.is(102)))
+                .andExpect(jsonPath("$.[0].listTagDto[1].name", Is.is("iThKcj2")))
+                .andExpect(jsonPath("$.[0].listTagDto[1].description", Is.is("Description of tag 2")))
+                .andExpect(jsonPath("$.[0].listTagDto[2].id", Is.is(103)))
+                .andExpect(jsonPath("$.[0].listTagDto[2].name", Is.is("LTGDJP3")))
+                .andExpect(jsonPath("$.[0].listTagDto[2].description", Is.is("Description of tag 3")))
+                .andExpect(jsonPath("$.[0].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.[0].countVote").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$.[0].countView", Is.is(0)))
+                .andExpect(jsonPath("$.[0].note").value(IsNull.nullValue()))
+
+                .andExpect(jsonPath("$.[1].bookmarkId", Is.is(102)))
+                .andExpect(jsonPath("$.[1].questionId", Is.is(102)))
+                .andExpect(jsonPath("$.[1].title", Is.is("Question 102")))
+                .andExpect(jsonPath("$.[1].listTagDto[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.[1].listTagDto[0].name", Is.is("vfOxMU4")))
+                .andExpect(jsonPath("$.[1].listTagDto[0].description", Is.is("Description of tag 4")))
+                .andExpect(jsonPath("$.[1].listTagDto[1].id", Is.is(105)))
+                .andExpect(jsonPath("$.[1].listTagDto[1].name", Is.is("iThKcj5")))
+                .andExpect(jsonPath("$.[1].listTagDto[1].description", Is.is("Description of tag 5")))
+                .andExpect(jsonPath("$.[1].listTagDto[2].id", Is.is(106)))
+                .andExpect(jsonPath("$.[1].listTagDto[2].name", Is.is("LTGDJP6")))
+                .andExpect(jsonPath("$.[1].listTagDto[2].description", Is.is("Description of tag 6")))
+                .andExpect(jsonPath("$.[1].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.[1].countVote").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$.[1].countView", Is.is(0)))
+                .andExpect(jsonPath("$.[1].note").value(IsNull.nullValue()))
+
+                .andExpect(jsonPath("$.[2].bookmarkId", Is.is(103)))
+                .andExpect(jsonPath("$.[2].questionId", Is.is(103)))
+                .andExpect(jsonPath("$.[2].title", Is.is("Question 103")))
+                .andExpect(jsonPath("$.[2].listTagDto[0].id", Is.is(107)))
+                .andExpect(jsonPath("$.[2].listTagDto[0].name", Is.is("vfOxMU7")))
+                .andExpect(jsonPath("$.[2].listTagDto[0].description", Is.is("Description of tag 7")))
+                .andExpect(jsonPath("$.[2].listTagDto[1].id", Is.is(108)))
+                .andExpect(jsonPath("$.[2].listTagDto[1].name", Is.is("iThKcj8")))
+                .andExpect(jsonPath("$.[2].listTagDto[1].description", Is.is("Description of tag 8")))
+                .andExpect(jsonPath("$.[2].listTagDto[2].id", Is.is(109)))
+                .andExpect(jsonPath("$.[2].listTagDto[2].name", Is.is("LTGDJP9")))
+                .andExpect(jsonPath("$.[2].listTagDto[2].description", Is.is("Description of tag 9")))
+                .andExpect(jsonPath("$.[2].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.[2].countVote").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$.[2].countView", Is.is(0)))
+                .andExpect(jsonPath("$.[2].note").value(IsNull.nullValue()));
+
+    }
+
+    // Пользователь добавил в закладки 0 вопросов, JSON Body = []
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllBookMarksInUserProfile_ShouldFindAllData_WhenEmpty/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllBookMarksInUserProfile_ShouldFindAllData_WhenEmpty/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllBookMarksInUserProfile_ShouldFindAllData_WhenEmpty() throws Exception {
+        mockMvc.perform(get("/api/user/profile/bookmarks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", Is.is(0)));
     }
 
-    //Проверка создания новой группы закладок
+    //Проверка сортировки по дате создания вопроса с параметром sortBookmark=NEW
     @Test
-    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/Before.sql",
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllBookMarksInUserProfile_sortBy_persistDate_NEW/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/After.sql",
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllBookMarksInUserProfile_sortBy_persistDate_NEW/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void createNewUserProfileGroupBookMark() throws Exception {
-        String newGroupBookMarkName = "testGroupBookMark";
-        mockMvc.perform(post("/api/user/profile/bookmark/group")
-                        .content(newGroupBookMarkName)
+    void getAllBookMarksInUserProfile_sortBy_persistDate_NEW() throws Exception {
+        mockMvc.perform(get("/api/user/profile/bookmarks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )
                 .andDo(print())
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(8)))
 
-        List<GroupBookmark> groupBookmarks = entityManager.createQuery("select new com.javamentor.qa.platform.models.entity.GroupBookmark (" +
-                        "gb.title," +
-                        "gb.user" +
-                        ") from GroupBookmark gb where gb.user.id = :id", GroupBookmark.class)
-                .setParameter("id", 101L)
-                .getResultList();
+                .andExpect(jsonPath("$[0].bookmarkId", Is.is(101)))
+                .andExpect(jsonPath("$[0].questionId", Is.is(101)))
+                .andExpect(jsonPath("$[0].persistDateTime", Is.is("2022-12-28T00:00:00")))
 
-        Assertions.assertEquals(newGroupBookMarkName, groupBookmarks.get(4).getTitle());
-        Assertions.assertEquals(101L, groupBookmarks.get(4).getUser().getId());
+                .andExpect(jsonPath("$[1].bookmarkId", Is.is(102)))
+                .andExpect(jsonPath("$[1].questionId", Is.is(102)))
+                .andExpect(jsonPath("$[1].persistDateTime", Is.is("2022-12-27T00:00:00")))
+
+                .andExpect(jsonPath("$[2].bookmarkId", Is.is(103)))
+                .andExpect(jsonPath("$[2].questionId", Is.is(103)))
+                .andExpect(jsonPath("$[2].persistDateTime", Is.is("2022-12-26T00:00:00")))
+
+                .andExpect(jsonPath("$[3].bookmarkId", Is.is(104)))
+                .andExpect(jsonPath("$[3].questionId", Is.is(104)))
+                .andExpect(jsonPath("$[3].persistDateTime", Is.is("2022-12-25T00:00:00")))
+
+                .andExpect(jsonPath("$[4].bookmarkId", Is.is(105)))
+                .andExpect(jsonPath("$[4].questionId", Is.is(105)))
+                .andExpect(jsonPath("$[4].persistDateTime", Is.is("2022-12-24T00:00:00")))
+
+                .andExpect(jsonPath("$[5].bookmarkId", Is.is(106)))
+                .andExpect(jsonPath("$[5].questionId", Is.is(106)))
+                .andExpect(jsonPath("$[5].persistDateTime", Is.is("2022-12-23T00:00:00")))
+
+                .andExpect(jsonPath("$[6].bookmarkId", Is.is(107)))
+                .andExpect(jsonPath("$[6].questionId", Is.is(107)))
+                .andExpect(jsonPath("$[6].persistDateTime", Is.is("2022-12-22T00:00:00")))
+
+                .andExpect(jsonPath("$[7].bookmarkId", Is.is(108)))
+                .andExpect(jsonPath("$[7].questionId", Is.is(108)))
+                .andExpect(jsonPath("$[7].persistDateTime", Is.is("2022-12-21T00:00:00")));
     }
 
-    //Проверка создания новой группы закладок должен вернуть ошибку если тело метода пустое
+
+    //Проверка сортировки с параметром sortBookmark=VIEW - по количеству просмотров
     @Test
-    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/Before.sql",
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllBookMarksInUserProfile_sortBy_QuestionViewed/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/After.sql",
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllBookMarksInUserProfile_sortBy_QuestionViewed/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void createNewUserProfileGroupBookMarkShouldReturnBadRequestIfBodyIsEmpty() throws Exception {
-        mockMvc.perform(post("/api/user/profile/bookmark/group")
-                        .content("")
+    void getAllBookMarksInUserProfile_sortBy_QuestionViewed() throws Exception {
+        mockMvc.perform(get("/api/user/profile/bookmarks")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .param("sortBookmark", "VIEW")
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )
                 .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$", Is.is("request body (title field) must not be empty")));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(8)))
+
+                .andExpect(jsonPath("$[0].bookmarkId", Is.is(108)))
+                .andExpect(jsonPath("$[0].questionId", Is.is(108)))
+                .andExpect(jsonPath("$[0].countView", Is.is(4)))
+
+                .andExpect(jsonPath("$[1].bookmarkId", Is.is(103)))
+                .andExpect(jsonPath("$[1].questionId", Is.is(103)))
+                .andExpect(jsonPath("$[1].countView", Is.is(3)))
+
+                .andExpect(jsonPath("$[2].bookmarkId", Is.is(102)))
+                .andExpect(jsonPath("$[2].questionId", Is.is(102)))
+                .andExpect(jsonPath("$[2].countView", Is.is(1)));
     }
 
-    //Проверка создания новой группы закладок
+
+    //Проверка сортировки с параметром sortBookmark=VOTE - по количеству голосов
     @Test
-    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/Before.sql",
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllBookMarksInUserProfile_sortBy_QuestionVoted/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileGroupBookMarkNames/After.sql",
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllBookMarksInUserProfile_sortBy_QuestionVoted/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void createNewUserProfileGroupBookMarkShouldReturnBadRequestIfGroupBookMarkExists() throws Exception {
-        String newGroupBookMarkName = "group_bookmark1";
-        mockMvc.perform(post("/api/user/profile/bookmark/group")
-                        .content(newGroupBookMarkName)
+    void getAllBookMarksInUserProfile_sortBy_QuestionVoted() throws Exception {
+        mockMvc.perform(get("/api/user/profile/bookmarks")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .param("sortBookmark", "VOTE")
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )
                 .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$", Is.is("user already has group bookmark with title group_bookmark1")));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Is.is(8)))
+
+                .andExpect(jsonPath("$[0].bookmarkId", Is.is(101)))
+                .andExpect(jsonPath("$[0].questionId", Is.is(101)))
+                .andExpect(jsonPath("$[0].countVote", Is.is(4)))
+
+                .andExpect(jsonPath("$[1].bookmarkId", Is.is(102)))
+                .andExpect(jsonPath("$[1].questionId", Is.is(102)))
+                .andExpect(jsonPath("$[1].countVote", Is.is(3)))
+
+                .andExpect(jsonPath("$[2].bookmarkId", Is.is(103)))
+                .andExpect(jsonPath("$[2].questionId", Is.is(103)))
+                .andExpect(jsonPath("$[2].countVote", Is.is(1)));
+
     }
 
     // Проверка получения репутацуии пользователя и не бросает ошибку если запрос без параметров

@@ -175,7 +175,7 @@ public class UserResourceController {
                     })
     })
     @GetMapping("/api/user/top")
-    public ResponseEntity<List<UserDto>> getTopUsersForDaysRankedByNumberOfQuestions(
+    public ResponseEntity<List<UserDto>> getTopUsersForDaysRankedByNumberOfAnswers(
             @RequestParam(name = "usersCount", required = false, defaultValue = "10")
             @Parameter(name = "Количество юзеров, которых необходимо получить.",
                     description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
@@ -200,10 +200,7 @@ public class UserResourceController {
                     })
     })
     @GetMapping("api/user/profile/vote")
-    public ResponseEntity<List<UserProfileVoteDto>> getVotesUsersInProfile(@AuthenticationPrincipal User user){
-        return new ResponseEntity<>(userDtoService.getCountVotesAnswersAndQuestions(user.getId()), HttpStatus.OK);
+    public ResponseEntity <UserProfileVoteDto> getVotesUsersInProfile(@AuthenticationPrincipal User user){
+        return new ResponseEntity(userDtoService.getCountVotesAnswersAndQuestions(user.getId()), HttpStatus.OK);
     }
-
-
-
 }

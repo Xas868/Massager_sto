@@ -16,8 +16,8 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
 
     //идеальный вариант, есть глобальный чат, получаем все сообщения, сверяем порядок создания
     @Test
-    @Sql("script/testMessageResourceController/shouldGetAllMessagesInGlobalChat/Before.sql")
-    @Sql(scripts = "script/testMessageResourceController/shouldGetAllMessagesInGlobalChat/After.sql",
+    @Sql("/script/testMessageResourceController/shouldGetAllMessagesInGlobalChat/Before.sql")
+    @Sql(scripts = "/script/testMessageResourceController/shouldGetAllMessagesInGlobalChat/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetAllMessageInGlobalChat() throws Exception {
 
@@ -47,8 +47,8 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
 
     //вариант c параметрами (такая же таблица как в 1 тесте, но ограничиваем выборку 2мя объектами
     @Test
-    @Sql("script/testMessageResourceController/shouldGetAllMessageInGlobalChatWithVariables/Before.sql")
-    @Sql(scripts = "script/testMessageResourceController/shouldGetAllMessageInGlobalChatWithVariables/After.sql",
+    @Sql("/script/testMessageResourceController/shouldGetAllMessageInGlobalChatWithVariables/Before.sql")
+    @Sql(scripts = "/script/testMessageResourceController/shouldGetAllMessageInGlobalChatWithVariables/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetAllMessageInGlobalChatWithVariables() throws Exception {
 
@@ -75,8 +75,8 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
 
     //вариант, когда глобального чата нет
     @Test
-    @Sql("script/testMessageResourceController/shouldGetZeroMessageInGlobalChat/Before.sql")
-    @Sql(scripts = "script/testMessageResourceController/shouldGetZeroMessageInGlobalChat/After.sql",
+    @Sql("/script/testMessageResourceController/shouldGetZeroMessageInGlobalChat/Before.sql")
+    @Sql(scripts = "/script/testMessageResourceController/shouldGetZeroMessageInGlobalChat/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldGetZeroMessageInGlobalChat() throws Exception {
 
@@ -92,8 +92,8 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
 
     //вариант, когда вход выполнен под ролью админа (403 ошибка)
     @Test
-    @Sql("script/testMessageResourceController/shouldHaventAccess/Before.sql")
-    @Sql(scripts = "script/testMessageResourceController/shouldHaventAccess/After.sql",
+    @Sql("/script/testMessageResourceController/shouldHaventAccess/Before.sql")
+    @Sql(scripts = "/script/testMessageResourceController/shouldHaventAccess/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldHaventAccess() throws Exception {
 
@@ -108,8 +108,8 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
 
     //идеальный вариант, есть глобальный чат, получаем все сообщения, включающие текст "essa", сверяем порядок создания
     @Test
-    @Sql("script/testMessageResourceController/shouldFindMessagesInGlobalChat/Before.sql")
-    @Sql(scripts = "script/testMessageResourceController/shouldFindMessagesInGlobalChat/After.sql",
+    @Sql("/script/testMessageResourceController/shouldFindMessagesInGlobalChat/Before.sql")
+    @Sql(scripts = "/script/testMessageResourceController/shouldFindMessagesInGlobalChat/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldFindMessagesInGlobalChat() throws Exception {
 
@@ -139,8 +139,8 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
 
     //вариант, где есть глобальный чат, получаем все сообщения, включающие текст "essa", ограничиваем пагинацию 2мя объектами
     @Test
-    @Sql("script/testMessageResourceController/shouldFindMessagesInGlobalChatWithVariables/Before.sql")
-    @Sql(scripts = "script/testMessageResourceController/shouldFindMessagesInGlobalChatWithVariables/After.sql",
+    @Sql("/script/testMessageResourceController/shouldFindMessagesInGlobalChatWithVariables/Before.sql")
+    @Sql(scripts = "/script/testMessageResourceController/shouldFindMessagesInGlobalChatWithVariables/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldFindMessagesInGlobalChatWithVariables() throws Exception {
 
@@ -164,8 +164,8 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
 
     //вариант, когда нет глобального чата, получаем все сообщения, включающие текст "essa"
     @Test
-    @Sql("script/testMessageResourceController/shouldFindZeroMessagesInGlobalChatWhenChatIsNotGlobal/Before.sql")
-    @Sql(scripts = "script/testMessageResourceController/shouldFindZeroMessagesInGlobalChatWhenChatIsNotGlobal/After.sql",
+    @Sql("/script/testMessageResourceController/shouldFindZeroMessagesInGlobalChatWhenChatIsNotGlobal/Before.sql")
+    @Sql(scripts = "/script/testMessageResourceController/shouldFindZeroMessagesInGlobalChatWhenChatIsNotGlobal/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldFindZeroMessagesInGlobalChatWhenChatIsNotGlobal() throws Exception {
 
@@ -181,8 +181,8 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
 
     //вариант, когда есть глобальный чат, получаем все сообщения, включающие текст "messss", не находим среди message
     @Test
-    @Sql("script/testMessageResourceController/shouldFindZeroMessagesInGlobalChatWithWrongText/Before.sql")
-    @Sql(scripts = "script/testMessageResourceController/shouldFindZeroMessagesInGlobalChatWithWrongText/After.sql",
+    @Sql("/script/testMessageResourceController/shouldFindZeroMessagesInGlobalChatWithWrongText/Before.sql")
+    @Sql(scripts = "/script/testMessageResourceController/shouldFindZeroMessagesInGlobalChatWithWrongText/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldFindZeroMessagesInGlobalChatWithWrongText() throws Exception {
 
@@ -196,8 +196,8 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
                 .andExpect(jsonPath("$.items.size()").value(0));
     }
 @Test
-@Sql("script/testMessageResourceController/shouldAddMessageToStar/Before.sql")
-@Sql(scripts = "script/testMessageResourceController/shouldAddMessageToStar/After.sql",
+@Sql("/script/testMessageResourceController/shouldAddMessageToStar/Before.sql")
+@Sql(scripts = "/script/testMessageResourceController/shouldAddMessageToStar/After.sql",
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
  public void shouldAddMessageToStar() throws Exception {
     this.mockMvc.perform(MockMvcRequestBuilders
@@ -211,8 +211,8 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
  }
 
     @Test
-    @Sql("script/testMessageResourceController/shouldNotAddMessageToStar_MessageDoesntExist/Before.sql")
-    @Sql(scripts = "script/testMessageResourceController/shouldNotAddMessageToStar_MessageDoesntExist/After.sql",
+    @Sql("/script/testMessageResourceController/shouldNotAddMessageToStar_MessageDoesntExist/Before.sql")
+    @Sql(scripts = "/script/testMessageResourceController/shouldNotAddMessageToStar_MessageDoesntExist/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldNotAddMessageToStar_MessageDoesntExist() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
@@ -226,8 +226,8 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
     }
 
     @Test
-    @Sql("script/testMessageResourceController/shouldNotAddMessageToStar_MessageInStarAlready/Before.sql")
-    @Sql(scripts = "script/testMessageResourceController/shouldNotAddMessageToStar_MessageInStarAlready/After.sql",
+    @Sql("/script/testMessageResourceController/shouldNotAddMessageToStar_MessageInStarAlready/Before.sql")
+    @Sql(scripts = "/script/testMessageResourceController/shouldNotAddMessageToStar_MessageInStarAlready/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldNotAddMessageToStar_MessageInStarAlready() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
@@ -241,8 +241,8 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
     }
 
     @Test
-    @Sql("script/testMessageResourceController/shouldDeleteMessageFromStar/Before.sql")
-    @Sql(scripts = "script/testMessageResourceController/shouldDeleteMessageFromStar/After.sql",
+    @Sql("/script/testMessageResourceController/shouldDeleteMessageFromStar/Before.sql")
+    @Sql(scripts = "/script/testMessageResourceController/shouldDeleteMessageFromStar/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldDeleteMessageFromStar() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
@@ -256,8 +256,8 @@ public class TestMessageResourceController extends AbstractClassForDRRiderMockMV
     }
 
     @Test
-    @Sql("script/testMessageResourceController/shouldNotDeleteMessageFromStar_NoTheMessageInStar/Before.sql")
-    @Sql(scripts = "script/testMessageResourceController/shouldNotDeleteMessageFromStar_NoTheMessageInStar/After.sql",
+    @Sql("/script/testMessageResourceController/shouldNotDeleteMessageFromStar_NoTheMessageInStar/Before.sql")
+    @Sql(scripts = "/script/testMessageResourceController/shouldNotDeleteMessageFromStar_NoTheMessageInStar/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void shouldNotDeleteMessageFromStar_NoTheMessageInStar() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
