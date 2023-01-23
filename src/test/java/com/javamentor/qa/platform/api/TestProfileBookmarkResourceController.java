@@ -235,5 +235,49 @@ public class TestProfileBookmarkResourceController extends AbstractClassForDRRid
 
     }
 
+    @Test
+    @Sql(scripts = "/script/TestProfileBookmarkResourceController/shouldAddNoteToBookmark/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileBookmarkResourceController/shouldAddNoteToBookmark/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void shouldAddNoteToBookmark() throws Exception{
+        String newNoteInBookMarkName = "test note 2";
+        mockMvc.perform(post("/api/user/profile/bookmark/{bookmarkId}/note", 101)
+                        .content(newNoteInBookMarkName)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isCreated());
+        assertThat(entityManager.createQuery("from BookMarks bm where bm.user.id = :id")
+                .setParameter("id", (long) 101)
+                .getResultList()
+                .isEmpty())
+                .isEqualTo(false);
+
+    }
+
+    @Test
+    @Sql(scripts = "/script/TestProfileBookmarkResourceController/shouldAddNoteToBookmark/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileBookmarkResourceController/shouldAddNoteToBookmark/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void shouldNotAddNoteToBookmark_WhenBookmarkIdNotExist() throws Exception{
+        String newNoteInBookMarkName = "test note 2";
+        mockMvc.perform(post("/api/user/profile/bookmark/{bookmarkId}/note", 103)
+                        .content(newNoteInBookMarkName)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+        assertThat(entityManager.createQuery("from BookMarks bm where bm.user.id = :id")
+                .setParameter("id", (long) 101)
+                .getResultList()
+                .isEmpty())
+                .isEqualTo(false);
+
+    }
+
 
 }
