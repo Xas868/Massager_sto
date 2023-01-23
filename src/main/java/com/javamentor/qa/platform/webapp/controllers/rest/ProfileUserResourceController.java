@@ -8,6 +8,7 @@ import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
+import com.javamentor.qa.platform.models.entity.question.ProfileReputationSort;
 import com.javamentor.qa.platform.models.entity.question.answer.ProfileAnswerSort;
 import com.javamentor.qa.platform.models.entity.question.comparator.ReputationComparator;
 import com.javamentor.qa.platform.models.entity.bookmark.SortBookmark;
@@ -175,53 +176,7 @@ public class ProfileUserResourceController {
         return new ResponseEntity<>(userProfileAnswerPageDtoDaoService.getPageDto(data), HttpStatus.OK);
     }
 
-    @Operation(summary = "Получение списка названий групп пользователя",
-            description = "Возвращает список имен(title) GroupBookMark")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Возвращает список имен(title) GroupBookMark",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json"
-                            )
-                    }
-            )
-    })
 
-    @GetMapping("/bookmark/group")
-    public ResponseEntity<List<String>> getAllUserBookMarkGroupNames(@AuthenticationPrincipal User user) {
-        return new ResponseEntity<List<String>>(groupBookmarkService.getAllUserBookMarkGroupNamesByUserId(user.getId()), HttpStatus.OK);
-    }
-
-    @Operation(summary = "Создание новой группы закладок")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200",
-                            description = "Создание новой группы закладок",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json"
-                                    )
-                            })
-            }
-    )
-    @PostMapping("/bookmark/group")
-    public ResponseEntity addNewGroupBookMark(@AuthenticationPrincipal User user, @RequestBody(required = false) String title) {
-        if (title == null || title.isEmpty()) {
-            return new ResponseEntity<>("request body (title field) must not be empty", HttpStatus.BAD_REQUEST);
-        }
-        if (groupBookmarkService.isGroupBookMarkExistsByName(user.getId(), title)) {
-            return new ResponseEntity<>("user already has group bookmark with title " + title, HttpStatus.BAD_REQUEST);
-        }
-        GroupBookmark groupBookmark = GroupBookmark.builder()
-                .user(user)
-                .title(title)
-                .build();
-
-        groupBookmarkService.persist(groupBookmark);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
 
 
     @Operation (summary = "Возвращает пангинированный список истории получения репутации в профиле пользователя")
@@ -238,7 +193,7 @@ public class ProfileUserResourceController {
     })
     @GetMapping ("/reputation")
     public ResponseEntity <PageDTO<UserProfileReputationDto>> getUserProfileReputation (@AuthenticationPrincipal User user,
-                                                                                        @RequestParam(required = false, defaultValue = "NEW", name = "sort")ProfileReputationSort profileReputationSort,
+                                                                                        @RequestParam(required = false, defaultValue = "NEW", name = "sort") ProfileReputationSort profileReputationSort,
                                                                                         @RequestParam (required = false,defaultValue = "1") int currenPage,
                                                                                         @RequestParam (defaultValue = "10") int items){
         PaginationData data = new PaginationData(currenPage, items, UserProfileReputationPageDtoDaoImpl.class.getSimpleName());
