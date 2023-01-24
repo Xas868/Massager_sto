@@ -51,13 +51,15 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
     @Override
     public List<UserProfileQuestionDto> getAllUserProfileQuestionDtoByUserIdWhereQuestionIsDeleted(Long id) {
-        return (List<UserProfileQuestionDto>) entityManager.createQuery("select " +
-                        "new com.javamentor.qa.platform.models.dto.UserProfileQuestionDto (" +
-                        "q.id," +
-                        "q.title ," +
-                        "coalesce((select count(a.id) from Answer a where a.question.id = q.id),0), " +
-                        "q.persistDateTime) " +
-                        "from Question q  where q.isDeleted=true and q.user.id=:id")
+        return (List<UserProfileQuestionDto>) entityManager.createQuery(
+                "select new com.javamentor.qa.platform.models.dto.UserProfileQuestionDto(" +
+                        "q.id,q.title," +
+                        "coalesce((select count(a.id) from Answer a where a.question.id=q.id),0),q.persistDateTime," +
+                        "(select count (qv.question.id) from QuestionViewed qv where qv.question.id = q.id)," +
+                        "(select coalesce(sum(case when vq.vote = 'UP_VOTE' then 1 else -1 end), 0) from VoteQuestion vq where vq.question.id = q.id))" +
+                        "from Question q where q.user.id=:id and  q.isDeleted=true", UserProfileQuestionDto.class)
+
+
                 .setParameter("id", id)
                 .getResultList();
     }

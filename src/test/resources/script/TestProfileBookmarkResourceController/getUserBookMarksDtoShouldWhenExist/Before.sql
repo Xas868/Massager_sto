@@ -1,8 +1,20 @@
+TRUNCATE  user_entity CASCADE;
+TRUNCATE  group_bookmark CASCADE;
+TRUNCATE  role CASCADE;
+TRUNCATE  bookmarks CASCADE;
+TRUNCATE  question CASCADE;
+TRUNCATE  answer CASCADE;
+TRUNCATE  reputation CASCADE;
+TRUNCATE  question_viewed CASCADE;
+TRUNCATE  tag CASCADE;
+TRUNCATE  question_has_tag CASCADE;
+
 /*
  *  Table: role
  */
 INSERT INTO role (id, name) VALUES
     (100, 'ROLE_USER');
+
 
 
 /*
@@ -47,9 +59,9 @@ INSERT INTO reputation (id, count, persist_date, type, answer_id, author_id, que
     (103, 800, DATE(NOW()), 1, null, 100, 100, null);
 
 
-insert into bookmarks(question_id, user_id, note)
-values (100, 100, 'note 1'),
-       (101, 100, 'note 2');
+insert into bookmarks(id,question_id, user_id, note)
+values (1, 100, 100, 'note 1'),
+       (2, 101, 100, 'note 2');
 
 
 INSERT INTO answer (id, date_accept_time, html_body, is_deleted, is_deleted_by_moderator, is_helpful, persist_date,
