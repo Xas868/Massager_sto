@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 public class GroupBookmarkDto {
     @NotNull(message = "Это поле не может быть null")
     private long id;
+    @NotBlank(message = "Это поле не может быть пустым")
     @NotNull(message = "Это поле не может быть null")
     private String title;
 }
