@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -287,9 +288,13 @@ public class TestProfileBookmarkResourceController extends AbstractClassForDRRid
     @Sql(scripts = "/script/TestProfileBookmarkResourceController/changeGroupBookmarkName/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void changeGroupBookmarkName() throws Exception{
+        String content = "{\n" +
+                "  \"id\": 101,\n" +
+                "  \"title\": \"testGroupBookMark\"\n" +
+                "}";
         mockMvc.perform(put("/api/user/profile/{bookmarkId}/group", 101)
-                        .content("101")
-                        .content("testGroupBookMark")
+
+                        .content(content)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )

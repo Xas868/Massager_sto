@@ -23,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -188,7 +189,7 @@ public class ProfileBookmarkResourceController {
             }
     )
     @PutMapping("/{bookmarkId}/group")
-    public ResponseEntity<?> changeGroupBookmarkName(@PathVariable("bookmarkId") long bookmarkId, @RequestBody GroupBookmarkDto GroupBookmarkDto) {
+    public ResponseEntity<?> changeGroupBookmarkName(@PathVariable("bookmarkId") long bookmarkId, @Valid @RequestBody GroupBookmarkDto GroupBookmarkDto) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 //        if (GroupBookmarkDto.class.getDeclaredField(title) == null || title.isEmpty()) {
 //            return new ResponseEntity<>("request body (title field) must not be empty", HttpStatus.BAD_REQUEST);
@@ -203,7 +204,6 @@ public class ProfileBookmarkResourceController {
                 .user(user)
                 .title(GroupBookmarkDto.getTitle())
                 .id(GroupBookmarkDto.getId())
-
                 .build();
         groupBookmarkService.update(groupBookmark);
         return new ResponseEntity<>(HttpStatus.OK);
