@@ -4,21 +4,16 @@ import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileAn
 import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileQuestionsPageDtoDaoImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileReputationPageDtoDaoImpl;
 import com.javamentor.qa.platform.models.dto.*;
-import com.javamentor.qa.platform.models.dto.*;
-import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
 import com.javamentor.qa.platform.models.entity.question.ProfileReputationSort;
 import com.javamentor.qa.platform.models.entity.question.answer.ProfileAnswerSort;
-import com.javamentor.qa.platform.models.entity.question.comparator.ReputationComparator;
-import com.javamentor.qa.platform.models.entity.bookmark.SortBookmark;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.*;
 import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarkService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.impl.dto.UserProfileAnswerPageDtoDaoServiceImpl;
 import com.javamentor.qa.platform.service.impl.dto.UserProfileReputationPageDtoDaoServiceImpl;
-import com.sun.xml.bind.v2.TODO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,8 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,7 +43,7 @@ public class ProfileUserResourceController {
     private final GroupBookmarkService groupBookmarkService;
     private final ProfileUserDtoService profileUserDtoService;
     private final UserProfileTagDtoService userProfileTagDtoService;
-    private final UserProfileReputationPageDtoDaoServiceImpl userProfileReputationPageDtoDaoService;
+    private final UserProfileReputationPageDtoDaoService userProfileReputationPageDtoDaoService;
 
     public ProfileUserResourceController(
             UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService, ProfileUserDtoService profileUserDtoService, UserProfileTagDtoService userProfileTagDtoService, GroupBookmarkService groupBookmarkService, UserProfileReputationPageDtoDaoServiceImpl userProfileReputationPageDtoDaoService) {
