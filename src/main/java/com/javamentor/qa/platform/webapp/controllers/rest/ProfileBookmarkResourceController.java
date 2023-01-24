@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
 import com.javamentor.qa.platform.models.dto.BookMarksDto;
+import com.javamentor.qa.platform.models.dto.GroupBookmarkDto;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.dto.UserProfileGroup;
 import com.javamentor.qa.platform.models.entity.bookmark.BookMarks;
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
+
 
 @RestController
 @Tag(name = "ProfileBookmarkResourceController", description = "Позволяет работать с закладками пользователя")
@@ -185,21 +188,21 @@ public class ProfileBookmarkResourceController {
             }
     )
     @PutMapping("/{bookmarkId}/group")
-    public ResponseEntity<?> changeGroupBookmarkName(@PathVariable("bookmarkId") long bookmarkId, @RequestBody String title) {
+    public ResponseEntity<?> changeGroupBookmarkName(@PathVariable("bookmarkId") long bookmarkId, @RequestBody GroupBookmarkDto GroupBookmarkDto) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (title == null || title.isEmpty()) {
-            return new ResponseEntity<>("request body (title field) must not be empty", HttpStatus.BAD_REQUEST);
-        }
-        if (groupBookmarkService.isGroupBookMarkExistsByName(user.getId(), title)) {
+//        if (GroupBookmarkDto.class.getDeclaredField(title) == null || title.isEmpty()) {
+//            return new ResponseEntity<>("request body (title field) must not be empty", HttpStatus.BAD_REQUEST);
+//        }
+        if (groupBookmarkService.isGroupBookMarkExistsByName(user.getId(), GroupBookmarkDto.getTitle())) {
 
-            return new ResponseEntity<>("user already has group bookmark with title " + title, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("user already has group bookmark with title " + GroupBookmarkDto.getTitle(), HttpStatus.BAD_REQUEST);
         }
 
             groupBookmarkService.getAllUserBookMarkGroupNamesByUserId(user.getId());
         GroupBookmark groupBookmark = GroupBookmark.builder()
                 .user(user)
-                .title(title)
-                .id(bookmarkId)
+                .title(GroupBookmarkDto.getTitle())
+                .id(GroupBookmarkDto.getId())
 
                 .build();
         groupBookmarkService.update(groupBookmark);

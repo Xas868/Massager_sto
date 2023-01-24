@@ -288,6 +288,7 @@ public class TestProfileBookmarkResourceController extends AbstractClassForDRRid
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void changeGroupBookmarkName() throws Exception{
         mockMvc.perform(put("/api/user/profile/{bookmarkId}/group", 101)
+                        .content("101")
                         .content("testGroupBookMark")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
