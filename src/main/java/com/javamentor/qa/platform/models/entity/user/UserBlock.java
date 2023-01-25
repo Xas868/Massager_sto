@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Table(name = "user_chat_pin")
+    @Table(name = "block_chat_user_list")
     public class UserBlock {
         @Id
         @GeneratedValue(generator = "id")
