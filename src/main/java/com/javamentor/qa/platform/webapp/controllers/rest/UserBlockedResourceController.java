@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.entity.bookmark.BookMarks;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.model.UserBlockedService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,6 +17,13 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/user/")
 public class UserBlockedResourceController {
+
+
+
+
+    private final UserBlockedService userBlockedService;
+
+
     @Operation(summary = "Удаление данного пользователя из блока у авторизированного пользователя")
     @ApiResponse(responseCode = "200",
             description = "Пользователь удален",
@@ -31,15 +39,15 @@ public class UserBlockedResourceController {
                             mediaType = "application/json"
                     )
             })
-    @DeleteMapping("/bookmark/{id}")
-    public ResponseEntity<?> deleteUserByUserId(@PathVariable("id") @RequestBody Long questionId){
+    @DeleteMapping(" {userId}/delete ")
+    public ResponseEntity<?> deleteBlockedUserByUserId(@PathVariable("userId") long userId){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<BookMarks> bookmarks = bookmarksService.getBookmarkByQuestionIdAndUserId(user.getId(), questionId);
-        if (bookmarks.isPresent()) {
-            bookmarksService.deleteById(questionId);
-            return new ResponseEntity<>("Закладка с id = " + questionId + " была успешно удалена", HttpStatus.OK);
+
+
+            ;
+            return new ResponseEntity<>("Пользователь с id = " + userId + " был успешно удален", HttpStatus.OK);
         }
-        return new ResponseEntity<>("Закладка с id = " + questionId + " не существует", HttpStatus.BAD_REQUEST);
+//        return new ResponseEntity<>("Закладка с id = " + questionId + " не существует", HttpStatus.BAD_REQUEST);
     }
 
 
