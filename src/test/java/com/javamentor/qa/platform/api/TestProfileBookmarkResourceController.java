@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -288,13 +289,16 @@ public class TestProfileBookmarkResourceController extends AbstractClassForDRRid
     @Sql(scripts = "/script/TestProfileBookmarkResourceController/changeGroupBookmarkName/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void changeGroupBookmarkName() throws Exception{
-        String content = "{\n" +
-                "  \"id\": 101,\n" +
-                "  \"title\": \"testGroupBookMark\"\n" +
-                "}";
+
+        GroupBookmark groupBookmark = new GroupBookmark();
+        groupBookmark.setId(Long.valueOf("101"));
+        groupBookmark.setTitle("testGroupBookMark");
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValueAsString(groupBookmark);
+
         mockMvc.perform(put("/api/user/profile/{bookmarkId}/group", 101)
 
-                        .content(content)
+                        .content(objectMapper.writeValueAsString(groupBookmark))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )

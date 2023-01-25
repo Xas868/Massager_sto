@@ -199,7 +199,7 @@ public class ProfileBookmarkResourceController {
             return new ResponseEntity<>("user already has group bookmark with title " + GroupBookmarkDto.getTitle(), HttpStatus.BAD_REQUEST);
         }
 
-            groupBookmarkService.getAllUserBookMarkGroupNamesByUserId(user.getId());
+        //groupBookmarkService. getAllUserBookMarkGroupNamesByUserId(user.getId());
         GroupBookmark groupBookmark = GroupBookmark.builder()
                 .user(user)
                 .title(GroupBookmarkDto.getTitle())
