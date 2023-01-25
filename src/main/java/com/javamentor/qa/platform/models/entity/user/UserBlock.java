@@ -18,16 +18,16 @@ import java.time.LocalDateTime;
     @Table(name = "user_chat_pin")
     public class UserBlock {
         @Id
-        @GeneratedValue(generator = "user_chat_pin_seq")
+        @GeneratedValue(generator = "id")
         private Long id;
 
         @ManyToOne
-        @JoinColumn(name = "chat_id")
-        private Chat chat;
+        @JoinColumn(name = "user_id")
+        private Chat profile;
 
         @ManyToOne
         @JoinColumn(name = "user_id")
-        private User user;
+        private User block;
 
         @Column(name = "persist_date", updatable = false)
         @Type(type = "org.hibernate.type.LocalDateTimeType")

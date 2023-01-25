@@ -1,7 +1,5 @@
 package com.javamentor.qa.platform.dao.impl.model;
 
-import com.javamentor.qa.platform.models.dto.UserBlockDto;
-import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -13,11 +11,11 @@ public class UserBlockedResourceDaoImpl extends ReadWriteDaoImpl<UserDaoImpl,Lon
     public EntityManager entityManager;
 
 
-    public void deleteUserFromBlockById(Long id, Long userId) {
+    public void deleteUserFromBlockById(Long profile, Long block) {
         entityManager
-                .createNativeQuery("delete from groupchat_has_users where chat_id=:id and user_id=:userId")
-                .setParameter("id", id)
-                .setParameter("userId", userId)
+                .createNativeQuery("delete from block_chat_user_list where profile_id=:profile and blocked_id=:block")
+                .setParameter("profile", profile)
+                .setParameter("block", block)
                 .executeUpdate();
     }
 }
