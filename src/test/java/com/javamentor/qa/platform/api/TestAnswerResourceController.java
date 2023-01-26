@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.api;
 
-import com.google.gson.Gson;
+
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import org.apache.coyote.Response;
