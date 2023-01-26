@@ -1,19 +1,20 @@
 package com.javamentor.qa.platform.models.entity.user.reputation;
 
-import com.javamentor.qa.platform.models.dto.RoleChatStatus;
-
 public enum ReputationType {
-    Question,
-    Answer,
-    VOTE_UP_ANSWER,
-    VOTE_DOWN_ANSWER,
-    VOTE_UP_CREATE_QUESTION,
-    VOTE_DOWN_CREATE_QUESTION;
+    Question (5),
+    Answer (5),
+    VOTE_UP_ANSWER (10),
+    VOTE_DOWN_ANSWER (-5),
+    VOTE_UP_QUESTION (10),
+    VOTE_DOWN_QUESTION (-5);
+    private int value;
 
-    public static ReputationType fromStringToEnum(String reputationType) {
-        return (reputationType == null ? null : ReputationType.valueOf(reputationType));
+    public int getValue() {
+        return value;
     }
-    public static ReputationType fromIntegerToEnum(Integer reputationType) {
-        return (reputationType == null ? null : ReputationType.values()[reputationType]);
+
+    ReputationType(int value) {
+        this.value = value;
     }
+
 }

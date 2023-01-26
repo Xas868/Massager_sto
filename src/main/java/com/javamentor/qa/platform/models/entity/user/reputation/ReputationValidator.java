@@ -19,7 +19,7 @@ public class ReputationValidator implements ConstraintValidator<CombinedNotNullQ
                 && (reputation.getType() == ReputationType.Answer || reputation.getType() == ReputationType.VOTE_UP_ANSWER
                 || reputation.getType() == ReputationType.VOTE_DOWN_ANSWER)
                 || (reputation.getQuestion() != null && reputation.getAnswer() == null)
-                && (reputation.getType() == ReputationType.Question || reputation.getType() == ReputationType.VOTE_UP_CREATE_QUESTION
-                || reputation.getType() == ReputationType.VOTE_DOWN_CREATE_QUESTION);
+                && (reputation.getType() == ReputationType.Question || reputation.getType() == ReputationType.VOTE_UP_QUESTION
+                || reputation.getType() == ReputationType.VOTE_DOWN_QUESTION);
     }
 }

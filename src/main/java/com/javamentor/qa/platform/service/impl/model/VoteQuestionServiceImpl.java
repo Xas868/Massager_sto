@@ -30,7 +30,7 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion,L
         User user = voteQuestion.getUser();
         User authorQuestion = question.getUser();
         int countVq = voteQuestion.getCountVQ();
-        Reputation reputation = new Reputation(authorQuestion,user,countVq, (voteQuestion.getVote().equals(VoteType.UP_VOTE))?ReputationType.VOTE_UP_CREATE_QUESTION : ReputationType.VOTE_DOWN_CREATE_QUESTION,question);
+        Reputation reputation = new Reputation(authorQuestion,user,countVq, (voteQuestion.getVote().equals(VoteType.UP_VOTE))?ReputationType.VOTE_UP_QUESTION : ReputationType.VOTE_DOWN_QUESTION,question);
         voteQuestionDao.persist(voteQuestion);
         reputationDao.persist(reputation);
     }
