@@ -1,3 +1,5 @@
+TRUNCATE tag CASCADE;
+
 /*
  *  Table: role
  */

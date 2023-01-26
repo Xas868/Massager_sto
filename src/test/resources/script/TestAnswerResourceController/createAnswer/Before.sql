@@ -44,31 +44,21 @@ INSERT INTO user_entity (id, about, city, email, full_name, image_link, is_delet
  *  Table: question
  */
 INSERT INTO question (id, description, is_deleted, last_redaction_date, persist_date, title, user_id) VALUES
-    (101, 'What do you think about question 101?', false, DATE(NOW()), '2022-12-28T00:00:00', 'Question 101', 101),
-    (102, 'What do you think about question 102?', false, DATE(NOW()), '2022-12-27T00:00:00', 'Question 102', 102),
-    (103, 'What do you think about question 103?', false, DATE(NOW()), '2022-12-26T00:00:00', 'Question 103', 103),
-    (104, 'What do you think about question 104?', false, DATE(NOW()), '2022-12-25T00:00:00', 'Question 104', 104),
-    (105, 'What do you think about question 105?', false, DATE(NOW()), '2022-12-24T00:00:00', 'Question 105', 105),
-    (106, 'What do you think about question 106?', false, DATE(NOW()), '2022-12-23T00:00:00', 'Question 106', 106),
-    (107, 'What do you think about question 107?', false, DATE(NOW()), '2022-12-22T00:00:00', 'Question 107', 107),
-    (108, 'What do you think about question 108?', false, DATE(NOW()), '2022-12-21T00:00:00', 'Question 108', 108);
+    (101, 'What do you think about question 101?', false, DATE(NOW()), '2022-10-06T00:00:00', 'Question 101', 110),
+    (102, 'What do you think about question 102?', false, DATE(NOW()), '2022-10-06T00:00:00', 'Question 102', 101),
+    (103, 'What do you think about question 103?', false, DATE(NOW()), DATE(NOW()), 'Question 103', 104),
+    (104, 'What do you think about question 104?', false, DATE(NOW()), DATE(NOW()), 'Question 104', 110);
 
 /*
- *  Table: bookmarks
-    Test user: user101
-    Total count of bookmarks: 8
+ *  Table: answer
  */
-
-INSERT INTO bookmarks (id, question_id, user_id) VALUES
-    (101, 101, 101),
-    (102, 102, 101),
-    (103, 103, 101),
-    (104, 104, 101),
-    (105, 105, 101),
-    (106, 106, 101),
-    (107, 107, 101),
-    (108, 108, 101);
-
+INSERT INTO answer (id, date_accept_time, html_body, is_deleted, is_deleted_by_moderator, is_helpful, persist_date,
+                    update_date, question_id, user_id, moderator_id) VALUES
+    (101, DATE(NOW()), 'Answer 101', false, false, false, DATE(NOW()), DATE(NOW()), 101, 110, null),
+    (102, DATE(NOW()), 'Answer 102', false, false, false, DATE(NOW()), DATE(NOW()), 102, 109, null),
+    (103, DATE(NOW()), 'Answer 103', false, false, false, DATE(NOW()), DATE(NOW()), 103, 108, null),
+    (104, DATE(NOW()), 'Answer 104', false, false, false, DATE(NOW()), DATE(NOW()), 104, 107, null),
+    (105, DATE(NOW()), 'Answer 105', false, false, false, DATE(NOW()), DATE(NOW()), 101, 106, null);
 
 /*
  *  Table: tag
@@ -124,4 +114,3 @@ INSERT INTO reputation (id, count, persist_date, type, answer_id, author_id, que
     (108, 300, DATE(NOW()), 3, null, 108, 104, null),
     (109, 2000, DATE(NOW()), 2, null, 109, 101, null),
     (110, 100, DATE(NOW()), 3, null, 110, 102, null);
-
