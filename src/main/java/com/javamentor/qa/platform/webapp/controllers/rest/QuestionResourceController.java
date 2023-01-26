@@ -17,9 +17,12 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
+import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
+import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.TagConverter;
@@ -55,6 +58,7 @@ public class QuestionResourceController {
     private final QuestionDtoService questionDtoService;
     private final QuestionConverter questionConverter;
     private final TagConverter tagConverter;
+    private final ReputationService reputationService;
     private final QuestionViewedService questionViewedService;
 
 
@@ -141,9 +145,14 @@ public class QuestionResourceController {
     public ResponseEntity<?> createNewQuestion(@Valid @RequestBody QuestionCreateDto questionCreateDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Question question = questionConverter.questionDtoToQuestion(questionCreateDto);
-        question.setUser((User) authentication.getPrincipal());
+        User user = (User) authentication.getPrincipal();
+        question.setUser(user);
         question.setTags(tagConverter.listTagDtoToListTag(questionCreateDto.getTags()));
         questionService.persist(question);
+        int countUpVote = 5;
+        Reputation reputation = new Reputation(user,user,countUpVote, ReputationType.Question,question);
+        reputationService.persist(reputation);
+
         return new ResponseEntity<>(questionConverter.questionToQuestionDto(question), HttpStatus.OK);
     }
 
