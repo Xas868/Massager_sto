@@ -1,18 +1,14 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
-import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.List;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
 
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -728,7 +724,7 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
 
                 .andExpect(jsonPath("$.items.[0].questionId", Is.is(106)))
                 .andExpect(jsonPath("$.items.[0].answerId", Is.is(18)))
-                .andExpect(jsonPath("$.items.[0].reputationType", Is.is("VOTE_UP_CREATE_QUESTION")))
+                .andExpect(jsonPath("$.items.[0].reputationType", Is.is("VOTE_UP_QUESTION")))
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(10)));
 
     }
@@ -755,7 +751,7 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
 
                 .andExpect(jsonPath("$.items.[0].questionId", Is.is(106)))
                 .andExpect(jsonPath("$.items.[0].answerId", Is.is(18)))
-                .andExpect(jsonPath("$.items.[0].reputationType", Is.is("VOTE_UP_CREATE_QUESTION")))
+                .andExpect(jsonPath("$.items.[0].reputationType", Is.is("VOTE_UP_QUESTION")))
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(10)));
 
     }
@@ -782,7 +778,7 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
 
                 .andExpect(jsonPath("$.items.[0].questionId", Is.is(106)))
                 .andExpect(jsonPath("$.items.[0].answerId", Is.is(18)))
-                .andExpect(jsonPath("$.items.[0].reputationType", Is.is("VOTE_UP_CREATE_QUESTION")))
+                .andExpect(jsonPath("$.items.[0].reputationType", Is.is("VOTE_UP_QUESTION")))
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(10)));
 
     }

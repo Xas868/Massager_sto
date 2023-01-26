@@ -28,7 +28,7 @@ public class UserProfileReputationPageDtoDaoImpl implements PageDtoDao<UserProfi
                         "(select va.title from Question va where va.id = a.question.id)," +
                         "a.answer.id, a.persistDate, a.type)" +
                         "from Reputation a where a.author.id =: id  order by " +
-                        profileReputationSort.getComparingField(), UserProfileReputationDto.class)
+                        profileReputationSort.ComparingField(), UserProfileReputationDto.class)
                 .setParameter("id", properties.getProps().get("userId"))
                 .setFirstResult(offset)
                 .setMaxResults(itemsOnPage)
