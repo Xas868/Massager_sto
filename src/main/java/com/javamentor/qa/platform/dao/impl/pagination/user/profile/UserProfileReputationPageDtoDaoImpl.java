@@ -4,8 +4,6 @@ import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
 import com.javamentor.qa.platform.models.dto.UserProfileReputationDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.ProfileReputationSort;
-import com.javamentor.qa.platform.models.entity.question.answer.ProfileAnswerSort;
-import com.javamentor.qa.platform.models.entity.question.comparator.ReputationComparator;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
