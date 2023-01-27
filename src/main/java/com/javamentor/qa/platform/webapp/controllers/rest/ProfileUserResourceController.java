@@ -10,10 +10,7 @@ import com.javamentor.qa.platform.models.entity.question.ProfileReputationSort;
 import com.javamentor.qa.platform.models.entity.question.answer.ProfileAnswerSort;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.*;
-import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarkService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.impl.dto.UserProfileAnswerPageDtoDaoServiceImpl;
-import com.javamentor.qa.platform.service.impl.dto.UserProfileReputationPageDtoDaoServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -36,25 +33,19 @@ import java.util.List;
 
 public class ProfileUserResourceController {
 
-    private final UserService userService;
     private final UserDtoService userDtoService;
-    private final BookMarksDtoService bookMarksDtoService;
     private final UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService;
-    private final GroupBookmarkService groupBookmarkService;
     private final ProfileUserDtoService profileUserDtoService;
     private final UserProfileTagDtoService userProfileTagDtoService;
     private final UserProfileReputationPageDtoDaoService userProfileReputationPageDtoDaoService;
 
     public ProfileUserResourceController(
-            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService, ProfileUserDtoService profileUserDtoService, UserProfileTagDtoService userProfileTagDtoService, GroupBookmarkService groupBookmarkService, UserProfileReputationPageDtoDaoServiceImpl userProfileReputationPageDtoDaoService) {
+            UserDtoService userDtoService, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService, ProfileUserDtoService profileUserDtoService, UserProfileTagDtoService userProfileTagDtoService, UserProfileReputationPageDtoDaoService userProfileReputationPageDtoDaoService) {
 
-        this.userService = userService;
         this.userDtoService = userDtoService;
-        this.bookMarksDtoService = bookMarksDtoService;
         this.userProfileAnswerPageDtoDaoService = userProfileAnswerPageDtoDaoService;
         this.profileUserDtoService = profileUserDtoService;
         this.userProfileTagDtoService = userProfileTagDtoService;
-        this.groupBookmarkService = groupBookmarkService;
         this.userProfileReputationPageDtoDaoService = userProfileReputationPageDtoDaoService;
     }
 
