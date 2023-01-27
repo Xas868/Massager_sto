@@ -3,7 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.entity.user.User;
 
-import com.javamentor.qa.platform.service.abstracts.model.UserBlockedService;
+import com.javamentor.qa.platform.service.abstracts.model.BlockChatUserListService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -19,9 +19,9 @@ public class UserBlockedResourceController {
 
 
 
-    private final UserBlockedService userBlockedService;
+    private final BlockChatUserListService userBlockedService;
 
-    public UserBlockedResourceController(UserBlockedService userBlockedService) {
+    public UserBlockedResourceController(BlockChatUserListService userBlockedService) {
         this.userBlockedService = userBlockedService;
     }
 
