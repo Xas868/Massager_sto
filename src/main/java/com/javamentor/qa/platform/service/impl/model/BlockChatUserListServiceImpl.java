@@ -12,6 +12,9 @@ public class BlockChatUserListServiceImpl extends ReadWriteServiceImpl<BlockChat
     private final BlockChatUserListDao blockChatUserListDao;
 
 
+    void deleteUserFromBlockById(Long profile, Long blocked){
+        blockChatUserListDao.deleteUserFromBlockById(profile,blocked);
+    }
     public BlockChatUserListServiceImpl(BlockChatUserListDao blockChatUserListDao) {
         super(blockChatUserListDao);
         this.blockChatUserListDao = blockChatUserListDao;

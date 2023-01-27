@@ -5,5 +5,5 @@ import com.javamentor.qa.platform.models.entity.chat.BlockChatUserList;
 public interface BlockChatUserListDao extends ReadWriteDao<BlockChatUserList, Long>{
 
 
-    void deleteUserFromBlockById(Long profile, Long block);
+    void deleteUserFromBlockById(Long profile, Long blocked);
 }
