@@ -13,7 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/user/")
+@RequestMapping("/api/user/block")
 public class UserBlockedResourceController {
 
 
@@ -41,17 +41,15 @@ public class UserBlockedResourceController {
                             mediaType = "application/json"
                     )
             })
-    @DeleteMapping(" {userId}/delete ")
-    public ResponseEntity<?> deleteBlockedUserByUserId(@PathVariable("userId") long userId){
+    @DeleteMapping("/{userId}/delete")
+    public ResponseEntity<?> deleteBlockedUserByUserId(@PathVariable("userId") Long userId){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-
             userBlockedService.deleteUserFromBlockById(user.getId(),userId);
             return new ResponseEntity<>("Пользователь с id = " + userId + " был успешно удален", HttpStatus.OK);
         }
 
 
-//        return new ResponseEntity<>("Закладка с id = " + questionId + " не существует", HttpStatus.BAD_REQUEST);
+
     }
 
 

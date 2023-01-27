@@ -59,16 +59,16 @@ public class TestUserBlockedResourceController extends AbstractClassForDRRiderMo
     @Sql(scripts = "/script/TestUserBlockedResourceController/deleteBlockedUserByUserId/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void deleteBlockedUserByUserId() throws Exception{
-        mockMvc.perform(delete("/api/user/102/delete", 120)
+        mockMvc.perform(delete("/api/user/block/{userId}/delete", 102)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
         assertThat(entityManager
-                .createQuery("select ub.id from UserBlock ub where ub.profile = 101 and ub.block =102")
-                .getSingleResult())
-                .isNull();
+                .createQuery("select ub.id from BlockChatUserList ub where ub.profile = 101 and ub.blocked =102")
+                .getResultList())
+                .isEmpty();
 
     }
 
