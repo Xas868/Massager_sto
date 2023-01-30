@@ -59,7 +59,7 @@ public class TestUserBlockedResourceController extends AbstractClassForDRRiderMo
     @Sql(scripts = "/script/TestUserBlockedResourceController/deleteBlockedUserByUserId/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void deleteBlockedUserByUserId() throws Exception{
-        mockMvc.perform(delete("/api/user/block/{userId}/delete", 102)
+        mockMvc.perform(delete("/api/user/{userId}/block", 102)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )

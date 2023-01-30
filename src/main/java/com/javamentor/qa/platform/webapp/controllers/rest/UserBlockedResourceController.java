@@ -13,7 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/user/block")
+@RequestMapping("/api/user")
 public class UserBlockedResourceController {
 
 
@@ -41,7 +41,7 @@ public class UserBlockedResourceController {
                             mediaType = "application/json"
                     )
             })
-    @DeleteMapping("/{userId}/delete")
+    @DeleteMapping("/{userId}/block")
     public ResponseEntity<?> deleteBlockedUserByUserId(@PathVariable("userId") Long userId){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             userBlockedService.deleteUserFromBlockById(user.getId(),userId);
