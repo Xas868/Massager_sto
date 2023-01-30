@@ -62,9 +62,8 @@ public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> im
             }
         }
         question.setTags(listTagForQuestion);
-        int countUpVote = 5;
         reputationDao.persist(Reputation.builder()
-                .count(countUpVote)
+                .count(ReputationType.Question.getValue())
                 .persistDate(Timestamp.from(Instant.now()).toLocalDateTime())
                 .type(ReputationType.Question)
                 .author(question.getUser())
