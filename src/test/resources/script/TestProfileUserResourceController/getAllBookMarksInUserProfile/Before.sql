@@ -114,12 +114,12 @@ INSERT INTO question_has_tag (question_id, tag_id) VALUES
  */
 INSERT INTO reputation (id, count, persist_date, type, answer_id, author_id, question_id, sender_id) VALUES
     (101, 1000, DATE(NOW()), 2, null, 101, 101, null),
-    (102, 900, DATE(NOW()), 3, null, 102, 102, null),
+    (102, 900, DATE(NOW()), 4, null, 102, 102, null),
     (103, 8000, DATE(NOW()), 2, null, 103, 103, null),
-    (104, 700, DATE(NOW()), 3, null, 104, 104, null),
+    (104, 700, DATE(NOW()), 4, null, 104, 104, null),
     (105, 600, DATE(NOW()), 2, null, 105, 101, null),
-    (106, 500, DATE(NOW()), 3, null, 106, 102, null),
+    (106, 500, DATE(NOW()), 4, null, 106, 102, null),
     (107, 400, DATE(NOW()), 2, null, 107, 103, null),
-    (108, 300, DATE(NOW()), 3, null, 108, 104, null),
+    (108, 300, DATE(NOW()), 4, null, 108, 104, null),
     (109, 2000, DATE(NOW()), 2, null, 109, 101, null),
-    (110, 100, DATE(NOW()), 3, null, 110, 102, null);
+    (110, 100, DATE(NOW()), 4, null, 110, 102, null);
