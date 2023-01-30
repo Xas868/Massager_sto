@@ -141,7 +141,8 @@ public class QuestionResourceController {
     public ResponseEntity<?> createNewQuestion(@Valid @RequestBody QuestionCreateDto questionCreateDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Question question = questionConverter.questionDtoToQuestion(questionCreateDto);
-        question.setUser((User) authentication.getPrincipal());
+        User user = (User) authentication.getPrincipal();
+        question.setUser(user);
         question.setTags(tagConverter.listTagDtoToListTag(questionCreateDto.getTags()));
         questionService.persist(question);
         return new ResponseEntity<>(questionConverter.questionToQuestionDto(question), HttpStatus.OK);
