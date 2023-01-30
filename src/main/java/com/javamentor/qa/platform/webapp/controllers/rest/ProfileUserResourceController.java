@@ -2,21 +2,22 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileAnswerPageDtoDaoImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileQuestionsPageDtoDaoImpl;
-import com.javamentor.qa.platform.models.dto.*;
-import com.javamentor.qa.platform.models.entity.GroupBookmark;
+import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileReputationPageDtoDaoImpl;
+import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.dto.UserProfileAnswerDto;
+import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.UserProfileReputationDto;
+import com.javamentor.qa.platform.models.dto.UserProfileTagDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
+import com.javamentor.qa.platform.models.entity.question.ProfileReputationSort;
 import com.javamentor.qa.platform.models.entity.question.answer.ProfileAnswerSort;
-import com.javamentor.qa.platform.models.entity.bookmark.SortBookmark;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.ProfileUserDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.UserProfileReputationPageDtoDaoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserProfileTagDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarkService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.impl.dto.UserProfileAnswerPageDtoDaoServiceImpl;
-import com.sun.xml.bind.v2.TODO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,8 +28,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,24 +40,20 @@ import java.util.List;
 
 public class ProfileUserResourceController {
 
-    private final UserService userService;
     private final UserDtoService userDtoService;
-    private final BookMarksDtoService bookMarksDtoService;
     private final UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService;
-    private final GroupBookmarkService groupBookmarkService;
     private final ProfileUserDtoService profileUserDtoService;
     private final UserProfileTagDtoService userProfileTagDtoService;
+    private final UserProfileReputationPageDtoDaoService userProfileReputationPageDtoDaoService;
 
     public ProfileUserResourceController(
-            UserService userService, UserDtoService userDtoService, BookMarksDtoService bookMarksDtoService, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService, ProfileUserDtoService profileUserDtoService, UserProfileTagDtoService userProfileTagDtoService, GroupBookmarkService groupBookmarkService) {
+            UserDtoService userDtoService, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService, ProfileUserDtoService profileUserDtoService, UserProfileTagDtoService userProfileTagDtoService, UserProfileReputationPageDtoDaoService userProfileReputationPageDtoDaoService) {
 
-        this.userService = userService;
         this.userDtoService = userDtoService;
-        this.bookMarksDtoService = bookMarksDtoService;
         this.userProfileAnswerPageDtoDaoService = userProfileAnswerPageDtoDaoService;
         this.profileUserDtoService = profileUserDtoService;
         this.userProfileTagDtoService = userProfileTagDtoService;
-        this.groupBookmarkService = groupBookmarkService;
+        this.userProfileReputationPageDtoDaoService = userProfileReputationPageDtoDaoService;
     }
 
 
@@ -172,4 +167,30 @@ public class ProfileUserResourceController {
         return new ResponseEntity<>(userProfileAnswerPageDtoDaoService.getPageDto(data), HttpStatus.OK);
     }
 
+
+
+
+    @Operation (summary = "Возвращает пангинированный список истории получения репутации в профиле пользователя")
+    @Parameter(name = "items", description = "количество ответов в одной странице")
+    @Parameter(name = "currentPage", description = "указывает на страницу")
+    @ApiResponses (value =  {
+            @ApiResponse(responseCode = "200",
+                    description = "Возвращает пангинированный список истории получения репутации в профиле пользователя",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json"
+                            )
+                    })
+    })
+    @GetMapping ("/reputation")
+    public ResponseEntity <PageDTO<UserProfileReputationDto>> getUserProfileReputation (@AuthenticationPrincipal User user,
+                                                                                        @RequestParam(required = false, defaultValue = "NEW", name = "sort") ProfileReputationSort profileReputationSort,
+                                                                                        @RequestParam (required = false,defaultValue = "1") int currenPage,
+                                                                                        @RequestParam (defaultValue = "10") int items){
+        PaginationData data = new PaginationData(currenPage, items, UserProfileReputationPageDtoDaoImpl.class.getSimpleName());
+        data.getProps().put("userId", user.getId());
+        data.getProps().put("profileReputationSort",profileReputationSort);
+
+        return new ResponseEntity<>(userProfileReputationPageDtoDaoService.getPageDto(data),HttpStatus.OK);
+    }
 }

@@ -1,18 +1,14 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
-import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.List;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
 
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -702,6 +698,115 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$[2].bookmarkId", Is.is(103)))
                 .andExpect(jsonPath("$[2].questionId", Is.is(103)))
                 .andExpect(jsonPath("$[2].countVote", Is.is(1)));
+
+    }
+
+    // Проверка получения репутацуии пользователя и не бросает ошибку если запрос без параметров
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getUserProfileReputationDtoShouldReturnAllReputationDTO/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getUserProfileReputationDtoShouldReturnAllReputationDTO/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getUserProfileReputationDtoShouldReturnAllReputationDTO() throws Exception {
+        mockMvc.perform(get("/api/user/profile/reputation")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(2)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(15)))
+                .andExpect(jsonPath("$.items.length()", Is.is(10)))
+                .andExpect(jsonPath("$.items.[0].countReputation", Is.is(10)))
+                .andExpect(jsonPath("$.items.[0].questionTitle", Is.is("Question 106")))
+
+                .andExpect(jsonPath("$.items.[0].questionId", Is.is(106)))
+                .andExpect(jsonPath("$.items.[0].answerId", Is.is(18)))
+                .andExpect(jsonPath("$.items.[0].reputationType", Is.is("VOTE_UP_QUESTION")))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)));
+
+    }
+    // Проверка получения репутацуии пользователя при сортировке по дате создания
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getUserProfileReputationDtoShouldReturnAllReputationDTO/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getUserProfileReputationDtoShouldReturnAllReputationDTO/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getUserProfileReputationDtoShouldReturnAllReputationDTOByNew() throws Exception {
+        mockMvc.perform(get("/api/user/profile/reputation?sort=NEW")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(2)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(15)))
+                .andExpect(jsonPath("$.items.length()", Is.is(10)))
+                .andExpect(jsonPath("$.items.[0].countReputation", Is.is(10)))
+                .andExpect(jsonPath("$.items.[0].questionTitle", Is.is("Question 106")))
+
+                .andExpect(jsonPath("$.items.[0].questionId", Is.is(106)))
+                .andExpect(jsonPath("$.items.[0].answerId", Is.is(18)))
+                .andExpect(jsonPath("$.items.[0].reputationType", Is.is("VOTE_UP_QUESTION")))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)));
+
+    }
+    // Проверка получения репутацуии пользователя пользователя по параметру currentPage
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getUserProfileReputationDtoShouldReturnAllReputationDTO/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getUserProfileReputationDtoShouldReturnAllReputationDTO/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getUserProfileReputationDtoShouldReturnAllReputationDTOByNewByParamCurrentPage() throws Exception {
+        mockMvc.perform(get("/api/user/profile/reputation?sort=NEW&currentPage=2")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(2)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(15)))
+                .andExpect(jsonPath("$.items.length()", Is.is(10)))
+                .andExpect(jsonPath("$.items.[0].countReputation", Is.is(10)))
+                .andExpect(jsonPath("$.items.[0].questionTitle", Is.is("Question 106")))
+
+                .andExpect(jsonPath("$.items.[0].questionId", Is.is(106)))
+                .andExpect(jsonPath("$.items.[0].answerId", Is.is(18)))
+                .andExpect(jsonPath("$.items.[0].reputationType", Is.is("VOTE_UP_QUESTION")))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(10)));
+
+    }
+    // Проверка получения репутацуии пользователя пользователя по параметру items
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getUserProfileReputationDtoShouldReturnAllReputationDTO/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getUserProfileReputationDtoShouldReturnAllReputationDTO/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getUserProfileReputationDtoShouldReturnAllReputationDTOByNewByParamItems() throws Exception {
+        mockMvc.perform(get("/api/user/profile/reputation?sort=NEW&currentPage=2&items=3")
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(5)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(15)))
+                .andExpect(jsonPath("$.items.length()", Is.is(3)))
+                .andExpect(jsonPath("$.items.[0].countReputation", Is.is(-5)))
+                .andExpect(jsonPath("$.items.[0].questionTitle", Is.is("Question 109")))
+
+                .andExpect(jsonPath("$.items.[0].questionId", Is.is(109)))
+                .andExpect(jsonPath("$.items.[0].answerId", Is.is(18)))
+                .andExpect(jsonPath("$.items.[0].reputationType", Is.is("VOTE_DOWN_ANSWER")))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(3)));
 
     }
 }
