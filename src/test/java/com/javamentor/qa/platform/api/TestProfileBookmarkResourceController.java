@@ -294,7 +294,6 @@ public class TestProfileBookmarkResourceController extends AbstractClassForDRRid
         groupBookmark.setId(Long.valueOf("101"));
         groupBookmark.setTitle("testGroupBookMark");
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writeValueAsString(groupBookmark);
 
         mockMvc.perform(put("/api/user/profile/{bookmarkId}/group", 101)
 

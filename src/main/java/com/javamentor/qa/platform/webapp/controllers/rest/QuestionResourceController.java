@@ -248,6 +248,7 @@ public class QuestionResourceController {
 
         PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoAllQuestionsImpl.class.getSimpleName());
         User user = (User) auth.getPrincipal();
+        
         data.getProps().put("trackedTags", trackedTag);
         data.getProps().put("ignoredTags", ignoredTag);
         data.getProps().put("userId", user.getId());
