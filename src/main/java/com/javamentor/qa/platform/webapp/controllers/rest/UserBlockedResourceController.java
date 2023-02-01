@@ -1,9 +1,11 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
+import com.javamentor.qa.platform.models.entity.chat.BlockChatUserList;
 import com.javamentor.qa.platform.models.entity.user.User;
 
 import com.javamentor.qa.platform.service.abstracts.model.BlockChatUserListService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,17 +14,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+
 @RestController
 @RequestMapping("/api/user")
 public class UserBlockedResourceController {
 
-
-
-
     private final BlockChatUserListService userBlockedService;
+    private final UserService userService;
 
-    public UserBlockedResourceController(BlockChatUserListService userBlockedService) {
+    public UserBlockedResourceController(BlockChatUserListService userBlockedService, UserService userService) {
         this.userBlockedService = userBlockedService;
+        this.userService = userService;
     }
 
 
@@ -48,7 +52,22 @@ public class UserBlockedResourceController {
             return new ResponseEntity<>("Пользователь с id = " + userId + " был успешно удален", HttpStatus.OK);
         }
 
-
+    @Operation(summary = "Добавление пользователя в блок лист у авторизированного пользователя")
+    @ApiResponse(responseCode = "200",
+            description = "Пользователь добавлен в блок лист",
+            content = {
+                    @Content(
+                            mediaType = "application/json"
+                    )
+            })
+    @PostMapping("/{userId}/block")
+    public ResponseEntity<?> addBlockedUserByUserId(@PathVariable("userId") Long userId){
+        User profile = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User blocked = userService.getById( userId).get();
+        BlockChatUserList blockChatUserList = new BlockChatUserList(profile,blocked, Timestamp.from(Instant.now()).toLocalDateTime());
+        userBlockedService.persist(blockChatUserList);
+        return new ResponseEntity<>("Пользователь с id = " + userId + " был успешно добавлен в ваш блок лист", HttpStatus.OK);
+    }
 
     }
 

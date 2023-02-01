@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
 @Repository
@@ -22,4 +23,22 @@ public class SingleChatDaoImpl extends ReadWriteDaoImpl<SingleChat, Long> implem
                 .setParameter("id", id)
                 .executeUpdate();
     }
+
+    @Override
+    public long findChatForId (Long userOne,Long userTwo){
+        Long res;
+        String query ="select COALESCE (id,0) from SingleChat where (userOne.id=%s AND useTwo.id=%s) OR (userOne.id=%s AND useTwo.id=%s)".formatted(userTwo.toString(), userOne.toString(), userOne.toString(), userTwo.toString());
+        try {
+            res = (Long)entityManager.createQuery(query).getSingleResult();
+        } catch (NoResultException e){
+            res=0L;
+        }
+        return res;
+    }
+    @Override
+    public void deleteSinglChat (Long id) {
+        String query ="delete from SingleChat a where a.id=%s".formatted(id.toString());
+        entityManager.createQuery(query).executeUpdate();
+    }
+
 }

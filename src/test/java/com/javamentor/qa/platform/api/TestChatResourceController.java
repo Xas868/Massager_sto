@@ -633,4 +633,39 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
+    // Проверка создания нового singl_chat, если добавляет заблокированный пользователь
+    @Test
+    @Sql(scripts = "/script/TestChatResourceController/addSingleChat/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestChatResourceController/addSingleChat/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void addSinglChatbyBlockedUser() throws Exception{
+        mockMvc.perform(post("/api/user/chat/single")
+                        .content("{\n" +
+                                "  \"userId\": 100,\n" +
+                                "  \"message\": \"string\"\n" +
+                                "}")
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101")))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+    // Проверка создания нового singl_chat, если добавляет не заблокированный пользователь
+    @Test
+    @Sql(scripts = "/script/TestChatResourceController/addSingleChat/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestChatResourceController/addSingleChat/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void addSinglChatbyUser() throws Exception{
+        mockMvc.perform(post("/api/user/chat/single")
+                        .content("{\n" +
+                                "  \"userId\": 104,\n" +
+                                "  \"message\": \"string\"\n" +
+                                "}")
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101")))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
 }

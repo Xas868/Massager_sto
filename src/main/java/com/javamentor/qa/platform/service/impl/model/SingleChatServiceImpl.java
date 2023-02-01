@@ -53,6 +53,8 @@ public class SingleChatServiceImpl extends ReadWriteServiceImpl<SingleChat, Long
                 .chat(new Chat(ChatType.SINGLE))
                 .userOne(currentUser)
                 .useTwo(singleChat.getUseTwo())
+                .userOneIsDeleted(false)
+                .userTwoIsDeleted(false)
                 .build();
         persist(singleChat);
         Message message = Message.builder()
@@ -63,4 +65,15 @@ public class SingleChatServiceImpl extends ReadWriteServiceImpl<SingleChat, Long
         messageService.persist(message);
         return singleChat;
     }
+    @Override
+    public long findChatForId (Long userOne, Long userTwo) {
+        return singleChatDao.findChatForId(userOne, userTwo);
+    }
+
+    @Transactional
+    @Override
+    public void deleteSinglChat (Long id){
+        singleChatDao.deleteSinglChat(id);
+    }
+
 }

@@ -21,4 +21,10 @@ public class BlockChatUserListServiceImpl extends ReadWriteServiceImpl<BlockChat
         super(blockChatUserListDao);
         this.blockChatUserListDao = blockChatUserListDao;
     }
+    @Override
+    public Boolean findUserFromBlockById(Long profile, Long blocked){
+        return blockChatUserListDao.findUserFromBlockById (profile,blocked);
+    }
+
+
 }
