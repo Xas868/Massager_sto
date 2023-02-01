@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
 import com.javamentor.qa.platform.models.dto.BookMarksDto;
+import com.javamentor.qa.platform.models.dto.GroupBookmarkDto;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.dto.UserProfileGroup;
 import com.javamentor.qa.platform.models.entity.bookmark.BookMarks;
@@ -27,10 +28,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+
+
 
 @RestController
 @Tag(name = "ProfileBookmarkResourceController", description = "Позволяет работать с закладками пользователя")
@@ -123,19 +128,19 @@ public class ProfileBookmarkResourceController {
 
     @Operation(summary = "Удаление закладки авторизированного пользователя по questionId")
     @ApiResponse(responseCode = "200",
-                            description = "Bookmark удален",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json"
-                                    )
-                            })
+            description = "Bookmark удален",
+            content = {
+                    @Content(
+                            mediaType = "application/json"
+                    )
+            })
     @ApiResponse(responseCode = "400",
-                            description = "Bookmark с таким questionId не существует",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json"
-                                    )
-                            })
+            description = "Bookmark с таким questionId не существует",
+            content = {
+                    @Content(
+                            mediaType = "application/json"
+                    )
+            })
     @DeleteMapping("/bookmark/{id}")
     public ResponseEntity<?> deleteBookmarkByQuestionId(@PathVariable("id") @RequestBody Long questionId){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -146,6 +151,8 @@ public class ProfileBookmarkResourceController {
         }
         return new ResponseEntity<>("Закладка с id = " + questionId + " не существует", HttpStatus.BAD_REQUEST);
     }
+
+
 
     @Operation(
             summary = "Добавление примечания к закладке",
@@ -177,6 +184,33 @@ public class ProfileBookmarkResourceController {
 
     }
 
+    @Operation(summary = "Изменение названия группы Bookmark")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Изменение названия группы Bookmark",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json"
+                                    )
+                            })
+            }
+    )
+
+
+    @PutMapping("/{bookmarkId}/group")
+    public ResponseEntity<?> changeGroupBookmarkName(@PathVariable("bookmarkId") long bookmarkId, @Valid @RequestBody GroupBookmarkDto GroupBookmarkDto) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        GroupBookmark groupBookmark = GroupBookmark.builder()
+                .user(user)
+                .title(GroupBookmarkDto.getTitle())
+                .id(GroupBookmarkDto.getId())
+                .build();
+        groupBookmarkService.update(groupBookmark);
+        return new ResponseEntity<>(HttpStatus.OK);
+
+
+    }
+
+
 }
-
-

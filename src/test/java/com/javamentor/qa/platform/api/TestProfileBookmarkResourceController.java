@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -280,4 +282,39 @@ public class TestProfileBookmarkResourceController extends AbstractClassForDRRid
     }
 
 
+
+    @Test
+    @Sql(scripts = "/script/TestProfileBookmarkResourceController/changeGroupBookmarkName/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileBookmarkResourceController/changeGroupBookmarkName/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void changeGroupBookmarkName() throws Exception{
+
+        GroupBookmark groupBookmark = new GroupBookmark();
+        groupBookmark.setId(Long.valueOf("101"));
+        groupBookmark.setTitle("testGroupBookMark");
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        mockMvc.perform(put("/api/user/profile/{bookmarkId}/group", 101)
+
+                        .content(objectMapper.writeValueAsString(groupBookmark))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        List<GroupBookmark> groupBookmarks = entityManager.createQuery("select new com.javamentor.qa.platform.models.entity.GroupBookmark (" +
+                        "gb.title," +
+                        "gb.user" +
+                        ") from GroupBookmark gb where gb.user.id = :id", GroupBookmark.class)
+                .setParameter("id", 101L)
+                .getResultList();
+
+        Assertions.assertEquals("testGroupBookMark", groupBookmarks.get(3).getTitle());
+        Assertions.assertEquals(101L, groupBookmarks.get(3).getUser().getId());
+
+    }
 }
+
+
