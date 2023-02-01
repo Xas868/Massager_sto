@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class TestAnswerResourceController extends AbstractClassForDRRiderMockMVCTests {
 
+
     // Получение всех "ответов" по id вопроса
     @Test
     @Sql("/script/TestAnswerResourceController/getAnswers/Before.sql")
