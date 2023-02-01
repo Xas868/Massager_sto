@@ -1,0 +1,3 @@
+TRUNCATE role CASCADE;
+
+TRUNCATE user_entity CASCADE;

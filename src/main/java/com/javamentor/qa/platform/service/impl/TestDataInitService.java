@@ -1,7 +1,20 @@
 package com.javamentor.qa.platform.service.impl;
 
-import com.javamentor.qa.platform.models.entity.chat.*;
-import com.javamentor.qa.platform.models.entity.question.*;
+import com.javamentor.qa.platform.models.entity.bookmark.BookMarks;
+import com.javamentor.qa.platform.models.entity.GroupBookmark;
+import com.javamentor.qa.platform.models.entity.chat.Chat;
+import com.javamentor.qa.platform.models.entity.chat.ChatType;
+import com.javamentor.qa.platform.models.entity.chat.BlockChatUserList;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.models.entity.chat.Message;
+import com.javamentor.qa.platform.models.entity.chat.MessageStar;
+import com.javamentor.qa.platform.models.entity.chat.SingleChat;
+import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
+import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.RelatedTag;
+import com.javamentor.qa.platform.models.entity.question.Tag;
+import com.javamentor.qa.platform.models.entity.question.TrackedTag;
+import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
@@ -10,13 +23,43 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.UserChatPin;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
-import com.javamentor.qa.platform.service.abstracts.model.*;
+import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.BookmarksService;
+import com.javamentor.qa.platform.service.abstracts.model.ChatRoomService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarkService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
+import com.javamentor.qa.platform.service.abstracts.model.IgnoredTagService;
+import com.javamentor.qa.platform.service.abstracts.model.MessageService;
+import com.javamentor.qa.platform.service.abstracts.model.MessageStarService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
+import com.javamentor.qa.platform.service.abstracts.model.RelatedTagService;
+import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
+import com.javamentor.qa.platform.service.abstracts.model.RoleService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
+import com.javamentor.qa.platform.service.abstracts.model.TagService;
+import com.javamentor.qa.platform.service.abstracts.model.TrackedTagService;
+import com.javamentor.qa.platform.service.abstracts.model.UserChatPinService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.BlockChatUserListService;
+import com.javamentor.qa.platform.webapp.controllers.exceptions.QuestionNotFoundException;
+import com.javamentor.qa.platform.webapp.controllers.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,10 +83,13 @@ public class TestDataInitService {
     private final QuestionViewedService questionViewedService;
     private final MessageStarService messageStarService;
     private final UserChatPinService userChatPinService;
-    private final long NUM_OF_USERS = 100L;
+    private final BookmarksService bookmarksService;
+    private final GroupBookmarkService groupBookmarkService;
+    private final BlockChatUserListService blockChatUserListService;
+    private final long NUM_OF_USERS = 200L;
     private final long NUM_OF_TAGS = 50L;
     private final long NUM_OF_QUESTIONS = 100L;
-    private final long NUM_OF_ANSWERS = 50L;
+    private final long NUM_OF_ANSWERS = 100L;
     private final int MAX_TRACKED_TAGS = 3;
     private final int MAX_IGNORED_TAGS = 3;
     private final long NUM_OF_REPUTATIONS = 100L;
@@ -59,6 +105,8 @@ public class TestDataInitService {
     private final long NUM_OF_MODERATORS_GROUPCHAT = 5L;
 
     private final long NUM_OF_USERS_GROUPCHAT = 30L;
+    private final long NUM_OF_BOOKMARK_GROUP = 30L;
+    private final long NUM_OF_BLOCKS = 30L;
 
     public void init() {
         createRoles();
@@ -79,6 +127,73 @@ public class TestDataInitService {
         createMessageStar();
         createUserChatPinChats();
         createGroupChatModeratorsAndUsers();
+        createBookMarks();
+        createGroupBookMarks();
+        createBlockChatUserList();
+    }
+
+    private void createBlockChatUserList(){
+        ArrayList<BlockChatUserList> blockChatUserLists = new ArrayList<>();
+        for (int i = 1; i <= NUM_OF_BLOCKS; i++){
+            BlockChatUserList b = BlockChatUserList.builder()
+                    .persistDate(LocalDateTime.now())
+                    .profile(getRandomUser())
+                    .blocked(getRandomUser())
+                    .build();
+            blockChatUserLists.add(b);
+        }
+        blockChatUserListService.persistAll(blockChatUserLists);
+    }
+
+    private void createGroupBookMarks() {
+        ArrayList<GroupBookmark> groupBookmarks = new ArrayList<>((int) NUM_OF_BOOKMARK_GROUP);
+        List<BookMarks> bookMarksList = bookmarksService.getAll();
+        for (int i = 0; i < NUM_OF_BOOKMARK_GROUP; i++) {
+            User randomUser = getRandomUser();
+            groupBookmarks.add(GroupBookmark.builder()
+                    .title(String.format("group bookmark %d", i))
+                    .bookMarks((new HashSet<>(bookMarksList.stream()
+                            .filter(bookMark -> Objects.equals(bookMark.getUser().getId(), randomUser.getId()))
+                            .collect(Collectors.toSet())
+                    )))
+                    .user(randomUser)
+                    .build());
+        }
+        groupBookmarkService.persistAll(groupBookmarks);
+    }
+
+    public void createBookMarks() {
+        ArrayList<BookMarks> bookMarks = new ArrayList<>((int) NUM_OF_USERS * 5);
+
+        for (int i = 0; i < NUM_OF_USERS * 5; i++) {
+            bookMarks.add(
+                    BookMarks.builder()
+                            .user(getRandomUser())
+                            .question(getRandomQuestion())
+                            .note(String.format("BookMarks %d note", i))
+                            .build()
+            );
+        }
+
+        User user = userService.getById(1L).orElseThrow(() -> new UserNotFoundException("user with this id  not found"));
+        bookMarks.add(
+                BookMarks.builder()
+                        .user(user)
+                        .question(questionService.getQuestionByIdWithAuthor(user.getId()).orElseThrow(() -> new QuestionNotFoundException("question with author id  not found")))
+                        .note(String.format("BookMarks %d note", 1))
+                        .build()
+        );
+
+        User user2 = userService.getById(2L).orElseThrow(() -> new UserNotFoundException("user with this id  not found"));
+        bookMarks.add(
+                BookMarks.builder()
+                        .user(user2)
+                        .question(questionService.getQuestionByIdWithAuthor(user.getId()).orElseThrow(() -> new QuestionNotFoundException("question with author id  not found")))
+                        .note(String.format("BookMarks %d note", 2))
+                        .build()
+        );
+
+        bookmarksService.persistAll(bookMarks);
     }
 
     public void createMessage() {
@@ -109,12 +224,16 @@ public class TestDataInitService {
 
     public void createGroupChat() {
         List<GroupChat> groupChats = new ArrayList<>();
+        List<User> users;
         for (int i = 1; i <= NUM_OF_GROUPCHAT; i++) {
+            users = Arrays.asList(getRandomUser(), getRandomUser(), getRandomUser(), getRandomUser(), getRandomUser());
             GroupChat groupChat = GroupChat.builder()
                     .chat(Chat.builder().chatType(ChatType.GROUP).build())
                     .title("GroupChat" + i)
-                    .image("image"+i)
+                    .image("image" + i)
                     .userAuthor(getRandomUser())
+                    .users(new HashSet<>(users))
+                    .moderators(new HashSet<>(List.of(users.get(1), users.get(2))))
                     .build();
             groupChats.add(groupChat);
         }
@@ -243,34 +362,36 @@ public class TestDataInitService {
     public void createQuestions() {
         List<Question> questions = new ArrayList<>();
         for (int i = 1; i <= NUM_OF_QUESTIONS; i++) {
-            Question question = Question.builder()
-                    .title("Question " + i)
-                    .description("What do you think about question " + i + "?")
-                    .persistDateTime(LocalDateTime.now().minusDays(i))
-                    .lastUpdateDateTime(LocalDateTime.now().minusDays(i).plusHours(12))
-                    .user(getRandomUser())
-                    .tags(getRandomTagList())
-                    .build();
-            questions.add(question);
+            for (int j = 0; j < NUM_OF_QUESTIONS / 5; j++) {
+                Question question = Question.builder()
+                        .title("Question " + i)
+                        .description("What do you think about question " + i + "?")
+                        .persistDateTime(LocalDateTime.now().minusDays(i))
+                        .lastUpdateDateTime(LocalDateTime.now().minusDays(i).plusHours(12))
+                        .user(getRandomUser())
+                        .tags(getRandomTagList())
+                        .build();
+                questions.add(question);
+            }
         }
-
         questionService.persistAll(questions);
-
     }
 
     public void createAnswers() {
         List<Answer> answers = new ArrayList<>();
         for (int i = 1; i <= NUM_OF_ANSWERS; i++) {
-            Answer answer = Answer.builder()
-                    .htmlBody("Answer " + i)
-                    .user(getRandomUser())
-                    .editModerator(getRandomAdmin())
-                    .question(getRandomQuestion())
-                    .isDeleted(false)
-                    .isHelpful(false)
-                    .isDeletedByModerator(false)
-                    .build();
-            answers.add(answer);
+            for (int j = 1; j < NUM_OF_ANSWERS / 5; j++) {
+                Answer answer = Answer.builder()
+                        .htmlBody("Answer " + i)
+                        .user(userService.getById((long) i).get())
+                        .editModerator(getRandomAdmin())
+                        .question(getRandomQuestion())
+                        .isDeleted(false)
+                        .isHelpful(false)
+                        .isDeletedByModerator(false)
+                        .build();
+                answers.add(answer);
+            }
         }
 
         answerService.persistAll(answers);
@@ -315,20 +436,18 @@ public class TestDataInitService {
 
     public void createVoteAnswer() {
         List<VoteAnswer> voteAnswers = new ArrayList<>();
-        for (long i = 1; i <= NUM_OF_VOTEANSWERS; i++) {
-            User randomUser = getRandomUser();
-            Answer randomAnswer = getRandomAnswer();
-            while (didThisUserVoteForThisAnswer(randomUser.getId(), randomAnswer.getId(), voteAnswers)) {
-                randomUser = getRandomUser();
-                randomAnswer = getRandomAnswer();
+        for (long i = 1; i <= NUM_OF_USERS; i++) {
+            User randomUser = userService.getById(i).get();
+            Answer randomAnswer = answerService.getById(i).get();
+            for (int j = 0; j < NUM_OF_USERS; j++) {
+                VoteAnswer voteAnswer = VoteAnswer.builder()
+                        .answer(randomAnswer)
+                        .vote(new Random().nextInt(100) % 2 == 0 ? VoteType.UP_VOTE : VoteType.DOWN_VOTE)
+                        .persistDateTime(LocalDateTime.now())
+                        .user(randomUser)
+                        .build();
+                voteAnswers.add(voteAnswer);
             }
-            VoteAnswer voteAnswer = VoteAnswer.builder()
-                    .answer(randomAnswer)
-                    .vote(new Random().nextInt(100) % 2 == 0 ? VoteType.UP_VOTE : VoteType.DOWN_VOTE)
-                    .persistDateTime(LocalDateTime.now())
-                    .user(randomUser)
-                    .build();
-            voteAnswers.add(voteAnswer);
         }
         voteAnswerService.persistAll(voteAnswers);
     }
@@ -498,7 +617,7 @@ public class TestDataInitService {
             Set<User> chatModerators = new HashSet<>();
             for (int j = 1; j <= NUM_OF_MODERATORS_GROUPCHAT; j++) {
                 User user = getRandomUser();
-                if ( !groupChat.getUserAuthor().equals(user) ) {
+                if (!groupChat.getUserAuthor().equals(user)) {
                     chatModerators.add(user);
                 }
             }
@@ -508,7 +627,7 @@ public class TestDataInitService {
             Set<User> chatUsers = new HashSet<>();
             for (int j = 1; j <= NUM_OF_USERS_GROUPCHAT; j++) {
                 User user = getRandomUser();
-                if ( !groupChat.getUsers().contains(user) ) {
+                if (!groupChat.getUsers().contains(user)) {
                     chatUsers.add(getRandomUser());
                 }
             }

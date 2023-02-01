@@ -1,11 +1,17 @@
 package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.QuestionDao;
+import com.javamentor.qa.platform.dao.abstracts.model.ReputationDao;
 import com.javamentor.qa.platform.dao.abstracts.model.TagDao;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
+import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,11 +22,13 @@ import java.util.stream.Collectors;
 public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> implements QuestionService {
 
     private final QuestionDao questionDao;
+    private final ReputationDao reputationDao;
     private final TagDao tagDao;
 
-    public QuestionServiceImpl(QuestionDao questionDao, TagDao tagDao) {
+    public QuestionServiceImpl(QuestionDao questionDao, ReputationDao reputationDao, TagDao tagDao) {
         super(questionDao);
         this.questionDao = questionDao;
+        this.reputationDao = reputationDao;
         this.tagDao = tagDao;
     }
 
@@ -29,7 +37,7 @@ public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> im
         return questionDao.getCountQuestion();
     }
 
-    public Optional<Question> getQuestionByIdWithAuthor(Long id){
+    public Optional<Question> getQuestionByIdWithAuthor(Long id) {
         return questionDao.getQuestionByIdWithAuthor(id);
     }
 
@@ -54,6 +62,16 @@ public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> im
             }
         }
         question.setTags(listTagForQuestion);
+        reputationDao.persist(Reputation.builder()
+                .count(ReputationType.Question.getValue())
+                .persistDate(Timestamp.from(Instant.now()).toLocalDateTime())
+                .type(ReputationType.Question)
+                .author(question.getUser())
+                .sender(question.getUser())
+                .question(question)
+                .build());
+
         super.persist(question);
+
     }
 }

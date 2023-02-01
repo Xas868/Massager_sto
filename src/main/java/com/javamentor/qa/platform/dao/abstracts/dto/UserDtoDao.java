@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.dao.abstracts.dto;
 
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.UserProfileVoteDto;
 import com.javamentor.qa.platform.models.util.CalendarPeriod;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface UserDtoDao {
     Long getCountAnswersPerWeekByUserId (Long userId);
 
     List<Long> getUnregisteredUserIds(List<Long> userIds);
+
+    Optional<UserProfileVoteDto> getCountVotesAnswersAndQuestions(Long id);
 }

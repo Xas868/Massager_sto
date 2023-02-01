@@ -38,15 +38,11 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
     }
 
     public void persist(VoteAnswer voteAnswer) {
-        int count = -5;
-        if (voteAnswer.getVote().equals(VoteType.UP_VOTE)) {
-            count = 10;
-        }
-        voteAnswerDao.persist(voteAnswer);
+         voteAnswerDao.persist(voteAnswer);
         reputationDao.persist(Reputation.builder()
-                .count(count)
+                .count((voteAnswer.getVote().equals(VoteType.UP_VOTE))?ReputationType.VOTE_UP_ANSWER.getValue() : ReputationType.VOTE_DOWN_ANSWER.getValue())
                 .persistDate(Timestamp.from(Instant.now()).toLocalDateTime())
-                .type(ReputationType.VoteAnswer)
+                .type(((voteAnswer.getVote().equals(VoteType.UP_VOTE))?ReputationType.VOTE_UP_ANSWER : ReputationType.VOTE_DOWN_ANSWER))
                 .answer(voteAnswer.getAnswer())
                 .author(voteAnswer.getAnswer().getUser())
                 .sender(voteAnswer.getUser())

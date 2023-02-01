@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.service.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.BookMarksDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.BookMarksDto;
+import com.javamentor.qa.platform.models.entity.bookmark.SortBookmark;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import org.springframework.security.core.Authentication;
@@ -25,13 +26,17 @@ public class BookMarksDtoServiceImpl implements BookMarksDtoService {
     }
 
     @Override
-    public List<BookMarksDto> getAllBookMarksInUserProfile(Long id) {
+    public List<BookMarksDto> getAllBookMarksInUserProfile(Long id, SortBookmark sortBookmark) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        List<BookMarksDto> resultList = bookMarksDtoDao.getAllBookMarksInUserProfile(user.getId());
+        List<BookMarksDto> resultList = bookMarksDtoDao.getAllBookMarksInUserProfile(user.getId(), sortBookmark);
         var map = tagDtoDao.getTagDtoByQuestionIds(
-                resultList.stream().map(BookMarksDto::getQuestionId).collect(Collectors.toList()));
-        resultList.forEach(q -> q.setListTagDto(map.containsKey(q.getQuestionId()) ? map.get(q.getQuestionId()) : new ArrayList<>()));
+                resultList.stream()
+                        .map(BookMarksDto::getQuestionId)
+                        .collect(Collectors.toList()));
+       resultList.forEach(q -> q.setListTagDto(map.containsKey(q.getQuestionId())
+                ? map.get(q.getQuestionId())
+                : new ArrayList<>()));
         return resultList;
     }
 }

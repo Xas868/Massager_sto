@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.BookmarksDao;
-import com.javamentor.qa.platform.models.entity.BookMarks;
+import com.javamentor.qa.platform.models.entity.bookmark.BookMarks;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.BookmarksService;
@@ -9,8 +9,10 @@ import com.javamentor.qa.platform.webapp.controllers.exceptions.AddBookmarkExcep
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
-public class BookmarksServiceImpl  extends ReadWriteServiceImpl<BookMarks, Long> implements BookmarksService {
+public class BookmarksServiceImpl extends ReadWriteServiceImpl<BookMarks, Long> implements BookmarksService {
 
     private final BookmarksDao bookmarksDao;
 
@@ -22,7 +24,7 @@ public class BookmarksServiceImpl  extends ReadWriteServiceImpl<BookMarks, Long>
     @Override
     @Transactional
     public void addQuestionInBookmarks(User user, Question question) {
-        if(!bookmarksDao.findBookmarksByUserAndQuestion(user.getId(), question.getId())){
+        if (!bookmarksDao.findBookmarksByUserAndQuestion(user.getId(), question.getId())) {
             throw new AddBookmarkException("The bookmark has not been added");
         }
         BookMarks bookMarks = BookMarks.builder()
@@ -31,4 +33,10 @@ public class BookmarksServiceImpl  extends ReadWriteServiceImpl<BookMarks, Long>
                 .build();
         bookmarksDao.persist(bookMarks);
     }
+
+    @Override
+    public Optional<BookMarks> getBookmarkByQuestionIdAndUserId(Long userId, Long questionId) {
+        return bookmarksDao.getBookmarkByQuestionIdAndUserId(userId, questionId);
+    }
+
 }

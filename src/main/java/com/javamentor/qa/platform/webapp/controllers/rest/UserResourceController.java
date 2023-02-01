@@ -1,13 +1,14 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoAllUsersByRepImpl;
-import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoAllUsersImpl;
-import com.javamentor.qa.platform.dao.impl.pagination.userdto.UserPageDtoDaoByVoteImpl;
-import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.dao.impl.pagination.user.UserPageDtoDaoAllUsersByRepImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.user.UserPageDtoDaoAllUsersImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.user.UserPageDtoDaoByVoteImpl;
+import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.dto.UserDto;
+import com.javamentor.qa.platform.models.dto.UserProfileVoteDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.CalendarPeriod;
-import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
-import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,13 +39,11 @@ public class UserResourceController {
 
     private final UserDtoService userDtoService;
     private final UserService userService;
-    private final BookMarksDtoService bookMarksDtoService;
 
     public UserResourceController(UserDtoService userDtoService,
-                                  UserService userService, BookMarksDtoService bookMarksDtoService) {
+                                  UserService userService) {
         this.userDtoService = userDtoService;
         this.userService = userService;
-        this.bookMarksDtoService = bookMarksDtoService;
     }
 
     @GetMapping("/api/user/{userId}")
@@ -161,60 +159,6 @@ public class UserResourceController {
         return new ResponseEntity<>(userDtoService.getPageDto(data), HttpStatus.OK);
     }
 
-    @Operation(summary = "Получение всех вопросов авторизированного пользователя неотсортированных" +
-            "В запросе нет параметров,возвращается список объектов UserProfileQuestionDto ",
-            description = "Получение всех вопросов авторизированного пользователя")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Возвращает список UserProfileQuestionDto(long questionId,String title, List<TagDto>, Long answerCount, LocalDateTime persistDateTime)",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json")
-                    }),
-    })
-    @GetMapping("/api/user/profile/questions")
-    public ResponseEntity<List<UserProfileQuestionDto>> getAllUserProfileQuestionDtoById(@AuthenticationPrincipal User user) {
-        return new ResponseEntity<>(userDtoService.getAllUserProfileQuestionDtoById(user.getId()), HttpStatus.OK);
-    }
-
-    @Operation(summary = "Получение всех удаленных вопросов в виде UserProfileQuestionDto по email авторизованного пользователя " +
-            "Параметры запроса не требуются",
-            description = "Получение списка UserProfileQuestionDto на основе вопросов авторизованного пользователя,которые имеют статус isDeleted ")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Возвращает список List<UserProfileQuestionDto> (questionId, title, listTagDto, countAnswer, persistDateTime)",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json")
-                    }),
-    })
-    @GetMapping("/api/user/profile/delete/questions")
-    public ResponseEntity<List<UserProfileQuestionDto>> getAllUserProfileQuestionDtoByUserIdIsDelete(@AuthenticationPrincipal User user) {
-        return new ResponseEntity<>(userDtoService
-                .getUserProfileQuestionDtoByUserIdIsDeleted(user.getId()),
-                HttpStatus.OK);
-    }
-
-    @Operation(summary = "Получение всех закладок в профиле пользователя в виде BookMarksDto" +
-            "Параметры запроса не требуются",
-            description = "Получение всех закладок в профиле пользователя в виде BookMarksDto")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Возвращает список List<BookMarksDto> (questionId, title, listTagDto, countAnswer, countVote, countView, persistDateTime)",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json")
-                    }),
-    })
-    @GetMapping("/api/user/profile/bookmarks")
-    public ResponseEntity<List<BookMarksDto>> getAllBookMarksInUserProfile(@AuthenticationPrincipal User user) {
-        return new ResponseEntity<>(bookMarksDtoService
-                .getAllBookMarksInUserProfile(user.getId()),
-                HttpStatus.OK);
-    }
 
     @Operation(summary = "Получение списка из топ 10 пользователей, оставивших наибольшее число ответов на вопросы за неделю",
             description = "Получение отсортированного списка из топ 10 пользователей (UserDto), оставивших наибольшее число ответов на вопросы за неделю. " +
@@ -231,33 +175,32 @@ public class UserResourceController {
                     })
     })
     @GetMapping("/api/user/top")
-    public ResponseEntity<List<UserDto>> getTopUsersForDaysRankedByNumberOfQuestions(
+    public ResponseEntity<List<UserDto>> getTopUsersForDaysRankedByNumberOfAnswers(
             @RequestParam(name = "usersCount", required = false, defaultValue = "10")
-            @Parameter (name = "Количество юзеров, которых необходимо получить.",
+            @Parameter(name = "Количество юзеров, которых необходимо получить.",
                     description = "Необязательный параметр. Позволяет настроить количество сообщений на одной странице. По-умолчанию равен 10.")
             Integer usersCount,
             @RequestParam(name = "period", required = false, defaultValue = "week")
-            @Parameter (name = "Количество дней, по которым будет идти поиск", description = "Необязательный параметр. Позволяет настроить пероид времени, " +
+            @Parameter(name = "Количество дней, по которым будет идти поиск", description = "Необязательный параметр. Позволяет настроить пероид времени, " +
                     "по которому будет идти поиск. Значение по умолчанию \"week\" ")
             CalendarPeriod calendarPeriod) {
         return new ResponseEntity<>(userDtoService.getTopUsersForDaysRankedByNumberOfQuestions(calendarPeriod), HttpStatus.OK);
     }
 
-    @Operation(summary = "Получение количества ответов авторизованного пользователя." ,
-            description = "Контроллер возвращает целое число, которое отражает количество ответов авторизованного пользователя за неделю. В качестве параметра принимает авторизованного пользователя.")
-    @Parameter (name = "user", description = "Авторизованный пользователь, количество ответов которого будет отображено.", required = true)
+
+    @Operation(summary = "Получение количества голосов пользователя в профиле.",
+            description = "Контролер возвращает количество голосов (UP и DOWN) вопросов и ответов, а также количество голосов за месяц.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Возвращает число ответов авторизованного пользователя.",
+                    description = "Возвращает UserProfileVoteDto с количеством голосов.",
                     content = {
                             @Content(
                                     mediaType = "application/json")
                     })
     })
-    @GetMapping ("api/user/profile/question/week")
-    public ResponseEntity<Long> getAnswersPerWeekByUserId (@AuthenticationPrincipal User user) {
-        return new ResponseEntity<Long>(userDtoService.getCountAnswersPerWeekByUserId(user.getId()), HttpStatus.OK);
-
+    @GetMapping("api/user/profile/vote")
+    public ResponseEntity <UserProfileVoteDto> getVotesUsersInProfile(@AuthenticationPrincipal User user){
+        return new ResponseEntity(userDtoService.getCountVotesAnswersAndQuestions(user.getId()), HttpStatus.OK);
     }
 }
