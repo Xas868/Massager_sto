@@ -1,12 +1,15 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
+import com.javamentor.qa.platform.dao.impl.pagination.bookmarks.BookMarkPageDtoDaoImpl;
 import com.javamentor.qa.platform.models.dto.BookMarksDto;
 import com.javamentor.qa.platform.models.dto.GroupBookmarkDto;
+import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.dto.UserProfileGroup;
 import com.javamentor.qa.platform.models.entity.bookmark.BookMarks;
 import com.javamentor.qa.platform.models.entity.bookmark.SortBookmark;
+import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.BookMarksDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.BookmarksService;
@@ -55,28 +58,48 @@ public class ProfileBookmarkResourceController {
     }
 
 
-    @Operation(summary = "Получение всех закладок в профиле пользователя в виде BookMarksDto" +
-            "Параметры запроса не требуются",
-            description = "Получение всех закладок в профиле пользователя в виде BookMarksDto")
+    @Operation(summary = "Получение пагинированного списка всех закладок в профиле пользователя в виде BookMarksDto" +
+                         "Есть два необязательных параметра. " +
+                         "Первый :sortBookmark - сортирует закладки по дате (sortBookmark=NEW), " +
+                         "по просмотрам (sortBookmark=VIEW), по голосам (sortBookmark=VIEW). " +
+                         "" +
+                         "Второй: groupId, если параметр не передан, то возвращаются все закладки," +
+                         "если передан Long groupId - возвращает только те закладки, которые относятся " +
+                         "к указанной группе",
+
+            description = "Получение закладок в профиле пользователя в виде BookMarksDto")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Возвращает список List<BookMarksDto> (questionId, title, listTagDto, countAnswer, countVote, countView, persistDateTime)",
+                    description = "Возвращает список List<BookMarksDto> ( bookmarkId, groupBookmarkId, " +
+                                  "groupBookmarkTitle ,questionId, title, listTagDto, countAnswer, countVote, " +
+                                  "countView, persistDateTime, note)",
                     content = {
                             @Content(
                                     mediaType = "application/json")
                     }),
     })
     @GetMapping("/bookmarks")
-    public ResponseEntity<List<BookMarksDto>> getAllBookMarksInUserProfile(@AuthenticationPrincipal User user,
-                                                                           @RequestParam(
-                                                                                   required = false,
-                                                                                   defaultValue = "NEW",
-                                                                                   name = "sortBookmark"
-                                                                           ) SortBookmark sortBookmark) {
-        return new ResponseEntity<>(bookMarksDtoService
-                .getAllBookMarksInUserProfile(user.getId(), sortBookmark), HttpStatus.OK);
+    public ResponseEntity<PageDTO<BookMarksDto>> getAllBookMarksInUserProfile(@AuthenticationPrincipal User user,
+                                                                              @RequestParam(required = false,
+                                                                                            defaultValue = "NEW",
+                                                                                            name = "sortBookmark"
+                                                                              ) SortBookmark sortBookmark,
+                                                                              @RequestParam(required = false,
+                                                                                            defaultValue = "1"
+                                                                              ) int page,
+                                                                              @RequestParam(defaultValue = "10"
+                                                                              ) int items,
+                                                                              @RequestParam(required = false
+                                                                              ) Long groupId) {
 
+        PaginationData data = new PaginationData(page, items, BookMarkPageDtoDaoImpl.class.getSimpleName());
+        data.getProps().put("user", user);
+        data.getProps().put("userId", user.getId());
+        data.getProps().put("sortBookmark", sortBookmark);
+        data.getProps().put("groupId", groupId);
+
+        return new ResponseEntity<>(bookMarksDtoService.getPageDto(data), HttpStatus.OK);
     }
 
     @Operation(summary = "Получение списка названий групп пользователя",
