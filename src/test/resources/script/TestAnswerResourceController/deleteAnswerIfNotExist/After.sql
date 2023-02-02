@@ -1,0 +1,1 @@
+TRUNCATE role, user_entity, question, answer CASCADE;
