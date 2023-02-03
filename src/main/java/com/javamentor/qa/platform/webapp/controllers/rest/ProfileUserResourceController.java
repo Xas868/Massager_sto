@@ -4,14 +4,24 @@ import com.javamentor.qa.platform.dao.impl.pagination.commentdto.UserProfileComm
 import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileAnswerPageDtoDaoImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileQuestionsPageDtoDaoImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileReputationPageDtoDaoImpl;
-import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.dto.UserProfileAnswerDto;
+import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.UserProfileReputationDto;
+import com.javamentor.qa.platform.models.dto.UserProfileTagDto;
+import com.javamentor.qa.platform.models.dto.UserProfileCommentDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
 import com.javamentor.qa.platform.models.entity.question.ProfileReputationSort;
 import com.javamentor.qa.platform.models.entity.question.answer.ProfileAnswerSort;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.dto.*;
+import com.javamentor.qa.platform.service.abstracts.dto.ProfileUserDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.UserProfileReputationPageDtoDaoService;
+import com.javamentor.qa.platform.service.abstracts.dto.UserProfileTagDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.UserProfileCommentPageDtoService;
 import com.javamentor.qa.platform.service.impl.dto.UserProfileAnswerPageDtoDaoServiceImpl;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
