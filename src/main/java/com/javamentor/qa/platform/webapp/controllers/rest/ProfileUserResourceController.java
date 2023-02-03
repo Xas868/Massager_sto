@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.dao.impl.pagination.commentdto.UserProfileCommentPageDtoDaoImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileAnswerPageDtoDaoImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileQuestionsPageDtoDaoImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.user.profile.UserProfileReputationPageDtoDaoImpl;
@@ -8,6 +9,7 @@ import com.javamentor.qa.platform.models.dto.UserProfileAnswerDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.dto.UserProfileReputationDto;
 import com.javamentor.qa.platform.models.dto.UserProfileTagDto;
+import com.javamentor.qa.platform.models.dto.UserProfileCommentDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.ProfileQuestionSort;
 import com.javamentor.qa.platform.models.entity.question.ProfileReputationSort;
@@ -17,7 +19,9 @@ import com.javamentor.qa.platform.service.abstracts.dto.ProfileUserDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserProfileReputationPageDtoDaoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserProfileTagDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.UserProfileCommentPageDtoService;
 import com.javamentor.qa.platform.service.impl.dto.UserProfileAnswerPageDtoDaoServiceImpl;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -45,15 +49,19 @@ public class ProfileUserResourceController {
     private final ProfileUserDtoService profileUserDtoService;
     private final UserProfileTagDtoService userProfileTagDtoService;
     private final UserProfileReputationPageDtoDaoService userProfileReputationPageDtoDaoService;
+    private final UserProfileCommentPageDtoService userProfileCommentPageDtoService;
 
     public ProfileUserResourceController(
-            UserDtoService userDtoService, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService, ProfileUserDtoService profileUserDtoService, UserProfileTagDtoService userProfileTagDtoService, UserProfileReputationPageDtoDaoService userProfileReputationPageDtoDaoService) {
+            UserDtoService userDtoService, UserProfileAnswerPageDtoDaoServiceImpl userProfileAnswerPageDtoDaoService,
+            ProfileUserDtoService profileUserDtoService, UserProfileTagDtoService userProfileTagDtoService,
+            UserProfileReputationPageDtoDaoService userProfileReputationPageDtoDaoService, UserProfileCommentPageDtoService userProfileCommentPageDtoService) {
 
         this.userDtoService = userDtoService;
         this.userProfileAnswerPageDtoDaoService = userProfileAnswerPageDtoDaoService;
         this.profileUserDtoService = profileUserDtoService;
         this.userProfileTagDtoService = userProfileTagDtoService;
         this.userProfileReputationPageDtoDaoService = userProfileReputationPageDtoDaoService;
+        this.userProfileCommentPageDtoService = userProfileCommentPageDtoService;
     }
 
 
@@ -192,5 +200,34 @@ public class ProfileUserResourceController {
         data.getProps().put("profileReputationSort",profileReputationSort);
 
         return new ResponseEntity<>(userProfileReputationPageDtoDaoService.getPageDto(data),HttpStatus.OK);
+    }
+
+    @Operation(summary = "Получение пагинированного списка всех комментариев пользователя.",
+            description = "Возвращается пагинированный список объектов UserProfileCommentDto, " +
+                          "который содержит все ответы или вопросы пользователя.")
+    @Parameter(name = "page", description = "есть параметр page - указывает на страницу")
+    @Parameter(name = "items", description = "есть параметр items - возвращает список объектов UserProfileCommentDto ")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Возвращает список UserProfileCommentDto(Long id,String commentText,LocalDateTime persistDate," +
+                                  "Long answerId,Long questionId,CommentType commentType)",
+                    content = {
+                            @Content(mediaType = "application/json")
+                    }),
+    })
+    @GetMapping("/comment")
+    public ResponseEntity<PageDTO<UserProfileCommentDto>> getAllUserProfileCommentDtoById(@AuthenticationPrincipal User user,
+                                                                                          @RequestParam(required = false,
+                                                                                                        defaultValue = "1"
+                                                                                          ) int page,
+                                                                                          @RequestParam(defaultValue = "10"
+                                                                                          ) int items) {
+
+        PaginationData data = new PaginationData(page, items, UserProfileCommentPageDtoDaoImpl.class.getSimpleName());
+        data.getProps().put("user", user);
+        data.getProps().put("userId", user.getId());
+
+        return new ResponseEntity<>(userProfileCommentPageDtoService.getPageDto(data), HttpStatus.OK);
     }
 }
