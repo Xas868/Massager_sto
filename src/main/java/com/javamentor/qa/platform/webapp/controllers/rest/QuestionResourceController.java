@@ -18,6 +18,7 @@ import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
@@ -58,7 +59,7 @@ public class QuestionResourceController {
     private final QuestionConverter questionConverter;
     private final TagConverter tagConverter;
     private final QuestionViewedService questionViewedService;
-
+    private final TagDtoService tagDtoService;
 
     @GetMapping("/count")
     @Operation(summary = "Количество всего вопросов в бд")
@@ -252,8 +253,8 @@ public class QuestionResourceController {
         PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoAllQuestionsImpl.class.getSimpleName());
         User user = (User) auth.getPrincipal();
         
-        data.getProps().put("trackedTags", trackedTag);
-        data.getProps().put("ignoredTags", ignoredTag);
+        data.getProps().put("trackedTags", tagDtoService.getTrackedTagsByUserId(user.getId()));
+        data.getProps().put("ignoredTags", tagDtoService.getIgnoredTagsByUserId(user.getId()));
         data.getProps().put("userId", user.getId());
         data.getProps().put("dateFilter", dateFilter.getDay());
 
