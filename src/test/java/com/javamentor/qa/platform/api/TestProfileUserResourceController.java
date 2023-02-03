@@ -809,4 +809,95 @@ public class TestProfileUserResourceController extends AbstractClassForDRRiderMo
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(3)));
 
     }
+
+    // Проверка всех данных, questionId у CommentAnswer должен быть = answerId у CommentAnswer
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileCommentDtoById_shouldFindAllData_whenExists/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileCommentDtoById_shouldFindAllData_whenExists/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllUserProfileCommentDtoById_shouldFindAllData_whenExists() throws Exception {
+        mockMvc.perform(get("/api/user/profile/comment")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(4)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(4)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].commentText", Is.is("Random CommentAnswer 1")))
+                .andExpect(jsonPath("$.items[0].answerId", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].questionId", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].commentType", Is.is("ANSWER")))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[1].commentText", Is.is("Random CommentAnswer 2")))
+                .andExpect(jsonPath("$.items[1].answerId", Is.is(102)))
+                .andExpect(jsonPath("$.items[1].questionId", Is.is(102)))
+                .andExpect(jsonPath("$.items[1].commentType", Is.is("ANSWER")))
+
+                .andExpect(jsonPath("$.items[2].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[2].commentText", Is.is("Random CommentQuestion 1")))
+                .andExpect(jsonPath("$.items[2].answerId", Is.is(IsNull.nullValue())))
+                .andExpect(jsonPath("$.items[2].questionId", Is.is(101)))
+                .andExpect(jsonPath("$.items[2].commentType", Is.is("QUESTION")))
+
+                .andExpect(jsonPath("$.items[3].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[3].commentText", Is.is("Random CommentQuestion 2")))
+                .andExpect(jsonPath("$.items[3].answerId", Is.is(IsNull.nullValue())))
+                .andExpect(jsonPath("$.items[3].questionId", Is.is(102)))
+                .andExpect(jsonPath("$.items[3].commentType", Is.is("QUESTION")));
+    }
+
+    //Пользователь не оставил ни одного комментария
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileCommentDtoById_shouldFindAllData_whenEmpty/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileCommentDtoById_shouldFindAllData_whenEmpty/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllUserProfileCommentDtoById_shouldFindAllData_whenEmpty() throws Exception {
+        mockMvc.perform(get("/api/user/profile/comment")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(0)))
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(0)));
+    }
+
+    //Проверка пагинации
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileCommentDtoPaginationById_shouldFindAllData_whenExists/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/getAllUserProfileCommentDtoPaginationById_shouldFindAllData_whenExists/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllUserProfileCommentDtoPaginationById_shouldFindAllData_whenExists() throws Exception {
+        mockMvc.perform(get("/api/user/profile/comment")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("items", "2")
+                        .param("page", "3")
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(2)))
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(3)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(5)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[0].commentText", Is.is("Random CommentAnswer 5")))
+                .andExpect(jsonPath("$.items[0].answerId", Is.is(102)))
+                .andExpect(jsonPath("$.items[0].questionId", Is.is(102)))
+                .andExpect(jsonPath("$.items[0].commentType", Is.is("ANSWER")))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(106)))
+                .andExpect(jsonPath("$.items[1].commentText", Is.is("Random CommentQuestion 1")))
+                .andExpect(jsonPath("$.items[1].answerId", Is.is(IsNull.nullValue())))
+                .andExpect(jsonPath("$.items[1].questionId", Is.is(101)))
+                .andExpect(jsonPath("$.items[1].commentType", Is.is("QUESTION")));
+    }
 }
