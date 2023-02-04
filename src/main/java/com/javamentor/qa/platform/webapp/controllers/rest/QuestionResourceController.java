@@ -245,8 +245,6 @@ public class QuestionResourceController {
     })
     public ResponseEntity<PageDTO<QuestionViewDto>> allQuestionsWithTrackedTagsAndIgnoredTags(@RequestParam int page,
                                                                                               @RequestParam(required = false, defaultValue = "10") int items,
-                                                                                              @RequestParam(required = false) List<Long> trackedTag,
-                                                                                              @RequestParam(required = false) List<Long> ignoredTag,
                                                                                               @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter,
                                                                                               Authentication auth) {
 
