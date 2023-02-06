@@ -260,13 +260,12 @@ public class QuestionResourceController {
 
 
 
-        //List <Long> idLong = tracked.stream().map(TagDto::getId);
         data.getProps().put("trackedTags", tagDtoService.getTrackedTagsByUserId(user.getId()).stream().map(TagDto::getId).collect(Collectors.toList()));
         data.getProps().put("ignoredTags", tagDtoService.getIgnoredTagsByUserId(user.getId()).stream().map(TagDto::getId).collect(Collectors.toList()));
         data.getProps().put("userId", user.getId());
         data.getProps().put("dateFilter", dateFilter.getDay());
-        data.getProps().get("trackedTags");
-        data.getProps().get("ignoredTags");
+//        data.getProps().get("trackedTags");
+//        data.getProps().get("ignoredTags");
 
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
