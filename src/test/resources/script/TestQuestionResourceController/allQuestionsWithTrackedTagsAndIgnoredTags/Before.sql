@@ -67,9 +67,11 @@ VALUES (100, 'Description of tag 1', 'vfOxMU1', '2022-11-12 22:09:06.639083'),
  *  Table: question_has_tag
  */
 INSERT INTO tag_ignore (id, persist_date,ignored_tag_id, user_id)
+VALUES (1,DATE(NOW()),114,101),
+       (2,DATE(NOW()),102,101);
+INSERT INTO tag_tracked (id, persist_date,tracked_tag_id, user_id)
 VALUES (1,DATE(NOW()),101,101),
        (2,DATE(NOW()),100,101);
-
 
 
 INSERT INTO question_has_tag (question_id, tag_id)
