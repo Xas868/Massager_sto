@@ -66,11 +66,11 @@ VALUES (101, 'Description of tag 1', 'vfOxMU1', '2022-11-12 22:09:06.639083'),
 
        (107, 'Description of tag 7', 'vfOxMU7', '2022-11-12 22:09:06.639083'),
        (108, 'Description of tag 8', 'iThKcj8', '2022-11-12 22:09:06.639579'),
-       (109, 'Description of tag 9', 'LTGDJP9', '2022-11-12 22:09:06.639579'),
+       (109, 'Description of tag 9', 'LTGDJP9', '2022-12-12 22:09:06.639579'),
 
-       (110, 'Description of tag 10', 'vfOxMU10', '2022-11-12 22:09:06.639083'),
-       (111, 'Description of tag 11', 'iThKcj11', '2022-11-12 22:09:06.639579'),
-       (112, 'Description of tag 12', 'LTGDJP12', '2022-11-12 22:09:06.639579');
+       (110, 'Description of tag 10', 'vfOxMU10', '2022-12-12 22:09:06.639083'),
+       (111, 'Description of tag 11', 'iThKcj11', '2023-01-12 22:09:06.639579'),
+       (112, 'Description of tag 12', 'LAST_GDJP12', '2023-01-12 22:09:06.639579');
 
 /*
  *  Table: question_has_tag
