@@ -16,6 +16,8 @@ import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.question.TrackedTag;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
+import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.Role;
@@ -44,6 +46,8 @@ import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.BlockChatUserListService;
+import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.CommentAnswerService;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.QuestionNotFoundException;
 import com.javamentor.qa.platform.webapp.controllers.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -86,6 +90,9 @@ public class TestDataInitService {
     private final BookmarksService bookmarksService;
     private final GroupBookmarkService groupBookmarkService;
     private final BlockChatUserListService blockChatUserListService;
+    private final CommentQuestionService commentQuestionService;
+    private final CommentAnswerService commentAnswerService;
+
     private final long NUM_OF_USERS = 200L;
     private final long NUM_OF_TAGS = 50L;
     private final long NUM_OF_QUESTIONS = 100L;
@@ -99,11 +106,8 @@ public class TestDataInitService {
     private final long NUM_OF_MESSAGE = 5L;
     private final long NUM_OF_GROUPCHAT = 5L;
     private final long NUM_OF_SINGLECHAT = 5L;
-
     private final long NUM_OF_FAVORITE_MESSAGES = 3L;
-
     private final long NUM_OF_MODERATORS_GROUPCHAT = 5L;
-
     private final long NUM_OF_USERS_GROUPCHAT = 30L;
     private final long NUM_OF_BOOKMARK_GROUP = 30L;
     private final long NUM_OF_BLOCKS = 30L;
@@ -116,6 +120,8 @@ public class TestDataInitService {
         createRelatedTags();
         createQuestions();
         createAnswers();
+        createCommentsQuestion();
+        createCommentsAnswer();
         createReputations();
         createVoteQuestion();
         createVoteAnswer();
@@ -130,6 +136,30 @@ public class TestDataInitService {
         createBookMarks();
         createGroupBookMarks();
         createBlockChatUserList();
+    }
+
+    private void createCommentsAnswer() {
+        ArrayList<CommentAnswer> commentAnswers = new ArrayList<>((int) NUM_OF_ANSWERS * 2);
+
+        for (int i = 0; i < NUM_OF_ANSWERS * 2; i++) {
+            CommentAnswer commentAnswer = new CommentAnswer("Random CommentAnswer " + i,
+                    getRandomUser());
+            commentAnswer.setAnswer(getRandomAnswer());
+            commentAnswers.add(commentAnswer);
+        }
+        commentAnswerService.persistAll(commentAnswers);
+    }
+
+    private void createCommentsQuestion() {
+        List<CommentQuestion> commentQuestions = new ArrayList<>((int) NUM_OF_QUESTIONS * 2);
+
+        for (int i = 0; i < NUM_OF_QUESTIONS * 2; i++) {
+            CommentQuestion commentQuestion = new CommentQuestion("Random CommentQuestion " + i,
+                    getRandomUser());
+            commentQuestion.setQuestion(getRandomQuestion());
+            commentQuestions.add(commentQuestion);
+        }
+        commentQuestionService.persistAll(commentQuestions);
     }
 
     private void createBlockChatUserList(){
