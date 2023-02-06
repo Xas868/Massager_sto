@@ -29,10 +29,10 @@ void allQuestionsWithTrackedTagsAndIgnoredTags() throws Exception {
                     .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
             )
             .andDo(print())
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
 
 
-//            .andExpect(jsonPath("$.items.[0].questionId", Is.is(101)))
+              .andExpect(jsonPath("$.items.[0].questionId", Is.is(101)));
 //            .andExpect(jsonPath("$.items.[0].title", Is.is("Question 101")))
 //
 //            .andExpect(jsonPath("$.items.[0].listTagDto.size()", Is.is(1)))
