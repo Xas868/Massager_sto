@@ -1,8 +1,10 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
+import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.user.User;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
@@ -640,11 +642,13 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     @Sql(scripts = "/script/TestChatResourceController/addSingleChat/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void addSinglChatbyBlockedUser() throws Exception{
+        CreateSingleChatDto createSingleChatDto = new CreateSingleChatDto();
+        createSingleChatDto.setUserId(Long.valueOf("100"));
+        createSingleChatDto.setMessage("string");
+        ObjectMapper objectMapper = new ObjectMapper();
+
         mockMvc.perform(post("/api/user/chat/single")
-                        .content("{\n" +
-                                "  \"userId\": 100,\n" +
-                                "  \"message\": \"string\"\n" +
-                                "}")
+                        .content(objectMapper.writeValueAsString(createSingleChatDto))
                         .contentType("application/json")
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101")))
                 .andDo(print())
@@ -657,11 +661,12 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
     @Sql(scripts = "/script/TestChatResourceController/addSingleChat/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void addSinglChatbyUser() throws Exception{
+        CreateSingleChatDto createSingleChatDto = new CreateSingleChatDto();
+        createSingleChatDto.setUserId(Long.valueOf("104"));
+        createSingleChatDto.setMessage("string");
+        ObjectMapper objectMapper = new ObjectMapper();
         mockMvc.perform(post("/api/user/chat/single")
-                        .content("{\n" +
-                                "  \"userId\": 104,\n" +
-                                "  \"message\": \"string\"\n" +
-                                "}")
+                        .content(objectMapper.writeValueAsString(createSingleChatDto))
                         .contentType("application/json")
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101")))
                 .andDo(print())

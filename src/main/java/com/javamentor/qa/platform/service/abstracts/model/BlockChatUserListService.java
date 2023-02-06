@@ -6,5 +6,5 @@ import org.springframework.transaction.annotation.Transactional;
 public interface BlockChatUserListService extends ReadWriteService<BlockChatUserList, Long> {
     @Transactional
     void deleteUserFromBlockById(Long profile, Long blocked);
-    Boolean findUserFromBlockById(Long profil, Long block);
+    Boolean isExistsUserFromBlockById(Long profilId, Long blockId);
 }

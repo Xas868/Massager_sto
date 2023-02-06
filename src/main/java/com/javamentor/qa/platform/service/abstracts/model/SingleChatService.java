@@ -9,7 +9,7 @@ public interface SingleChatService extends ReadWriteService<SingleChat, Long>{
 
     SingleChat createSingleChatAndFirstMessage(String stringMessage, SingleChat singleChat) throws Exception;
 
-    long findChatForId (Long userOne, Long userTwo);
+    long getChatForId(Long userOneId, Long userTwoId);
     void deleteSinglChat (Long id);
 
 }

@@ -14,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 
 @RestController
 @RequestMapping("/api/user")
@@ -64,7 +62,7 @@ public class UserBlockedResourceController {
     public ResponseEntity<?> addBlockedUserByUserId(@PathVariable("userId") Long userId){
         User profile = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User blocked = userService.getById( userId).get();
-        BlockChatUserList blockChatUserList = new BlockChatUserList(profile,blocked, Timestamp.from(Instant.now()).toLocalDateTime());
+        BlockChatUserList blockChatUserList = new BlockChatUserList(profile,blocked);
         userBlockedService.persist(blockChatUserList);
         return new ResponseEntity<>("Пользователь с id = " + userId + " был успешно добавлен в ваш блок лист", HttpStatus.OK);
     }

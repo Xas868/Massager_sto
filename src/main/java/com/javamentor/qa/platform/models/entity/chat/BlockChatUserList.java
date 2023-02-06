@@ -38,7 +38,7 @@ public class BlockChatUserList {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User blocked;
 
-    public BlockChatUserList(User profile, User blocked, LocalDateTime persistDate) {
+    public BlockChatUserList(User profile, User blocked) {
         this.profile = profile;
         this.blocked = blocked;
         this.persistDate = persistDate;

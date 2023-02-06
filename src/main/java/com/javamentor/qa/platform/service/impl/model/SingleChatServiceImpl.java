@@ -66,8 +66,8 @@ public class SingleChatServiceImpl extends ReadWriteServiceImpl<SingleChat, Long
         return singleChat;
     }
     @Override
-    public long findChatForId (Long userOne, Long userTwo) {
-        return singleChatDao.findChatForId(userOne, userTwo);
+    public long getChatForId(Long userOneId, Long userTwoId) {
+        return singleChatDao.getChatForId(userOneId, userTwoId);
     }
 
     @Transactional
