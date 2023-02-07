@@ -40,14 +40,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
-
+@RequestMapping("api/user/question")
 @RestController
 @Tag(name = "Question Resource Controller", description = "Управление сущностями, которые связаны с вопросами")
 @AllArgsConstructor
+
 public class QuestionResourceController {
 
     private final QuestionService questionService;
@@ -58,7 +60,7 @@ public class QuestionResourceController {
     private final QuestionViewedService questionViewedService;
 
 
-    @GetMapping("api/user/question/count")
+    @GetMapping("/count")
     @Operation(summary = "Количество всего вопросов в бд")
     @ApiResponse(responseCode = "200", description = "OK", content = {
             @Content(mediaType = "application/json", schema = @Schema(implementation = Question.class))
@@ -71,7 +73,7 @@ public class QuestionResourceController {
         return new ResponseEntity<>(countQuestion, HttpStatus.OK);
     }
 
-    @PostMapping("api/user/question/{questionId}/upVote")
+    @PostMapping("/{questionId}/upVote")
     @Operation(
             summary = "Голосование ЗА вопрос",
             description = "Устанавливает голос +1 за вопрос и +10 к репутации автора вопроса"
@@ -92,7 +94,7 @@ public class QuestionResourceController {
         return new ResponseEntity<>("User was voting", HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("api/user/question/{questionId}/downVote")
+    @PostMapping("/{questionId}/downVote")
     @Operation(
             summary = "Голосование ПРОТИВ вопроса",
             description = "Устанавливает голос -1 за вопрос и -5 к репутации автора вопроса"
@@ -113,7 +115,7 @@ public class QuestionResourceController {
         return new ResponseEntity<>("User was voting", HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("api/user/question/{id}")
+    @GetMapping("/{id}")
     @Operation(summary = "Получение информации по вопросу пользователя")
     @ApiResponse(responseCode = "200", description = "Информация по вопросу", content = {
             @Content(mediaType = "application/json")
@@ -137,7 +139,7 @@ public class QuestionResourceController {
     @ApiResponse(responseCode = "400", description = "Вопрос не добавлен", content = {
             @Content(mediaType = "application/json")
     })
-    @PostMapping("api/user/question")
+    @PostMapping("")
     public ResponseEntity<?> createNewQuestion(@Valid @RequestBody QuestionCreateDto questionCreateDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Question question = questionConverter.questionDtoToQuestion(questionCreateDto);
@@ -150,7 +152,7 @@ public class QuestionResourceController {
 
 
 
-    @GetMapping("api/user/question/tag/{id}")
+    @GetMapping("/tag/{id}")
     @Operation(
             summary = "Получение списка вопросов по tag id",
             description = "Получение пагинированного списка dto вопросов по id тэга"
@@ -180,7 +182,7 @@ public class QuestionResourceController {
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
 
-    @GetMapping("api/user/question/new")
+    @GetMapping("/new")
     @Operation(
             summary = "Получение вопросов",
             description = "Сортировка по дате добавления(сначала самые новые)"
@@ -200,7 +202,7 @@ public class QuestionResourceController {
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
 
-    @GetMapping("api/user/question/noAnswer")
+    @GetMapping("/noAnswer")
     @Operation(summary = "Получение пагинированного списка всех вопросов, на которые еще не дан ответ. " +
             "В запросе указываем page - номер страницы, items (по умолчанию 10) - количество результатов на странице",
             description = "Получение пагинированного списка всех вопросов, на которые еще не дан ответ.")
@@ -230,7 +232,7 @@ public class QuestionResourceController {
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
 
-    @GetMapping("/api/user/question")
+    @GetMapping("")
     @Operation(summary = "Получение пагинированного списка вопросов с возможностью учета trackedTag и ignoredTag",
             description = "Получение пагинированного списка вопросов пользователя, " +
                     "в запросе указываем page - номер страницы, обязательный параметр, items (по умолчанию 10) - количество результатов на странице," +
@@ -268,7 +270,7 @@ public class QuestionResourceController {
     @ApiResponse(responseCode = "403", description = "Пользователь не аутентифицирован", content = {
             @Content(mediaType = "application/json")
     })
-    @GetMapping("api/user/question/{id}/view")
+    @GetMapping("/{id}/view")
     public ResponseEntity<String> markQuestionLikeViewed(@PathVariable Long id, Authentication auth) {
 
         User user = (User) auth.getPrincipal();
@@ -282,7 +284,7 @@ public class QuestionResourceController {
         return new ResponseEntity<>("There is no question " + id.toString(), HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("api/user/question/paginationForWeek")
+    @GetMapping("/paginationForWeek")
     @Operation(summary = "Получение пагинированного списка вопросов за неделю по наибольшим голосам,просмотрам и ответам " +
             "с возможностью учета trackedTag и ignoredTag",
             description = "Получение пагинированного списка вопросов за неделю, " +
@@ -308,7 +310,7 @@ public class QuestionResourceController {
 
     }
 
-    @GetMapping("api/user/question/paginationForMonth")
+    @GetMapping("/paginationForMonth")
     @Operation(summary = "Получение пагинированного списка вопросов за месяц по наибольшему количеству ответов,голосам," +
             "(?просмотрам)(приоритет соответствует порядку)",
             description = "Получение пагинированного списка вопросов за месяц, " +
