@@ -8,6 +8,9 @@ import java.util.Map;
 public interface TagDtoDao {
     List<TagDto> getIgnoredTagsByUserId(Long userId);
     List<TagDto> getTrackedTagsByUserId(Long userId);
+    List<TagDto> getIgnoredTagsIdByUserId(Long userId);
+    List<TagDto> getTrackedTagsIdByUserId(Long userId);
+
     List<PopularTagDto> getPopularTags();
     List<PopularTagDto> getPopularTags(Integer limit);
     List<TagDto> getTagDtoDaoById(Long id);
