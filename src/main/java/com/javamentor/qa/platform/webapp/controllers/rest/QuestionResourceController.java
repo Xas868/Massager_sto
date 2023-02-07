@@ -7,7 +7,11 @@ import com.javamentor.qa.platform.dao.impl.pagination.questiondto.QuestionPageDt
 import com.javamentor.qa.platform.dao.impl.pagination.questiondto.QuestionPageDtoDaoSortedByImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.questiondto.QuestionPageDtoDaoSortedByWeightForTheWeekImpl;
 import com.javamentor.qa.platform.exception.ConstrainException;
-import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.dto.PageDTO;
+import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
+import com.javamentor.qa.platform.models.dto.QuestionDto;
+import com.javamentor.qa.platform.models.dto.QuestionViewDto;
+
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.DateFilter;
 import com.javamentor.qa.platform.models.entity.question.Question;
