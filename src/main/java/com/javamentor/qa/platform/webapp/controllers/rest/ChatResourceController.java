@@ -126,8 +126,8 @@ public class ChatResourceController {
         User userOne = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User userTwo = userService.getById( createSingleChatDto.getUserId()).get();
         if (blockChatUserListService.isExistsUserFromBlockById(userTwo.getId(), userOne.getId())) {
-            long idChat= singleChatService.getChatForId(userOne.getId(), userTwo.getId());
-            if (idChat!=0) {singleChatService.deleteSinglChat(idChat);}
+            long chatId = singleChatService.getChatForId(userTwo.getId(), userOne.getId());
+            if (chatId!=0){ singleChatService.deleteUserFromSingleChatById(chatId, userTwo.getId());}
             return new ResponseEntity<>("SingleChat is not created", HttpStatus.BAD_REQUEST);
         }
         SingleChat singleChat = singleChatService.createSingleChatAndFirstMessage(createSingleChatDto.getMessage(), singleChatConverter.createSingleChatDtoToSingleChat(createSingleChatDto));

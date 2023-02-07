@@ -5,7 +5,9 @@ import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.Optional;
 
 @Repository
@@ -24,25 +26,15 @@ public class SingleChatDaoImpl extends ReadWriteDaoImpl<SingleChat, Long> implem
                 .executeUpdate();
     }
 
+
     @Override
     public long getChatForId(Long userOneId, Long userTwoId) {
         TypedQuery<Long> query = (TypedQuery<Long>) entityManager.createQuery("select COALESCE (r.id,0) as s from SingleChat r where (r.userOne.id=:id AND r.useTwo.id=:id1) OR (r.userOne.id=:id1 AND r.useTwo.id=:id)")
                 .setParameter("id", userOneId)
                 .setParameter("id1", userTwoId);
-        Long res;
         Optional<Long> bufer = SingleResultUtil.getSingleResultOrNull(query);
-        if (bufer.isEmpty()) {
-            res = Long.valueOf(0);
-        } else {
-            res = bufer.get();
-        }
-        return res;
-    }
-    @Override
-    public void deleteSinglChat(Long id) {
-        entityManager.createQuery("delete from Message a where a.chat.id=:ids").setParameter("ids", id).executeUpdate();
-        entityManager.createQuery("delete from SingleChat a where a.chat.id=:ids").setParameter("ids", id).executeUpdate();
-        entityManager.createQuery("delete from Chat a where a.id=:ids").setParameter("ids", id).executeUpdate();
+        if (bufer.isEmpty()) { return 0;}
+        return bufer.get();
     }
 
 }

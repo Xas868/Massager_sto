@@ -33,12 +33,12 @@ public class SingleChatServiceImpl extends ReadWriteServiceImpl<SingleChat, Long
     @Transactional
     public void deleteUserFromSingleChatById(Long chatId, Long userId) {
         SingleChat singleChat = singleChatDao.getById(chatId)
-                .orElseThrow(() ->new EntityNotFoundException("Single chat not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Single chat not found"));
 
-        if (Objects.equals(singleChat.getUserOne().getId(), userId) && singleChat.getUserOneIsDeleted()){
-             throw new UserRemovedFromTheSingleChat("First user has already been removed from the chat");
+        if (Objects.equals(singleChat.getUserOne().getId(), userId) && singleChat.getUserOneIsDeleted()) {
+            throw new UserRemovedFromTheSingleChat("First user has already been removed from the chat");
         }
-        if (Objects.equals(singleChat.getUseTwo().getId(), userId) && singleChat.getUserTwoIsDeleted()){
+        if (Objects.equals(singleChat.getUseTwo().getId(), userId) && singleChat.getUserTwoIsDeleted()) {
             throw new UserRemovedFromTheSingleChat("Second user has already been removed from the chat");
         }
 
@@ -65,15 +65,9 @@ public class SingleChatServiceImpl extends ReadWriteServiceImpl<SingleChat, Long
         messageService.persist(message);
         return singleChat;
     }
+
     @Override
     public long getChatForId(Long userOneId, Long userTwoId) {
         return singleChatDao.getChatForId(userOneId, userTwoId);
     }
-
-    @Transactional
-    @Override
-    public void deleteSinglChat (Long id){
-        singleChatDao.deleteSinglChat(id);
-    }
-
 }
