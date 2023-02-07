@@ -33,12 +33,12 @@ public class TagDtoServiceImpl extends DtoServiceImpl<TagViewDto> implements Tag
     }
 
     @Override
-    public List<TagDto> getIgnoredTagsIdByUserId(Long userId){
+    public List<Long> getIgnoredTagsIdByUserId(Long userId){
         return tagDtoDao.getIgnoredTagsIdByUserId(userId);
     }
 
     @Override
-    public List<TagDto> getTrackedTagsIdByUserId(Long currentUserId) {
+    public List<Long> getTrackedTagsIdByUserId(Long currentUserId) {
         return tagDtoDao.getTrackedTagsIdByUserId(currentUserId);
     }
 

@@ -48,7 +48,7 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
 
     @Override
-    public List<TagDto> getIgnoredTagsIdByUserId(Long userId) {
+    public List<Long> getIgnoredTagsIdByUserId(Long userId) {
         return entityManager.createQuery(
                         "select tag.id " +
                                 "from IgnoredTag ignTag inner join ignTag.user " +
@@ -58,7 +58,7 @@ public class TagDtoDaoImpl implements TagDtoDao {
                 .getResultList();
     }
     @Override
-    public List<TagDto> getTrackedTagsIdByUserId(Long userId) {
+    public List<Long> getTrackedTagsIdByUserId(Long userId) {
         return entityManager.createQuery(
                         "SELECT t.id as id " +
                                 "FROM Tag t JOIN TrackedTag tr " +
@@ -66,8 +66,6 @@ public class TagDtoDaoImpl implements TagDtoDao {
                                 "WHERE tr.user.id = :userId"
                 )
                 .setParameter("userId", userId)
-                //.unwrap(org.hibernate.query.Query.class)
-                //.setResultTransformer(Transformers.aliasToBean(TagDto.class))
                 .getResultList();
     }
     public List<TagDto> getTrackedTagsByUserId(Long userId) {
