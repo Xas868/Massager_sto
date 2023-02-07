@@ -168,9 +168,6 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
-}
-
-public class TestQuestionResourceController extends AbstractClassForDRRiderMockMVCTests {
 
 
     //получение пагинированного списка
