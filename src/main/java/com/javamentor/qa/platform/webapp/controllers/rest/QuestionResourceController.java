@@ -11,15 +11,19 @@ import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.QuestionViewDto;
+
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.DateFilter;
 import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.TrackedTag;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
+import com.javamentor.qa.platform.service.abstracts.model.TrackedTagService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.TagConverter;
@@ -41,10 +45,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.yaml.snakeyaml.events.Event;
 
+import javax.persistence.Id;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 @RequestMapping("api/user/question")
 @RestController
 @Tag(name = "Question Resource Controller", description = "Управление сущностями, которые связаны с вопросами")
@@ -58,7 +66,9 @@ public class QuestionResourceController {
     private final QuestionConverter questionConverter;
     private final TagConverter tagConverter;
     private final QuestionViewedService questionViewedService;
-
+    private final TagDtoService tagDtoService;
+    private final TrackedTagService trackedTagService;
+    private TagDtoService tagDtoService1;
 
     @GetMapping("/count")
     @Operation(summary = "Количество всего вопросов в бд")
@@ -151,7 +161,6 @@ public class QuestionResourceController {
     }
 
 
-
     @GetMapping("/tag/{id}")
     @Operation(
             summary = "Получение списка вопросов по tag id",
@@ -169,7 +178,7 @@ public class QuestionResourceController {
                     )
             }
     )
-      public ResponseEntity<PageDTO<QuestionViewDto>> getPageQuestionsByTagId(@PathVariable Long id,
+    public ResponseEntity<PageDTO<QuestionViewDto>> getPageQuestionsByTagId(@PathVariable Long id,
                                                                             @RequestParam int page,
                                                                             @RequestParam(defaultValue = "10") int items,
                                                                             @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter) {
@@ -244,18 +253,18 @@ public class QuestionResourceController {
     })
     public ResponseEntity<PageDTO<QuestionViewDto>> allQuestionsWithTrackedTagsAndIgnoredTags(@RequestParam int page,
                                                                                               @RequestParam(required = false, defaultValue = "10") int items,
-                                                                                              @RequestParam(required = false) List<Long> trackedTag,
-                                                                                              @RequestParam(required = false) List<Long> ignoredTag,
                                                                                               @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter,
-                                                                                              Authentication auth) {
+                                                                                              Authentication auth) throws NoSuchFieldException {
 
         PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoAllQuestionsImpl.class.getSimpleName());
         User user = (User) auth.getPrincipal();
-        
-        data.getProps().put("trackedTags", trackedTag);
-        data.getProps().put("ignoredTags", ignoredTag);
+
+
+        data.getProps().put("trackedTags", tagDtoService.getTrackedTagsIdByUserId(user.getId()));
+        data.getProps().put("ignoredTags", tagDtoService.getIgnoredTagsIdByUserId(user.getId()));
         data.getProps().put("userId", user.getId());
         data.getProps().put("dateFilter", dateFilter.getDay());
+
 
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
@@ -325,9 +334,9 @@ public class QuestionResourceController {
     })
     public ResponseEntity<PageDTO<QuestionViewDto>> paginationForTheMonth(@RequestParam int page,
                                                                           @RequestParam(required = false, defaultValue = "10") int items,
-                                                                          @RequestParam(required = false) List<Long>trackedTag,
-                                                                          @RequestParam(required = false) List<Long>ignoredTag,
-                                                                          @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter){
+                                                                          @RequestParam(required = false) List<Long> trackedTag,
+                                                                          @RequestParam(required = false) List<Long> ignoredTag,
+                                                                          @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter) {
         PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoSortedByImpl.class.getSimpleName());
         data.getProps().put("trackedTags", trackedTag);
         data.getProps().put("ignoredTags", ignoredTag);
