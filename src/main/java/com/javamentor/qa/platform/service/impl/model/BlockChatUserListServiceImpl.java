@@ -21,4 +21,10 @@ public class BlockChatUserListServiceImpl extends ReadWriteServiceImpl<BlockChat
         super(blockChatUserListDao);
         this.blockChatUserListDao = blockChatUserListDao;
     }
+    @Override
+    public Boolean isExistsUserFromBlockById(Long profileId, Long blockedId){
+        return blockChatUserListDao.isExistsUserFromBlockById(profileId,blockedId);
+    }
+
+
 }

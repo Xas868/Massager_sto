@@ -1,8 +1,10 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractClassForDRRiderMockMVCTests;
+import com.javamentor.qa.platform.models.dto.CreateSingleChatDto;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.user.User;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
@@ -633,4 +635,42 @@ public class TestChatResourceController extends AbstractClassForDRRiderMockMVCTe
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
+    // Проверка создания нового singl_chat, если добавляет заблокированный пользователь
+    @Test
+    @Sql(scripts = "/script/TestChatResourceController/addSingleChat/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestChatResourceController/addSingleChat/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void addSinglChatbyBlockedUser() throws Exception{
+        CreateSingleChatDto createSingleChatDto = new CreateSingleChatDto();
+        createSingleChatDto.setUserId(Long.valueOf("100"));
+        createSingleChatDto.setMessage("string");
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        mockMvc.perform(post("/api/user/chat/single")
+                        .content(objectMapper.writeValueAsString(createSingleChatDto))
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101")))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+    // Проверка создания нового singl_chat, если добавляет не заблокированный пользователь
+    @Test
+    @Sql(scripts = "/script/TestChatResourceController/addSingleChat/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestChatResourceController/addSingleChat/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void addSinglChatbyUser() throws Exception{
+        CreateSingleChatDto createSingleChatDto = new CreateSingleChatDto();
+        createSingleChatDto.setUserId(Long.valueOf("104"));
+        createSingleChatDto.setMessage("string");
+        ObjectMapper objectMapper = new ObjectMapper();
+        mockMvc.perform(post("/api/user/chat/single")
+                        .content(objectMapper.writeValueAsString(createSingleChatDto))
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101")))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
 }

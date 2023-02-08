@@ -8,4 +8,7 @@ public interface SingleChatService extends ReadWriteService<SingleChat, Long>{
     void deleteUserFromSingleChatById(Long chatId, Long userId);
 
     SingleChat createSingleChatAndFirstMessage(String stringMessage, SingleChat singleChat) throws Exception;
+
+    long getChatForId(Long userOneId, Long userTwoId);
+
 }

@@ -19,6 +19,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.BlockChatUserListService;
 import com.javamentor.qa.platform.service.abstracts.model.ChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatRoomService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
@@ -33,7 +34,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -55,8 +65,9 @@ public class ChatResourceController {
     private final UserDtoService userDtoService;
     private final GroupChatConverter groupChatConverter;
     private final UserService userService;
+    private final BlockChatUserListService blockChatUserListService;
 
-    private ChatResourceController(MessageDtoService messageDtoService, ChatDtoService chatDtoService, SingleChatConverter singleChatConverter, ChatRoomService chatRoomService, GroupChatRoomService groupChatRoomService, SingleChatService singleChatService, UserDtoService userDtoService, GroupChatConverter groupChatConverter, UserService userService) {
+    private ChatResourceController(MessageDtoService messageDtoService, ChatDtoService chatDtoService, SingleChatConverter singleChatConverter, ChatRoomService chatRoomService, GroupChatRoomService groupChatRoomService, SingleChatService singleChatService, UserDtoService userDtoService, GroupChatConverter groupChatConverter, UserService userService, BlockChatUserListService blockChatUserListService) {
         this.messageDtoService = messageDtoService;
         this.chatDtoService = chatDtoService;
         this.singleChatConverter = singleChatConverter;
@@ -66,6 +77,7 @@ public class ChatResourceController {
         this.userDtoService = userDtoService;
         this.groupChatConverter = groupChatConverter;
         this.userService = userService;
+        this.blockChatUserListService = blockChatUserListService;
     }
 
     @Operation(summary = "Получение пагинированного списка чатов.", description = "Получение пагинированного списка чатов.")
@@ -111,6 +123,13 @@ public class ChatResourceController {
     })
     @PostMapping("/single")
     public ResponseEntity<?> createSingleChatAndFirstMessageDto(@Valid @RequestBody CreateSingleChatDto createSingleChatDto) throws Exception {
+        User userOne = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User userTwo = userService.getById( createSingleChatDto.getUserId()).get();
+        if (blockChatUserListService.isExistsUserFromBlockById(userTwo.getId(), userOne.getId())) {
+            long chatId = singleChatService.getChatForId(userTwo.getId(), userOne.getId());
+            if (chatId!=0){ singleChatService.deleteUserFromSingleChatById(chatId, userTwo.getId());}
+            return new ResponseEntity<>("SingleChat is not created", HttpStatus.BAD_REQUEST);
+        }
         SingleChat singleChat = singleChatService.createSingleChatAndFirstMessage(createSingleChatDto.getMessage(), singleChatConverter.createSingleChatDtoToSingleChat(createSingleChatDto));
         SingleChatDto singleChatDto = SingleChatDto.builder()
                 .id(singleChat.getId())
