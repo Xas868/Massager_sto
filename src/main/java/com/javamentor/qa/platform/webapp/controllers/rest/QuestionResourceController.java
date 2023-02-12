@@ -1,11 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.dao.impl.pagination.questiondto.QuestionPageDtoDaoAllQuestionsImpl;
-import com.javamentor.qa.platform.dao.impl.pagination.questiondto.QuestionPageDtoDaoByNoAnswersImpl;
-import com.javamentor.qa.platform.dao.impl.pagination.questiondto.QuestionPageDtoDaoByTagId;
-import com.javamentor.qa.platform.dao.impl.pagination.questiondto.QuestionPageDtoDaoSortedByDate;
-import com.javamentor.qa.platform.dao.impl.pagination.questiondto.QuestionPageDtoDaoSortedByImpl;
-import com.javamentor.qa.platform.dao.impl.pagination.questiondto.QuestionPageDtoDaoSortedByWeightForTheWeekImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.questiondto.*;
 import com.javamentor.qa.platform.exception.ConstrainException;
 import com.javamentor.qa.platform.models.dto.PageDTO;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
@@ -14,6 +9,7 @@ import com.javamentor.qa.platform.models.dto.QuestionViewDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.DateFilter;
 import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.QuestionViewSort;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -325,16 +321,55 @@ public class QuestionResourceController {
     })
     public ResponseEntity<PageDTO<QuestionViewDto>> paginationForTheMonth(@RequestParam int page,
                                                                           @RequestParam(required = false, defaultValue = "10") int items,
-                                                                          @RequestParam(required = false) List<Long>trackedTag,
-                                                                          @RequestParam(required = false) List<Long>ignoredTag,
-                                                                          @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter){
-        PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoSortedByImpl.class.getSimpleName());
+                                                                          @RequestParam(required = false) List<Long> trackedTag,
+                                                                          @RequestParam(required = false) List<Long> ignoredTag,
+                                                                          @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter,
+                                                                          @RequestParam(required = false, defaultValue = "NEW", name = "sortedBy") QuestionViewSort questionViewSort) {
+        PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoSortedByWeightForTheMonthImpl.class.getSimpleName());
         data.getProps().put("trackedTags", trackedTag);
         data.getProps().put("ignoredTags", ignoredTag);
         data.getProps().put("dateFilter", dateFilter.getDay());
 
+
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
 
+
+    @GetMapping("/sorted")
+    @Operation(
+            summary = "Получение пагинированного списка вопросов.",
+            description = "Получение пагинированного списка вопросов за весь период с сортировкой по списка по параметрам:" +
+                          "NEW - сортировка от новых к старым," +
+                          "NoAnswer - сортировка от вопросов, в которых нет ответов," +
+                          "VIEW - сортировка по просмотрам (от большего к меньшему)" +
+
+                          "В запросе указываем page - номер страницы, обязательный параметр, items (по умолчанию 10) - " +
+                          "количество результатов на странице, так же можно отфильтровать по ignoredTag и trackedTag" +
+                          "(указываются как параметр в HTTP запросе списком)"
+    )
+
+    @ApiResponse(
+            responseCode = "200", description = "Возвращает пагинированный список PageDTO<QuestionViewDTO> " +
+                                                "(id, title, authorId," +
+                                                " authorReputation, authorName, authorImage, description, viewCount, countAnswer, countValuable," +
+                                                " LocalDateTime, LocalDateTime, listTagDto",
+            content = {@Content(mediaType = "application/json")}
+    )
+
+    public ResponseEntity<PageDTO<QuestionViewDto>> getAllQuestionsSortedBy(@RequestParam int page,
+                                                                            @RequestParam(defaultValue = "10") int items,
+                                                                            @RequestParam(required = false) List<Long> trackedTag,
+                                                                            @RequestParam(required = false) List<Long> ignoredTag,
+                                                                            @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter,
+                                                                            @RequestParam(required = false, defaultValue = "NEW", name = "sortedBy") QuestionViewSort questionViewSort) {
+
+        PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoSortedByImpl.class.getSimpleName());
+        data.getProps().put("trackedTags", trackedTag);
+        data.getProps().put("ignoredTags", ignoredTag);
+        data.getProps().put("dateFilter", dateFilter.getDay());
+        data.getProps().put("sortedBy", questionViewSort);
+
+        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
+    }
 }
 

@@ -33,4 +33,5 @@ public class QuestionViewDto {
     private List<TagDto> listTagDto;
     private Boolean isUserBookmark;// которое показывает добавил ли
                                       // авторизированный пользователь данный вопрос к себе в закладки
+
 }

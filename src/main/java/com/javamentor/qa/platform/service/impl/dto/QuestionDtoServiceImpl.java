@@ -55,13 +55,15 @@ public class QuestionDtoServiceImpl extends DtoServiceImpl<QuestionViewDto> impl
         return Optional.empty();
     }
 
+    // TODO: 12.02.2023 вернуть listTagDto на место 
+
     @Override
     public PageDTO<QuestionViewDto> getPageDto(PaginationData properties) {
         var pageDto = super.getPageDto(properties);
-        var map = tagDtoDao.getTagDtoByQuestionIds(
-                pageDto.getItems().stream().map(QuestionViewDto::getId).collect(Collectors.toList())
-        );
-        pageDto.getItems().forEach(q -> q.setListTagDto(map.get(q.getId())));
+        //var map = tagDtoDao.getTagDtoByQuestionIds(
+                //pageDto.getItems().stream().map(QuestionViewDto::getId).collect(Collectors.toList())
+        //);
+        //pageDto.getItems().forEach(q -> q.setListTagDto(map.get(q.getId())));
         return pageDto;
     }
 }
