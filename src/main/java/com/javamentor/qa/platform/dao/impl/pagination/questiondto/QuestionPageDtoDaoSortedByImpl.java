@@ -24,8 +24,13 @@ public class QuestionPageDtoDaoSortedByImpl implements PageDtoDao<QuestionViewDt
         int itemsOnPage = properties.getItemsOnPage();
         int offset = (properties.getCurrentPage() - 1) * itemsOnPage;
         QuestionViewSort sortBy = (QuestionViewSort) properties.getProps().get("sortedBy");
+        String select = "SELECT ";
 
-        return (List<QuestionViewDto>) entityManager.createQuery("SELECT" +
+        if (sortBy.equals(QuestionViewSort.NoAnswer)) {
+            select = select + "DISTINCT";
+        }
+
+        return (List<QuestionViewDto>) entityManager.createQuery(select +
                                                                  " q.id as question_id," +
                                                                  " q.title," +
                                                                  " q.user.id as author_id," +

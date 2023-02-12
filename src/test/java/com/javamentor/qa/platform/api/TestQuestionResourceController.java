@@ -6,9 +6,11 @@ import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
@@ -60,6 +62,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
         assertThat(count.get(0).toString()).isEqualTo("35");
 
     }
+
     //Проверка создания нового вопроса если новый таг, то он доавляется в список tag
     @Test
     @Sql(scripts = "/script/TestQuestionResourceController/postCreateNewQuestion/Before.sql",
@@ -92,9 +95,10 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.countAnswer").value("0"))
                 .andExpect(jsonPath("$.countValuable").value("0"))
                 .andExpect(jsonPath("$.listTagDto[0].name").value("firstTag"));
-        assertThat(SingleResultUtil.getSingleResultOrNull((TypedQuery<Long>) entityManager.createQuery("select r.id as s from Tag as r where r.name =:ids").setParameter("ids","firstTag")).isEmpty()).isEqualTo(false);
+        assertThat(SingleResultUtil.getSingleResultOrNull((TypedQuery<Long>) entityManager.createQuery("select r.id as s from Tag as r where r.name =:ids").setParameter("ids", "firstTag")).isEmpty()).isEqualTo(false);
 
     }
+
     //Проверка создания нового вопроса без указания title. Выбрасывает ошибку
     @Test
     @Sql(scripts = "/script/TestQuestionResourceController/postCreateNewQuestion/Before.sql",
@@ -163,5 +167,349 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101")))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+
+    //Проверка получения всех данных и сортировки по умолчанию (по параметру NEW - от новых вопросов к старым)
+    @Test
+    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_NEW_shouldFindAllData_whenExists/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_NEW_shouldFindAllData_whenExists/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllQuestionsSortedBy_NEW_shouldFindAllData_whenExists() throws Exception {
+
+        this.mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .get("/api/user/question/sorted")
+                                .param("page", "1")
+                                .param("sortedBy", "NEW")
+                                .contentType("application/json")
+                                .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items.length()", Is.is(4)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("Question 104")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(30)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("User 101")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("What do you think about question 104?")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-02-08T21:44")))
+                .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[1].title", Is.is("Question 103")))
+                .andExpect(jsonPath("$.items[1].authorId", Is.is(104)))
+                .andExpect(jsonPath("$.items[1].authorReputation", Is.is(20)))
+                .andExpect(jsonPath("$.items[1].authorName", Is.is("User 104")))
+                .andExpect(jsonPath("$.items[1].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("What do you think about question 103?")))
+                .andExpect(jsonPath("$.items[1].viewCount", Is.is(1)))
+                .andExpect(jsonPath("$.items[1].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[1].countValuable", Is.is(-1)))
+                .andExpect(jsonPath("$.items[1].persistDateTime", Is.is("2023-02-08T21:30")))
+                .andExpect(jsonPath("$.items[1].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
+
+                .andExpect(jsonPath("$.items[2].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[2].title", Is.is("Question 102")))
+                .andExpect(jsonPath("$.items[2].authorId", Is.is(101)))
+                .andExpect(jsonPath("$.items[2].authorReputation", Is.is(30)))
+                .andExpect(jsonPath("$.items[2].authorName", Is.is("User 101")))
+                .andExpect(jsonPath("$.items[2].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[2].description", Is.is("What do you think about question 102?")))
+                .andExpect(jsonPath("$.items[2].viewCount", Is.is(2)))
+                .andExpect(jsonPath("$.items[2].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[2].countValuable", Is.is(2)))
+                .andExpect(jsonPath("$.items[2].persistDateTime", Is.is("2023-02-08T21:26")))
+                .andExpect(jsonPath("$.items[2].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
+
+                .andExpect(jsonPath("$.items[3].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[3].title", Is.is("Question 101")))
+                .andExpect(jsonPath("$.items[3].authorId", Is.is(105)))
+                .andExpect(jsonPath("$.items[3].authorReputation", Is.is(20)))
+                .andExpect(jsonPath("$.items[3].authorName", Is.is("User 105")))
+                .andExpect(jsonPath("$.items[3].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[3].description", Is.is("What do you think about question 101?")))
+                .andExpect(jsonPath("$.items[3].viewCount", Is.is(2)))
+                .andExpect(jsonPath("$.items[3].countAnswer", Is.is(2)))
+                .andExpect(jsonPath("$.items[3].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.items[3].persistDateTime", Is.is("2023-02-08T21:23")))
+                .andExpect(jsonPath("$.items[3].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")));
+    }
+
+    //Проверка получения всех вопросов по параметру NoAnswer - которым еще не дан ответ
+    @Test
+    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_NoAnswer/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_NoAnswer/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllQuestionsSortedBy_NoAnswer() throws Exception {
+
+        this.mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .get("/api/user/question/sorted")
+                                .param("page", "1")
+                                .param("sortedBy", "NoAnswer")
+                                .contentType("application/json")
+                                .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items.length()", Is.is(2)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("Question 103")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(20)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("User 104")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("What do you think about question 103?")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(-1)))
+                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-02-08T21:30")))
+                .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[1].title", Is.is("Question 104")))
+                .andExpect(jsonPath("$.items[1].authorId", Is.is(101)))
+                .andExpect(jsonPath("$.items[1].authorReputation", Is.is(30)))
+                .andExpect(jsonPath("$.items[1].authorName", Is.is("User 101")))
+                .andExpect(jsonPath("$.items[1].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("What do you think about question 104?")))
+                .andExpect(jsonPath("$.items[1].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[1].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.items[1].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.items[1].persistDateTime", Is.is("2023-02-08T21:44")))
+                .andExpect(jsonPath("$.items[1].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")));
+
+    }
+
+    //Проверка получения всех вопросов по параметру NoAnswer - которым еще не дан ответ
+    @Test
+    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_VIEW/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_VIEW/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllQuestionsSortedBy_VIEW() throws Exception {
+
+        this.mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .get("/api/user/question/sorted")
+                                .param("page", "1")
+                                .param("sortedBy", "VIEW")
+                                .contentType("application/json")
+                                .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andExpect(jsonPath("$.items.length()", Is.is(4)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("Question 101")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(105)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(20)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("User 105")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("What do you think about question 101?")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(2)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(2)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-02-08T21:23")))
+                .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[1].title", Is.is("Question 102")))
+                .andExpect(jsonPath("$.items[1].authorId", Is.is(101)))
+                .andExpect(jsonPath("$.items[1].authorReputation", Is.is(30)))
+                .andExpect(jsonPath("$.items[1].authorName", Is.is("User 101")))
+                .andExpect(jsonPath("$.items[1].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("What do you think about question 102?")))
+                .andExpect(jsonPath("$.items[1].viewCount", Is.is(2)))
+                .andExpect(jsonPath("$.items[1].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[1].countValuable", Is.is(2)))
+                .andExpect(jsonPath("$.items[1].persistDateTime", Is.is("2023-02-08T21:26")))
+                .andExpect(jsonPath("$.items[1].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
+
+                .andExpect(jsonPath("$.items[2].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[2].title", Is.is("Question 103")))
+                .andExpect(jsonPath("$.items[2].authorId", Is.is(104)))
+                .andExpect(jsonPath("$.items[2].authorReputation", Is.is(20)))
+                .andExpect(jsonPath("$.items[2].authorName", Is.is("User 104")))
+                .andExpect(jsonPath("$.items[2].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[2].description", Is.is("What do you think about question 103?")))
+                .andExpect(jsonPath("$.items[2].viewCount", Is.is(1)))
+                .andExpect(jsonPath("$.items[2].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[2].countValuable", Is.is(-1)))
+                .andExpect(jsonPath("$.items[2].persistDateTime", Is.is("2023-02-08T21:30")))
+                .andExpect(jsonPath("$.items[2].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
+
+                .andExpect(jsonPath("$.items[3].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[3].title", Is.is("Question 104")))
+                .andExpect(jsonPath("$.items[3].authorId", Is.is(101)))
+                .andExpect(jsonPath("$.items[3].authorReputation", Is.is(30)))
+                .andExpect(jsonPath("$.items[3].authorName", Is.is("User 101")))
+                .andExpect(jsonPath("$.items[3].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[3].description", Is.is("What do you think about question 104?")))
+                .andExpect(jsonPath("$.items[3].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[3].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[3].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.items[3].persistDateTime", Is.is("2023-02-08T21:44")))
+                .andExpect(jsonPath("$.items[3].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")));
+
+    }
+
+    //Проверка Пагинации
+    @Test
+    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_VIEW/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_VIEW/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllQuestionsSortedBy_VIEW_Pagination() throws Exception {
+
+        this.mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .get("/api/user/question/sorted")
+                                .param("page", "3")
+                                .param("items", "1")
+                                .param("sortedBy", "VIEW")
+                                .contentType("application/json")
+                                .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andExpect(jsonPath("$.items.length()", Is.is(1)))
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(3)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(4)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("Question 103")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(20)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("User 104")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("What do you think about question 103?")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(-1)))
+                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-02-08T21:30")))
+                .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")));
+    }
+
+    //Проверка получения вопросов по trackedTag
+    @Test
+    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_trackedTag/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_trackedTag/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllQuestionsSortedBy_trackedTag() throws Exception {
+
+        this.mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .get("/api/user/question/sorted")
+                                .param("page", "1")
+                                .param("trackedTag", "110", "105")
+                                .contentType("application/json")
+                                .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andExpect(jsonPath("$.items.length()", Is.is(2)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("Question 104")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(30)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("User 101")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("What do you think about question 104?")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-02-08T21:44")))
+                .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(110)))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("vfOxMU10")))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].description", Is.is("Description of tag 10")))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].id", Is.is(111)))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].name", Is.is("iThKcj11")))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].description", Is.is("Description of tag 11")))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].id", Is.is(112)))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].name", Is.is("LAST_GDJP12")))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].description", Is.is("Description of tag 12")))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[1].title", Is.is("Question 102")))
+                .andExpect(jsonPath("$.items[1].authorId", Is.is(101)))
+                .andExpect(jsonPath("$.items[1].authorReputation", Is.is(30)))
+                .andExpect(jsonPath("$.items[1].authorName", Is.is("User 101")))
+                .andExpect(jsonPath("$.items[1].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("What do you think about question 102?")))
+                .andExpect(jsonPath("$.items[1].viewCount", Is.is(2)))
+                .andExpect(jsonPath("$.items[1].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[1].countValuable", Is.is(2)))
+                .andExpect(jsonPath("$.items[1].persistDateTime", Is.is("2023-02-08T21:26")))
+                .andExpect(jsonPath("$.items[1].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].name", Is.is("vfOxMU4")))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].description", Is.is("Description of tag 4")))
+                .andExpect(jsonPath("$.items[1].listTagDto[1].id", Is.is(105)))
+                .andExpect(jsonPath("$.items[1].listTagDto[1].name", Is.is("iThKcj5")))
+                .andExpect(jsonPath("$.items[1].listTagDto[1].description", Is.is("Description of tag 5")))
+                .andExpect(jsonPath("$.items[1].listTagDto[2].id", Is.is(106)))
+                .andExpect(jsonPath("$.items[1].listTagDto[2].name", Is.is("LTGDJP6")))
+                .andExpect(jsonPath("$.items[1].listTagDto[2].description", Is.is("Description of tag 6")));
+    }
+
+    //Проверка получения вопросов по ignoredTag
+    @Test
+    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_ignoredTag/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_ignoredTag/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllQuestionsSortedBy_ignoredTag() throws Exception {
+
+        this.mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .get("/api/user/question/sorted")
+                                .param("page", "1")
+                                .param("ignoredTag", "101", "104", "107")
+                                .contentType("application/json")
+                                .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andExpect(jsonPath("$.items.length()", Is.is(1)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("Question 104")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(30)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("User 101")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("What do you think about question 104?")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-02-08T21:44")))
+                .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(110)))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("vfOxMU10")))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].description", Is.is("Description of tag 10")))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].id", Is.is(111)))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].name", Is.is("iThKcj11")))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].description", Is.is("Description of tag 11")))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].id", Is.is(112)))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].name", Is.is("LAST_GDJP12")))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].description", Is.is("Description of tag 12")));
     }
 }
