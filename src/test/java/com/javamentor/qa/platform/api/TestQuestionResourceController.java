@@ -631,7 +631,6 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andDo(print())
                 .andExpect(status().isOk())
 
-
                 .andExpect(jsonPath("$.items.[0].id", Is.is(101)))
                 .andExpect(jsonPath("$.items.[0].title", Is.is("Question 101")))
                 .andExpect(jsonPath("$.items.[0].listTagDto.size()", Is.is(1)))
@@ -646,5 +645,4 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items.[1].listTagDto[0].description", Is.is("Description of tag 2")));
 
     }
-
 }
