@@ -290,7 +290,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
 
     }
 
-    //Проверка получения всех вопросов по параметру NoAnswer - которым еще не дан ответ
+    //Проверка получения всех вопросов по параметру VIEW - по количеству просмотров
     @Test
     @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_VIEW/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
