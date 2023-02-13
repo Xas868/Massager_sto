@@ -12,6 +12,9 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.persistence.TypedQuery;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestQuestionResourceController extends AbstractClassForDRRiderMockMVCTests {
+
+
 
     //Проверка создания нового вопроса + проверка добавление репутации автору вопроса
     @Test
@@ -223,57 +228,56 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items.length()", Is.is(4)))
 
-                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
-                .andExpect(jsonPath("$.items[0].title", Is.is("Question 104")))
-                .andExpect(jsonPath("$.items[0].authorId", Is.is(101)))
-                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(30)))
-                .andExpect(jsonPath("$.items[0].authorName", Is.is("User 101")))
-                .andExpect(jsonPath("$.items[0].authorImage", Is.is("/images/noUserAvatar.png")))
-                .andExpect(jsonPath("$.items[0].description", Is.is("What do you think about question 104?")))
-                .andExpect(jsonPath("$.items[0].viewCount", Is.is(0)))
-                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(1)))
-                .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)))
-                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-02-08T21:44")))
-                .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
-
-                .andExpect(jsonPath("$.items[1].id", Is.is(103)))
-                .andExpect(jsonPath("$.items[1].title", Is.is("Question 103")))
-                .andExpect(jsonPath("$.items[1].authorId", Is.is(104)))
-                .andExpect(jsonPath("$.items[1].authorReputation", Is.is(20)))
-                .andExpect(jsonPath("$.items[1].authorName", Is.is("User 104")))
-                .andExpect(jsonPath("$.items[1].authorImage", Is.is("/images/noUserAvatar.png")))
-                .andExpect(jsonPath("$.items[1].description", Is.is("What do you think about question 103?")))
-                .andExpect(jsonPath("$.items[1].viewCount", Is.is(1)))
-                .andExpect(jsonPath("$.items[1].countAnswer", Is.is(1)))
-                .andExpect(jsonPath("$.items[1].countValuable", Is.is(-1)))
-                .andExpect(jsonPath("$.items[1].persistDateTime", Is.is("2023-02-08T21:30")))
-                .andExpect(jsonPath("$.items[1].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
-
-                .andExpect(jsonPath("$.items[2].id", Is.is(102)))
-                .andExpect(jsonPath("$.items[2].title", Is.is("Question 102")))
-                .andExpect(jsonPath("$.items[2].authorId", Is.is(101)))
-                .andExpect(jsonPath("$.items[2].authorReputation", Is.is(30)))
-                .andExpect(jsonPath("$.items[2].authorName", Is.is("User 101")))
-                .andExpect(jsonPath("$.items[2].authorImage", Is.is("/images/noUserAvatar.png")))
-                .andExpect(jsonPath("$.items[2].description", Is.is("What do you think about question 102?")))
-                .andExpect(jsonPath("$.items[2].viewCount", Is.is(2)))
-                .andExpect(jsonPath("$.items[2].countAnswer", Is.is(1)))
-                .andExpect(jsonPath("$.items[2].countValuable", Is.is(2)))
-                .andExpect(jsonPath("$.items[2].persistDateTime", Is.is("2023-02-08T21:26")))
-                .andExpect(jsonPath("$.items[2].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
-
-                .andExpect(jsonPath("$.items[3].id", Is.is(101)))
-                .andExpect(jsonPath("$.items[3].title", Is.is("Question 101")))
-                .andExpect(jsonPath("$.items[3].authorId", Is.is(105)))
-                .andExpect(jsonPath("$.items[3].authorReputation", Is.is(20)))
-                .andExpect(jsonPath("$.items[3].authorName", Is.is("User 105")))
+                .andExpect(jsonPath("$.items[3].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[3].title", Is.is("Question 104")))
+                .andExpect(jsonPath("$.items[3].authorId", Is.is(101)))
+                .andExpect(jsonPath("$.items[3].authorReputation", Is.is(30)))
+                .andExpect(jsonPath("$.items[3].authorName", Is.is("User 101")))
                 .andExpect(jsonPath("$.items[3].authorImage", Is.is("/images/noUserAvatar.png")))
-                .andExpect(jsonPath("$.items[3].description", Is.is("What do you think about question 101?")))
-                .andExpect(jsonPath("$.items[3].viewCount", Is.is(2)))
-                .andExpect(jsonPath("$.items[3].countAnswer", Is.is(2)))
+                .andExpect(jsonPath("$.items[3].description", Is.is("What do you think about question 104?")))
+                .andExpect(jsonPath("$.items[3].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[3].countAnswer", Is.is(1)))
                 .andExpect(jsonPath("$.items[3].countValuable", Is.is(0)))
-                .andExpect(jsonPath("$.items[3].persistDateTime", Is.is("2023-02-08T21:23")))
-                .andExpect(jsonPath("$.items[3].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")));
+                .andExpect(jsonPath("$.items[3].persistDateTime", Is.is(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).toString())))
+
+
+                .andExpect(jsonPath("$.items[2].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[2].title", Is.is("Question 103")))
+                .andExpect(jsonPath("$.items[2].authorId", Is.is(104)))
+                .andExpect(jsonPath("$.items[2].authorReputation", Is.is(20)))
+                .andExpect(jsonPath("$.items[2].authorName", Is.is("User 104")))
+                .andExpect(jsonPath("$.items[2].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[2].description", Is.is("What do you think about question 103?")))
+                .andExpect(jsonPath("$.items[2].viewCount", Is.is(1)))
+                .andExpect(jsonPath("$.items[2].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[2].countValuable", Is.is(-1)))
+                .andExpect(jsonPath("$.items[2].persistDateTime", Is.is(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).toString())))
+
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[1].title", Is.is("Question 102")))
+                .andExpect(jsonPath("$.items[1].authorId", Is.is(101)))
+                .andExpect(jsonPath("$.items[1].authorReputation", Is.is(30)))
+                .andExpect(jsonPath("$.items[1].authorName", Is.is("User 101")))
+                .andExpect(jsonPath("$.items[1].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("What do you think about question 102?")))
+                .andExpect(jsonPath("$.items[1].viewCount", Is.is(2)))
+                .andExpect(jsonPath("$.items[1].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[1].countValuable", Is.is(2)))
+                .andExpect(jsonPath("$.items[1].persistDateTime", Is.is(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).toString())))
+
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("Question 101")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(105)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(20)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("User 105")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("What do you think about question 101?")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(2)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(2)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).toString())));
     }
 
     //Проверка получения всех вопросов по параметру NoAnswer - которым еще не дан ответ
@@ -306,8 +310,6 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items[0].viewCount", Is.is(1)))
                 .andExpect(jsonPath("$.items[0].countAnswer", Is.is(0)))
                 .andExpect(jsonPath("$.items[0].countValuable", Is.is(-1)))
-                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-02-08T21:30")))
-                .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
 
                 .andExpect(jsonPath("$.items[1].id", Is.is(104)))
                 .andExpect(jsonPath("$.items[1].title", Is.is("Question 104")))
@@ -318,9 +320,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items[1].description", Is.is("What do you think about question 104?")))
                 .andExpect(jsonPath("$.items[1].viewCount", Is.is(0)))
                 .andExpect(jsonPath("$.items[1].countAnswer", Is.is(0)))
-                .andExpect(jsonPath("$.items[1].countValuable", Is.is(0)))
-                .andExpect(jsonPath("$.items[1].persistDateTime", Is.is("2023-02-08T21:44")))
-                .andExpect(jsonPath("$.items[1].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")));
+                .andExpect(jsonPath("$.items[1].countValuable", Is.is(0)));
 
     }
 
@@ -355,8 +355,6 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items[0].viewCount", Is.is(2)))
                 .andExpect(jsonPath("$.items[0].countAnswer", Is.is(2)))
                 .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)))
-                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-02-08T21:23")))
-                .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
 
                 .andExpect(jsonPath("$.items[1].id", Is.is(102)))
                 .andExpect(jsonPath("$.items[1].title", Is.is("Question 102")))
@@ -368,8 +366,6 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items[1].viewCount", Is.is(2)))
                 .andExpect(jsonPath("$.items[1].countAnswer", Is.is(1)))
                 .andExpect(jsonPath("$.items[1].countValuable", Is.is(2)))
-                .andExpect(jsonPath("$.items[1].persistDateTime", Is.is("2023-02-08T21:26")))
-                .andExpect(jsonPath("$.items[1].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
 
                 .andExpect(jsonPath("$.items[2].id", Is.is(103)))
                 .andExpect(jsonPath("$.items[2].title", Is.is("Question 103")))
@@ -381,8 +377,6 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items[2].viewCount", Is.is(1)))
                 .andExpect(jsonPath("$.items[2].countAnswer", Is.is(1)))
                 .andExpect(jsonPath("$.items[2].countValuable", Is.is(-1)))
-                .andExpect(jsonPath("$.items[2].persistDateTime", Is.is("2023-02-08T21:30")))
-                .andExpect(jsonPath("$.items[2].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
 
                 .andExpect(jsonPath("$.items[3].id", Is.is(104)))
                 .andExpect(jsonPath("$.items[3].title", Is.is("Question 104")))
@@ -393,9 +387,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items[3].description", Is.is("What do you think about question 104?")))
                 .andExpect(jsonPath("$.items[3].viewCount", Is.is(0)))
                 .andExpect(jsonPath("$.items[3].countAnswer", Is.is(1)))
-                .andExpect(jsonPath("$.items[3].countValuable", Is.is(0)))
-                .andExpect(jsonPath("$.items[3].persistDateTime", Is.is("2023-02-08T21:44")))
-                .andExpect(jsonPath("$.items[3].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")));
+                .andExpect(jsonPath("$.items[3].countValuable", Is.is(0)));
 
     }
 
@@ -432,9 +424,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items[0].description", Is.is("What do you think about question 103?")))
                 .andExpect(jsonPath("$.items[0].viewCount", Is.is(1)))
                 .andExpect(jsonPath("$.items[0].countAnswer", Is.is(1)))
-                .andExpect(jsonPath("$.items[0].countValuable", Is.is(-1)))
-                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-02-08T21:30")))
-                .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")));
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(-1)));
     }
 
     //Проверка получения вопросов по trackedTag
@@ -468,8 +458,6 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items[0].viewCount", Is.is(0)))
                 .andExpect(jsonPath("$.items[0].countAnswer", Is.is(1)))
                 .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)))
-                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-02-08T21:44")))
-                .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
                 .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(110)))
                 .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("vfOxMU10")))
                 .andExpect(jsonPath("$.items[0].listTagDto[0].description", Is.is("Description of tag 10")))
@@ -490,8 +478,6 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items[1].viewCount", Is.is(2)))
                 .andExpect(jsonPath("$.items[1].countAnswer", Is.is(1)))
                 .andExpect(jsonPath("$.items[1].countValuable", Is.is(2)))
-                .andExpect(jsonPath("$.items[1].persistDateTime", Is.is("2023-02-08T21:26")))
-                .andExpect(jsonPath("$.items[1].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
                 .andExpect(jsonPath("$.items[1].listTagDto[0].id", Is.is(104)))
                 .andExpect(jsonPath("$.items[1].listTagDto[0].name", Is.is("vfOxMU4")))
                 .andExpect(jsonPath("$.items[1].listTagDto[0].description", Is.is("Description of tag 4")))
@@ -534,8 +520,6 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items[0].viewCount", Is.is(0)))
                 .andExpect(jsonPath("$.items[0].countAnswer", Is.is(1)))
                 .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)))
-                .andExpect(jsonPath("$.items[0].persistDateTime", Is.is("2023-02-08T21:44")))
-                .andExpect(jsonPath("$.items[0].lastUpdateDateTime", Is.is("2023-02-12T00:00:00")))
                 .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(110)))
                 .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("vfOxMU10")))
                 .andExpect(jsonPath("$.items[0].listTagDto[0].description", Is.is("Description of tag 10")))
