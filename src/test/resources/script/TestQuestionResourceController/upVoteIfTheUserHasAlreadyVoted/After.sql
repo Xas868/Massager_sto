@@ -1,0 +1,1 @@
+TRUNCATE role, user_entity, question, votes_on_questions, reputation CASCADE;

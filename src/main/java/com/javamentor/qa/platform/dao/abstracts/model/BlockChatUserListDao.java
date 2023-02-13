@@ -6,4 +6,5 @@ public interface BlockChatUserListDao extends ReadWriteDao<BlockChatUserList, Lo
 
 
     void deleteUserFromBlockById(Long profile, Long blocked);
+    Boolean isExistsUserFromBlockById(Long profileId, Long blockedId);
 }

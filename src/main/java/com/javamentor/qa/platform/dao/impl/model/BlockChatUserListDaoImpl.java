@@ -20,4 +20,10 @@ public class BlockChatUserListDaoImpl extends ReadWriteDaoImpl<BlockChatUserList
                 .setParameter("blocked", blocked)
                 .executeUpdate();
     }
+    public Boolean isExistsUserFromBlockById(Long profilId, Long blockId){
+        return (Long) entityManager.createQuery("select count (r.blocked) from BlockChatUserList as r where r.profile.id=:id AND r.blocked.id=:ids")
+                .setParameter("id",profilId)
+                .setParameter("ids",blockId)
+                .getSingleResult()>0;
+    }
 }
