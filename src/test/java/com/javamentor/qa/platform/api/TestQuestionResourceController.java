@@ -69,6 +69,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
         assertThat(count.get(0).toString()).isEqualTo("35");
 
     }
+
     //Проверка создания нового вопроса если новый таг, то он доавляется в список tag
     @Test
     @Sql(scripts = "/script/TestQuestionResourceController/postCreateNewQuestion/Before.sql",
@@ -101,9 +102,10 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.countAnswer").value("0"))
                 .andExpect(jsonPath("$.countValuable").value("0"))
                 .andExpect(jsonPath("$.listTagDto[0].name").value("firstTag"));
-        assertThat(SingleResultUtil.getSingleResultOrNull((TypedQuery<Long>) entityManager.createQuery("select r.id as s from Tag as r where r.name =:ids").setParameter("ids","firstTag")).isEmpty()).isEqualTo(false);
+        assertThat(SingleResultUtil.getSingleResultOrNull((TypedQuery<Long>) entityManager.createQuery("select r.id as s from Tag as r where r.name =:ids").setParameter("ids", "firstTag")).isEmpty()).isEqualTo(false);
 
     }
+
     //Проверка создания нового вопроса без указания title. Выбрасывает ошибку
     @Test
     @Sql(scripts = "/script/TestQuestionResourceController/postCreateNewQuestion/Before.sql",
@@ -172,7 +174,8 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                         .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101")))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
-public class TestQuestionResourceController extends AbstractClassForDRRiderMockMVCTests {
+    }
+
 
     // Голосование ЗА вопрос
     // Устанавливает голос +1 за вопрос и +10 к репутации автора вопроса
@@ -190,7 +193,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
 
         String count1 = valueOf(entityManager.createQuery("select sum(r.count) as s from Reputation as r where r.author = 110")
                 .getResultList());
-        count1 = count1.replaceAll("[()<\\[\\]>]","");
+        count1 = count1.replaceAll("[()<\\[\\]>]", "");
         assertThat(count1).isEqualTo("1510");
     }
 
@@ -241,7 +244,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
 
         String count1 = valueOf(entityManager.createQuery("select sum(r.count) as s from Reputation as r where r.author = 110")
                 .getResultList());
-        count1 = count1.replaceAll("[()<\\[\\]>]","");
+        count1 = count1.replaceAll("[()<\\[\\]>]", "");
         assertThat(count1).isEqualTo("95");
     }
 
@@ -304,12 +307,45 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items.[1].listTagDto.size()", Is.is(1)))
                 .andExpect(jsonPath("$.items.[1].listTagDto[0].id", Is.is(101)))
                 .andExpect(jsonPath("$.items.[1].listTagDto[0].name", Is.is("iThKcj2")))
-                .andExpect(jsonPath("$.items.[1].listTagDto[0].description", Is.is("Description of tag 2")))
-        ;
-
-
+                .andExpect(jsonPath("$.items.[1].listTagDto[0].description", Is.is("Description of tag 2")));
 
 
     }
 
+    //Проверка отметки вопроса как просмотренного
+    @Test
+    @Sql(scripts = "/script/TestQuestionResourceController/postMarkQuestionLikeViewed/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/postMarkQuestionLikeViewed/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void postMarkQuestionLikeViewed() throws Exception {
+
+        mockMvc.perform(post("/api/user/question/103/view")
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101")))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        String questionId = valueOf(entityManager.createQuery("SELECT qv.question.id FROM QuestionViewed as qv where qv.user.id = 101 and qv.question.id = 103")
+                .getSingleResult());
+        assertThat(questionId).isEqualTo("103");
+
+    }
+
+    //Проверка отметки вопроса с несуществующим questionId
+    @Test
+    @Sql(scripts = "/script/TestQuestionResourceController/postMarkQuestionLikeViewed/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/postMarkQuestionLikeViewed/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void postMarkQuestionLikeViewed_with_wrongQuestionId() throws Exception {
+
+        mockMvc.perform(post("/api/user/question/989768/view")
+                        .contentType("application/json")
+                        .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101")))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("There is no question 989768")));
+
+    }
 }
