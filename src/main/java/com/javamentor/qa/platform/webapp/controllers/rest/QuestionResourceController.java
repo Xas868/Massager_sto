@@ -228,7 +228,7 @@ public class QuestionResourceController {
     @ApiResponse(responseCode = "403", description = "Пользователь не аутентифицирован", content = {
             @Content(mediaType = "application/json")
     })
-    @GetMapping("/{id}/view")
+    @PostMapping("/{id}/view")
     public ResponseEntity<String> markQuestionLikeViewed(@PathVariable Long id, Authentication auth) {
 
         User user = (User) auth.getPrincipal();
