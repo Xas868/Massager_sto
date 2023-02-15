@@ -36,10 +36,10 @@ VALUES  (100, 'I am test user', 'Moskow', 'user100@mail.ru', 'User 100', '/image
  *  Table: question
  */
 INSERT INTO question (id, description, is_deleted, last_redaction_date, persist_date, title, user_id)
-VALUES (101, 'What do you think about question 101?', false, DATE(NOW()), '2023-02-08 21:23:08.051909', 'Question 101', 105),
-       (102, 'What do you think about question 102?', false, DATE(NOW()), '2023-02-08 21:26:08.070666', 'Question 102', 101),
-       (103, 'What do you think about question 103?', false, DATE(NOW()), '2023-02-08 21:30:08.086899', 'Question 103', 104),
-       (104, 'What do you think about question 104?', false, DATE(NOW()), '2023-02-08 21:44:08.119151', 'Question 104', 101);
+VALUES (101, 'What do you think about question 101?', false, DATE(NOW()), CURRENT_TIMESTAMP, 'Question 101', 105),
+       (102, 'What do you think about question 102?', false, DATE(NOW()), CURRENT_TIMESTAMP, 'Question 102', 101),
+       (103, 'What do you think about question 103?', false, DATE(NOW()), CURRENT_TIMESTAMP, 'Question 103', 104),
+       (104, 'What do you think about question 104?', false, DATE(NOW()), CURRENT_TIMESTAMP, 'Question 104', 101);
 
 /*
  *  Table: answer
@@ -129,10 +129,13 @@ VALUES (101, DATE(NOW()), 101, 101),
        (104, DATE(NOW()), 103, 104),
        (105, DATE(NOW()), 102, 101);
 
+
 /*
  *  Table: tag_tracked
  */
 
-INSERT INTO tag_tracked (id, persist_date, tracked_tag_id, user_id)
-VALUES (101, DATE(NOW()), 110, 101),
-       (102, DATE(NOW()), 105, 101);
+
+INSERT INTO tag_ignore(id, persist_date, ignored_tag_id, user_id)
+VALUES (101, DATE(NOW()), 101, 101),
+       (102, DATE(NOW()), 104, 101),
+       (103, DATE(NOW()), 107, 101);

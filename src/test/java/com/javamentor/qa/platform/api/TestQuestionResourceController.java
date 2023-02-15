@@ -292,7 +292,7 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                         MockMvcRequestBuilders
                                 .get("/api/user/question/sorted")
                                 .param("page", "1")
-                                .param("sortedBy", "NoAnswer")
+                                .param("sortedBy", "NO_ANSWER")
                                 .contentType("application/json")
                                 .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
                 )
@@ -391,6 +391,95 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
 
     }
 
+    //Проверка получения всех вопросов по параметру VIEW - по количеству просмотров, фильтрация по tagTracked
+    @Test
+    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_VIEW_filteredBy_tagTracked/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_VIEW_filteredBy_tagTracked/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllQuestionsSortedBy_VIEW_filteredBy_tagTracked() throws Exception {
+
+        this.mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .get("/api/user/question/sorted")
+                                .param("page", "1")
+                                .param("sortedBy", "VIEW")
+                                .contentType("application/json")
+                                .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andExpect(jsonPath("$.items.length()", Is.is(2)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("Question 102")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(30)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("User 101")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("What do you think about question 102?")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(2)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(2)))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[1].title", Is.is("Question 104")))
+                .andExpect(jsonPath("$.items[1].authorId", Is.is(101)))
+                .andExpect(jsonPath("$.items[1].authorReputation", Is.is(30)))
+                .andExpect(jsonPath("$.items[1].authorName", Is.is("User 101")))
+                .andExpect(jsonPath("$.items[1].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("What do you think about question 104?")))
+                .andExpect(jsonPath("$.items[1].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[1].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[1].countValuable", Is.is(0)));
+
+    }
+
+    //Проверка получения всех вопросов по параметру VIEW - по количеству просмотров, фильтрация по tagIgnored
+    @Test
+    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_VIEW_filteredBy_tagIgnored/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_VIEW_filteredBy_tagIgnored/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllQuestionsSortedBy_VIEW_filteredBy_tagIgnored() throws Exception {
+
+        this.mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .get("/api/user/question/sorted")
+                                .param("page", "1")
+                                .param("sortedBy", "VIEW")
+                                .contentType("application/json")
+                                .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+
+                .andExpect(jsonPath("$.items.length()", Is.is(1)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("Question 104")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(30)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("User 101")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("What do you think about question 104?")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)))
+
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(110)))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("vfOxMU10")))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].description", Is.is("Description of tag 10")))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].id", Is.is(111)))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].name", Is.is("iThKcj11")))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].description", Is.is("Description of tag 11")))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].id", Is.is(112)))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].name", Is.is("LAST_GDJP12")))
+                .andExpect(jsonPath("$.items[0].listTagDto[2].description", Is.is("Description of tag 12")));
+
+    }
+
     //Проверка Пагинации
     @Test
     @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_VIEW/Before.sql",
@@ -425,110 +514,6 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
                 .andExpect(jsonPath("$.items[0].viewCount", Is.is(1)))
                 .andExpect(jsonPath("$.items[0].countAnswer", Is.is(1)))
                 .andExpect(jsonPath("$.items[0].countValuable", Is.is(-1)));
-    }
-
-    //Проверка получения вопросов по trackedTag
-    @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_trackedTag/Before.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_trackedTag/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getAllQuestionsSortedBy_trackedTag() throws Exception {
-
-        this.mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .get("/api/user/question/sorted")
-                                .param("page", "1")
-                                .param("trackedTag", "110", "105")
-                                .contentType("application/json")
-                                .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-
-                .andExpect(jsonPath("$.items.length()", Is.is(2)))
-
-                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
-                .andExpect(jsonPath("$.items[0].title", Is.is("Question 104")))
-                .andExpect(jsonPath("$.items[0].authorId", Is.is(101)))
-                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(30)))
-                .andExpect(jsonPath("$.items[0].authorName", Is.is("User 101")))
-                .andExpect(jsonPath("$.items[0].authorImage", Is.is("/images/noUserAvatar.png")))
-                .andExpect(jsonPath("$.items[0].description", Is.is("What do you think about question 104?")))
-                .andExpect(jsonPath("$.items[0].viewCount", Is.is(0)))
-                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(1)))
-                .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)))
-                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(110)))
-                .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("vfOxMU10")))
-                .andExpect(jsonPath("$.items[0].listTagDto[0].description", Is.is("Description of tag 10")))
-                .andExpect(jsonPath("$.items[0].listTagDto[1].id", Is.is(111)))
-                .andExpect(jsonPath("$.items[0].listTagDto[1].name", Is.is("iThKcj11")))
-                .andExpect(jsonPath("$.items[0].listTagDto[1].description", Is.is("Description of tag 11")))
-                .andExpect(jsonPath("$.items[0].listTagDto[2].id", Is.is(112)))
-                .andExpect(jsonPath("$.items[0].listTagDto[2].name", Is.is("LAST_GDJP12")))
-                .andExpect(jsonPath("$.items[0].listTagDto[2].description", Is.is("Description of tag 12")))
-
-                .andExpect(jsonPath("$.items[1].id", Is.is(102)))
-                .andExpect(jsonPath("$.items[1].title", Is.is("Question 102")))
-                .andExpect(jsonPath("$.items[1].authorId", Is.is(101)))
-                .andExpect(jsonPath("$.items[1].authorReputation", Is.is(30)))
-                .andExpect(jsonPath("$.items[1].authorName", Is.is("User 101")))
-                .andExpect(jsonPath("$.items[1].authorImage", Is.is("/images/noUserAvatar.png")))
-                .andExpect(jsonPath("$.items[1].description", Is.is("What do you think about question 102?")))
-                .andExpect(jsonPath("$.items[1].viewCount", Is.is(2)))
-                .andExpect(jsonPath("$.items[1].countAnswer", Is.is(1)))
-                .andExpect(jsonPath("$.items[1].countValuable", Is.is(2)))
-                .andExpect(jsonPath("$.items[1].listTagDto[0].id", Is.is(104)))
-                .andExpect(jsonPath("$.items[1].listTagDto[0].name", Is.is("vfOxMU4")))
-                .andExpect(jsonPath("$.items[1].listTagDto[0].description", Is.is("Description of tag 4")))
-                .andExpect(jsonPath("$.items[1].listTagDto[1].id", Is.is(105)))
-                .andExpect(jsonPath("$.items[1].listTagDto[1].name", Is.is("iThKcj5")))
-                .andExpect(jsonPath("$.items[1].listTagDto[1].description", Is.is("Description of tag 5")))
-                .andExpect(jsonPath("$.items[1].listTagDto[2].id", Is.is(106)))
-                .andExpect(jsonPath("$.items[1].listTagDto[2].name", Is.is("LTGDJP6")))
-                .andExpect(jsonPath("$.items[1].listTagDto[2].description", Is.is("Description of tag 6")));
-    }
-
-    //Проверка получения вопросов по ignoredTag
-    @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_ignoredTag/Before.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/getAllQuestionsSortedBy_ignoredTag/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void getAllQuestionsSortedBy_ignoredTag() throws Exception {
-
-        this.mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .get("/api/user/question/sorted")
-                                .param("page", "1")
-                                .param("ignoredTag", "101", "104", "107")
-                                .contentType("application/json")
-                                .header("Authorization", "Bearer " + getToken("user101@mail.ru", "user101"))
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-
-                .andExpect(jsonPath("$.items.length()", Is.is(1)))
-
-                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
-                .andExpect(jsonPath("$.items[0].title", Is.is("Question 104")))
-                .andExpect(jsonPath("$.items[0].authorId", Is.is(101)))
-                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(30)))
-                .andExpect(jsonPath("$.items[0].authorName", Is.is("User 101")))
-                .andExpect(jsonPath("$.items[0].authorImage", Is.is("/images/noUserAvatar.png")))
-                .andExpect(jsonPath("$.items[0].description", Is.is("What do you think about question 104?")))
-                .andExpect(jsonPath("$.items[0].viewCount", Is.is(0)))
-                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(1)))
-                .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)))
-                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(110)))
-                .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("vfOxMU10")))
-                .andExpect(jsonPath("$.items[0].listTagDto[0].description", Is.is("Description of tag 10")))
-                .andExpect(jsonPath("$.items[0].listTagDto[1].id", Is.is(111)))
-                .andExpect(jsonPath("$.items[0].listTagDto[1].name", Is.is("iThKcj11")))
-                .andExpect(jsonPath("$.items[0].listTagDto[1].description", Is.is("Description of tag 11")))
-                .andExpect(jsonPath("$.items[0].listTagDto[2].id", Is.is(112)))
-                .andExpect(jsonPath("$.items[0].listTagDto[2].name", Is.is("LAST_GDJP12")))
-                .andExpect(jsonPath("$.items[0].listTagDto[2].description", Is.is("Description of tag 12")));
     }
 
 

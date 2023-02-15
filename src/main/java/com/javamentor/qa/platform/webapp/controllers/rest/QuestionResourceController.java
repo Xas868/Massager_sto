@@ -245,38 +245,39 @@ public class QuestionResourceController {
 
     @GetMapping("/sorted")
     @Operation(
-            summary = "Получение пагинированного списка вопросов.",
+            summary = "Получение пагинированного списка всех вопросов с фильтрацией по тегам авторизированного пользователя.",
+
             description = "Получение пагинированного списка вопросов за весь период с сортировкой по списка по параметрам:" +
                           "NEW - сортировка от новых к старым," +
                           "NoAnswer - сортировка от вопросов, в которых нет ответов," +
                           "VIEW - сортировка по просмотрам (от большего к меньшему)" +
 
                           "В запросе указываем page - номер страницы, обязательный параметр, items (по умолчанию 10) - " +
-                          "количество результатов на странице, так же можно отфильтровать по ignoredTag и trackedTag" +
-                          "(указываются как параметр в HTTP запросе списком)"
+                          "количество результатов на странице."
     )
 
     @ApiResponse(
-            responseCode = "200", description = "Возвращает пагинированный список PageDTO<QuestionViewDTO> " +
+            responseCode = "200",
+
+            description = "Возвращает пагинированный список PageDTO<QuestionViewDTO> " +
                                                 "(id, title, authorId, " +
                                                 "authorReputation, authorName, authorImage, description, " +
                                                 "viewCount, countAnswer, countValuable," +
                                                 " LocalDateTime, LocalDateTime, listTagDto)",
+
             content = {@Content(mediaType = "application/json")}
     )
 
     public ResponseEntity<PageDTO<QuestionViewDto>> getAllQuestionsSortedBy(
             @RequestParam int page,
             @RequestParam(defaultValue = "10") int items,
-            @RequestParam(required = false) List<Long> trackedTag,
-            @RequestParam(required = false) List<Long> ignoredTag,
             @RequestParam(required = false, defaultValue = "ALL") DateFilter dateFilter,
-            @RequestParam(required = false, defaultValue = "NEW", name = "sortedBy") QuestionViewSort questionViewSort
+            @RequestParam(required = false, defaultValue = "NEW", name = "sortedBy") QuestionViewSort questionViewSort,
+            Authentication auth
     ) {
 
         PaginationData data = new PaginationData(page, items, QuestionPageDtoDaoSortedByImpl.class.getSimpleName());
-        data.getProps().put("trackedTag", trackedTag);
-        data.getProps().put("ignoredTag", ignoredTag);
+        data.getProps().put("user", auth.getPrincipal());
         data.getProps().put("dateFilter", dateFilter.getDay());
         data.getProps().put("sortedBy", questionViewSort);
 

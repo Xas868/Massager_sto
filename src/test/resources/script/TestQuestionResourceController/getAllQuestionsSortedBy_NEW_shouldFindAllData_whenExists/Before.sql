@@ -128,3 +128,13 @@ VALUES (101, DATE(NOW()), 101, 101),
        (103, DATE(NOW()), 102, 103),
        (104, DATE(NOW()), 103, 104),
        (105, DATE(NOW()), 102, 101);
+
+
+/*
+ *  Table: tag_tracked
+ */
+
+/*
+INSERT INTO tag_tracked (id, persist_date, tracked_tag_id, user_id)
+VALUES (101, DATE(NOW()), 110, 101),
+       (102, DATE(NOW()), 105, 101); */
