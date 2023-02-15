@@ -12,7 +12,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.persistence.TypedQuery;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -634,7 +633,6 @@ public class TestQuestionResourceController extends AbstractClassForDRRiderMockM
         String questionId = valueOf(entityManager.createQuery("SELECT qv.question.id FROM QuestionViewed as qv where qv.user.id = 101 and qv.question.id = 103")
                 .getSingleResult());
         assertThat(questionId).isEqualTo("103");
-                .andExpect(jsonPath("$.items.[1].listTagDto[0].description", Is.is("Description of tag 2")));
 
     }
 
