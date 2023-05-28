@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 public class MyTestPj {
 
     public static void main(String[] args) {
-        System.out.println("_________");
+        MyTestPj myTestPj = new MyTestPj();
+        myTestPj.func();
     }
 
     private String firstName;
