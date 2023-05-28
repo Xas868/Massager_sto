@@ -46,6 +46,11 @@ public class BookMarksDtoServiceImpl extends DtoServiceImpl<BookMarksDto> implem
     }
 
     @Override
+    public Object getAllBookMarksInUserProfile(Long id) {
+        return null;
+    }
+
+    @Override
     public PageDTO<BookMarksDto> getPageDto(PaginationData properties) {
         var pageDto = super.getPageDto(properties);
         var tagDtoByQuestionIds =

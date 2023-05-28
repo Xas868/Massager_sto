@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface BookMarksDtoService extends PageDtoService<BookMarksDto> {
     List<BookMarksDto> getAllBookMarksInUserProfile(Long id, SortBookmark sortBookmark);
+
+    Object getAllBookMarksInUserProfile(Long id);
 }
