@@ -17,4 +17,8 @@ public class MyTestPj {
     private String secondName;
     private int age;
 
+    public void func() {
+        setFirstName("Вася");
+    }
+
 }
